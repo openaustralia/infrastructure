@@ -36,3 +36,4 @@ Our current plan is to separate the different sites currently running on kedumba
 
 * [6 practices for super smooth Ansible experience](http://hakunin.com/six-ansible-practices)
 * [Ansible Best Practices](http://docs.ansible.com/playbooks_best_practices.html)
+* [Ansible real life good practices](https://www.reinteractive.net/posts/167-ansible-real-life-good-practices)
