@@ -1,4 +1,4 @@
-# Ansible configuration management for all of OpenAustralia Foundations servers
+# Ansible configuration management for all of OpenAustralia Foundation's servers
 
 ** THIS IS A WORK IN PROGRESS **
 
