@@ -2,4 +2,7 @@
 - hosts: all
   roles:
     - {role: jnv.unattended-upgrades, unattended_automatic_reboot: true}
+    - {role: ANXS.postgresql, postgresql_ext_install_dev_headers: yes}
+    - {role: abtris.nginx-passenger}
+    - {role: MaximeThoonsen.autopostgresqlbackup}
     - righttoknow
