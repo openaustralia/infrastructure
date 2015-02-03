@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: righttoknow.org.au.dev
   roles:
     - {role: jnv.unattended-upgrades, unattended_automatic_reboot: true}
     - {role: ANXS.postgresql, postgresql_ext_install_dev_headers: yes}
@@ -7,3 +7,8 @@
     - {role: MaximeThoonsen.autopostgresqlbackup}
     - {role: zzet.rbenv}
     - righttoknow
+
+- hosts: planningalerts.org.au.dev
+  roles:
+    - {role: jnv.unattended-upgrades, unattended_automatic_reboot: true}
+    - planningalerts
