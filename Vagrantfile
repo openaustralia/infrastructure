@@ -56,19 +56,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # View the documentation for the provider you're using for more
   # information on available options.
 
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "development.yml"
+    # Doing this here so we don't need to put in the playbook
+    ansible.sudo = true
+  end
+
   config.vm.define "righttoknow.org.au.dev" do |server|
-    server.vm.provision "ansible" do |ansible|
-      ansible.playbook = "playbook.yml"
-      # Doing this here so we don't need to put in the playbook
-      ansible.sudo = true
-    end
   end
 
   config.vm.define "planningalerts.org.au.dev" do |server|
-    server.vm.provision "ansible" do |ansible|
-      ansible.playbook = "playbook.yml"
-      # Doing this here so we don't need to put in the playbook
-      ansible.sudo = true
-    end
   end
 end
