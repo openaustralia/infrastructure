@@ -42,3 +42,8 @@ Our current plan is to separate the different sites currently running on kedumba
 
 For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/).
 For configuration management you will need [Ansible](http://docs.ansible.com/).
+
+Also
+```
+$ vagrant plugin install vagrant-hostsupdater
+```
