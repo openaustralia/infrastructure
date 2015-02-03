@@ -62,9 +62,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.sudo = true
   end
 
-  config.vm.define "righttoknow.org.au.dev" do |server|
-  end
+  hosts = {
+    "righttoknow.org.au.dev"    => "192.168.10.10",
+    "planningalerts.org.au.dev" => "192.168.10.11"
+  }
 
-  config.vm.define "planningalerts.org.au.dev" do |server|
+  hosts.each do |hostname, ip|
+    config.vm.define hostname do |host|
+      host.vm.network :private_network, ip: ip
+      host.vm.hostname = hostname
+    end
   end
 end
