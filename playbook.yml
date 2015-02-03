@@ -1,7 +1,5 @@
 ---
 - hosts: all
-  sudo: true
-  #user: root
   roles:
     - {role: jnv.unattended-upgrades, unattended_automatic_reboot: true}
     - righttoknow
