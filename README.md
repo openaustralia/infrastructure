@@ -53,11 +53,14 @@ password used to encrypt the secret info in this repo
 
 ## Notes for deploying RightToKnow
 
+For the time being you will need to use the `update-rbenv-deploy` branch of the OpenAustralia
+Foundation Alaveteli repo as it contains some small fixes to allow capistrano to work with rbenv.
+
 In your checked out copy of the Alaveteli repo add the following to `config/deploy.yml`
 
 ```
 development:
-  branch: production
+  branch: update-rbenv-deploy
   repository: git://github.com/openaustralia/alaveteli.git
   server: righttoknow.org.au.dev
   user: deploy
