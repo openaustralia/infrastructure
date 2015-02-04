@@ -1,0 +1,49 @@
+---
+
+- name: check for unsupported target operating system
+  fail:
+    msg: "The operating system of the target machine ({{ inventory_hostname }}) is not currently supported"
+  when: not (ansible_os_family == 'Debian' or ansible_distribution == 'Ubuntu')
+
+- name: Debian | run apt update
+  sudo: yes
+  apt: update_cache=yes
+  tags:
+    - automysqlbackup
+
+- name: Debian | install automysqlbackup
+  sudo: yes
+  apt: pkg=automysqlbackup state=latest
+  tags:
+    - automysqlbackup
+
+- name: apply automysqlbackup configuration
+  sudo: yes
+  template:
+    src: automysqlbackup.j2
+    dest: /etc/default/automysqlbackup
+    group: root
+    owner: root
+    mode: 0600
+  tags:
+    - automysqlbackup
+
+- name: remove the cron.daily file
+  sudo: yes
+  file: path=/etc/cron.daily/automysqlbackup state=absent
+  tags:
+    - automysqlbackup
+
+- name: add automysqlbackup cron job
+  sudo: yes
+  cron:
+    name: "automysqlbackup"
+    minute: "{{ automysqlbackup_cron.minute }}"
+    hour: "{{ automysqlbackup_cron.hour }}"
+    day: "{{ automysqlbackup_cron.day }}"
+    month: "{{ automysqlbackup_cron.month }}"
+    weekday: "{{ automysqlbackup_cron.weekday }}"
+    user: root
+    job: "/usr/sbin/automysqlbackup"
+  tags:
+    - automysqlbackup

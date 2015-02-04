@@ -1,0 +1,20 @@
+---
+
+galaxy_info:
+  author: Maxime Thoonsen
+  description: Install and configure automysqlbackup utility
+  license: MIT
+  min_ansible_version: 1.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - lenny
+        - squeeze
+        - wheezy
+        - trusty
+  categories:
+    - database
+dependencies: []
