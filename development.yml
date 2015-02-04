@@ -22,4 +22,5 @@
       mysql_databases:
         - name: planningalerts
     - role: MaximeThoonsen.automysqlbackup
+    - role: abtris.nginx-passenger
     - role: planningalerts
