@@ -5,6 +5,8 @@
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 - name: Install bundler gem
   command: bash -lc "gem install bundler"
+  sudo: true
+  sudo_user: deploy
 
 - name: Install libicu-dev for charlock_holmes gem used in alaveteli
   apt: name=libicu-dev state=present

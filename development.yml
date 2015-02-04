@@ -10,9 +10,11 @@
     - {role: MaximeThoonsen.autopostgresqlbackup}
     - role: zzet.rbenv
       rbenv:
-        env: system
+        env: user
         version: v0.4.0
         ruby_version: 2.0.0-p598
+      rbenv_users:
+        - deploy
     - righttoknow
 
 - hosts: planningalerts.org.au.dev
