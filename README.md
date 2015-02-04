@@ -47,3 +47,25 @@ Also
 ```
 $ vagrant plugin install vagrant-hostsupdater
 ```
+
+## Notes for deploying RightToKnow
+
+In your checked out copy of the Alaveteli repo add the following to `config/deploy.yml`
+
+```
+development:
+  branch: production
+  repository: git://github.com/openaustralia/alaveteli.git
+  server: righttoknow.org.au.dev
+  user: deploy
+  deploy_to: /srv/www
+```
+
+This adds an extra staging for the capistrano deploy called `development`. This will deploy to your
+local development VM being managed by Vagrant.
+
+Then
+```
+$ cap -S stage=development deploy:setup
+$ cap -S stage=development deploy:cold
+```
