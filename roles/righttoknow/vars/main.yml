@@ -1,2 +1,2 @@
 ---
-# vars file for righttoknow
+db_password: "{{ encrypted_db_password }}"
