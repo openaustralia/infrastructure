@@ -5,6 +5,7 @@
   file: owner=deploy group=deploy path=/srv/www state=directory
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
+# TODO When gem is already installed stop it from saying something has changed
 - name: Install bundler gem
   command: bash -lc "gem install bundler"
   sudo: true
