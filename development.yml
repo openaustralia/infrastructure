@@ -29,4 +29,9 @@
     - role: MaximeThoonsen.automysqlbackup
     - role: abtris.nginx-passenger
     - role: geerlingguy.git
+    - role: zzet.rbenv
+      rbenv:
+        env: system
+        version: v0.4.0
+        ruby_version: 2.0.0-p598
     - role: planningalerts
