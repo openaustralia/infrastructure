@@ -6,8 +6,13 @@
     - {role: jnv.unattended-upgrades, unattended_automatic_reboot: true}
     - {role: ANXS.postgresql, postgresql_ext_install_dev_headers: yes}
     - {role: abtris.nginx-passenger}
+    # TODO This runs apt update. Fix this
     - {role: MaximeThoonsen.autopostgresqlbackup}
-    - {role: zzet.rbenv}
+    - role: zzet.rbenv
+      rbenv:
+        env: system
+        version: v0.4.0
+        ruby_version: 2.0.0-p598
     - righttoknow
 
 - hosts: planningalerts.org.au.dev
