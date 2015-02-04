@@ -23,4 +23,5 @@
         - name: planningalerts
     - role: MaximeThoonsen.automysqlbackup
     - role: abtris.nginx-passenger
+    - role: geerlingguy.git
     - role: planningalerts
