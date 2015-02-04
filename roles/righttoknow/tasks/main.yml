@@ -8,20 +8,14 @@
   sudo: true
   sudo_user: deploy
 
-- name: Install libicu-dev for charlock_holmes gem used in alaveteli
-  apt: name=libicu-dev state=present
-
-- name: Install libmagic-dev for mahoro gem used in alaveteli
-  apt: name=libmagic-dev state=present
-
-- name: Install libmagickwand-dev for RMagick gem used in alaveteli
-  apt: name=libmagickwand-dev state=present
-
-- name: Install xapian-tools for Alaveteli
-  apt: name=xapian-tools state=present
-
-- name: Install uuid-dev for Alaveteli
-  apt: name=uuid-dev state=present
+- name: Install packages required by Alaveteli
+  apt: name={{ item }} state=present
+  with_items:
+    - libicu-dev
+    - libmagic-dev
+    - libmagickwand-dev
+    - xapian-tools
+    - uuid-dev
 
 - name: Create database
   postgresql_db: name=alaveteli
