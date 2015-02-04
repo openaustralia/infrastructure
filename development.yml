@@ -12,8 +12,14 @@
 
 - hosts: planningalerts.org.au.dev
   roles:
-    - {role: deploy-user, github_users: ['mlandauer', 'henare']}
-    - {role: jnv.unattended-upgrades, unattended_automatic_reboot: true}
-    - {role: ANXS.mysql, mysql_bind_address: '127.0.0.1', mysql_root_password: '', mysql_databases: [{name: planningalerts}]}
-    - {role: MaximeThoonsen.automysqlbackup}
-    - planningalerts
+    - role: deploy-user
+      github_users: ['mlandauer', 'henare']
+    - role: jnv.unattended-upgrades
+      unattended_automatic_reboot: true
+    - role: ANXS.mysql
+      mysql_bind_address: '127.0.0.1'
+      mysql_root_password: ''
+      mysql_databases:
+        - name: planningalerts
+    - role: MaximeThoonsen.automysqlbackup
+    - role: planningalerts
