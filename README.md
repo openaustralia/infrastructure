@@ -48,6 +48,9 @@ Also
 $ vagrant plugin install vagrant-hostsupdater
 ```
 
+Create a file in your home directory `.infrastructure_ansible_vault_pass.txt` with the secret
+password used to encrypt the secret info in this repo
+
 ## Notes for deploying RightToKnow
 
 In your checked out copy of the Alaveteli repo add the following to `config/deploy.yml`
