@@ -1,3 +1,8 @@
+- name: Ensure Postfix is installed
+  apt: >
+    name=postfix
+    state=present
+
 - name: configure /etc/aliases
   lineinfile:
     dest: /etc/aliases
