@@ -22,3 +22,13 @@
 
 - name: Install uuid-dev for Alaveteli
   apt: name=uuid-dev state=present
+
+- name: Create database
+  postgresql_db: name=alaveteli
+
+- name: Create posgresql role
+  postgresql_user: db=alaveteli name=alaveteli password={{ db_password }}
+
+- name: Copy over database configuration for application
+  template: src=database.yml dest=/srv/www/shared/database.yml owner=deploy group=deploy
+  notify: nginx restart
