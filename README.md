@@ -75,4 +75,16 @@ Then
 $ cap -S stage=development deploy:setup
 $ cap -S stage=development deploy:cold
 $ cap -S stage=development deploy:migrate
+$ cap -S stage=development xapian:rebuild_index
 ```
+
+### TODOS
+
+* Varnish
+* Xapian
+* Cron jobs
+* Email
+* SSL
+* Backups
+* wkhtmltopdf
+* pdftk
