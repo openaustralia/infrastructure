@@ -40,3 +40,4 @@
 
 - name: Copy across the main Alaveteli config
   template: src=general.yml dest=/srv/www/shared owner=deploy group=deploy
+  notify: nginx restart
