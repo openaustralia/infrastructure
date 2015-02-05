@@ -41,3 +41,11 @@
 - name: Copy across the main Alaveteli config
   template: src=general.yml dest=/srv/www/shared owner=deploy group=deploy
   notify: nginx restart
+
+- name: Add SSL certificate
+  copy: src=ssl-unified.crt dest=/etc/ssl/righttoknow.org.au.dev.pem owner=root group=root mode=0644
+  notify: nginx reload
+
+- name: Add private SSL key
+  copy: content="{{ private_ssl_key }}" dest=/etc/ssl/private/righttoknow.org.au.dev.key owner=root group=ssl-cert mode=0640
+  notify: nginx reload
