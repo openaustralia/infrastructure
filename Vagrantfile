@@ -56,13 +56,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # View the documentation for the provider you're using for more
   # information on available options.
 
-  # Building a box for the first time?
-  # Uncomment this to crank up the volume along with the tempo
-  # config.vm.provider "virtualbox" do |vb|
-  #   vb.memory = 2048
-  #   vb.cpus = 2
-  # end
-
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "development.yml"
     # Doing this here so we don't need to put in the playbook
@@ -72,6 +65,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider "virtualbox" do |v|
     v.memory = 1024
+    # Uncomment this and crank up the memory for a faster build
+    # v.cpus = 2
   end
 
   hosts = {
