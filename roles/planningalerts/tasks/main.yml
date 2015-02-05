@@ -23,6 +23,7 @@
     - configuration.rb
     - production.sphinx.conf
     - sphinx.yml
+  notify: nginx reload
 
 - name: Copy nginx main configuration
   template:
