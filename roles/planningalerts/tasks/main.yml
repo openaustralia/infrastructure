@@ -10,3 +10,16 @@
     - libxml2-dev
     - libxslt1-dev
     - sphinxsearch
+
+- name: Copy application configuration files
+  template:
+    src: '{{item}}'
+    dest: /srv/www/shared
+    owner: deploy
+    group: deploy
+  with_items:
+    - database.yml
+    - throttling.yml
+    - configuration.rb
+    - production.sphinx.conf
+    - sphinx.yml
