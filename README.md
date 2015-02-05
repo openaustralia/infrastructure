@@ -74,4 +74,5 @@ Then
 ```
 $ cap -S stage=development deploy:setup
 $ cap -S stage=development deploy:cold
+$ cap -S stage=development deploy:migrate
 ```

@@ -70,6 +70,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.vault_password_file = "~/.infrastructure_ansible_vault_pass.txt"
   end
 
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+  end
+
   hosts = {
     "righttoknow.org.au.dev"    => "192.168.10.10",
     "planningalerts.org.au.dev" => "192.168.10.11"
