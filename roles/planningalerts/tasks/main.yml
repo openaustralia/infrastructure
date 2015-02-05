@@ -23,3 +23,15 @@
     - configuration.rb
     - production.sphinx.conf
     - sphinx.yml
+
+- name: Copy nginx main configuration
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/
+  notify: nginx restart
+
+- name: Copy nginx site configuration
+  template:
+    src: default
+    dest: /etc/nginx/sites-available/
+  notify: nginx reload
