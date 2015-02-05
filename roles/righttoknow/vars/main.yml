@@ -1,2 +1,7 @@
 ---
 db_password: "{{ encrypted_db_password }}"
+alavateli_incoming_email_secret: '{{ encrypted_alavateli_incoming_email_secret }}'
+alavateli_admin_password: '{{ encrypted_alavateli_admin_password }}'
+alaveteli_cookie_store_session_secret: '{{ encrypted_alaveteli_cookie_store_session_secret }}'
+alaveteli_recaptcha_public_key: '6Lej6tUSAAAAACzt-z26hUlGcFmpehGBFwr-7vLj'
+alaveteli_recaptcha_private_key: '{{ encrypted_alaveteli_recaptcha_private_key }}'

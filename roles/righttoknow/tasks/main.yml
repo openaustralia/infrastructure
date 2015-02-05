@@ -29,3 +29,14 @@
 - name: Copy over database configuration for application
   template: src=database.yml dest=/srv/www/shared/database.yml owner=deploy group=deploy
   notify: nginx restart
+
+- name: Generate the overall nginx config
+  template: src=nginx.conf dest=/etc/nginx/nginx.conf
+  notify: nginx reload
+
+- name: Generate the nginx config for the app
+  template: src=default dest=/etc/nginx/sites-available/ owner=root group=root mode=644
+  notify: nginx reload
+
+- name: Copy across the main Alaveteli config
+  template: src=general.yml dest=/srv/www/shared owner=deploy group=deploy
