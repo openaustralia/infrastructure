@@ -1,7 +1,3 @@
 ---
 - name: Ensure that deploy owns /srv/www
   file: owner=deploy group=deploy path=/srv/www state=directory
-
-# Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
-- name: Install bundler gem
-  command: bash -lc "gem install bundler"
