@@ -15,7 +15,7 @@ DOMAIN: 'www.righttoknow.org.au'
 # If true forces everyone (in the production environment) to use encrypted connections
 # (via https) by redirecting unencrypted connections. This is *highly* recommended
 # so that logins can't be intercepted by naughty people.
-FORCE_SSL: false
+FORCE_SSL: true
 
 # ISO country code of country currrently deployed in
 # (http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
