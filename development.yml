@@ -32,5 +32,6 @@
     - role: abtris.nginx-passenger
     - role: geerlingguy.git
     - role: rvm_io.rvm1-ruby
-      rvm1_rubies: ruby-2.0.0-p598
+      rvm1_rubies:
+        - ruby-2.0.0-p598
     - role: planningalerts
