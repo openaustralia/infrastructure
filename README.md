@@ -88,3 +88,4 @@ $ cap -S stage=development xapian:rebuild_index
 * Backups
 * wkhtmltopdf
 * pdftk
+* Set up mail server logs so that they can be read in
