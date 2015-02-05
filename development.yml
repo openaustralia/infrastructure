@@ -33,5 +33,4 @@
     - role: geerlingguy.git
     - role: rvm_io.rvm1-ruby
       rvm1_rubies: ruby-2.0.0-p598
-      rvm1_gpg_key_server: hkp://subkeys.pgp.net # I was getting timeouts with the default keyserver
     - role: planningalerts
