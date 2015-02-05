@@ -1,3 +1,12 @@
 ---
 - name: Ensure that deploy owns /srv/www
   file: owner=deploy group=deploy path=/srv/www state=directory
+
+- name: Ensure packages to build gem native extensions are installed
+  apt:
+    pkg: '{{item}}'
+  with_items:
+    - libmysqlclient-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - sphinxsearch
