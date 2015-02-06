@@ -43,3 +43,14 @@
     src: default
     dest: /etc/nginx/sites-available/
   notify: nginx reload
+
+- name: Copy application upstart service configuration
+  copy:
+    src: '{{item}}'
+    dest: /etc/init/
+  with_items:
+    - planningalerts.conf
+    - planningalerts-sphinx-1.conf
+    - planningalerts-sphinx.conf
+    - planningalerts-worker-1.conf
+    - planningalerts-worker.conf
