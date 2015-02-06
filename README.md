@@ -51,7 +51,9 @@ $ vagrant plugin install vagrant-hostsupdater
 Create a file in your home directory `.infrastructure_ansible_vault_pass.txt` with the secret
 password used to encrypt the secret info in this repo
 
-## Notes for deploying RightToKnow
+## Notes for deploying
+
+### Right To Know
 
 For the time being you will need to use the `update-rbenv-deploy` branch of the OpenAustralia
 Foundation Alaveteli repo as it contains some small fixes to allow capistrano to work with rbenv.
@@ -78,7 +80,7 @@ $ cap -S stage=development deploy:migrate
 $ cap -S stage=development xapian:rebuild_index
 ```
 
-### TODOS
+#### TODOS
 
 * Varnish
 * Xapian
