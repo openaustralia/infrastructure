@@ -91,3 +91,11 @@ cap -S stage=development xapian:rebuild_index
 * wkhtmltopdf
 * pdftk
 * Set up mail server logs so that they can be read in
+
+### PlanningAlerts
+
+After provisioning, deploy from the [PlanningAlerts repository](https://github.com/openaustralia/planningalerts-app/):
+
+```
+bundle exec cap -S stage=development deploy:setup deploy:cold
+```
