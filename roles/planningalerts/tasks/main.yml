@@ -54,3 +54,9 @@
     - planningalerts-sphinx.conf
     - planningalerts-worker-1.conf
     - planningalerts-worker.conf
+
+- name: Allow deploy user to control services
+  copy:
+    src: deploy_service_control
+    dest: /etc/sudoers.d/
+  notify: sudo reload

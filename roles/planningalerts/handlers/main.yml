@@ -1,2 +1,6 @@
 ---
 # handlers file for planningalerts
+- name: sudo reload
+  service:
+    name: sudo
+    state: reloaded
