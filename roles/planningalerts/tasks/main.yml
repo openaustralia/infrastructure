@@ -22,10 +22,13 @@
 
 - name: Copy application configuration
   template:
-    src: configuration.rb
+    src: "{{ item }}"
     dest: /srv/www/shared/
     owner: deploy
     group: deploy
+  with_items:
+    - configuration.rb
+    - throttling.yml
   notify: nginx reload
 
 - name: Copy static application configuration
@@ -36,7 +39,6 @@
     group: deploy
   with_items:
     - database.yml
-    - throttling.yml
     - production.sphinx.conf
     - sphinx.yml
   notify: nginx reload
