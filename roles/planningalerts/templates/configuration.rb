@@ -1,8 +1,7 @@
-# TODO: Add real values - this is just copied from the development repo
 # Stores application configuration settings
 module Configuration
   # URL Stuff
-  HOST = 'localhost:3000'
+  HOST = 'www.planningalerts.org.au'
 
   # See https://morph.io/api
   MORPH_API_KEY = "xxxxxxxxxxxxxxxxxxxx"
@@ -14,7 +13,7 @@ module Configuration
   EMAIL_MODERATOR = EMAIL_FROM_ADDRESS
 
   # Scraper params
-  SCRAPE_DELAY = 5
+  SCRAPE_DELAY = 14
 
   # Google maps key
   # Use the following maps API key if you are running your development instance at http://planningalerts-app.dev
@@ -27,7 +26,7 @@ module Configuration
   #GOOGLE_MAPS_CRYPTOGRAPHIC_KEY = "xxxxxxxxxxx"
 
   # Google Analytics key
-  GOOGLE_ANALYTICS_KEY = "UA-3107958-5"
+  GOOGLE_ANALYTICS_KEY = 'UA-3107958-6'
 
   # OAuth details for Twitter application with read access only (for twitter feed on home page)
   # TWITTER_CONSUMER_KEY = "xxxxxxxxxxx"
