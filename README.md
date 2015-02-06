@@ -74,10 +74,10 @@ local development VM being managed by Vagrant.
 
 Then
 ```
-$ cap -S stage=development deploy:setup
-$ cap -S stage=development deploy:cold
-$ cap -S stage=development deploy:migrate
-$ cap -S stage=development xapian:rebuild_index
+cap -S stage=development deploy:setup
+cap -S stage=development deploy:cold
+cap -S stage=development deploy:migrate
+cap -S stage=development xapian:rebuild_index
 ```
 
 #### TODOS
