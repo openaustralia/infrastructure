@@ -60,7 +60,7 @@ Foundation Alaveteli repo as it contains some small fixes to allow capistrano to
 
 In your checked out copy of the Alaveteli repo add the following to `config/deploy.yml`
 
-```
+```yaml
 development:
   branch: update-rbenv-deploy
   repository: git://github.com/openaustralia/alaveteli.git
