@@ -20,8 +20,16 @@
     - libxslt1-dev
     - sphinxsearch
 
-- name: Copy application configuration files
+- name: Copy application configuration
   template:
+    src: configuration.rb
+    dest: /srv/www/shared/
+    owner: deploy
+    group: deploy
+  notify: nginx reload
+
+- name: Copy static application configuration
+  copy:
     src: '{{item}}'
     dest: /srv/www/shared/
     owner: deploy
@@ -29,19 +37,18 @@
   with_items:
     - database.yml
     - throttling.yml
-    - configuration.rb
     - production.sphinx.conf
     - sphinx.yml
   notify: nginx reload
 
 - name: Copy nginx main configuration
-  template:
+  copy:
     src: nginx.conf
     dest: /etc/nginx/
   notify: nginx restart
 
 - name: Copy nginx site configuration
-  template:
+  copy:
     src: default
     dest: /etc/nginx/sites-available/
   notify: nginx reload
