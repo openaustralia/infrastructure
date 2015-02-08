@@ -105,3 +105,4 @@ bundle exec cap -S stage=development deploy:setup deploy:cold foreman:start
 - [ ] Cron job
 - [ ] Web server - redirects, SSL, etc.
 - [ ] Backups
+- [ ] Logrotate
