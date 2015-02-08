@@ -20,3 +20,17 @@ server {
 }
 
 # Production
+# TODO: planningalerts.org.au redirect to canonical URL
+# HTTP
+server {
+  listen 80;
+  server_name www.planningalerts.org.au;
+  server_name api.planningalerts.org.au;
+  server_name www.applicationtracking.planning.nsw.gov.au;
+
+  root /srv/www/current/public;
+  passenger_enabled on;
+}
+
+# TODO: HTTPS www.planningalerts.org.au
+# TODO: HTTPS api.planningalerts.org.au
