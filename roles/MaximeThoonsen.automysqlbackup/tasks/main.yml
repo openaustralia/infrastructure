@@ -5,15 +5,9 @@
     msg: "The operating system of the target machine ({{ inventory_hostname }}) is not currently supported"
   when: not (ansible_os_family == 'Debian' or ansible_distribution == 'Ubuntu')
 
-- name: Debian | run apt update
-  sudo: yes
-  apt: update_cache=yes
-  tags:
-    - automysqlbackup
-
 - name: Debian | install automysqlbackup
   sudo: yes
-  apt: pkg=automysqlbackup state=latest
+  apt: pkg=automysqlbackup state=latest update_cache=yes
   tags:
     - automysqlbackup
 
