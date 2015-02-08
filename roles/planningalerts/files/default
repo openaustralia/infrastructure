@@ -1,3 +1,4 @@
+# Development
 server {
   listen 80;
   server_name planningalerts.org.au.dev;
@@ -5,3 +6,17 @@ server {
   root /srv/www/current/public;
   passenger_enabled on;
 }
+
+# Staging
+server {
+  listen 80;
+  server_name test.planningalerts.org.au;
+
+  root /srv/www/current/public;
+  passenger_enabled on;
+
+  auth_basic "Staging Site";
+  auth_basic_user_file htpasswd;
+}
+
+# Production

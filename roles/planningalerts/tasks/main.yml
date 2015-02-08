@@ -49,6 +49,12 @@
     dest: /etc/nginx/
   notify: nginx restart
 
+- name: Copy test/test password for staging site
+  copy:
+    src: htpasswd
+    dest: /etc/nginx/
+  notify: nginx restart
+
 - name: Copy nginx site configuration
   copy:
     src: default
