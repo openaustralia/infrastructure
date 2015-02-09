@@ -20,8 +20,15 @@ server {
 }
 
 # Production
-# TODO: planningalerts.org.au redirect to canonical URL
-# HTTP
+
+## HTTP canonical redirect
+server {
+  listen 80;
+  server_name planningalerts.org.au;
+  rewrite ^/(.*) http://www.planningalerts.org.au/$1 permanent;
+}
+
+## HTTP
 server {
   listen 80;
   server_name www.planningalerts.org.au;
@@ -32,5 +39,6 @@ server {
   passenger_enabled on;
 }
 
+# TODO: HTTPS planningalerts.org.au canonical redirect
 # TODO: HTTPS www.planningalerts.org.au
 # TODO: HTTPS api.planningalerts.org.au
