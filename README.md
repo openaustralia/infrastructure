@@ -102,7 +102,7 @@ bundle exec cap -S stage=development deploy:setup deploy:cold foreman:start
 
 #### TODOS
 
-- [ ] Timezone
+- [x] Timezone
 - [ ] Firewall?
 - [ ] Alternate SSH port?
 - [ ] Cron job

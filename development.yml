@@ -19,6 +19,8 @@
 
 - hosts: planningalerts.org.au.dev
   roles:
+    - role: ANXS.timezone
+      timezone_zone: Australia/Sydney
     - role: deploy-user
       github_users: ['mlandauer', 'henare']
     - role: jnv.unattended-upgrades
