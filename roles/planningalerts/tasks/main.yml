@@ -53,6 +53,7 @@
   with_items:
     - planningalerts.org.au.dev.pem
     - planningalerts.org.au_chain.pem
+    - api.planningalerts.org.au_chain.pem
   notify: nginx reload
 
 - name: Copy self-signed development SSL key
@@ -68,6 +69,15 @@
   copy:
     content: "{{ planningalerts_production_ssl_key }}"
     dest: /etc/ssl/private/planningalerts.org.au.key
+    owner: root
+    group: ssl-cert
+    mode: 0640
+  notify: nginx reload
+
+- name: Copy API SSL key
+  copy:
+    content: "{{ planningalerts_api_ssl_key }}"
+    dest: /etc/ssl/private/api.planningalerts.org.au.key
     owner: root
     group: ssl-cert
     mode: 0640
