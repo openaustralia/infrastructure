@@ -37,4 +37,14 @@
     - role: rvm_io.rvm1-ruby
       rvm1_rubies:
         - ruby-2.0.0-p598
+    - role: nickhammond.logrotate
+      logrotate_scripts:
+        - name: rails
+          path: "/srv/www/shared/log/*.log"
+          options:
+            - daily
+            - rotate 30
+            - compress
+            - missingok
+            - copytruncate
     - role: planningalerts
