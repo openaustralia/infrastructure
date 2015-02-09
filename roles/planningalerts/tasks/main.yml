@@ -77,3 +77,10 @@
     src: deploy_service_control
     dest: /etc/sudoers.d/
   notify: sudo reload
+
+- name: Set up PlanningAlerts daily scrape and email job
+  cron:
+    name: planningalerts_scrape_and_email
+    user: deploy
+    hour: 12
+    job: "cd /srv/www/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"
