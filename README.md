@@ -103,4 +103,3 @@ bundle exec cap -S stage=development deploy:setup deploy:cold foreman:start
 #### TODOS
 
 - [ ] Backups
-- [ ] Logrotate
