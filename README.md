@@ -106,6 +106,6 @@ bundle exec cap -S stage=development deploy:setup deploy:cold foreman:start
 - [ ] Firewall?
 - [ ] Alternate SSH port?
 - [x] Cron job
-- [ ] Web server - redirects, SSL, etc.
+- [x] Web server - redirects, SSL, etc.
 - [ ] Backups
 - [ ] Logrotate
