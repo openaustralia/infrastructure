@@ -19,6 +19,7 @@
 
 - hosts: planningalerts.org.au.dev
   roles:
+    # TODO: Fix 3 tasks always returned changed status https://github.com/ANXS/timezone/issues/1
     - role: ANXS.timezone
       timezone_zone: Australia/Sydney
     - role: deploy-user
