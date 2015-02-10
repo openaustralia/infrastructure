@@ -60,3 +60,7 @@
             - missingok
             - copytruncate
     - role: planningalerts
+
+- hosts: electionleaflets.org.au.dev
+  roles:
+    - role: electionleaflets
