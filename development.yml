@@ -18,15 +18,6 @@
 
 - hosts: righttoknow.org.au.dev
   roles:
-    - {role: ANXS.postgresql, postgresql_ext_install_dev_headers: yes}
-    - {role: abtris.nginx-passenger}
-    - role: zzet.rbenv
-      rbenv:
-        env: user
-        version: v0.4.0
-        ruby_version: 2.0.0-p598
-      rbenv_users:
-        - deploy
     - righttoknow
 
 - hosts: planningalerts.org.au.dev
