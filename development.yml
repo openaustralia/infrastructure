@@ -25,6 +25,8 @@
     - righttoknow
 
 - hosts: planningalerts.org.au.dev
+  vars_files:
+    - encrypted_vars/planningalerts.yml
   roles:
     # TODO: Fix 3 tasks always returned changed status https://github.com/ANXS/timezone/issues/1
     - role: ANXS.timezone
@@ -58,6 +60,17 @@
             - compress
             - missingok
             - copytruncate
+    - role: Stouts.backup
+      backup_gpg_pw: "{{ planningalerts_backup_gpg_pw }}"
+      backup_target_user: "{{ planningalerts_backup_target_user }}"
+      backup_target_pass: "{{ planningalerts_backup_target_pass }}"
+      backup_max_age: 6M
+      backup_profiles:
+        - name: automysqlbackup
+          schedule: 0 4 * * *
+          source: /var/lib/automysqlbackup
+          # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
+          target: "s3://s3.amazonaws.com/oaf-backups/planningalerts/{{ inventory_hostname }}"
     - role: planningalerts
 
 - hosts: electionleaflets.org.au.dev
