@@ -4,6 +4,7 @@
 - hosts:
     - righttoknow.org.au.dev
     - electionleaflets.org.au.dev
+    - planningalerts.org.au.dev
   roles:
     - role: deploy-user
       github_users: ['mlandauer', 'henare']
@@ -11,6 +12,7 @@
       aliases:
         - {user: deploy, alias: root}
         - {user: root, alias: web-administrators@openaustralia.org}
+    # TODO: Fix 3 tasks always returned changed status https://github.com/ANXS/timezone/issues/1
     - role: ANXS.timezone
       timezone_zone: Australia/Sydney
     - role: jnv.unattended-upgrades
@@ -28,23 +30,11 @@
   vars_files:
     - encrypted_vars/planningalerts.yml
   roles:
-    # TODO: Fix 3 tasks always returned changed status https://github.com/ANXS/timezone/issues/1
-    - role: ANXS.timezone
-      timezone_zone: Australia/Sydney
-    - role: deploy-user
-      github_users: ['mlandauer', 'henare']
-    - role: xcezx.aliases
-      aliases:
-        - {user: deploy, alias: root}
-        - {user: root, alias: web-administrators@openaustralia.org}
-    - role: jnv.unattended-upgrades
-      unattended_automatic_reboot: true
     - role: ANXS.mysql
       mysql_bind_address: '127.0.0.1'
       mysql_root_password: ''
       mysql_databases:
         - name: planningalerts
-    - role: MaximeThoonsen.automysqlbackup
     - role: abtris.nginx-passenger
     - role: geerlingguy.git
     - role: rvm_io.rvm1-ruby
