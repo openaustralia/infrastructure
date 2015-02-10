@@ -1,29 +1,6 @@
 ---
 - include_vars: encrypted.yml
 
-- name: Enable firewall and deny traffic by default
-  ufw:
-    state: enabled
-    policy: deny
-
-- name: Allow rate-limited SSH trafic
-  ufw:
-    rule: limit
-    port: ssh
-    proto: tcp
-
-- name: Allow HTTP traffic
-  ufw:
-    rule: allow
-    port: http
-    proto: tcp
-
-- name: Allow HTTPS traffic
-  ufw:
-    rule: allow
-    port: https
-    proto: tcp
-
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
     state: directory
