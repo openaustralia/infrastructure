@@ -27,41 +27,10 @@
     - righttoknow
 
 - hosts: planningalerts.org.au.dev
+  roles:
+    - role: planningalerts
   vars_files:
     - encrypted_vars/planningalerts.yml
-  roles:
-    - role: ANXS.mysql
-      mysql_bind_address: '127.0.0.1'
-      mysql_root_password: ''
-      mysql_databases:
-        - name: planningalerts
-    - role: abtris.nginx-passenger
-    - role: geerlingguy.git
-    - role: rvm_io.rvm1-ruby
-      rvm1_rubies:
-        - ruby-2.0.0-p598
-    - role: nickhammond.logrotate
-      logrotate_scripts:
-        - name: rails
-          path: "/srv/www/shared/log/*.log"
-          options:
-            - daily
-            - rotate 30
-            - compress
-            - missingok
-            - copytruncate
-    - role: Stouts.backup
-      backup_gpg_pw: "{{ planningalerts_backup_gpg_pw }}"
-      backup_target_user: "{{ planningalerts_backup_target_user }}"
-      backup_target_pass: "{{ planningalerts_backup_target_pass }}"
-      backup_max_age: 6M
-      backup_profiles:
-        - name: automysqlbackup
-          schedule: 0 4 * * *
-          source: /var/lib/automysqlbackup
-          # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
-          target: "s3://s3.amazonaws.com/oaf-backups/planningalerts/{{ inventory_hostname }}"
-    - role: planningalerts
 
 - hosts: electionleaflets.org.au.dev
   roles:
