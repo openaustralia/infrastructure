@@ -15,5 +15,10 @@
 
 - hosts: electionleaflets.org.au.dev
   roles:
-    - base-server
-    - electionleaflets
+    - role: base-server
+    - role: ANXS.mysql
+      mysql_bind_address: '127.0.0.1'
+      mysql_root_password: ''
+      mysql_databases:
+        - name: electionleaflets
+    - role: electionleaflets

@@ -1,2 +1,8 @@
 ---
+- name: Install packages required by Electionleaflets
+  apt: name={{ item }} state=present
+  with_items:
+    - php5-imap
+    - php5-gd
+
 # tasks file for electionleaflets
