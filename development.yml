@@ -1,13 +1,25 @@
 # Playbook for development VMs on your local box
 ---
+
+- hosts:
+    - righttoknow.org.au.dev
+    - electionleaflets.org.au.dev
+  roles:
+    - role: deploy-user
+      github_users: ['mlandauer', 'henare']
+    - role: ANXS.timezone
+      timezone_zone: Australia/Sydney
+    - role: jnv.unattended-upgrades
+      unattended_automatic_reboot: true
+    # Let's always install database backup scripts (even if we're not using one of the databases)
+    # TODO This runs apt update. Fix this
+    - role: MaximeThoonsen.autopostgresqlbackup
+    - role: MaximeThoonsen.automysqlbackup
+
 - hosts: righttoknow.org.au.dev
   roles:
-    - {role: deploy-user, github_users: ['mlandauer', 'henare']}
-    - {role: jnv.unattended-upgrades, unattended_automatic_reboot: true}
     - {role: ANXS.postgresql, postgresql_ext_install_dev_headers: yes}
     - {role: abtris.nginx-passenger}
-    # TODO This runs apt update. Fix this
-    - {role: MaximeThoonsen.autopostgresqlbackup}
     - role: zzet.rbenv
       rbenv:
         env: user
