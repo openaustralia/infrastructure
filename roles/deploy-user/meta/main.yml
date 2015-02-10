@@ -120,8 +120,4 @@ galaxy_info:
   #- packaging
   #- system
   #- web
-dependencies:
-  - role: xcezx.aliases
-    aliases:
-      - {user: deploy, alias: root}
-      - {user: root, alias: web-administrators@openaustralia.org}
+dependencies: []

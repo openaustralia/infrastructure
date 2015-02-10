@@ -7,6 +7,10 @@
   roles:
     - role: deploy-user
       github_users: ['mlandauer', 'henare']
+    - role: xcezx.aliases
+      aliases:
+        - {user: deploy, alias: root}
+        - {user: root, alias: web-administrators@openaustralia.org}
     - role: ANXS.timezone
       timezone_zone: Australia/Sydney
     - role: jnv.unattended-upgrades
@@ -27,6 +31,10 @@
       timezone_zone: Australia/Sydney
     - role: deploy-user
       github_users: ['mlandauer', 'henare']
+    - role: xcezx.aliases
+      aliases:
+        - {user: deploy, alias: root}
+        - {user: root, alias: web-administrators@openaustralia.org}
     - role: jnv.unattended-upgrades
       unattended_automatic_reboot: true
     - role: ANXS.mysql
