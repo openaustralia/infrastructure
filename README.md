@@ -99,7 +99,3 @@ After provisioning, deploy from the [PlanningAlerts repository](https://github.c
 ```
 bundle exec cap -S stage=development deploy:setup deploy:cold foreman:start
 ```
-
-#### TODOS
-
-- [ ] Backups
