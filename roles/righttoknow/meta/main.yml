@@ -121,6 +121,7 @@ galaxy_info:
   #- system
   #- web
 dependencies:
+  - role: base-server
   - role: ANXS.postgresql
     postgresql_ext_install_dev_headers: yes
   - role: abtris.nginx-passenger

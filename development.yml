@@ -3,19 +3,16 @@
 
 - hosts: righttoknow.org.au.dev
   roles:
-    - base-server
     - righttoknow
 
 - hosts: planningalerts.org.au.dev
   roles:
-    - base-server
     - planningalerts
   vars_files:
     - encrypted_vars/planningalerts.yml
 
 - hosts: electionleaflets.org.au.dev
   roles:
-    - role: base-server
     - role: ANXS.mysql
       mysql_bind_address: '127.0.0.1'
       mysql_root_password: ''
