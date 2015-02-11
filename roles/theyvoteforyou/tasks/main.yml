@@ -1,4 +1,6 @@
 ---
+- include_vars: encrypted.yml
+
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
     state: directory
@@ -8,3 +10,25 @@
   with_items:
     - /srv/www
     - /srv/www/shared
+
+- name: Copy application configuration files
+  copy:
+    src: "{{item}}"
+    dest: /srv/www/shared/config
+    owner: deploy
+    group: deploy
+  with_items:
+    - database.yml
+    - settings.yml
+  notify: nginx reload
+
+- name: Copy application configuration templates
+  template:
+    src: "{{item}}"
+    dest: /srv/www/shared/config
+    owner: deploy
+    group: deploy
+  with_items:
+    - secrets.yml
+    - newrelic.yml
+  notify: nginx reload

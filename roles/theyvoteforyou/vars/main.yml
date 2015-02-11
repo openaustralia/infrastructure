@@ -1,2 +1,8 @@
 ---
-# vars file for roles/theyvoteforyou
+newrelic_license_key: "{{ encrypted_newrelic_license_key }}"
+secret_key_base: "{{ encrypted_secret_key_base }}"
+cuttlefish_server: cuttlefish.oaf.org.au
+cuttlefish_user_name: "{{ encrypted_cuttlefish_user_name }}"
+cuttlefish_password: "{{ encrypted_cuttlefish_password }}"
+honeybadger_api_key: "{{ encrypted_honeybadger_api_key }}"
+google_analytics_code: UA-3107958-15
