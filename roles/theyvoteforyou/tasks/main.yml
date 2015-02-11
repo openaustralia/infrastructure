@@ -1,2 +1,10 @@
 ---
-# tasks file for roles/theyvoteforyou
+- name: Ensure that deploy owns /srv/www and /srv/www/shared
+  file:
+    state: directory
+    owner: deploy
+    group: deploy
+    path: '{{item}}'
+  with_items:
+    - /srv/www
+    - /srv/www/shared
