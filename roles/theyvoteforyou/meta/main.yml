@@ -1,3 +1,12 @@
 ---
 dependencies:
-  - base-server
+  - role: base-server
+  - role: ANXS.mysql
+    mysql_bind_address: '127.0.0.1'
+    mysql_root_password: ''
+    mysql_databases:
+      - name: theyvoteforyou
+  - role: abtris.nginx-passenger
+  - role: rvm_io.rvm1-ruby
+    rvm1_rubies:
+      - ruby-2.0.0-p598
