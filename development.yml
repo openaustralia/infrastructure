@@ -19,3 +19,7 @@
       mysql_databases:
         - name: electionleaflets
     - role: electionleaflets
+
+- hosts: theyvoteforyou.org.au.dev
+  roles:
+    - theyvoteforyou

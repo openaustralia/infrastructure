@@ -72,7 +72,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   hosts = {
     "righttoknow.org.au.dev"      => "192.168.10.10",
     "planningalerts.org.au.dev"   => "192.168.10.11",
-    "electionleaflets.org.au.dev" => "192.168.10.12"
+    "electionleaflets.org.au.dev" => "192.168.10.12",
+    "theyvoteforyou.org.au.dev"   => "192.168.10.14"
   }
 
   hosts.each do |hostname, ip|
