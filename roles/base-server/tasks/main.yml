@@ -22,3 +22,7 @@
     rule: allow
     port: https
     proto: tcp
+
+- name: Ensure git is installed
+  apt:
+    pkg: git
