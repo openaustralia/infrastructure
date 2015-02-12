@@ -8,4 +8,6 @@
     - apache2
     - libapache2-mod-php5
 
-# tasks file for electionleaflets
+# The rest of the deploy directories get created by running "cap deploy:setup"
+- name: Ensure that deploy owns /srv/www
+  file: path="/srv/www" owner=deploy group=deploy state=directory
