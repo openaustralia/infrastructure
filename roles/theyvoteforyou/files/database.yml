@@ -1,4 +1,4 @@
 production:
   adapter: mysql2
-  database: planningalerts
+  database: theyvoteforyou
   username: root
