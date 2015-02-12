@@ -32,3 +32,9 @@
     - secrets.yml
     - newrelic.yml
   notify: nginx reload
+
+- name: Ensure packages to build gem native extensions are installed
+  apt:
+    pkg: "{{item}}"
+  with_items:
+    - libmysqlclient-dev
