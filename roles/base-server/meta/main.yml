@@ -6,9 +6,6 @@ dependencies:
     aliases:
       - {user: deploy, alias: root}
       - {user: root, alias: web-administrators@openaustralia.org}
-  # TODO: Fix 3 tasks always returned changed status https://github.com/ANXS/timezone/issues/1
-  - role: ANXS.timezone
-    timezone_zone: Australia/Sydney
   - role: jnv.unattended-upgrades
     unattended_automatic_reboot: true
   # Let's always install database backup scripts (even if we're not using one of the databases)

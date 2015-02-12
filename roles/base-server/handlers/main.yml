@@ -1,2 +1,3 @@
 ---
-# handlers file for base-server
+- name: Update timezone
+  command: dpkg-reconfigure --frontend noninteractive tzdata
