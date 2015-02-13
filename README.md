@@ -99,3 +99,18 @@ After provisioning, deploy from the [PlanningAlerts repository](https://github.c
 ```
 bundle exec cap -S stage=development deploy:setup deploy:cold foreman:start
 ```
+
+### Electionleaflets
+
+After provisioning, deploy from Electionleaflets repository
+```
+cap -S stage=development deploy
+cap -S stage=development deploy:setup_db
+```
+
+#### TODOS
+
+* Django maps app
+* backups
+* incoming email
+* Cron jobs
