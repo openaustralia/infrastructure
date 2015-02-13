@@ -11,3 +11,7 @@
 # The rest of the deploy directories get created by running "cap deploy:setup"
 - name: Ensure that deploy owns /srv/www
   file: path="/srv/www" owner=deploy group=deploy state=directory
+
+- name: Copy across the main apache config
+  template: src=apache2.conf dest=/etc/apache2
+  notify: reload apache
