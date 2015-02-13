@@ -12,13 +12,28 @@
     - libapache2-mod-php5
 
 # The rest of the deploy directories get created by running "cap deploy:setup"
-- name: Ensure that deploy owns /srv/www and /srv/www/log
+- name: Ensure that directories exist
   file: path={{ item }} owner=deploy group=deploy state=directory
   with_items:
     - "/srv/www"
     - "/srv/www/log"
     - "/srv/www/shared"
     - "/srv/www/shared/config"
+
+- name: Ensure that shared data directories exist and are writeable
+  file: path={{ item }} owner=deploy group=www-data mode=775 state=directory
+  with_items:
+    - "/srv/www/shared/data"
+    - "/srv/www/shared/data/smarty_compile"
+    - "/srv/www/shared/data/smarty_compile"
+    - "/srv/www/shared/data/cache"
+    - "/srv/www/shared/data/temp"
+    - "/srv/www/shared/data/images"
+    - "/srv/www/shared/data/images/small"
+    - "/srv/www/shared/data/images/original"
+    - "/srv/www/shared/data/images/large"
+    - "/srv/www/shared/data/images/medium"
+    - "/srv/www/shared/data/images/thumbnail"
 
 # TODO Add a password to mysql root user
 
