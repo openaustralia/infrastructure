@@ -112,5 +112,3 @@ cap -S stage=development deploy:setup_db
 
 * Django maps app
 * backups
-* incoming email
-* Cron jobs
