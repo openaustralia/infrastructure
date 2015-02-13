@@ -1,10 +1,13 @@
 ---
+- include_vars: encrypted.yml
+
 - name: Install packages required by Electionleaflets
   apt: name={{ item }} state=present
   with_items:
     - php5
     - php5-imap
     - php5-gd
+    - php5-mysql
     - apache2
     - libapache2-mod-php5
 
@@ -14,6 +17,22 @@
   with_items:
     - "/srv/www"
     - "/srv/www/log"
+    - "/srv/www/shared"
+    - "/srv/www/shared/config"
+
+# TODO Add a password to mysql root user
+
+- name: Create mysql electionleaflets database
+  mysql_db: name=electionleaflets state=present
+  notify: reload apache
+
+- name: Create mysql electionleaflets user
+  mysql_user: name=electionleaflets password={{ db_password }} priv=electionleaflets.*:ALL state=present
+  notify: reload apache
+
+- name: Electionleaflets main config
+  template: src=general.php dest=/srv/www/shared/config
+  notify: reload apache
 
 - name: Copy across the main apache config
   template: src=apache2.conf dest=/etc/apache2

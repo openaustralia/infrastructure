@@ -1,2 +1,12 @@
 ---
-# vars file for electionleaflets
+db_password: "{{ encrypted_db_password }}"
+user_salt: "{{ encrypted_user_salt }}"
+google_maps_key: "{{ encrypted_google_maps_key }}"
+aws_key: "{{ encrypted_aws_key }}"
+aws_secret: "{{ encrypted_aws_secret }}"
+s3_bucket: "{{ encrypted_s3_bucket }}"
+upload_mail_server: "{{ encrypted_upload_mail_server }}"
+upload_mail_user: "{{ encrypted_upload_mail_user }}"
+upload_mail_password: "{{ encrypted_upload_mail_password }}"
+admin_username: "{{ encrypted_admin_username }}"
+admin_password: "{{ encrypted_admin_password }}"
