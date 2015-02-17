@@ -75,3 +75,24 @@
 
 - name: Cron for email alerts
   cron: name="email alerts" minute="*/5" user=deploy job="cd /srv/www/current/tools && php alertomatic.php" state=present
+
+- name: DNS setup
+  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="electionleaflets.org.au" record_ttl=300 state=present record_name={{ item.name }} record_type={{ item.type }} record_value={{ item.value }}
+  with_items:
+    - {name: "foo", type: "CNAME", value: "electionleaflets.org.au."}
+    - {name: "federal2010", type: "CNAME", value: "electionleaflets.org.au."}
+    - {name: "test", type: "CNAME", value: "electionleaflets.org.au."}
+    - {name: "www", type: "CNAME", value: "electionleaflets.org.au."}
+    # TODO Do we need this record?
+    - {name: "googleffffffffc7db8b0c", type: "CNAME", value: "google.com."}
+
+# 	                      A	1800	103.243.244.10
+# tickets                 HTTPRED	1800	http://tickets.openaustraliafoundation.org.au/browse/EL
+#                 	      MX	1800	aspmx2.googlemail.com.	30
+#                         MX	1800	aspmx3.googlemail.com.	30
+#                         MX	1800	aspmx.l.google.com.	10
+#                 	      MX	1800	aspmx5.googlemail.com.	30
+#                       	MX	1800	alt1.aspmx.l.google.com.	20
+#                       	MX	1800	aspmx4.googlemail.com.	30
+#                       	MX	1800	alt2.aspmx.l.google.com.	20
+#                       	TXT	1800	"v=spf1 a include:_spf.google.com ~all"
