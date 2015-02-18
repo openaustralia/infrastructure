@@ -10,6 +10,8 @@ dependencies:
   - role: rvm_io.rvm1-ruby
     rvm1_rubies:
       - ruby-2.0.0-p598
+    # Use round-robin pool of gpg key servers to avoid timeout
+    rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
   - role: nickhammond.logrotate
     logrotate_scripts:
       - name: rails
