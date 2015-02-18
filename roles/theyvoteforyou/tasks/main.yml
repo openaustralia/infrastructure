@@ -1,5 +1,6 @@
 ---
 - include_vars: encrypted.yml
+- include_vars: encrypted_vars/dnsmadeeasy.yml
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
@@ -98,3 +99,19 @@
     src: default
     dest: /etc/nginx/sites-available/
   notify: nginx reload
+
+- name: DNS setup
+  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="theyvoteforyou.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
+  with_items:
+    - {type: "A", name: "", value: "103.243.244.10"}
+    - {type: "CNAME", name: "www",    value: ""}
+    - {type: "CNAME", name: "test",   value: ""}
+    - {type: "CNAME", name: "email",  value: "cuttlefish.io."}
+    - {type: "CNAME", name: "email2", value: "cuttlefish.oaf.org.au."}
+    - {type: "MX", name: "", value: "1 aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "5 alt1.aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "5 alt2.aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "10 aspmx2.googlemail.com."}
+    - {type: "MX", name: "", value: "10 aspmx3.googlemail.com."}
+    - {type: "TXT", name: "", value: '"v=spf1 include:_spf.google.com -all"'}
+    - {type: "TXT", name: "cuttlefish._domainkey", value: '"k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0toFOrXAOcbnS8LNeKQsetYEO4Qh1RLGCx9+prCDeXBgs0obFCPWyanqxiPL6WEZCv+Vj4TCBPfoVCR1G0hszOZIA1QCEx0tG4v3dE2QsS3tSVCl9ax1h0oi4fC5aJ7XdxI+e2JVcWwmSSCLoKbkJYpj+6VBr86jUZl6f3JeUH/RuIeS6jIHRFmM6Mz/BfzloxM2wbDK32""0DUs3yWkL3/RcwkT6ebI9oS+ZWIxKXAgEcreTG0JltgPR/ABPFNzms4mAtLwPojF/FAYzGCj6diGbB61LNcMwe0MrutvLucclhnSefG5E3GVNqLrQA1oXzwFLFsq1H0x8rFccm+GNAuQIDAQAB"'}
