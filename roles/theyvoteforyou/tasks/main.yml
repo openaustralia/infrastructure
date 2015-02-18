@@ -105,6 +105,15 @@
     dest: /etc/sudoers.d/
   notify: sudo reload
 
+- name: Set up daily load cron job
+  cron:
+    name: theyvoteforyou_application_load_daily
+    user: deploy
+    hour: 9
+    minute: 15
+    weekday: 1-5
+    job: "cd /srv/www/current && /usr/local/bin/bundle exec rake application:load:daily RAILS_ENV=production"
+
 - name: DNS setup for theyvoteforyou.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="theyvoteforyou.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   with_items:
