@@ -1,2 +1,5 @@
 ---
-# handlers file for roles/theyvoteforyou
+- name: sudo reload
+  service:
+    name: sudo
+    state: reloaded
