@@ -102,6 +102,7 @@
     dest: /etc/nginx/sites-available/
   notify: nginx reload
 
+# TODO: Get the application to generate this on each deploy
 - name: Copy application upstart service configuration
   copy:
     src: '{{item}}'
