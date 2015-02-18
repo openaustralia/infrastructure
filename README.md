@@ -113,6 +113,24 @@ cap -S stage=development deploy:setup_db
 * Django maps app
 * backups
 
+### They Vote For You
+
+After provisioning, set up and deploy from the
+[Public Whip repository](https://github.com/openaustralia/publicwhip/)
+using **Mina**:
+
+```
+bundle exec mina setup
+bundle exec mina deploy
+```
+
+#### TODOS
+
+* elasticsearch
+* nginx/SSL
+* cron
+* Backups
+
 ### How to use our custom version of the dnsmadeeasy module
 
 We've made some fixes to the dnsmadeeasy module which allow it work for MX and TXT records, root A
