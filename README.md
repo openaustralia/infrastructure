@@ -122,6 +122,8 @@ using **Mina**:
 ```
 bundle exec mina setup
 bundle exec mina deploy
+# Optionally load seed data (the home page crashes with no data)
+bundle exec mina rake[db:seed]
 ```
 
 #### TODOS
