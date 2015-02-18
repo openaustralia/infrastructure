@@ -129,7 +129,6 @@ bundle exec mina rake[db:seed]
 #### TODOS
 
 * elasticsearch
-* nginx/SSL
 * cron
 * Backups
 * Background jobs/upstart
