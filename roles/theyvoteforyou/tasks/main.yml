@@ -40,7 +40,6 @@
   with_items:
     - libmysqlclient-dev
 
-
 - name: Copy SSL certificates
   copy:
     src: "{{ item }}"
