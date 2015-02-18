@@ -39,6 +39,27 @@
   with_items:
     - libmysqlclient-dev
 
+
+- name: Copy SSL certificates
+  copy:
+    src: "{{ item }}"
+    dest: /etc/ssl/
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - theyvoteforyou.org.au.dev.pem
+  notify: nginx reload
+
+- name: Copy self-signed development SSL key
+  copy:
+    content: "{{ theyvoteforyou_development_ssl_key }}"
+    dest: /etc/ssl/private/theyvoteforyou.org.au.dev.key
+    owner: root
+    group: ssl-cert
+    mode: 0640
+  notify: nginx reload
+
 - name: Copy nginx main configuration
   copy:
     src: nginx.conf
