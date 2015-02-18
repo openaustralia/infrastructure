@@ -38,3 +38,15 @@
     pkg: "{{item}}"
   with_items:
     - libmysqlclient-dev
+
+- name: Copy nginx main configuration
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/
+  notify: nginx restart
+
+- name: Copy nginx site configuration
+  copy:
+    src: default
+    dest: /etc/nginx/sites-available/
+  notify: nginx reload
