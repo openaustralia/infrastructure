@@ -124,6 +124,8 @@ bundle exec mina setup
 bundle exec mina deploy
 # Optionally load seed data (the home page crashes with no data)
 bundle exec mina rake[db:seed]
+# Optionally build index so search works
+bundle exec mina rake[searchkick:reindex:all]
 ```
 
 #### TODOS
