@@ -134,8 +134,9 @@ bundle exec mina deploy
 ### How to use our custom version of the dnsmadeeasy module
 
 We've made some fixes to the dnsmadeeasy module which allow it work for MX and TXT records, root A
-records and CNAMEs pointing to the domain root - well basically it was completely broken. We'll be
-trying to get the changes merged into Ansible.
+records and CNAMEs pointing to the domain root - well basically it was completely broken.
+
+We're trying to get the [changes merged into Ansible](https://github.com/ansible/ansible-modules-extras/pull/269).
 
 In the meantime, to use it with Ansible first you need to checkout a clean copy:
 ```
