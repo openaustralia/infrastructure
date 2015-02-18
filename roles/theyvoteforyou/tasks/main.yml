@@ -14,7 +14,7 @@
 - name: Copy application configuration files
   copy:
     src: "{{item}}"
-    dest: /srv/www/shared/config
+    dest: /srv/www/shared/config/
     owner: deploy
     group: deploy
   with_items:
@@ -25,7 +25,7 @@
 - name: Copy application configuration templates
   template:
     src: "{{item}}"
-    dest: /srv/www/shared/config
+    dest: /srv/www/shared/config/
     owner: deploy
     group: deploy
   with_items:
