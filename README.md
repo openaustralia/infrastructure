@@ -130,10 +130,7 @@ bundle exec mina rake[searchkick:reindex:all]
 
 #### TODOS
 
-* elasticsearch
-* cron
 * Backups
-* Background jobs/upstart
 
 ### How to use our custom version of the dnsmadeeasy module
 
