@@ -1,0 +1,19 @@
+---
+- name: Configure ElasticSearch APT key
+  apt_key: url=http://packages.elasticsearch.org/GPG-KEY-elasticsearch state=present
+
+- name: Configure the ElasticSearch APT repositories
+  apt_repository: repo="deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main"
+                  state=present
+
+- name: Install ElasticSearch
+  apt: pkg=elasticsearch={{ elasticsearch_version }} state=present
+
+- name: Configure ElasticSearch
+  template: src=elasticsearch.yml.j2
+            dest=/etc/elasticsearch/elasticsearch.yml
+  notify:
+    - Restart ElasticSearch
+
+- name: Enable ElasticSearch service
+  service: name=elasticsearch enabled=yes state=started
