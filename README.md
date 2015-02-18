@@ -130,6 +130,7 @@ bundle exec mina deploy
 * nginx/SSL
 * cron
 * Backups
+* Background jobs/upstart
 
 ### How to use our custom version of the dnsmadeeasy module
 
