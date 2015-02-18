@@ -1,5 +1,6 @@
 ---
 - include_vars: encrypted.yml
+- include_vars: encrypted_vars/dnsmadeeasy.yml
 
 - name: Install packages required by Electionleaflets
   apt: name={{ item }} state=present
