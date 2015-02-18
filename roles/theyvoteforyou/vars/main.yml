@@ -8,3 +8,4 @@ honeybadger_api_key: "{{ encrypted_honeybadger_api_key }}"
 google_analytics_code: UA-3107958-15
 theyvoteforyou_development_ssl_key: "{{ encrypted_theyvoteforyou_development_ssl_key }}"
 theyvoteforyou_test_ssl_key: "{{ encrypted_theyvoteforyou_test_ssl_key }}"
+theyvoteforyou_production_ssl_key: "{{ encrypted_theyvoteforyou_production_ssl_key }}"

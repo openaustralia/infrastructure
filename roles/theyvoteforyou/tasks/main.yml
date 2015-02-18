@@ -50,6 +50,7 @@
   with_items:
     - theyvoteforyou.org.au.dev.pem
     - test.theyvoteforyou.org.au.pem
+    - theyvoteforyou.org.au_chain.pem
   notify: nginx reload
 
 - name: Copy self-signed development SSL key
@@ -66,6 +67,15 @@
   copy:
     content: "{{ theyvoteforyou_test_ssl_key }}"
     dest: /etc/ssl/private/test.theyvoteforyou.org.au.key
+    owner: root
+    group: ssl-cert
+    mode: 0640
+  notify: nginx reload
+
+- name: Copy production SSL key
+  copy:
+    content: "{{ theyvoteforyou_production_ssl_key }}"
+    dest: /etc/ssl/private/theyvoteforyou.org.au.key
     owner: root
     group: ssl-cert
     mode: 0640
