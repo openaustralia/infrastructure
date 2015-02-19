@@ -136,3 +136,11 @@ records and CNAMEs pointing to the domain root - well basically it was completel
 We're trying to get the [changes merged into Ansible](https://github.com/ansible/ansible-modules-extras/pull/269).
 
 In the meantime, our updated version is used and included automatically from `custom_modules/library/dnsmadeeasy.py`
+
+## Backups
+
+Data directories of servers are backed up to S3 using Duply. For most servers this means backing up the automysqlbackup directory.
+
+Using the `automysqlbackup` profile as an example, to run a backup manually you'd log in as root and run `duply automysqlbackup backup`.
+
+To restore the latest backup to `/mnt/restore` you'd run `duply automysqlbackup restore /mnt/restore`.
