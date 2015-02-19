@@ -78,12 +78,20 @@ server {
 server {
   listen 80;
   server_name www.theyvoteforyou.org.au;
+  server_name theyvoteforyou.org;
+  server_name www.theyvoteforyou.org;
+  server_name theyvoteforyou.com.au;
+  server_name www.theyvoteforyou.com.au;
   rewrite ^/(.*) https://theyvoteforyou.org.au/$1 permanent;
 }
 
 server {
   listen 443 ssl spdy;
   server_name www.theyvoteforyou.org.au;
+  server_name theyvoteforyou.org;
+  server_name www.theyvoteforyou.org;
+  server_name theyvoteforyou.com.au;
+  server_name www.theyvoteforyou.com.au;
   rewrite ^/(.*) https://theyvoteforyou.org.au/$1 permanent;
 
   ssl on;
