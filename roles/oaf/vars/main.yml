@@ -1,2 +1,4 @@
 ---
-# vars file for oaf
+# TODO These keys are replicated in the roles. Remove this duplication
+dnsmadeeasy_key: "{{ encrypted_dnsmadeeasy_key }}"
+dnsmadeeasy_secret: "{{ encrypted_dnsmadeeasy_secret }}"

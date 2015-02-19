@@ -1,2 +1,30 @@
 ---
-# tasks file for oaf
+- include_vars: encrypted_vars/dnsmadeeasy.yml
+
+- name: DNS setup for oaf.org.au
+  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="oaf.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
+  with_items:
+    - {type: "A", name: "", value: "103.243.244.10"}
+    - {type: "A", name: "cuttlefish", value: "23.239.22.35"}
+    - {type: "A", name: "kedumba", value: "103.243.244.10"}
+    # TODO Do we need scraper anymore?
+    - {type: "A", name: "scraper", value: "162.243.201.227"}
+    - {type: "CNAME", name: "www",             value: ""}
+    - {type: "CNAME", name: "test",            value: ""}
+    # TODO Do we need publicwhip-test anymore?
+    - {type: "CNAME", name: "publicwhip-test", value: ""}
+    - {type: "CNAME", name: "tickets",         value: ""}
+    - {type: "MX", name: "", value: "10 aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "20 alt1.aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "20 alt2.aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "30 aspmx2.googlemail.com."}
+    - {type: "MX", name: "", value: "30 aspmx3.googlemail.com."}
+    - {type: "MX", name: "cuttlefish", value: "1 aspmx.l.google.com."}
+    - {type: "MX", name: "cuttlefish", value: "5 alt1.aspmx.l.google.com."}
+    - {type: "MX", name: "cuttlefish", value: "5 alt2.aspmx.l.google.com."}
+    - {type: "MX", name: "cuttlefish", value: "10 aspmx2.googlemail.com."}
+    - {type: "MX", name: "cuttlefish", value: "10 aspmx3.googlemail.com."}
+    - {type: "TXT", name: "", value: '"v=spf1 a include:_spf.google.com ~all"'}
+    - {type: "TXT", name: "", value: "google-site-verification=RLhe_zgIDJMxpFFYFewv0KaRlWQvH-JDBxxpEV-8noY"}
+    - {type: "TXT", name: "cuttlefish", value: '"v=spf1 include:_spf.google.com ip4:23.239.22.35 ip6:2600:3c01::f03c:91ff:fe89:1913 -all"'}
+    - {type: "TXT", name: "cuttlefish._domainkey.cuttlefish", value: '"k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvEPfY69ZLYEn+I8rXaRLpTTb9c8AAEdjlUIPAX5nZ2cPYRxA8eCO/AYgXGXXdvGYWUm7sDkil6oSlqZjLx3au31AOoPNimi8FT2QjSgDp/Qkd403ACW314Aio4lo39y+un4GK0ih6KDuJAcxSftoGd9DFViBkVUs8Cs/WhFnc2dkhKTpCtt8Mji+bNtTOYsFwAg8LC3tDn""Wg+V3UTqqFQBi476DemGPVjxtpe48uFjCQpGg8T0uW54cIKWiC3PWCU0Ksj3HVMhE8P33McW/VFyGAx+nDlc0i6VY3zZi2i86O9Z84j0bJm/607lFK/pCa/Rv8hSJz5Ksk2EkD0NKh0QIDAQAB"'}

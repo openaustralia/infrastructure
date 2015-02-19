@@ -24,3 +24,8 @@
     - theyvoteforyou
   vars_files:
     - encrypted_vars/theyvoteforyou.yml
+
+- hosts: oaf.org.au.dev
+  roles:
+    - custom_modules
+    - oaf
