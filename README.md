@@ -128,10 +128,6 @@ bundle exec mina rake[db:seed]
 bundle exec mina rake[searchkick:reindex:all]
 ```
 
-#### TODOS
-
-* Backups
-
 ### Note about the custom dnsmadeeasy module
 
 We've made some fixes to the dnsmadeeasy module which allow it work for MX and TXT records, root A
