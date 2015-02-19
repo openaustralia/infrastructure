@@ -1,5 +1,6 @@
 ---
 - include_vars: encrypted.yml
+- include_vars: encrypted_vars/dnsmadeeasy.yml
 
 - name: Ensure that deploy owns /srv/www
   file: owner=deploy group=deploy path=/srv/www state=directory
@@ -91,3 +92,18 @@
 
 - name: Add alaveteli crontab entry
   cron: user=deploy name="user-use-graph" minute="48" hour="2" job="/bin/bash -l -c 'cd /srv/www/current && RAILS_ENV=production ./script/user-use-graph'"
+
+- name: DNS setup for righttoknow.org.au
+  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="righttoknow.org.au" record_ttl=300 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
+  with_items:
+    - {type: "A", name: "", value: "103.243.244.10"}
+    - {type: "CNAME", name: "www",  value: ""}
+    - {type: "CNAME", name: "test", value: ""}
+    - {type: "MX", name: "", value: "10 aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "20 alt1.aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "20 alt2.aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "30 aspmx2.googlemail.com."}
+    - {type: "MX", name: "", value: "30 aspmx3.googlemail.com."}
+    - {type: "MX", name: "server", value: "10 "}
+    - {type: "TXT", name: "", value: '"v=spf1 a include:_spf.google.com ~all"'}
+    - {type: "TXT", name: "", value: "google-site-verification=CPi5guMn0IiJjjYusPOb3ziStX_vKDqyk-cs0cLZvHc"}

@@ -6,3 +6,6 @@ alaveteli_cookie_store_session_secret: '{{ encrypted_alaveteli_cookie_store_sess
 alaveteli_recaptcha_public_key: '6Lej6tUSAAAAACzt-z26hUlGcFmpehGBFwr-7vLj'
 alaveteli_recaptcha_private_key: '{{ encrypted_alaveteli_recaptcha_private_key }}'
 private_ssl_key: '{{ encrypted_private_ssl_key }}'
+# TODO These keys are replicated in the roles. Remove this duplication
+dnsmadeeasy_key: "{{ encrypted_dnsmadeeasy_key }}"
+dnsmadeeasy_secret: "{{ encrypted_dnsmadeeasy_secret }}"
