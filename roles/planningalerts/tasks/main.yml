@@ -1,5 +1,6 @@
 ---
 - include_vars: encrypted.yml
+- include_vars: encrypted_vars/dnsmadeeasy.yml
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
@@ -126,3 +127,26 @@
     user: deploy
     hour: 12
     job: "cd /srv/www/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"
+
+- name: DNS setup for planningalerts.org.au
+  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="planningalerts.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
+  with_items:
+    - {type: "A", name: "", value: "103.243.244.10"}
+    - {type: "CNAME", name: "www",            value: ""}
+    - {type: "CNAME", name: "api",            value: ""}
+    - {type: "CNAME", name: "test",           value: ""}
+    - {type: "CNAME", name: "nsw.test",       value: ""}
+    - {type: "CNAME", name: "email",          value: "cuttlefish.io."}
+    - {type: "CNAME", name: "email2",         value: "cuttlefish.oaf.org.au."}
+    - {type: "CNAME", name: "email.nsw.test", value: "cuttlefish.io."}
+    - {type: "HTTPRED", name: "tickets", value: "http://tickets.openaustraliafoundation.org.au/browse/PA/"}
+    - {type: "MX", name: "", value: "10 aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "20 alt1.aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "20 alt2.aspmx.l.google.com."}
+    - {type: "MX", name: "", value: "30 aspmx2.googlemail.com."}
+    - {type: "MX", name: "", value: "30 aspmx3.googlemail.com."}
+    - {type: "MX", name: "", value: "30 aspmx4.googlemail.com."}
+    - {type: "MX", name: "", value: "30 aspmx5.googlemail.com."}
+    - {type: "TXT", name: "", value: '"v=spf1 include:_spf.google.com -all"'}
+    - {type: "TXT", name: "", value: "google-site-verification=JYy5YaJQFzwI4HtLDThcvFldc8fzX7QWJmwwmmp0nMo"}
+    - {type: "TXT", name: "cuttlefish._domainkey", value: '"k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoUPCB2huZQkwFnEMn0/jorQ/nHsNul1gQqHbQsX2unANX+dXnnmF0y+rFnB93mlmOVemv+vnQik/DGr+3aCQqOia5t5xXTsbPenmstC1tfCNDl9irQb7sCP8IeiLdcxJ5upsH8PtAod9r7J/Uo8KdXxMPbBFvVT/X9qe25dHkZUqwJHGn7peLmSTe2Ti4ZRTlyolc1orKD""7sHx7iI+lU/9Ga1at2kykrXGAs4bUDPY2cmsSMcwqYRu6DQgBz01g9pqaOmDZ7mKwbI7M2m9kX6AWFCb9YqyeyZpW42bytlsKiVsH5bwQmhNFJ/vqTuwyyvBlIDcforixhRGZ13Ufj2QIDAQAB"'}

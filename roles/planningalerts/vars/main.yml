@@ -20,3 +20,6 @@ throttling_configuration: "{{ encrypted_throttling_configuration }}"
 planningalerts_development_ssl_key: "{{ encrypted_planningalerts_development_ssl_key }}"
 planningalerts_production_ssl_key: "{{ encrypted_planningalerts_production_ssl_key }}"
 planningalerts_api_ssl_key: "{{ encrypted_planningalerts_api_ssl_key }}"
+# TODO These keys are replicated in the roles. Remove this duplication
+dnsmadeeasy_key: "{{ encrypted_dnsmadeeasy_key }}"
+dnsmadeeasy_secret: "{{ encrypted_dnsmadeeasy_secret }}"
