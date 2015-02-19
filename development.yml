@@ -29,3 +29,8 @@
   roles:
     - custom_modules
     - oaf
+
+- hosts: openaustralia.org.au.dev
+  roles:
+    - custom_modules
+    - openaustralia
