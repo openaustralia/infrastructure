@@ -3,18 +3,22 @@
 
 - hosts: righttoknow.org.au.dev
   roles:
+    - custom_modules
     - righttoknow
 
 - hosts: planningalerts.org.au.dev
   roles:
+    - custom_modules
     - planningalerts
   vars_files:
     - encrypted_vars/planningalerts.yml
 
 - hosts: electionleaflets.org.au.dev
   roles:
+    - custom_modules
     - electionleaflets
 
 - hosts: theyvoteforyou.org.au.dev
   roles:
+    - custom_modules
     - theyvoteforyou

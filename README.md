@@ -132,20 +132,11 @@ bundle exec mina rake[searchkick:reindex:all]
 
 * Backups
 
-### How to use our custom version of the dnsmadeeasy module
+### Note about the custom dnsmadeeasy module
 
 We've made some fixes to the dnsmadeeasy module which allow it work for MX and TXT records, root A
 records and CNAMEs pointing to the domain root - well basically it was completely broken.
 
 We're trying to get the [changes merged into Ansible](https://github.com/ansible/ansible-modules-extras/pull/269).
 
-In the meantime, to use it with Ansible first you need to checkout a clean copy:
-```
-cd [a directory]
-git clone https://github.com/openaustralia/ansible-modules-extras.git
-```
-
-Then to ensure that Ansible uses it, on OS X
-```
-export ANSIBLE_LIBRARY=[a directory]/ansible-modules-extras/network
-```
+In the meantime, our updated version is used and included automatically from `custom_modules/library/dnsmadeeasy.py`
