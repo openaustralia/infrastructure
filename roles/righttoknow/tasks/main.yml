@@ -94,7 +94,7 @@
   cron: user=deploy name="user-use-graph" minute="48" hour="2" job="/bin/bash -l -c 'cd /srv/www/current && RAILS_ENV=production ./script/user-use-graph'"
 
 - name: DNS setup for righttoknow.org.au
-  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="righttoknow.org.au" record_ttl=300 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
+  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="righttoknow.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   with_items:
     - {type: "A", name: "", value: "103.243.244.10"}
     - {type: "CNAME", name: "www",  value: ""}
