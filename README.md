@@ -128,7 +128,7 @@ bundle exec mina rake[db:seed]
 bundle exec mina rake[searchkick:reindex:all]
 ```
 
-### Note about the custom dnsmadeeasy module
+## Note about the custom dnsmadeeasy module
 
 We've made some fixes to the dnsmadeeasy module which allow it work for MX and TXT records, root A
 records and CNAMEs pointing to the domain root - well basically it was completely broken.
