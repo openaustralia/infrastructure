@@ -47,11 +47,11 @@
   notify: reload apache
 
 - name: Electionleaflets main config
-  template: src=general.php dest=/srv/www/shared/config
+  template: src=general.php dest=/srv/www/shared/config/
   notify: reload apache
 
 - name: Copy across the main apache config
-  template: src=apache2.conf dest=/etc/apache2
+  template: src=apache2.conf dest=/etc/apache2/
   notify: reload apache
 
 - name: Enable apache rewrite module
@@ -59,7 +59,7 @@
   notify: reload apache
 
 - name: Copy across the apache config
-  template: src=electionleaflets.org.au.dev.conf dest=/etc/apache2/sites-available
+  template: src=electionleaflets.org.au.dev.conf dest=/etc/apache2/sites-available/
   notify: reload apache
 
 - name: Enable virtual host
