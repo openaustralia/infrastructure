@@ -79,6 +79,8 @@
 
 - name: DNS setup
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="electionleaflets.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
+  tags:
+    - dns
   with_items:
     - {type: "A", name: "", value: "103.243.244.10"}
     - {type: "CNAME", name: "federal2010", value: ""}
