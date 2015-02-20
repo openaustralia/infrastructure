@@ -128,6 +128,14 @@ bundle exec mina rake[db:seed]
 bundle exec mina rake[searchkick:reindex:all]
 ```
 
+### OpenAustralia
+
+After provision, set up the database and deploy from the OpenAustralia repository:
+```
+cap -S stage=development deploy
+cap -S stage=development deploy:setup_db
+```
+
 ## DNS Setup
 
 We're using Ansible to setup DNS for each project. The tasks that do that are currently in the
