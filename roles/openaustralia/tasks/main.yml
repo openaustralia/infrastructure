@@ -15,9 +15,11 @@
   apt: name={{ item }} state=present
   with_items:
     - php5
+    - php5-curl
     - php5-mysql
     - apache2
     - libapache2-mod-php5
+  notify: reload apache
 
 - name: Enable apache modules
   apache2_module: state=present name={{ item }}
@@ -32,6 +34,10 @@
 
 - name: Copy across the apache config
   template: src=openaustralia.org.au.dev.conf dest=/etc/apache2/sites-available/
+  notify: reload apache
+
+- name: Copy across the application config
+  template: src=general dest=/srv/www/shared
   notify: reload apache
 
 - name: Enable virtual host
