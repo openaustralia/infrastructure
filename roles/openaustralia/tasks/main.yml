@@ -1,6 +1,15 @@
 ---
 - include_vars: encrypted_vars/dnsmadeeasy.yml
 
+- name: Ensure that directories exist
+  file: path={{ item }} owner=deploy group=deploy state=directory
+  with_items:
+    - "/srv/www/log"
+    - "/srv/www/releases"
+    - "/srv/www/shared/config"
+    - "/srv/www/shared/images/mps"
+    - "/srv/www/shared/images/mpsL"
+
 - name: DNS setup for openaustralia.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="openaustralia.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   tags:
