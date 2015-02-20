@@ -26,6 +26,10 @@
     - expires
     - rewrite
 
+- name: Copy across the php config
+  template: src=php.ini dest=/etc/php5/apache2
+  notify: reload apache
+
 - name: Copy across the apache config
   template: src=openaustralia.org.au.dev.conf dest=/etc/apache2/sites-available/
   notify: reload apache
