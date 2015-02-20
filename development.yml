@@ -34,3 +34,8 @@
   roles:
     - custom_modules
     - openaustralia
+
+- hosts: morph.io.dev
+  roles:
+    - custom_modules
+    - morph
