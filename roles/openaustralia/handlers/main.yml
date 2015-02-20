@@ -1,2 +1,6 @@
 ---
-# handlers file for openaustralia
+- name: reload apache
+  service: name=apache2 state=reloaded
+
+- name: restart apache
+  service: name=apache2 state=restarted

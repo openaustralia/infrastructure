@@ -10,6 +10,34 @@
     - "/srv/www/shared/images/mps"
     - "/srv/www/shared/images/mpsL"
 
+# TODO Extract php-mysql-apache role
+- name: Install required packages
+  apt: name={{ item }} state=present
+  with_items:
+    - php5
+    - php5-mysql
+    - apache2
+    - libapache2-mod-php5
+
+- name: Enable apache modules
+  apache2_module: state=present name={{ item }}
+  notify: reload apache
+  with_items:
+    - expires
+    - rewrite
+
+- name: Copy across the apache config
+  template: src=openaustralia.org.au.dev.conf dest=/etc/apache2/sites-available/
+  notify: reload apache
+
+- name: Enable virtual host
+  file: src="../sites-available/openaustralia.org.au.dev.conf" dest="/etc/apache2/sites-enabled/openaustralia.org.au.dev.conf" state=link
+  notify: reload apache
+
+- name: Disable default virtual host
+  file: dest="/etc/apache2/sites-enabled/000-default.conf" state=absent
+  notify: reload apache
+
 - name: DNS setup for openaustralia.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="openaustralia.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   tags:
