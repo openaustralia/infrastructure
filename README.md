@@ -169,6 +169,8 @@ dnsmadeeasy: account_key=xxxx account_secret=xxxx domain="foo.com" record_ttl=18
 it will always add a new record unless there is already a `TXT` record with the value `some text` on the
 root of the domain.
 
+To add a new domain, first you will need to add the domain in [DNSMadeEasy web console](https://cp.dnsmadeeasy.com/). Then, you can copy the Ansible dnsmadeeasy task template from any of the roles that use it remembering to change the `domain=` parameter to the new domain name.
+
 ## Note about the custom dnsmadeeasy module
 
 We've made some fixes to the dnsmadeeasy module which allow it work for MX and TXT records, root A
