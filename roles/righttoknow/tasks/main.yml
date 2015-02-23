@@ -67,10 +67,10 @@
   notify: nginx reload
 
 - name: Add alaveteli crontab entry
-  cron: user=deploy name="foi-alert-tracks" minute="0,10,20,30,40,50" job="/bin/bash -l -c 'sudo /etc/init.d/foi-alert-tracks check'"
+  cron: name="foi-alert-tracks" minute="0,10,20,30,40,50" job="/bin/bash -l -c 'sudo /etc/init.d/foi-alert-tracks check'"
 
 - name: Add alaveteli crontab entry
-  cron: user=deploy name="foi-purge-varnish" minute="0,10,20,30,40,50" job="/bin/bash -l -c 'sudo /etc/init.d/foi-purge-varnish check'"
+  cron: name="foi-purge-varnish" minute="0,10,20,30,40,50" job="/bin/bash -l -c 'sudo /etc/init.d/foi-purge-varnish check'"
 
 - name: Add alaveteli crontab entry
   cron: user=deploy name="holidays" minute="0" hour="0" day="1" month="12" job="/bin/bash -l -c '/bin/echo \"A year has passed, please update the bank holidays for the Freedom of Information site, thank you.\"'"
