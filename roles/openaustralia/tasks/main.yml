@@ -19,6 +19,10 @@
     - php5-mysql
     - apache2
     - libapache2-mod-php5
+    - imagemagick
+    #- libmagick9-dev
+    - ghostscript
+    - libxslt1-dev
   notify: reload apache
 
 - name: Enable apache modules
