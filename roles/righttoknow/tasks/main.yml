@@ -89,6 +89,14 @@
   copy: content="{{ righttoknow_test_ssl_key }}" dest=/etc/ssl/private/test.righttoknow.org.au.key owner=root group=ssl-cert mode=0640
   notify: nginx reload
 
+- name: Add production self signed SSL certificate
+  copy: src=www.righttoknow.org.au_chain.pem dest=/etc/ssl/www.righttoknow.org.au_chain.pem owner=root group=root mode=0644
+  notify: nginx reload
+
+- name: Add production private SSL key
+  copy: content="{{ righttoknow_production_ssl_key }}" dest=/etc/ssl/private/www.righttoknow.org.au.key owner=root group=ssl-cert mode=0640
+  notify: nginx reload
+
 - name: Add alaveteli crontab entry
   cron: name="foi-alert-tracks" minute="0,10,20,30,40,50" job="/bin/bash -l -c 'sudo /etc/init.d/foi-alert-tracks check'"
 
