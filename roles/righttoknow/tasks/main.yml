@@ -42,6 +42,7 @@
   copy:
     dest: /etc/init.d/
     src: "{{ item }}"
+    mode: 0755
   with_items:
     - foi-alert-tracks
     - foi-purge-varnish
