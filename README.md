@@ -110,7 +110,7 @@ cap -S stage=development deploy:setup_db
 
 #### TODOS
 
-* Django maps app
+* Django maps app (not worth doing?)
 
 ### They Vote For You
 
