@@ -127,3 +127,19 @@ dependencies:
     mysql_root_password: ''
     mysql_databases:
       - name: electionleaflets
+  - role: Stouts.backup
+    backup_gpg_pw: "{{ electionleaflets_backup_gpg_pw }}"
+    backup_target_user: "{{ electionleaflets_backup_target_user }}"
+    backup_target_pass: "{{ electionleaflets_backup_target_pass }}"
+    backup_max_age: 6M
+    backup_profiles:
+      - name: automysqlbackup
+        schedule: 0 4 * * *
+        source: /var/lib/automysqlbackup
+        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
+        target: "s3://s3.amazonaws.com/oaf-backups/electionleaflets/{{ inventory_hostname }}/automysqlbackup"
+      - name: electionleaflets_images
+        schedule: 0 2 * * *
+        source: /srv/www/shared/data/images
+        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
+        target: "s3://s3.amazonaws.com/oaf-backups/electionleaflets/{{ inventory_hostname }}/electionleaflets_images"

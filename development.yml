@@ -17,6 +17,8 @@
   roles:
     - custom_modules
     - electionleaflets
+  vars_files:
+    - encrypted_vars/electionleaflets.yml
 
 - hosts: theyvoteforyou.org.au.dev
   roles:

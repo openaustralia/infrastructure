@@ -111,7 +111,6 @@ cap -S stage=development deploy:setup_db
 #### TODOS
 
 * Django maps app
-* backups
 
 ### They Vote For You
 
