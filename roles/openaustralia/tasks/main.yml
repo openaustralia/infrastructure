@@ -20,10 +20,26 @@
     - apache2
     - libapache2-mod-php5
     - imagemagick
-    #- libmagick9-dev
+    - libmagickcore-dev
+    - libmagickwand-dev
     - ghostscript
     - libxslt1-dev
   notify: reload apache
+
+# Taking these versions of gems from those installed in the default ruby on kedumba
+# rather than what it says in the Gemfile.lock or the install instructions
+
+- name: Install required gems
+  gem: name={{ item.name }} version={{ item.version }} user_install=no state=present
+  with_items:
+    - {name: nokogiri,      version: 1.4.4}
+    - {name: mechanize,     version: 1.0.0}
+    - {name: activesupport, version: 3.0.4}
+    - {name: builder,       version: 3.0.0}
+    - {name: rmagick,       version: 2.13.1}
+    - {name: htmlentities,  version: 4.2.1}
+    - {name: log4r,         version: 1.1.8}
+    - {name: json,          version: 1.8.0}
 
 - name: Enable apache modules
   apache2_module: state=present name={{ item }}
