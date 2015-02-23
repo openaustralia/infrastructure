@@ -88,8 +88,6 @@ bundle exec cap -S stage=development xapian:rebuild_index
 * Email
 * SSL
 * Backups
-* wkhtmltopdf
-* pdftk
 * Set up mail server logs so that they can be read in
 
 ### PlanningAlerts

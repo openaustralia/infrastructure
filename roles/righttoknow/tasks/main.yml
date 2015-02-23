@@ -19,6 +19,12 @@
   sudo: true
   sudo_user: deploy
 
+- name: Add mySociety Debian Package Repository key
+  apt_key: url="https://debian.mysociety.org/debian.mysociety.org.gpg.key"
+
+- name: Add mySociety Debian Package Repository
+  apt_repository: repo="deb http://debian.mysociety.org squeeze main"
+
 - name: Install packages required by Alaveteli
   apt: name={{ item }} state=present
   with_items:
@@ -27,6 +33,8 @@
     - libmagickwand-dev
     - xapian-tools
     - uuid-dev
+    - wkhtmltopdf-static
+    - pdftk
 
 - name: Create database
   postgresql_db: name=alaveteli
