@@ -38,6 +38,14 @@
   template: src=database.yml dest=/srv/www/shared/database.yml owner=deploy group=deploy
   notify: nginx restart
 
+- name: Copy init scripts for daemons
+  copy:
+    dest: /etc/init.d/
+    src: "{{ item }}"
+  with_items:
+    - foi-alert-tracks
+    - foi-purge-varnish
+
 - name: Generate the overall nginx config
   template: src=nginx.conf dest=/etc/nginx/nginx.conf
   notify: nginx reload
