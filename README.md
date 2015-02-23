@@ -67,6 +67,7 @@ development:
   server: righttoknow.org.au.dev
   user: deploy
   deploy_to: /srv/www
+  rails_env: production
 ```
 
 This adds an extra staging for the capistrano deploy called `development`. This will deploy to your
