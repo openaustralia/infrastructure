@@ -158,7 +158,7 @@ FORWARD_NONBOUNCE_RESPONSES_TO: web-administrators@openaustralia.org
 # http://code.google.com/p/wkhtmltopdf/downloads/list
 # If the command is not present, a text-only version will be rendered
 # instead.
-HTML_TO_PDF_COMMAND: /usr/bin/wkhtmltopdf
+HTML_TO_PDF_COMMAND: /usr/bin/wkhtmltopdf-static
 
 # Exception notifications
 EXCEPTION_NOTIFICATIONS_FROM: Alaveteli Production <web-administrators@openaustralia.org>
