@@ -59,6 +59,12 @@
   template: src=nginx.conf dest=/etc/nginx/nginx.conf
   notify: nginx reload
 
+- name: Copy test/test password for staging site
+  copy:
+    src: htpasswd
+    dest: /etc/nginx/
+  notify: nginx reload
+
 - name: Copy nginx config for the app
   copy: src=default dest=/etc/nginx/sites-available/ owner=root group=root mode=644
   notify: nginx reload
@@ -67,12 +73,20 @@
   template: src=general.yml dest=/srv/www/shared/ owner=deploy group=deploy
   notify: nginx restart
 
-- name: Add SSL certificate
+- name: Add development self signed SSL certificate
   copy: src=ssl-unified.crt dest=/etc/ssl/righttoknow.org.au.dev.pem owner=root group=root mode=0644
   notify: nginx reload
 
-- name: Add private SSL key
-  copy: content="{{ private_ssl_key }}" dest=/etc/ssl/private/righttoknow.org.au.dev.key owner=root group=ssl-cert mode=0640
+- name: Add development private SSL key
+  copy: content="{{ righttoknow_development_ssl_key }}" dest=/etc/ssl/private/righttoknow.org.au.dev.key owner=root group=ssl-cert mode=0640
+  notify: nginx reload
+
+- name: Add test self signed SSL certificate
+  copy: src=test.righttoknow.org.au.pem dest=/etc/ssl/test.righttoknow.org.au.pem owner=root group=root mode=0644
+  notify: nginx reload
+
+- name: Add test private SSL key
+  copy: content="{{ righttoknow_test_ssl_key }}" dest=/etc/ssl/private/test.righttoknow.org.au.key owner=root group=ssl-cert mode=0640
   notify: nginx reload
 
 - name: Add alaveteli crontab entry
