@@ -13,8 +13,8 @@
 # foi-alert-tracks Start the Alaveteli email alert daemon
 
 NAME=foi-alert-tracks
-DAEMON=/srv/www/current/script/runner
-DAEMON_ARGS="--daemon TrackMailer.alert_tracks_loop"
+DAEMON=/home/deploy/.rbenv/shims/ruby
+DAEMON_ARGS="/srv/www/current/script/runner --daemon TrackMailer.alert_tracks_loop"
 PIDFILE=/srv/www/shared/pids/foi-alert-tracks.pid
 LOGFILE=/srv/www/shared/log/foi-alert-tracks.log
 DUSER=deploy

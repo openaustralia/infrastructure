@@ -13,8 +13,8 @@
 # foi-purge-varnish Start the Alaveteli email purge-varnish daemon
 
 NAME=foi-purge-varnish
-DAEMON=/srv/www/current/script/runner
-DAEMON_ARGS="--daemon PurgeRequest.purge_all_loop"
+DAEMON=/home/deploy/.rbenv/shims/ruby
+DAEMON_ARGS="/srv/www/current/script/runner --daemon PurgeRequest.purge_all_loop"
 PIDFILE=/srv/www/shared/pids/foi-purge-varnish.pid
 LOGFILE=/srv/www/shared/log/foi-purge-varnish.log
 DUSER=deploy
