@@ -2,8 +2,15 @@
 - include_vars: encrypted.yml
 - include_vars: encrypted_vars/dnsmadeeasy.yml
 
-- name: Ensure that deploy owns /srv/www
-  file: owner=deploy group=deploy path=/srv/www state=directory
+- name: Ensure that deploy owns /srv/www and /srv/www/shared
+  file:
+    state: directory
+    owner: deploy
+    group: deploy
+    path: "{{item}}"
+  with_items:
+    - /srv/www
+    - /srv/www/shared
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 # TODO When gem is already installed stop it from saying something has changed
