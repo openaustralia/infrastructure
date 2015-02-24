@@ -87,7 +87,6 @@ bundle exec cap -S stage=development xapian:rebuild_index
 * Xapian
 * Email
 * Backups
-* Set up mail server logs so that they can be read in
 
 ### PlanningAlerts
 
