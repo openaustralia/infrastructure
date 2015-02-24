@@ -182,7 +182,7 @@ GA_CODE: 'UA-3107958-10'
 #OVERRIDE_ALL_PUBLIC_BODY_REQUEST_EMAILS: contact@openaustraliafoundation.org.au
 
 # Path to your exim or postfix log files that will get sucked up by script/load-exim-logs
-MTA_LOG_PATH: '/var/log/mail/mail.log-*'
+MTA_LOG_PATH: '/var/log/mail.log*'
 
 # Whether we are using "exim" or "postfix" for our MTA
 MTA_LOG_TYPE: "postfix"
