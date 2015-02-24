@@ -86,7 +86,6 @@ bundle exec cap -S stage=development xapian:rebuild_index
 * Varnish
 * Xapian
 * Email
-* SSL
 * Backups
 * Set up mail server logs so that they can be read in
 
