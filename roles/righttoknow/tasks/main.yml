@@ -36,6 +36,15 @@
     - wkhtmltopdf-static
     - pdftk
 
+- name: Install lockfile-progs for run-with-lockfile.sh
+  apt: name=lockfile-progs
+
+- name: Link run-with-lockfile.sh so it's available system-wide
+  file:
+    src: "/srv/www/current/commonlib/bin/run-with-lockfile.sh"
+    dest: "/usr/bin/run-with-lockfile"
+    state: link
+
 - name: Create database
   postgresql_db: name=alaveteli
 
