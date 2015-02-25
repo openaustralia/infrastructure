@@ -60,7 +60,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.playbook = "development.yml"
     # Doing this here so we don't need to put in the playbook
     ansible.sudo = true
-    ansible.vault_password_file = "~/.infrastructure_ansible_vault_pass.txt"
     # Uncomment the following line if you want some verbose output from ansible
     #ansible.verbose = "vv"
     # Don't try to setup DNS stuff when running things through vagrant
