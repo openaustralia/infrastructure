@@ -5,6 +5,8 @@
   roles:
     - custom_modules
     - righttoknow
+  vars_files:
+    - encrypted_vars/righttoknow.yml
 
 - hosts: planningalerts.org.au.dev
   roles:

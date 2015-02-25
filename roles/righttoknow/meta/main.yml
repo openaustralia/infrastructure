@@ -132,6 +132,22 @@ dependencies:
       ruby_version: 2.0.0-p598
     rbenv_users:
       - deploy
+  - role: Stouts.backup
+    backup_gpg_pw: "{{ righttoknow_backup_gpg_pw }}"
+    backup_target_user: "{{ righttoknow_backup_target_user }}"
+    backup_target_pass: "{{ righttoknow_backup_target_pass }}"
+    backup_max_age: 6M
+    backup_profiles:
+      - name: autopostgresqlbackup
+        schedule: 0 4 * * *
+        source: /var/lib/autopostgresqlbackup
+        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
+        target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/autopostgresqlbackup"
+      - name: righttoknow_files
+        schedule: 0 2 * * *
+        source: /srv/www/shared/files
+        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
+        target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/righttoknow_files"
 
   # List your role dependencies here, one per line. Only
   # dependencies available via galaxy should be listed here.

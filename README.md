@@ -85,7 +85,6 @@ bundle exec cap -S stage=development xapian:rebuild_index
 
 * Varnish
 * Email
-* Backups
 
 ### PlanningAlerts
 
