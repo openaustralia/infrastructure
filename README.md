@@ -51,6 +51,27 @@ $ vagrant plugin install vagrant-hostsupdater
 Create a file in your home directory `.infrastructure_ansible_vault_pass.txt` with the secret
 password used to encrypt the secret info in this repo
 
+## Provisioning
+
+### Development
+
+In development you set up and provision a server using Vagrant. You probably only want to run
+one machine so you can bring it up with:
+
+    vagrant up righttoknow.org.au.dev
+
+If it's already up you can re-run Ansible provisioning with:
+
+    vagrant provision righttoknow.org.au.dev
+
+### Staging
+
+**This is untested**
+
+Provision a running server with:
+
+    ansible-playbook site.yml -i staging --limit=righttoknow
+
 ## Notes for deploying
 
 ### Right To Know
