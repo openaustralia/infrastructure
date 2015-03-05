@@ -58,13 +58,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "site.yml"
+
     # Doing this here so we don't need to put in the playbook
     ansible.sudo = true
+
     # Uncomment the following line if you want some verbose output from ansible
     #ansible.verbose = "vv"
+
     # Don't try to setup DNS stuff when running things through vagrant
     # because chances are we're just doing things with development VMs anyway
-    ansible.skip_tags="dns"
+    ansible.skip_tags = "dns"
 
     ansible.groups = {
       "righttoknow"      => ["righttoknow.org.au.dev"],
