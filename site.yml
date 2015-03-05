@@ -1,45 +1,45 @@
 # Playbook for development VMs on your local box
 ---
 
-- hosts: righttoknow.org.au.dev
+- hosts: righttoknow
   roles:
     - custom_modules
     - righttoknow
   vars_files:
     - encrypted_vars/righttoknow.yml
 
-- hosts: planningalerts.org.au.dev
+- hosts: planningalerts
   roles:
     - custom_modules
     - planningalerts
   vars_files:
     - encrypted_vars/planningalerts.yml
 
-- hosts: electionleaflets.org.au.dev
+- hosts: electionleaflets
   roles:
     - custom_modules
     - electionleaflets
   vars_files:
     - encrypted_vars/electionleaflets.yml
 
-- hosts: theyvoteforyou.org.au.dev
+- hosts: theyvoteforyou
   roles:
     - custom_modules
     - theyvoteforyou
   vars_files:
     - encrypted_vars/theyvoteforyou.yml
 
-- hosts: oaf.org.au.dev
+- hosts: oaf
   roles:
     - custom_modules
     - oaf
 
-- hosts: openaustralia.org.au.dev
+- hosts: openaustralia
   roles:
     - custom_modules
     - openaustralia
 
-- hosts: morph.io.dev
+- hosts: morph
   roles:
     - custom_modules
     - morph
