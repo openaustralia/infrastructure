@@ -1,6 +1,15 @@
 ---
 - include_vars: encrypted_vars/dnsmadeeasy.yml
 
+# TODO Extract php-mysql-apache role
+- name: Install required packages
+  apt: name={{ item }} state=present
+  with_items:
+    - php5-mysql
+    - apache2
+    - libapache2-mod-php5
+  notify: reload apache
+
 - name: DNS setup for oaf.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="oaf.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   tags:
