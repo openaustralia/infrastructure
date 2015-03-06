@@ -26,7 +26,6 @@
     - ghostscript
     - libxslt1-dev
     - libxml-twig-perl
-  notify: reload apache
 
 - name: Install required gems
   gem: name={{ item.name }} version={{ item.version }} user_install=no state=present
