@@ -32,6 +32,48 @@
     creates: /var/www/html/wp-config.php
   sudo_user: www-data
 
+- name: Install wordpress plugins
+  shell: "wp-cli --path='/var/www/html' plugin install {{ item }}"
+  args:
+    creates: /var/www/html/wp-content/plugins/{{ item }}
+  sudo_user: www-data
+  with_items:
+    - advanced-edit-cforms
+    - akismet
+    - better-rss-widget
+    - broken-link-checker
+    # cforms2 gives a different version of the plugin than is currently installed on oaf.org.au
+    - cforms2
+    # CiviCRM I think needs to be installed differently
+    - collapsing-archives
+    - dynamic-content-gallery-plugin
+    - easy-wp-smtp
+    - google-analytics-for-wordpress
+    # Hello Dolly is already installed
+    - hifi
+    - mailchimp-for-wp
+    - nivo-slider-light
+    - quotes-collection
+    - recent-posts-embed
+    - redirection
+    - scalable-vector-graphics-svg
+    - sociable
+    - subscribe-to-comments
+    - tagaroo
+    # twitter-tracker appears to be a different version than on oaf.org.au
+    - twitter-tracker
+    - twitter-widget-pro
+    - typekit-fonts-for-wordpress
+    - update-notifier
+    - w3-total-cache
+    - widget-context
+    - widget-logic
+    - wordpress-https
+    - wordpress-importer
+    - wp-twittersearch
+    - wp-hide-pages
+    - wp-super-cache
+
 - name: DNS setup for oaf.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="oaf.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   tags:
