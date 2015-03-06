@@ -1,13 +1,4 @@
 ---
-auth_key: "{{ encrypted_auth_key }}"
-secure_auth_key: "{{ encrypted_secure_auth_key }}"
-logged_in_key: "{{ encrypted_logged_in_key }}"
-nonce_key: "{{ encrypted_nonce_key }}"
-auth_salt: "{{ encrypted_auth_salt }}"
-secure_auth_salt: "{{ encrypted_secure_auth_salt }}"
-logged_in_salt: "{{ encrypted_logged_in_salt }}"
-nonce_salt: "{{ encrypted_nonce_salt }}"
-
 # TODO These keys are replicated in the roles. Remove this duplication
 dnsmadeeasy_key: "{{ encrypted_dnsmadeeasy_key }}"
 dnsmadeeasy_secret: "{{ encrypted_dnsmadeeasy_secret }}"

@@ -1,5 +1,4 @@
 ---
-- include_vars: encrypted.yml
 - include_vars: encrypted_vars/dnsmadeeasy.yml
 
 # TODO Extract php-mysql-apache role
@@ -9,19 +8,29 @@
     - php5-mysql
     - apache2
     - libapache2-mod-php5
+    # TODO We'll need mod rewrite I think
   notify: reload apache
 
 - name: Remove default index.html
   file: path=/var/www/html/index.html state=absent
 
-- name: Checkout WordPress site
-  git: repo="https://github.com/WordPress/WordPress.git" dest="/var/www/html" version="4.0" depth=1
+- name: install wp-cli
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: "/usr/local/bin/wp-cli"
+    mode: 0755
 
-- name: Change WordPress permissions
-  file: path=/var/www/html owner=www-data group=www-data recurse=yes state=directory
+- name: download wordpress
+  shell: "wp-cli --path='/var/www/html' core download"
+  args:
+    creates: /var/www/html/index.php
+  sudo_user: www-data
 
-- name: Copy across the wordpress config
-  template: src=wp-config.php dest=/var/www/html owner=www-data group=www-data
+- name: configure wordpress
+  shell: "wp-cli --path='/var/www/html' core config --dbname=wordpress --dbuser=root"
+  args:
+    creates: /var/www/html/wp-config.php
+  sudo_user: www-data
 
 - name: DNS setup for oaf.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="oaf.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
