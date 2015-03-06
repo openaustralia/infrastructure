@@ -25,6 +25,7 @@
     - libmagickwand-dev
     - ghostscript
     - libxslt1-dev
+    - libxml-twig-perl
   notify: reload apache
 
 - name: Install required gems
