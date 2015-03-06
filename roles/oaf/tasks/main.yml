@@ -10,6 +10,12 @@
     - libapache2-mod-php5
   notify: reload apache
 
+- name: Remove default index.html
+  file: path=/var/www/html/index.html state=absent
+
+- name: Checkout WordPress site
+  git: repo="https://github.com/WordPress/WordPress.git" dest="/var/www/html" version="4.0" depth=1
+
 - name: DNS setup for oaf.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="oaf.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   tags:
