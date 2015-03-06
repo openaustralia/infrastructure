@@ -1,4 +1,5 @@
 ---
+- include_vars: encrypted.yml
 - include_vars: encrypted_vars/dnsmadeeasy.yml
 
 # TODO Extract php-mysql-apache role
@@ -15,6 +16,9 @@
 
 - name: Checkout WordPress site
   git: repo="https://github.com/WordPress/WordPress.git" dest="/var/www/html" version="4.0" depth=1
+
+- name: Copy across the wordpress config
+  template: src=wp-config.php dest=/var/www/html
 
 - name: DNS setup for oaf.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="oaf.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
