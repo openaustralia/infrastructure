@@ -150,6 +150,15 @@ cap -S stage=development deploy
 cap -S stage=development deploy:setup_db
 ```
 
+#### TODOS
+
+* Email (test sending, setup Cuttlefish)
+* Cronjobs
+* Set up data.openaustralia.org
+* Backups
+* HTTPS
+* Staging/production web server config
+
 ## DNS Setup
 
 We're using Ansible to setup DNS for each project. The tasks that do that are currently in the
