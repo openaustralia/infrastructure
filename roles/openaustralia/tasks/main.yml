@@ -77,6 +77,9 @@
   file: dest="/etc/apache2/sites-enabled/000-default.conf" state=absent
   notify: reload apache
 
+- name: Copy msmtp configuration
+  template: src=msmtprc dest=/etc/
+
 - name: DNS setup for openaustralia.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="openaustralia.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   tags:
