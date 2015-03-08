@@ -144,7 +144,7 @@ bundle exec mina rake[searchkick:reindex:all]
 
 ### OpenAustralia
 
-After provision, set up the database and deploy from the OpenAustralia repository:
+After provisioning, set up the database and deploy from the OpenAustralia repository:
 ```
 cap -S stage=development deploy
 cap -S stage=development deploy:setup_db
