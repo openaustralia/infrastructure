@@ -1,6 +1,7 @@
 ---
 admin_user: "{{ encrypted_admin_user }}"
 admin_password: "{{ encrypted_admin_password }}"
+civicrm_site_key: "{{ encrypted_civicrm_site_key }}"
 
 # TODO These keys are replicated in the roles. Remove this duplication
 dnsmadeeasy_key: "{{ encrypted_dnsmadeeasy_key }}"

@@ -98,6 +98,9 @@
 - name: Create civicrm files directory
   file: path=/var/www/html/wp-content/plugins/files owner=www-data group=www-data state=directory
 
+- name: Copy across civicrm config file
+  template: src=civicrm.settings.php dest=/var/www/html/wp-content/plugins/civicrm owner=www-data group=www-data
+
 - name: DNS setup for oaf.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="oaf.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   tags:
