@@ -98,6 +98,10 @@
 - name: Create civicrm files directory
   file: path=/var/www/html/wp-content/plugins/files owner=www-data group=www-data state=directory
 
+- name: Apache config
+  template: src=000-default.conf dest=/etc/apache2/sites-available
+  notify: reload apache
+
 - name: DNS setup for oaf.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="oaf.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   tags:
