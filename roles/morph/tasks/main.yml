@@ -10,7 +10,7 @@
     - {type: "CNAME", name: "www",     value: ""}
     - {type: "CNAME", name: "api",     value: ""}
     - {type: "CNAME", name: "faye",    value: ""}
-    - {type: "CNAME", name: "discuss", value: ""}
+    - {type: "CNAME", name: "help", value: ""}
     - {type: "CNAME", name: "email",   value: "cuttlefish.io."}
     - {type: "CNAME", name: "email2",  value: "cuttlefish.oaf.org.au."}
     - {type: "MX", name: "", value: "10 aspmx.l.google.com."}
