@@ -43,7 +43,6 @@
   git: 
     repo: https://github.com/mysociety/commonlib.git
     dest: /srv/www/current/commonlib
-    accept_hostkey: true
 
 - name: Link run-with-lockfile.sh so it's available system-wide
   file:
