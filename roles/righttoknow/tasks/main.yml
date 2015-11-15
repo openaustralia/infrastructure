@@ -39,6 +39,12 @@
 - name: Install lockfile-progs for run-with-lockfile.sh
   apt: name=lockfile-progs
 
+- name: Install mysociety commonlib
+  git: 
+    repo: https://github.com/mysociety/commonlib.git
+    dest: /srv/www/current/commonlib
+    accept_hostkey: true
+
 - name: Link run-with-lockfile.sh so it's available system-wide
   file:
     src: "/srv/www/current/commonlib/bin/run-with-lockfile.sh"
