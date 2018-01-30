@@ -34,7 +34,7 @@
     dest={{ rbenv_root }}/plugins/{{ item.name }}
     version={{ item.version }}
     accept_hostkey=true
-  with_items: rbenv_plugins
+  with_items: "{{ rbenv_plugins }}"
   when: rbenv.env == "system"
   tags:
     - rbenv
@@ -45,7 +45,7 @@
     dest={{ rbenv_root }}
     version={{ rbenv.version }}
     accept_hostkey=true
-  with_items: rbenv_users
+  with_items: "{{ rbenv_users }}"
   sudo: true
   sudo_user: "{{ item }}"
   when: not "system" == "{{ rbenv.env }}"
@@ -55,7 +55,7 @@
 
 - name: create plugins directory for selected users
   file: state=directory path={{ rbenv_root }}/plugins
-  with_items: rbenv_users
+  with_items: "{{ rbenv_users }}"
   sudo: true
   sudo_user: "{{ item }}"
   when: not "system" == "{{ rbenv.env }}"
@@ -89,7 +89,7 @@
 
 - name: set default-gems for select users
   copy: src=default-gems dest={{ rbenv_root }}/default-gems
-  with_items: rbenv_users
+  with_items: "{{ rbenv_users }}"
   sudo: true
   sudo_user: "{{ item }}"
   when:
@@ -101,7 +101,7 @@
 
 - name: set custom default-gems for select users
   copy: src={{ default_gems_file }} dest={{ rbenv_root }}/default-gems
-  with_items: rbenv_users
+  with_items: "{{ rbenv_users }}"
   sudo: true
   sudo_user: "{{ item }}"
   when:
@@ -113,7 +113,7 @@
 
 - name: set gemrc for select users
   copy: src=gemrc dest=~/.gemrc
-  with_items: rbenv_users
+  with_items: "{{ rbenv_users }}"
   sudo: true
   sudo_user: "{{ item }}"
   when: not "system" == "{{ rbenv.env }}"
@@ -123,7 +123,7 @@
 
 - name: set vars for select users
   copy: src=vars dest={{ rbenv_root }}/vars
-  with_items: rbenv_users
+  with_items: "{{ rbenv_users }}"
   sudo: true
   sudo_user: "{{ item }}"
   when: not "system" == "{{ rbenv.env }}"
@@ -160,7 +160,7 @@
   shell: $SHELL -lc "rbenv versions | grep {{ rbenv.ruby_version }}"
   sudo: true
   sudo_user: "{{ item }}"
-  with_items: rbenv_users
+  with_items: "{{ rbenv_users }}"
   when: not "system" == "{{ rbenv.env }}"
   register: ruby_installed
   ignore_errors: yes
