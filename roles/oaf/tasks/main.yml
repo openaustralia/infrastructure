@@ -29,23 +29,23 @@
   shell: "wp-cli --path='/var/www/html' core download"
   args:
     creates: /var/www/html/index.php
-  sudo_user: www-data
+  become_user: www-data
 
 - name: configure wordpress
   shell: "wp-cli --path='/var/www/html' core config --dbname=wordpress --dbuser=root"
   args:
     creates: /var/www/html/wp-config.php
-  sudo_user: www-data
+  become_user: www-data
 
 - name: install wordpress
   shell: "wp-cli --path='/var/www/html' core install --url=http://oaf.org.au.dev --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
-  sudo_user: www-data
+  become_user: www-data
 
 - name: Install wordpress plugins
   shell: "wp-cli --path='/var/www/html' plugin install {{ item }}"
   args:
     creates: /var/www/html/wp-content/plugins/{{ item }}
-  sudo_user: www-data
+  become_user: www-data
   with_items:
     - advanced-edit-cforms
     - akismet

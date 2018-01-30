@@ -46,8 +46,8 @@
     version={{ rbenv.version }}
     accept_hostkey=true
   with_items: "{{ rbenv_users }}"
-  sudo: true
-  sudo_user: "{{ item }}"
+  become: true
+  become_user: "{{ item }}"
   when: not "system" == "{{ rbenv.env }}"
   ignore_errors: true
   tags:
@@ -56,8 +56,8 @@
 - name: create plugins directory for selected users
   file: state=directory path={{ rbenv_root }}/plugins
   with_items: "{{ rbenv_users }}"
-  sudo: true
-  sudo_user: "{{ item }}"
+  become: true
+  become_user: "{{ item }}"
   when: not "system" == "{{ rbenv.env }}"
   ignore_errors: true
   tags:
@@ -72,8 +72,8 @@
   with_nested:
     - rbenv_users
     - rbenv_plugins
-  sudo: true
-  sudo_user: "{{ item[0] }}"
+  become: true
+  become_user: "{{ item[0] }}"
   when: not "system" == "{{ rbenv.env }}"
   ignore_errors: true
   tags:
@@ -81,7 +81,7 @@
 
 - name: add rbenv initialization to profile system-wide
   template: src=rbenv.sh.j2 dest=/etc/profile.d/rbenv.sh owner=root group=root mode=0755
-  sudo: true
+  become: true
   when:
     - ansible_os_family != 'OpenBSD'
   tags:
@@ -90,8 +90,8 @@
 - name: set default-gems for select users
   copy: src=default-gems dest={{ rbenv_root }}/default-gems
   with_items: "{{ rbenv_users }}"
-  sudo: true
-  sudo_user: "{{ item }}"
+  become: true
+  become_user: "{{ item }}"
   when:
     - not "system" == "{{ rbenv.env }}"
     - default_gems_file is not defined
@@ -102,8 +102,8 @@
 - name: set custom default-gems for select users
   copy: src={{ default_gems_file }} dest={{ rbenv_root }}/default-gems
   with_items: "{{ rbenv_users }}"
-  sudo: true
-  sudo_user: "{{ item }}"
+  become: true
+  become_user: "{{ item }}"
   when:
     - not "system" == "{{ rbenv.env }}"
     - default_gems_file is defined
@@ -114,8 +114,8 @@
 - name: set gemrc for select users
   copy: src=gemrc dest=~/.gemrc
   with_items: "{{ rbenv_users }}"
-  sudo: true
-  sudo_user: "{{ item }}"
+  become: true
+  become_user: "{{ item }}"
   when: not "system" == "{{ rbenv.env }}"
   ignore_errors: true
   tags:
@@ -124,8 +124,8 @@
 - name: set vars for select users
   copy: src=vars dest={{ rbenv_root }}/vars
   with_items: "{{ rbenv_users }}"
-  sudo: true
-  sudo_user: "{{ item }}"
+  become: true
+  become_user: "{{ item }}"
   when: not "system" == "{{ rbenv.env }}"
   ignore_errors: true
   tags:
@@ -158,8 +158,8 @@
 
 - name: check ruby {{ rbenv.ruby_version }} installed for select users
   shell: $SHELL -lc "rbenv versions | grep {{ rbenv.ruby_version }}"
-  sudo: true
-  sudo_user: "{{ item }}"
+  become: true
+  become_user: "{{ item }}"
   with_items: "{{ rbenv_users }}"
   when: not "system" == "{{ rbenv.env }}"
   register: ruby_installed
@@ -169,8 +169,8 @@
 
 - name: install ruby {{ rbenv.ruby_version }} for select users
   shell: $SHELL -lc "rbenv install {{ rbenv.ruby_version }}"
-  sudo: true
-  sudo_user: "{{ item[1] }}"
+  become: true
+  become_user: "{{ item[1] }}"
   with_together:
     - ruby_installed.results
     - rbenv_users
@@ -181,8 +181,8 @@
 
 - name: install ruby {{ rbenv.ruby_version }} for select users
   shell: $SHELL -lc "rbenv global {{ rbenv.ruby_version }} && rbenv rehash"
-  sudo: true
-  sudo_user: "{{ item[1] }}"
+  become: true
+  become_user: "{{ item[1] }}"
   with_together:
     - ruby_installed.results
     - rbenv_users
