@@ -103,7 +103,8 @@
   copy:
     src: theyvoteforyou_foreman
     dest: /etc/sudoers.d/
-  notify: sudo reload
+    validate: visudo -cf %s
+  # notify: sudo reload
 
 - name: Set up daily load cron job
   cron:

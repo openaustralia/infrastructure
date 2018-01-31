@@ -1,6 +1,16 @@
 # Playbook for development VMs on your local box
 ---
 
+# Ubuntu 16.04 LTS doesn't come with python pre-installed. We need that for
+# Ansible to work (for the gather facts). So install python first
+- hosts: all
+  become: true
+  gather_facts: False
+
+  tasks:
+  - name: install python 2
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
 - hosts: righttoknow
   roles:
     - custom_modules

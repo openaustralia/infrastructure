@@ -18,7 +18,8 @@
   version: 0.1.0
 
 - src: azavea.java
-  version: 0.2.1
+  # Latest version as of Jan 2018
+  version: 0.6.1
 
 - src: jnv.unattended-upgrades
   version: v1.0.1
