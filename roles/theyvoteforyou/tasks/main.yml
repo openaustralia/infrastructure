@@ -114,6 +114,12 @@
     weekday: 1-5
     job: "cd /srv/www/current && /usr/local/bin/bundle exec rake application:load:daily RAILS_ENV=production"
 
+# TODO: Install bundler (because ruby 2.3.1 doesn't have it pre-installed)
+# Not sure that this task below installs it with the correct version of ruby
+- name: Make sure that bundler gem is installed
+  gem:
+    name: bundler
+
 - name: DNS setup for theyvoteforyou.org.au
   dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="theyvoteforyou.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
   tags:
