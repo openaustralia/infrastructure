@@ -97,8 +97,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "morph.io.dev"                => "192.168.10.17"
   }
 
+  # Use this so that you don't need to give the machine name for all vagrant
+  # commands. Set this to whatever you're most working on at the moment.
+  primary_host = "theyvoteforyou.org.au.dev"
+
   hosts.each do |hostname, ip|
-    config.vm.define hostname do |host|
+    config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.network :private_network, ip: ip
       host.vm.hostname = hostname
     end
