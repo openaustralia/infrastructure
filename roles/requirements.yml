@@ -50,3 +50,7 @@
 - src: xcezx.aliases
   # This is missing some changes we made to our local copy
   version: v0.1.0
+
+- src: zzet.rbenv
+  # Switch to latest version as of Jan 2018
+  version: 3.4.0
