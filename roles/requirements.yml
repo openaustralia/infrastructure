@@ -13,3 +13,6 @@
   # Version 1.5.0 is the first version that includes the fix
   # https://github.com/ANXS/postgresql/commit/d28da5a52597f037fbca8bbac8e328d25eed72bc#diff-a34aabd4d2d9fb32e35c6814a8118bc7
   version: v1.5.0
+
+- src: azavea.elasticsearch
+  version: 0.1.0
