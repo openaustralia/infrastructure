@@ -22,3 +22,9 @@
 
 - src: jnv.unattended-upgrades
   version: v1.0.1
+
+- src: https://github.com/MaximeThoonsen/ansible-automysqlbackup-role
+  # This partially fixes what we directly committed to our local copy
+  # https://github.com/MaximeThoonsen/ansible-automysqlbackup-role/commit/273ac7444e68b34a02528afc43b412cb92d0e081#diff-2444ad0870f91f17ca6c2a5e96b26823
+  version: "273ac7444e68b34a02528afc43b412cb92d0e081"
+  name: MaximeThoonsen.automysqlbackup
