@@ -47,9 +47,8 @@
   # https://github.com/Stouts/Stouts.backup/commit/17b8f624e85494da5c41acf478706e1c52428984
   version: 3.4.2
 
-- src: xcezx.aliases
-  # This is missing some changes we made to our local copy
-  version: v0.1.0
+- src: MichaelRigart.aliases
+  version: bfffd92efff476f5a685ebd53d265f78babb48af
 
 - src: zzet.rbenv
   # Switch to latest version as of Jan 2018

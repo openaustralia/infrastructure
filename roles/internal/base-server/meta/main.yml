@@ -2,8 +2,8 @@
 dependencies:
   - role: deploy-user
     github_users: ['mlandauer', 'henare']
-  - role: xcezx.aliases
-    aliases:
+  - role: MichaelRigart.aliases
+    aliases_list:
       - {user: deploy, alias: root}
       - {user: root, alias: web-administrators@openaustralia.org}
   - role: ANXS.ntp
