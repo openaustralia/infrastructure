@@ -37,3 +37,7 @@
 - src: MaximeThoonsen.autopostgresqlbackup
   # This is missing some changes we made to our local copy
   version: v1.1
+
+- src: rvm_io.ruby
+  # This is missing some changes we made to our local copy
+  version: v1.3.5
