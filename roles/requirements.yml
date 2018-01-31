@@ -19,3 +19,6 @@
 
 - src: azavea.java
   version: 0.2.1
+
+- src: jnv.unattended-upgrades
+  version: v1.0.1
