@@ -5,11 +5,12 @@ dependencies:
     mysql_bind_address: '127.0.0.1'
     mysql_root_password: ''
     mysql_databases:
-      - name: planningalerts
+      - name: theyvoteforyou
   - role: abtris.nginx-passenger
-  - role: rvm_io.rvm1-ruby
+  - role: rvm_io.ruby
+    # TODO: How do we get it to use what's in the .ruby-version file?
     rvm1_rubies:
-      - ruby-2.0.0-p598
+      - ruby-2.3.1
     # Use round-robin pool of gpg key servers to avoid timeout
     rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
   - role: nickhammond.logrotate
@@ -22,14 +23,16 @@ dependencies:
           - compress
           - missingok
           - copytruncate
+  - role: azavea.elasticsearch
+    elasticsearch_bind_host: 127.0.0.1
   - role: Stouts.backup
-    backup_gpg_pw: "{{ planningalerts_backup_gpg_pw }}"
-    backup_target_user: "{{ planningalerts_backup_target_user }}"
-    backup_target_pass: "{{ planningalerts_backup_target_pass }}"
+    backup_gpg_pw: "{{ theyvoteforyou_backup_gpg_pw }}"
+    backup_target_user: "{{ theyvoteforyou_backup_target_user }}"
+    backup_target_pass: "{{ theyvoteforyou_backup_target_pass }}"
     backup_max_age: 6M
     backup_profiles:
       - name: automysqlbackup
         schedule: 0 4 * * *
         source: /var/lib/automysqlbackup
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
-        target: "s3://s3.amazonaws.com/oaf-backups/planningalerts/{{ inventory_hostname }}"
+        target: "s3://s3.amazonaws.com/oaf-backups/theyvoteforyou/{{ inventory_hostname }}"
