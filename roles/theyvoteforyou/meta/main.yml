@@ -8,8 +8,9 @@ dependencies:
       - name: theyvoteforyou
   - role: abtris.nginx-passenger
   - role: rvm_io.rvm1-ruby
+    # TODO: How do we get it to use what's in the .ruby-version file?
     rvm1_rubies:
-      - ruby-2.0.0-p598
+      - ruby-2.3.1
     # Use round-robin pool of gpg key servers to avoid timeout
     rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
   - role: nickhammond.logrotate
