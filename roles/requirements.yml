@@ -46,3 +46,7 @@
   # Using version 3.4.2 because it's the first to include the fix
   # https://github.com/Stouts/Stouts.backup/commit/17b8f624e85494da5c41acf478706e1c52428984
   version: 3.4.2
+
+- src: xcezx.aliases
+  # This is missing some changes we made to our local copy
+  version: v0.1.0
