@@ -51,6 +51,11 @@ $ vagrant plugin install vagrant-hostsupdater
 Create a file in your home directory `.infrastructure_ansible_vault_pass.txt` with the secret
 password used to encrypt the secret info in this repo
 
+Install required external roles with
+```
+ansible-galaxy install -r roles/requirements.yml -p roles/external
+```
+
 ## Provisioning
 
 ### Development
