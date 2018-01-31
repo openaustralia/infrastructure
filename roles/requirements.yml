@@ -1,2 +1,7 @@
 - src: abtris.nginx-passenger
   version: da82e7312488747b1e06a4af242aa52ffacad60b
+
+- src: ANXS.mysql
+  # Version 1.2.1 is the first version that applies the fix
+  # https://github.com/ANXS/mysql/commit/f8eebecd6627502a26d1864991b15ab97caa048b#diff-e009a2f628f6296f6af929d169317e00
+  version: v1.2.1
