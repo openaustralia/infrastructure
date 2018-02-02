@@ -1,5 +1,4 @@
 ---
-- include_vars: encrypted.yml
 - include_vars: encrypted_vars/dnsmadeeasy.yml
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
