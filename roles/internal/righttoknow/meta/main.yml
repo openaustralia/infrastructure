@@ -148,6 +148,7 @@ dependencies:
         source: /srv/www/shared/files
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/righttoknow_files"
+  - role: MaximeThoonsen.autopostgresqlbackup
 
   # List your role dependencies here, one per line. Only
   # dependencies available via galaxy should be listed here.

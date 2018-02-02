@@ -36,3 +36,4 @@ dependencies:
         source: /var/lib/automysqlbackup
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/theyvoteforyou/{{ inventory_hostname }}"
+  - role: MaximeThoonsen.automysqlbackup

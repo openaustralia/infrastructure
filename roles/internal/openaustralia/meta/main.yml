@@ -137,3 +137,4 @@ dependencies:
     # rvm1_rvm_check_for_updates: false
     # Use round-robin pool of gpg key servers to avoid timeout
     rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
+  - role: MaximeThoonsen.automysqlbackup

@@ -128,3 +128,4 @@ dependencies:
     mysql_databases:
       - name: wordpress
       - name: civicrm
+  - role: MaximeThoonsen.automysqlbackup
