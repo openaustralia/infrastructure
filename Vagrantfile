@@ -76,8 +76,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "electionleaflets" => ["electionleaflets.org.au.dev"],
       "theyvoteforyou"   => ["theyvoteforyou.org.au.dev"],
       "oaf"              => ["oaf.org.au.dev"],
-      "openaustralia"    => ["openaustralia.org.au.dev"],
-      "morph"            => ["morph.io.dev"]
+      "openaustralia"    => ["openaustralia.org.au.dev"]
     }
   end
 
@@ -93,8 +92,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "electionleaflets.org.au.dev" => "192.168.10.12",
     "theyvoteforyou.org.au.dev"   => "192.168.10.14",
     "oaf.org.au.dev"              => "192.168.10.15",
-    "openaustralia.org.au.dev"    => "192.168.10.16",
-    "morph.io.dev"                => "192.168.10.17"
+    "openaustralia.org.au.dev"    => "192.168.10.16"
   }
 
   # Use this so that you don't need to give the machine name for all vagrant
