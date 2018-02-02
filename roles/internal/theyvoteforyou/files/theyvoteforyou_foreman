@@ -1,4 +1,2 @@
-deploy  ALL = NOPASSWD: /usr/local/bin/bundle exec foreman export upstart /etc/init -a theyvoteforyou -u deploy -d /srv/www/current -l /srv/www/shared/log -f Procfile.ansible
-deploy  ALL = NOPASSWD: /sbin/start theyvoteforyou
-deploy  ALL = NOPASSWD: /sbin/stop theyvoteforyou
-deploy  ALL = NOPASSWD: /sbin/restart theyvoteforyou
+deploy  ALL = NOPASSWD: /usr/local/rvm/wrappers/default/bundle exec foreman export *
+deploy  ALL = NOPASSWD: /bin/systemctl restart theyvoteforyou.target
