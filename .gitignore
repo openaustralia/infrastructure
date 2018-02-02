@@ -1,2 +1,9 @@
 .vagrant
 roles/external
+
+# These certificates are generated for each user and shouldn't be checked in
+certificates/myCA.key
+certificates/myCA.pem
+certificates/theyvoteforyou.org.au.dev.key
+roles/internal/theyvoteforyou/files/theyvoteforyou.org.au.dev.key
+roles/internal/theyvoteforyou/files/theyvoteforyou.org.au.dev.pem
