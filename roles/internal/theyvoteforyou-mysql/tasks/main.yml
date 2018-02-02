@@ -1,2 +1,17 @@
 ---
 # tasks file for roles/internal/theyvoteforyou-mysql
+
+- name: Install mysql server
+  apt: pkg=mysql-server
+
+- name: Install dependency for following command
+  apt: pkg=python-mysqldb
+
+- name: Create theyvoteforyou database
+  mysql_db: name=theyvoteforyou
+
+- name: Create a theyvoteforyou user with access to the database
+  mysql_user:
+    name: theyvoteforyou
+    password: "{{ theyvoteforyou_mysql_password }}"
+    priv: 'theyvoteforyou.*:ALL'

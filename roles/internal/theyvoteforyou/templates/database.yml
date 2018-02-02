@@ -1,0 +1,5 @@
+production:
+  adapter: mysql2
+  database: theyvoteforyou
+  username: theyvoteforyou
+  password: "{{ theyvoteforyou_mysql_password }}"

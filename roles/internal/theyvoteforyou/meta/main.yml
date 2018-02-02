@@ -1,11 +1,7 @@
 ---
 dependencies:
   - role: base-server
-  - role: ANXS.mysql
-    mysql_bind_address: '127.0.0.1'
-    mysql_root_password: ''
-    mysql_databases:
-      - name: theyvoteforyou
+  - role: theyvoteforyou-mysql
   - role: abtris.nginx-passenger
   - role: rvm_io.ruby
     # TODO: How do we get it to use what's in the .ruby-version file?
