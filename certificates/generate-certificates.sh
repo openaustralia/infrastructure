@@ -3,15 +3,26 @@
 # Generates certificates for local development. A single certificate, that
 # is unique to you, is added to your browser
 
-# Generates a private key with passphrase "abcd"
-echo "Generating private key for root certificate..."
-openssl genrsa -des3 -passout pass:abcd -out myCA.key 2048
+# Generates a private key with passphrase "abcd" (but only if it doesn't already exist)
+if [ ! -f myCA.key ]; then
+  echo "Generating private key for root certificate..."
+  openssl genrsa -des3 -passout pass:abcd -out myCA.key 2048
+fi
 
 # Generate the root certificate (which you need to trust)
-echo "Generating root certificate..."
-openssl req \
-  -x509 -new -nodes -key myCA.key -sha256 -days 1825 -out myCA.pem \
-  -passin pass:abcd -subj '/C=AU/CN=OAF Root CA'
+# If you want to regenerate the root certificate then just delete it. You'll need
+# to reload the certificate to trust the new one.
+if [ ! -f myCA.pem ]; then
+  echo "Generating root certificate..."
+  openssl req \
+    -x509 -new -nodes -key myCA.key -sha256 -days 1825 -out myCA.pem \
+    -passin pass:abcd -subj '/C=AU/CN=OAF Root CA'
+  echo "**********************************************************************************************"
+  echo "Now you want to make your browser trust certificates signed with the root certificate myCA.pem"
+  echo "For instructions on how to do this on Mac OS see the section 'Installing your root certificate'"
+  echo "on https://deliciousbrains.com/ssl-certificate-authority-for-local-https-development/."
+  echo "**********************************************************************************************"
+fi
 
 echo "Generating private key for theyvoteforyou.org.au.dev..."
 openssl genrsa -out theyvoteforyou.org.au.dev.key 2048
