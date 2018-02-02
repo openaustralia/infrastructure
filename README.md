@@ -264,7 +264,7 @@ For instructions on how to do this on Mac OS see the section "Installing your ro
 ansible-vault view roles/theyvoteforyou/vars/encrypted.yml
 ```
 
-The value of `encrypted_theyvoteforyou_development_ssl_key` should already be
+The file `roles/internal/theyvoteforyou/files/theyvoteforyou.org.au.dev.key` should already be
 in a file in called `certificates/theyvoteforyou.org.au.dev.key`.
 
 Generate a CSR:

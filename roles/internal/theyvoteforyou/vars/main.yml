@@ -6,7 +6,6 @@ cuttlefish_user_name: "{{ encrypted_cuttlefish_user_name }}"
 cuttlefish_password: "{{ encrypted_cuttlefish_password }}"
 honeybadger_api_key: "{{ encrypted_honeybadger_api_key }}"
 google_analytics_code: UA-3107958-15
-theyvoteforyou_development_ssl_key: "{{ encrypted_theyvoteforyou_development_ssl_key }}"
 theyvoteforyou_test_ssl_key: "{{ encrypted_theyvoteforyou_test_ssl_key }}"
 theyvoteforyou_production_ssl_key: "{{ encrypted_theyvoteforyou_production_ssl_key }}"
 # TODO These keys are replicated in the roles. Remove this duplication

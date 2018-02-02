@@ -55,7 +55,7 @@
 
 - name: Copy self-signed development SSL key
   copy:
-    content: "{{ theyvoteforyou_development_ssl_key }}"
+    src: theyvoteforyou.org.au.dev.key
     dest: /etc/ssl/private/theyvoteforyou.org.au.dev.key
     owner: root
     group: ssl-cert
