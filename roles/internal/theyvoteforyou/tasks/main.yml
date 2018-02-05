@@ -118,7 +118,15 @@
     job: "cd /srv/www/current && /usr/local/bin/bundle exec rake application:load:daily RAILS_ENV=production"
 
 - name: DNS setup for theyvoteforyou.org.au
-  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="theyvoteforyou.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
+  dnsmadeeasy:
+    account_key: "{{ dnsmadeeasy_key }}"
+    account_secret: "{{ dnsmadeeasy_secret }}"
+    domain: "theyvoteforyou.org.au"
+    record_ttl: 1800
+    state: present
+    record_name: "{{ item.name }}"
+    record_type: "{{ item.type }}"
+    record_value: '{{ item.value }}'
   tags:
     - dns
   with_items:
@@ -136,7 +144,15 @@
     - {type: "TXT", name: "cuttlefish._domainkey", value: '"k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0toFOrXAOcbnS8LNeKQsetYEO4Qh1RLGCx9+prCDeXBgs0obFCPWyanqxiPL6WEZCv+Vj4TCBPfoVCR1G0hszOZIA1QCEx0tG4v3dE2QsS3tSVCl9ax1h0oi4fC5aJ7XdxI+e2JVcWwmSSCLoKbkJYpj+6VBr86jUZl6f3JeUH/RuIeS6jIHRFmM6Mz/BfzloxM2wbDK32""0DUs3yWkL3/RcwkT6ebI9oS+ZWIxKXAgEcreTG0JltgPR/ABPFNzms4mAtLwPojF/FAYzGCj6diGbB61LNcMwe0MrutvLucclhnSefG5E3GVNqLrQA1oXzwFLFsq1H0x8rFccm+GNAuQIDAQAB"'}
 
 - name: DNS setup for theyvoteforyou.org
-  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="theyvoteforyou.org" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
+  dnsmadeeasy:
+    account_key: "{{ dnsmadeeasy_key }}"
+    account_secret: "{{ dnsmadeeasy_secret }}"
+    domain: "theyvoteforyou.org"
+    record_ttl: 1800
+    state: present
+    record_name: "{{ item.name }}"
+    record_type: "{{ item.type }}"
+    record_value: '{{ item.value }}'
   tags:
     - dns
   with_items:
@@ -144,7 +160,15 @@
     - {type: "CNAME", name: "www",    value: ""}
 
 - name: DNS setup for theyvoteforyou.com.au
-  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="theyvoteforyou.com.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
+  dnsmadeeasy:
+    account_key: "{{ dnsmadeeasy_key }}"
+    account_secret: "{{ dnsmadeeasy_secret }}"
+    domain: "theyvoteforyou.com.au"
+    record_ttl: 1800
+    state: present
+    record_name: "{{ item.name }}"
+    record_type: "{{ item.type }}"
+    record_value: '{{ item.value }}'
   tags:
     - dns
   with_items:
