@@ -1,6 +1,7 @@
 .vagrant
 roles/external
 test.pem
+set-aws-access-keys.sh
 
 # These certificates are generated for each user and shouldn't be checked in
 certificates/myCA.key
