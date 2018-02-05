@@ -172,6 +172,10 @@ To do a dry-run for any DNS update on theyvoteforyou
 ansible-playbook --check --tags=dns -i development-hosts --limit=theyvoteforyou site.yml
 ```
 
+The DNS setup for theyvoteforyou is up to date as of 5 Feb 2018.
+
+**WARNING**: The other domains haven't been recently checked yet
+
 We're using Ansible to setup DNS for each project. The tasks that do that are currently in the
 associated role. So, for instance the tasks to setup the oaf.org.au domain are in the `oaf` role.
 
