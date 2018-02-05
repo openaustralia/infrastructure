@@ -166,6 +166,11 @@ cap -S stage=development deploy:setup_db
 
 ## DNS Setup
 
+To do a dry-run for any DNS update on theyvoteforyou
+```
+ansible-playbook --check --tags=dns -i development-hosts --limit=theyvoteforyou site.yml
+```
+
 We're using Ansible to setup DNS for each project. The tasks that do that are currently in the
 associated role. So, for instance the tasks to setup the oaf.org.au domain are in the `oaf` role.
 
