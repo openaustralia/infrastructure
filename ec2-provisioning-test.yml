@@ -24,6 +24,9 @@
         # Ubuntu 16.04 in Sydney
         image: "ami-974eb0f5"
         wait: true
+        count_tag:
+          Name: theyvoteforyou
+        exact_count: 1
         instance_tags:
           Name: theyvoteforyou
       register: ec2
