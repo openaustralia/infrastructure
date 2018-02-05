@@ -103,6 +103,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.network :private_network, ip: ip
       host.vm.hostname = hostname
+      # For each host set up some common aliases
+      host.hostsupdater.aliases = ["test.#{hostname}", "www.#{hostname}"]
     end
   end
 end
