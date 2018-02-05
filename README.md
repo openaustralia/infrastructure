@@ -217,15 +217,6 @@ root of the domain.
 
 To add a new domain, first you will need to add the domain in [DNSMadeEasy web console](https://cp.dnsmadeeasy.com/). Then, you can copy the Ansible dnsmadeeasy task template from any of the roles that use it remembering to change the `domain=` parameter to the new domain name.
 
-## Note about the custom dnsmadeeasy module
-
-We've made some fixes to the dnsmadeeasy module which allow it work for MX and TXT records, root A
-records and CNAMEs pointing to the domain root - well basically it was completely broken.
-
-We're trying to get the [changes merged into Ansible](https://github.com/ansible/ansible-modules-extras/pull/269).
-
-In the meantime, our updated version is used and included automatically from `custom_modules/library/dnsmadeeasy.py`
-
 ## Backups
 
 Data directories of servers are backed up to S3 using Duply. For most servers this means backing up the automysqlbackup directory.

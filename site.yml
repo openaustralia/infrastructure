@@ -14,38 +14,32 @@
 
 - hosts: righttoknow
   roles:
-    - custom_modules
     - righttoknow
   vars_files:
     - encrypted_vars/righttoknow.yml
 
 - hosts: planningalerts
   roles:
-    - custom_modules
     - planningalerts
   vars_files:
     - encrypted_vars/planningalerts.yml
 
 - hosts: electionleaflets
   roles:
-    - custom_modules
     - electionleaflets
   vars_files:
     - encrypted_vars/electionleaflets.yml
 
 - hosts: theyvoteforyou
   roles:
-    - custom_modules
     - theyvoteforyou
   vars_files:
     - encrypted_vars/theyvoteforyou.yml
 
 - hosts: oaf
   roles:
-    - custom_modules
     - oaf
 
 - hosts: openaustralia
   roles:
-    - custom_modules
     - openaustralia
