@@ -1,5 +1,6 @@
 .vagrant
 roles/external
+test.pem
 
 # These certificates are generated for each user and shouldn't be checked in
 certificates/myCA.key

@@ -1,0 +1,29 @@
+# This is a test playbook for creating an ec2 instance for theyvoteforyou
+
+- hosts: localhost
+  connection: local
+  gather_facts: False
+
+  tasks:
+
+    - include_vars:
+        file: encrypted_vars/aws.yml
+
+    - name: Provision a set of instances
+      ec2:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        # Sydney
+        region: 'ap-southeast-2'
+        key_name: test
+        # group: test
+        instance_type: t2.micro
+        # Ubuntu 16.04 in Sydney
+        image: "ami-974eb0f5"
+        wait: true
+        exact_count: 1
+        count_tag:
+          Name: Demo
+        instance_tags:
+          Name: Demo
+      register: ec2
