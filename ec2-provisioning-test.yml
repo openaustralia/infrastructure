@@ -1,5 +1,8 @@
 # This is a test playbook for creating an ec2 instance for theyvoteforyou
 
+# Run this like so:
+# ansible-playbook ec2-provisioning-test.yml
+
 - hosts: localhost
   connection: local
   gather_facts: False
@@ -21,9 +24,6 @@
         # Ubuntu 16.04 in Sydney
         image: "ami-974eb0f5"
         wait: true
-        exact_count: 1
-        count_tag:
-          Name: Demo
         instance_tags:
-          Name: Demo
+          Name: theyvoteforyou
       register: ec2
