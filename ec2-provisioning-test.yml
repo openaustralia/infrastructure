@@ -81,8 +81,6 @@
 - hosts: tag_Name_theyvoteforyou
   become: true
   tasks:
-    - debug:
-        msg: "inventory_hostname: {{ inventory_hostname }}"
     # Run this from the machine in question so we easy access to its address
     # Only run this if this is running on an EC2 instance
     # TODO: Move this to the theyvoteforyou role
