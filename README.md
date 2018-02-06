@@ -139,6 +139,7 @@ After provisioning, set up and deploy from the
 [Public Whip repository](https://github.com/openaustralia/publicwhip/)
 using **Mina**:
 
+
 ```
 bundle exec mina setup
 bundle exec mina deploy
@@ -146,6 +147,13 @@ bundle exec mina deploy
 bundle exec mina rake[db:seed]
 # Optionally build index so search works
 bundle exec mina rake[searchkick:reindex:all]
+```
+
+or on ec2
+```
+bundle exec cap ec2 deploy
+bundle exec cap ec2 app:db:seed
+bundle exec cap ec2 app:searchkick:reindex:all
 ```
 
 ### OpenAustralia
