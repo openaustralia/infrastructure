@@ -1,3 +1,7 @@
 ---
 ansible_user: ubuntu
 ansible_ssh_private_key_file: 'test.pem'
+# Override the default path in the theyvoteforyou role
+# TODO: Probably want let's encrypt to be the default and override for development
+theyvoteforyou_ssl_certificate_path: /etc/letsencrypt/live/ec2.theyvoteforyou.org.au/cert.pem
+theyvoteforyou_ssl_certificate_key_path:  /etc/letsencrypt/live/ec2.theyvoteforyou.org.au/privkey.pem
