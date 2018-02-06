@@ -55,3 +55,6 @@
 - src: zzet.rbenv
   # Switch to latest version as of Jan 2018
   version: 3.4.0
+
+- src: geerlingguy.certbot
+  version: 3.0.0

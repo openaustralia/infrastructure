@@ -66,6 +66,20 @@
 
 - hosts: tag_Name_theyvoteforyou
   become: true
+  vars:
+    certbot_auto_renew_user: deploy
+    certbot_auto_renew_minute: 10
+    certbot_auto_renew_hour: 7
+    certbot_create_if_missing: yes
+    certbot_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - ec2.theyvoteforyou.org.au
+  roles:
+    - geerlingguy.certbot
+
+- hosts: tag_Name_theyvoteforyou
+  become: true
   tasks:
     - debug:
         msg: "inventory_hostname: {{ inventory_hostname }}"
