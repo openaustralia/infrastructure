@@ -12,12 +12,15 @@
     path: '{{item}}'
   with_items:
     - /srv/www
-    - /srv/www/shared
+    - /srv/www/production
+    - /srv/www/production/shared
+    - /srv/www/staging
+    - /srv/www/staging/shared
 
 - name: Copy application configuration files
   copy:
     src: "{{item}}"
-    dest: /srv/www/shared/config/
+    dest: /srv/www/production/shared/config/
     owner: deploy
     group: deploy
   with_items:
@@ -27,7 +30,7 @@
 - name: Copy application configuration templates
   template:
     src: "{{item}}"
-    dest: /srv/www/shared/config/
+    dest: /srv/www/production/shared/config/
     owner: deploy
     group: deploy
   with_items:
@@ -115,7 +118,7 @@
     hour: 9
     minute: 15
     weekday: 1-5
-    job: "cd /srv/www/current && /usr/local/bin/bundle exec rake application:load:daily RAILS_ENV=production"
+    job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake application:load:daily RAILS_ENV=production"
 
 - name: DNS setup for theyvoteforyou.org.au
   dnsmadeeasy:

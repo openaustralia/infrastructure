@@ -4,7 +4,7 @@ server {
   listen 80;
   server_name {{ theyvoteforyou_domain }};
 
-  root /srv/www/current/public;
+  root /srv/www/production/current/public;
   passenger_enabled on;
 }
 
@@ -13,7 +13,7 @@ server {
   listen 443 ssl spdy;
   server_name {{ theyvoteforyou_domain }};
 
-  root /srv/www/current/public;
+  root /srv/www/production/current/public;
   passenger_enabled on;
 
   location ^~ /assets/ {
@@ -38,7 +38,7 @@ server {
   listen 80;
   server_name test.{{ theyvoteforyou_domain }};
 
-  root /srv/www/current/public;
+  root /srv/www/staging/current/public;
   passenger_enabled on;
 
   auth_basic "Staging Site";
@@ -50,7 +50,7 @@ server {
   listen 443 ssl spdy;
   server_name test.{{ theyvoteforyou_domain }};
 
-  root /srv/www/current/public;
+  root /srv/www/staging/current/public;
   passenger_enabled on;
 
   auth_basic "Staging Site";
