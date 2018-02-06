@@ -64,6 +64,29 @@
     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
     changed_when: False
 
+- hosts: tag_Name_theyvoteforyou
+  become: true
+  tasks:
+    - debug:
+        msg: "inventory_hostname: {{ inventory_hostname }}"
+    # Run this from the machine in question so we easy access to its address
+    # Only run this if this is running on an EC2 instance
+    # TODO: Move this to the theyvoteforyou role
+    - name: Setup DNS for theyvoteforyou EC2 instance
+      dnsmadeeasy:
+        account_key: "{{ encrypted_dnsmadeeasy_key }}"
+        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
+        domain: "theyvoteforyou.org.au"
+        record_ttl: 60
+        state: present
+        record_name: ec2
+        record_type: A
+        record_value: "{{ inventory_hostname }}"
+      tags:
+        - dns
+  vars_files:
+    - encrypted_vars/dnsmadeeasy.yml
+
 # TODO: Don't want to run dns update stuff
 - hosts: tag_Name_theyvoteforyou
   become: true
