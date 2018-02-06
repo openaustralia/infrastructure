@@ -1,7 +1,11 @@
 # This is a test playbook for creating an ec2 instance for theyvoteforyou
 
 # Run this like so:
-# ansible-playbook ec2-provisioning-test.yml
+# ansible-playbook -i ec2.py ec2-provisioning-test.yml
+
+# Before running this, however, you will need to set the environment variables
+# export AWS_ACCESS_KEY_ID='AK123'
+# export AWS_SECRET_ACCESS_KEY='abc123'
 
 - hosts: localhost
   connection: local
@@ -9,13 +13,8 @@
 
   tasks:
 
-    - include_vars:
-        file: encrypted_vars/aws.yml
-
     - name: Provision a set of instances
       ec2:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
         # Sydney
         region: 'ap-southeast-2'
         key_name: test
@@ -30,3 +29,28 @@
         instance_tags:
           Name: theyvoteforyou
       register: ec2
+
+    - name: Add all instance public IPs to host group
+      add_host:
+        hostname: "{{ item.public_ip }}"
+        groups:
+          - tag_Name_theyvoteforyou
+          - ec2
+      with_items: "{{ ec2.instances }}"
+
+- hosts: tag_Name_theyvoteforyou
+  become: true
+  gather_facts: False
+
+  tasks:
+  - name: install python 2
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+    changed_when: False
+
+# TODO: Don't want to run dns update stuff
+- hosts: tag_Name_theyvoteforyou
+  become: true
+  roles:
+    - theyvoteforyou
+  vars_files:
+    - encrypted_vars/theyvoteforyou.yml
