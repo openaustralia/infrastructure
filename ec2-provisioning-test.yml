@@ -97,7 +97,16 @@
   vars_files:
     - encrypted_vars/dnsmadeeasy.yml
 
+# TODO: Don't want to run dns update stuff
+- hosts: tag_Name_theyvoteforyou
+  become: true
+  roles:
+    - theyvoteforyou
+  vars_files:
+    - encrypted_vars/theyvoteforyou.yml
+
 # This needs to run after the two DNS entries for the hosts are added
+# It also needs to be run after nginx has been installed
 - hosts: tag_Name_theyvoteforyou
   become: true
   vars:
@@ -114,11 +123,3 @@
           - test.ec2.theyvoteforyou.org.au
   roles:
     - geerlingguy.certbot
-
-# TODO: Don't want to run dns update stuff
-- hosts: tag_Name_theyvoteforyou
-  become: true
-  roles:
-    - theyvoteforyou
-  vars_files:
-    - encrypted_vars/theyvoteforyou.yml
