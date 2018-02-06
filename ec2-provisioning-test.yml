@@ -7,18 +7,35 @@
 # export AWS_ACCESS_KEY_ID='AK123'
 # export AWS_SECRET_ACCESS_KEY='abc123'
 
+# More local requirements:
+# `sudo pip install --ignore-installed six boto3`
+#
+
 - hosts: localhost
   connection: local
   gather_facts: False
 
   tasks:
 
+    - name: Set up security group for theyvoteforyou
+      ec2_group:
+        name: theyvoteforyou
+        description: theyvoteforyou security group
+        region: 'ap-southeast-2'
+        rules:
+        - proto: tcp
+          ports:
+            - 22
+            - 80
+            - 443
+          cidr_ip: 0.0.0.0/0
+
     - name: Provision a set of instances
       ec2:
         # Sydney
         region: 'ap-southeast-2'
         key_name: test
-        # group: test
+        group: theyvoteforyou
         instance_type: t2.micro
         # Ubuntu 16.04 in Sydney
         image: "ami-974eb0f5"
