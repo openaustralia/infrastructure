@@ -66,20 +66,6 @@
 
 - hosts: tag_Name_theyvoteforyou
   become: true
-  vars:
-    certbot_auto_renew_user: deploy
-    certbot_auto_renew_minute: 10
-    certbot_auto_renew_hour: 7
-    certbot_create_if_missing: yes
-    certbot_certs:
-      - email: contact@oaf.org.au
-        domains:
-          - ec2.theyvoteforyou.org.au
-  roles:
-    - geerlingguy.certbot
-
-- hosts: tag_Name_theyvoteforyou
-  become: true
   tasks:
     # Run this from the machine in question so we easy access to its address
     # Only run this if this is running on an EC2 instance
@@ -91,13 +77,43 @@
         domain: "theyvoteforyou.org.au"
         record_ttl: 60
         state: present
-        record_name: ec2
         record_type: A
+        record_name: ec2
         record_value: "{{ inventory_hostname }}"
+      tags:
+        - dns
+    - name: Setup DNS for theyvoteforyou EC2 instance
+      dnsmadeeasy:
+        account_key: "{{ encrypted_dnsmadeeasy_key }}"
+        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
+        domain: "theyvoteforyou.org.au"
+        record_ttl: 60
+        state: present
+        record_type: CNAME
+        record_name: "test.ec2"
+        record_value: ec2
       tags:
         - dns
   vars_files:
     - encrypted_vars/dnsmadeeasy.yml
+
+# This needs to run after the two DNS entries for the hosts are added
+- hosts: tag_Name_theyvoteforyou
+  become: true
+  vars:
+    certbot_auto_renew_user: deploy
+    certbot_auto_renew_minute: 10
+    certbot_auto_renew_hour: 7
+    certbot_create_if_missing: yes
+    certbot_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - ec2.theyvoteforyou.org.au
+      - email: contact@oaf.org.au
+        domains:
+          - test.ec2.theyvoteforyou.org.au
+  roles:
+    - geerlingguy.certbot
 
 # TODO: Don't want to run dns update stuff
 - hosts: tag_Name_theyvoteforyou
