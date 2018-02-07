@@ -122,15 +122,6 @@
 
     - name: Install nginx (for the benefit of certbot)
       apt: pkg=nginx
-    - name: Get all the records for this domain
-      dnsmadeeasy:
-        account_key: "{{ encrypted_dnsmadeeasy_key }}"
-        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
-        domain: "theyvoteforyou.org.au"
-        state: present
-      register: response
-      tags:
-        - dns
 
 # TODO: Don't want to run dns update stuff
 - hosts: tag_Name_theyvoteforyou
