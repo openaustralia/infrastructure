@@ -1,3 +1,8 @@
+# TODO: Split this configuration file into 3:
+# * default
+# * production
+# * staging
+
 # Redirects
 server {
   listen 80 default_server;
