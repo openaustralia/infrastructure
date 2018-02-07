@@ -1,18 +1,24 @@
-# Redirects
+# TODO: We might as well just redirect always at the nginx level
 server {
-  listen 80 default_server;
-  server_name _;
-  server_name_in_redirect off;
-  rewrite ^/(.*) https://{{ theyvoteforyou_domain }}/$1 permanent;
+  listen 80;
+  server_name {{ theyvoteforyou_domain }};
+
+  root /srv/www/production/current/public;
+  passenger_enabled on;
 }
 
-# In reality we can't properly serve a request for any domain that happens to be
-# pointed at this because we only have certificates for some of them. But
-# doing it anyway because it makes the configuration a bit smaller
 server {
-  listen 443 ssl http2 default_server;
-  server_name _;
-  rewrite ^/(.*) https://{{ theyvoteforyou_domain }}/$1 permanent;
+  listen 443 ssl http2;
+  server_name {{ theyvoteforyou_domain }};
+
+  root /srv/www/production/current/public;
+  passenger_enabled on;
+
+  location ^~ /assets/ {
+    gzip_static on;
+    expires max;
+    add_header Cache-Control public;
+  }
 
   ssl on;
   ssl_certificate {{ theyvoteforyou_ssl_certificate_path }};
