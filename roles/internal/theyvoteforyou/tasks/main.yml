@@ -192,3 +192,6 @@
   with_items:
     - {type: "A", name: "", value: "103.243.244.10"}
     - {type: "CNAME", name: "www",    value: ""}
+
+- name: Enable theyvoteforyou service (probably won't work with fresh install)
+  systemd: name=theyvoteforyou.target daemon_reload=yes enabled=yes state=started
