@@ -1,9 +1,4 @@
 ---
-- include_vars:
-    file: encrypted_vars/dnsmadeeasy.yml
-  tags:
-    - dns
-
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
     state: directory
@@ -134,6 +129,11 @@
     minute: 15
     weekday: 1-5
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake application:load:daily RAILS_ENV=production"
+
+- include_vars:
+    file: encrypted_vars/dnsmadeeasy.yml
+  tags:
+    - dns
 
 - name: DNS setup for theyvoteforyou.org.au
   dnsmadeeasy:
