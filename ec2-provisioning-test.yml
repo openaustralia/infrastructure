@@ -123,16 +123,12 @@
     - name: Install nginx (for the benefit of certbot)
       apt: pkg=nginx
 
-# TODO: Don't want to run dns update stuff
-- hosts: tag_Name_theyvoteforyou
-  become: true
-  roles:
-    - theyvoteforyou
   vars_files:
-    - encrypted_vars/theyvoteforyou.yml
+    - encrypted_vars/dnsmadeeasy.yml
 
 # This needs to run after the two DNS entries for the hosts are added
 # It also needs to be run after nginx has been installed
+# And it depends on the deploy user being created
 - hosts: tag_Name_theyvoteforyou
   become: true
   vars:
@@ -147,5 +143,15 @@
       - email: contact@oaf.org.au
         domains:
           - test.ec2.theyvoteforyou.org.au
+    github_users: []
   roles:
+    - deploy-user
     - geerlingguy.certbot
+
+# TODO: Don't want to run dns update stuff
+- hosts: tag_Name_theyvoteforyou
+  become: true
+  roles:
+    - theyvoteforyou
+  vars_files:
+    - encrypted_vars/theyvoteforyou.yml
