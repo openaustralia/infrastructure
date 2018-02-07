@@ -48,6 +48,14 @@
           Name: theyvoteforyou
       register: ec2
 
+    # For this to work we need to have allocated one of these
+    # and we need to update the ip address that's used here
+    - name: Allocate one of our elastic IPs to the instance
+      ec2_eip:
+        device_id: "{{ ec2.tagged_instances[0].id }}"
+        ip: 13.211.24.93
+        region: 'ap-southeast-2'
+
     - name: Add all instance public IPs to host group
       add_host:
         hostname: "{{ item.public_ip }}"
