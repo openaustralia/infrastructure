@@ -149,11 +149,9 @@ bundle exec mina rake[db:seed]
 bundle exec mina rake[searchkick:reindex:all]
 ```
 
-or on ec2
+or on ec2 (if deploying for the first time)
 ```
-bundle exec cap ec2 deploy
-bundle exec cap ec2 app:db:seed
-bundle exec cap ec2 app:searchkick:reindex:all
+bundle exec cap ec2 deploy app:db:seed app:searchkick:reindex:all
 ```
 
 ### OpenAustralia
