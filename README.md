@@ -137,22 +137,14 @@ cap -S stage=development deploy:setup_db
 
 After provisioning, set up and deploy from the
 [Public Whip repository](https://github.com/openaustralia/publicwhip/)
-using **Mina**:
+using Capistrano:
 
-
-```
-bundle exec mina setup
-bundle exec mina deploy
-# Optionally load seed data (the home page crashes with no data)
-bundle exec mina rake[db:seed]
-# Optionally build index so search works
-bundle exec mina rake[searchkick:reindex:all]
-```
-
-or on ec2 (if deploying for the first time)
+On ec2 (if deploying for the first time)
 ```
 bundle exec cap ec2 deploy app:db:seed app:searchkick:reindex:all
 ```
+
+TODO: Deploying for development
 
 ### OpenAustralia
 
