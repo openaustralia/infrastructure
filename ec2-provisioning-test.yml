@@ -67,6 +67,34 @@
 - hosts: tag_Name_theyvoteforyou
   become: true
   tasks:
+    - name: Get all the records for this domain
+      dnsmadeeasy:
+        account_key: "{{ encrypted_dnsmadeeasy_key }}"
+        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
+        domain: "theyvoteforyou.org.au"
+        state: present
+      register: response
+      tags:
+        - dns
+
+    # This will currently delete a record and add the same one back. Not
+    # what we actually want
+    # TODO: Fix this
+    - name: Remove any pre-existing A records for ec2
+      dnsmadeeasy:
+        account_key: "{{ encrypted_dnsmadeeasy_key }}"
+        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
+        domain: "theyvoteforyou.org.au"
+        state: absent
+        record_type: A
+        record_name: ec2
+        record_value: "{{ item }}"
+      with_items: "{{ response | json_query(query) }}"
+      vars:
+        query: "result[?type=='A'] | [?name=='ec2'].value"
+      tags:
+        - dns
+
     # Run this from the machine in question so we easy access to its address
     # Only run this if this is running on an EC2 instance
     # TODO: Move this to the theyvoteforyou role
