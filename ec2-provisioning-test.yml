@@ -155,11 +155,11 @@
       # www.theyvoteforyou.com.au
       - email: contact@oaf.org.au
         domains:
-          - ec2.theyvoteforyou.org.au
-      # TODO: In production this should be test.theyvoteforyou.org.au
+          - "{{ theyvoteforyou_domain }}"
+          - www."{{ theyvoteforyou_domain }}"
       - email: contact@oaf.org.au
         domains:
-          - test.ec2.theyvoteforyou.org.au
+          - "test.{{ theyvoteforyou_domain }}"
     github_users: []
   roles:
     - deploy-user
