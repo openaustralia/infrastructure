@@ -1,10 +1,7 @@
-# TODO: We might as well just redirect always at the nginx level
 server {
   listen 80;
   server_name {{ theyvoteforyou_domain }};
-
-  root /srv/www/production/current/public;
-  passenger_enabled on;
+  rewrite ^/(.*) https://{{ theyvoteforyou_domain }}/$1 permanent;
 }
 
 server {

@@ -1,13 +1,7 @@
-# TODO: This should just redirect to https for staging
 server {
   listen 80;
   server_name test.{{ theyvoteforyou_domain }};
-
-  root /srv/www/staging/current/public;
-  passenger_enabled on;
-
-  auth_basic "Staging Site";
-  auth_basic_user_file htpasswd;
+  rewrite ^/(.*) https://test.{{ theyvoteforyou_domain }}/$1 permanent;
 }
 
 server {
