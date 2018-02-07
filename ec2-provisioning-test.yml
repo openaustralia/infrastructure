@@ -36,7 +36,8 @@
         region: 'ap-southeast-2'
         key_name: test
         group: theyvoteforyou
-        instance_type: t2.micro
+        # t2.micro doesn't give us enough memory
+        instance_type: t2.small
         # Ubuntu 16.04 in Sydney
         image: "ami-974eb0f5"
         wait: true
