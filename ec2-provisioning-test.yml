@@ -67,38 +67,10 @@
 - hosts: tag_Name_theyvoteforyou
   become: true
   tasks:
-    - name: Get all the records for this domain
-      dnsmadeeasy:
-        account_key: "{{ encrypted_dnsmadeeasy_key }}"
-        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
-        domain: "theyvoteforyou.org.au"
-        state: present
-      register: response
-      tags:
-        - dns
-
-    # This will currently delete a record and add the same one back. Not
-    # what we actually want
-    # TODO: Fix this
-    - name: Remove any pre-existing A records for ec2
-      dnsmadeeasy:
-        account_key: "{{ encrypted_dnsmadeeasy_key }}"
-        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
-        domain: "theyvoteforyou.org.au"
-        state: absent
-        record_type: A
-        record_name: ec2
-        record_value: "{{ item }}"
-      with_items: "{{ response | json_query(query) }}"
-      vars:
-        query: "result[?type=='A'] | [?name=='ec2'].value"
-      tags:
-        - dns
-
     # Run this from the machine in question so we easy access to its address
     # Only run this if this is running on an EC2 instance
     # TODO: Move this to the theyvoteforyou role
-    - name: Setup DNS for theyvoteforyou EC2 instance
+    - name: Setup DNS for ec2.theyvoteforyou.org.au
       dnsmadeeasy:
         account_key: "{{ encrypted_dnsmadeeasy_key }}"
         account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
@@ -110,7 +82,8 @@
         record_value: "{{ inventory_hostname }}"
       tags:
         - dns
-    - name: Setup DNS for theyvoteforyou EC2 instance
+
+    - name: Setup DNS for test.ec2.theyvoteforyou.org.au
       dnsmadeeasy:
         account_key: "{{ encrypted_dnsmadeeasy_key }}"
         account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
@@ -122,8 +95,41 @@
         record_value: ec2
       tags:
         - dns
-  vars_files:
-    - encrypted_vars/dnsmadeeasy.yml
+
+    - name: Get all the DNS records for theyvoteforyou.org.au
+      dnsmadeeasy:
+        account_key: "{{ encrypted_dnsmadeeasy_key }}"
+        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
+        domain: "theyvoteforyou.org.au"
+        state: present
+      register: response
+
+    - name: Remove any A records for ec2 that we don't want
+      dnsmadeeasy:
+        account_key: "{{ encrypted_dnsmadeeasy_key }}"
+        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
+        domain: "theyvoteforyou.org.au"
+        state: absent
+        record_type: A
+        record_name: ec2
+        record_value: "{{ item }}"
+      with_items: "{{ response | json_query(query) }}"
+      vars:
+        query: "result[?type=='A'] | [?name=='ec2'] | [?value!='{{ inventory_hostname }}'].value"
+      tags:
+        - dns
+
+    - name: Install nginx (for the benefit of certbot)
+      apt: pkg=nginx
+    - name: Get all the records for this domain
+      dnsmadeeasy:
+        account_key: "{{ encrypted_dnsmadeeasy_key }}"
+        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
+        domain: "theyvoteforyou.org.au"
+        state: present
+      register: response
+      tags:
+        - dns
 
 # TODO: Don't want to run dns update stuff
 - hosts: tag_Name_theyvoteforyou
