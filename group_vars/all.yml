@@ -1,0 +1,2 @@
+# We put this here because actually most ec2 commands are run on localhost
+ec2_region: 'ap-southeast-2'
