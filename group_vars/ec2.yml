@@ -8,3 +8,4 @@ theyvoteforyou_ssl_certificate_path: "/etc/letsencrypt/live/{{ theyvoteforyou_do
 theyvoteforyou_ssl_certificate_key_path: "/etc/letsencrypt/live/{{ theyvoteforyou_domain }}/privkey.pem"
 theyvoteforyou_test_ssl_certificate_path: "/etc/letsencrypt/live/test.{{ theyvoteforyou_domain }}/fullchain.pem"
 theyvoteforyou_test_ssl_certificate_key_path: "/etc/letsencrypt/live/test.{{ theyvoteforyou_domain }}/privkey.pem"
+ec2_region: 'ap-southeast-2'
