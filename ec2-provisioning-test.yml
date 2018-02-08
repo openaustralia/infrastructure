@@ -64,6 +64,33 @@
           - ec2
       with_items: "{{ ec2.instances }}"
 
+    - name: Setup database on EC2 (RDS)
+      rds:
+        command: create
+        region: "{{ ec2_region }}"
+        instance_name: main-database
+        db_engine: MySQL
+        engine_version: 5.6.37
+        # Start with 10GB of storage
+        size: 10
+        # TODO: Be explicit about the storage type. Don't see a way to set it here
+        # TODO: For production use SSD for storage type
+        # This instance type is only for testing/development
+        instance_type: db.t2.small
+        username: admin
+        password: "{{ rds_admin_password }}"
+        publicly_accessible: no
+        wait: yes
+        # Keep backups around for one week
+        backup_retention: 7
+        # We want 3-3:30am Sydney time which is 4-4:30pm GMT
+        backup_window: 16:00-16:30
+        # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
+        maint_window: Sun:17:00-Sun:17:30
+        # TODO: Change this to yes for production
+        multi_zone: no
+        upgrade: yes
+
 - hosts: tag_Name_theyvoteforyou
   become: true
   gather_facts: False
