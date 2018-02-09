@@ -17,6 +17,22 @@
 - hosts: theyvoteforyou
   become: true
   tasks:
+    - name: Get information about the RDS instance
+      rds:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        command: facts
+        instance_name: main-database
+        region: "{{ ec2_region }}"
+      register: rds
+
+    - name: Create theyvoteforyou database on RDS instance
+      mysql_db:
+        name: theyvoteforyou
+        login_host: "{{ rds.instance.endpoint }}"
+        login_user: admin
+        login_password: "{{ rds_admin_password }}"
+
     - name: Install nginx (for the benefit of certbot)
       apt: pkg=nginx
 
