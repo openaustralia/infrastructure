@@ -1,97 +1,11 @@
-# This is a test playbook for creating an ec2 instance for theyvoteforyou
+# This is a test playbook for configuring an ec2 instance for theyvoteforyou
 
 # Run this like so:
-# ansible-playbook -i ec2.py ec2-provisioning-test.yml
+# ansible-playbook -i ec2-hosts ec2-provisioning-test.yml
 
-# Before running this, however, you will need to set the environment variables
-# export AWS_ACCESS_KEY_ID='AK123'
-# export AWS_SECRET_ACCESS_KEY='abc123'
+# Use terraform (see terraform directory) to actually provision ec2 infrastructure
 
-# More local requirements:
-# `sudo pip install --ignore-installed six boto3`
-#
-
-- hosts: localhost
-  connection: local
-  gather_facts: False
-
-  tasks:
-
-    - name: Set up security group for theyvoteforyou
-      ec2_group:
-        name: theyvoteforyou
-        description: theyvoteforyou security group
-        region: "{{ ec2_region }}"
-        rules:
-        - proto: tcp
-          ports:
-            - 22
-            - 80
-            - 443
-          cidr_ip: 0.0.0.0/0
-
-    - name: Provision a set of instances
-      ec2:
-        # Sydney
-        region: "{{ ec2_region }}"
-        key_name: test
-        group: theyvoteforyou
-        # t2.micro doesn't give us enough memory
-        instance_type: t2.small
-        # Ubuntu 16.04 in Sydney
-        image: "ami-974eb0f5"
-        wait: true
-        count_tag:
-          Name: theyvoteforyou
-        exact_count: 1
-        instance_tags:
-          Name: theyvoteforyou
-      register: ec2
-
-    # For this to work we need to have allocated one of these
-    # and we need to update the ip address that's used here
-    - name: Allocate one of our elastic IPs to the instance
-      ec2_eip:
-        device_id: "{{ ec2.tagged_instances[0].id }}"
-        ip: 13.211.24.93
-        region: "{{ ec2_region }}"
-
-    - name: Add all instance public IPs to host group
-      add_host:
-        hostname: "{{ item.public_ip }}"
-        groups:
-          - tag_Name_theyvoteforyou
-          - ec2
-      with_items: "{{ ec2.instances }}"
-
-    - name: Setup database on EC2 (RDS)
-      rds:
-        command: create
-        region: "{{ ec2_region }}"
-        instance_name: main-database
-        db_engine: MySQL
-        engine_version: 5.6.37
-        # Start with 10GB of storage
-        size: 10
-        # TODO: Be explicit about the storage type. Don't see a way to set it here
-        # TODO: For production use SSD for storage type
-        # This instance type is only for testing/development
-        instance_type: db.t2.small
-        username: admin
-        password: "{{ rds_admin_password }}"
-        publicly_accessible: no
-        wait: yes
-        # Keep backups around for one week
-        backup_retention: 7
-        # We want 3-3:30am Sydney time which is 4-4:30pm GMT
-        backup_window: 16:00-16:30
-        # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
-        maint_window: Sun:17:00-Sun:17:30
-        # TODO: Change this to yes for production
-        multi_zone: no
-        upgrade: yes
-
-- hosts: tag_Name_theyvoteforyou
+- hosts: theyvoteforyou
   become: true
   gather_facts: False
 
@@ -100,71 +14,16 @@
     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
     changed_when: False
 
-- hosts: tag_Name_theyvoteforyou
+- hosts: theyvoteforyou
   become: true
   tasks:
-    # Run this from the machine in question so we easy access to its address
-    # Only run this if this is running on an EC2 instance
-    # TODO: Move this to the theyvoteforyou role
-    - name: Setup DNS for ec2.theyvoteforyou.org.au
-      dnsmadeeasy:
-        account_key: "{{ encrypted_dnsmadeeasy_key }}"
-        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
-        domain: "theyvoteforyou.org.au"
-        record_ttl: 60
-        state: present
-        record_type: A
-        record_name: ec2
-        record_value: "{{ inventory_hostname }}"
-      tags:
-        - dns
-
-    - name: Setup DNS for test.ec2.theyvoteforyou.org.au
-      dnsmadeeasy:
-        account_key: "{{ encrypted_dnsmadeeasy_key }}"
-        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
-        domain: "theyvoteforyou.org.au"
-        record_ttl: 60
-        state: present
-        record_type: CNAME
-        record_name: "test.ec2"
-        record_value: ec2
-      tags:
-        - dns
-
-    - name: Get all the DNS records for theyvoteforyou.org.au
-      dnsmadeeasy:
-        account_key: "{{ encrypted_dnsmadeeasy_key }}"
-        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
-        domain: "theyvoteforyou.org.au"
-        state: present
-      register: response
-
-    - name: Remove any A records for ec2 that we don't want
-      dnsmadeeasy:
-        account_key: "{{ encrypted_dnsmadeeasy_key }}"
-        account_secret: "{{ encrypted_dnsmadeeasy_secret }}"
-        domain: "theyvoteforyou.org.au"
-        state: absent
-        record_type: A
-        record_name: ec2
-        record_value: "{{ item }}"
-      with_items: "{{ response | json_query(query) }}"
-      vars:
-        query: "result[?type=='A'] | [?name=='ec2'] | [?value!='{{ inventory_hostname }}'].value"
-      tags:
-        - dns
-
     - name: Install nginx (for the benefit of certbot)
       apt: pkg=nginx
-
-  vars_files:
-    - encrypted_vars/dnsmadeeasy.yml
 
 # This needs to run after the two DNS entries for the hosts are added
 # It also needs to be run after nginx has been installed
 # And it depends on the deploy user being created
-- hosts: tag_Name_theyvoteforyou
+- hosts: theyvoteforyou
   become: true
   vars:
     certbot_auto_renew_user: deploy
@@ -193,7 +52,7 @@
     - geerlingguy.certbot
 
 # TODO: Don't want to run dns update stuff
-- hosts: tag_Name_theyvoteforyou
+- hosts: theyvoteforyou
   become: true
   roles:
     - theyvoteforyou
