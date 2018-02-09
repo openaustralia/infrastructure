@@ -5,8 +5,6 @@ set-aws-access-keys.sh
 ec2-provisioning-test.retry
 terraform/.terraform
 terraform/secrets.auto.tfvars
-terraform/terraform.tfstate
-terraform/terraform.tfstate.*
 
 # These certificates are generated for each user and shouldn't be checked in
 certificates/myCA.key
