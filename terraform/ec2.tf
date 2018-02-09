@@ -10,6 +10,8 @@ provider "aws" {
   region     = "${var.ec2_region}"
 }
 
+# TODO: Don't hardcode ami but rather look it up
+
 resource "aws_instance" "theyvoteforyou" {
   # Ubuntu 16.04 in Sydney
   ami =  "ami-974eb0f5"
@@ -22,6 +24,7 @@ resource "aws_instance" "theyvoteforyou" {
   security_groups = ["${aws_security_group.theyvoteforyou.name}"]
 }
 
+# TODO: Rename
 resource "aws_eip" "bar" {
   instance = "${aws_instance.theyvoteforyou.id}"
 }
@@ -79,4 +82,23 @@ resource "aws_db_instance" "main" {
   apply_immediately          = true
   # TODO: Set to false for production
   skip_final_snapshot        = true
+}
+
+# Configure the DNSMadeEasy provider
+provider "dme" {
+  version    = "~> 0.1"
+  akey       = "${var.dnsmadeeasy_akey}"
+  skey       = "${var.dnsmadeeasy_skey}"
+  usesandbox = false
+}
+
+# Create an A record
+resource "dme_record" "ec2" {
+  # theyvoteforyou.org.au
+  domainid    = "1828502"
+  type        = "A"
+  name        = "ec2"
+  value       = "${aws_eip.bar.public_ip}"
+  ttl         = 60
+  gtdLocation = "DEFAULT"
 }

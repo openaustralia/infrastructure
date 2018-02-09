@@ -9,3 +9,5 @@ variable "ec2_region" {
   default = "ap-southeast-2"
 }
 variable "rds_admin_password" {}
+variable "dnsmadeeasy_akey" {}
+variable "dnsmadeeasy_skey" {}
