@@ -22,6 +22,10 @@ resource "aws_instance" "theyvoteforyou" {
   security_groups = ["${aws_security_group.theyvoteforyou.name}"]
 }
 
+resource "aws_eip" "bar" {
+  instance = "${aws_instance.theyvoteforyou.id}"
+}
+
 resource "aws_security_group" "theyvoteforyou" {
   name        = "theyvoteforyou"
   description = "theyvoteforyou security group"
