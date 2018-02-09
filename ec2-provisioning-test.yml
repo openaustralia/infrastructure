@@ -71,6 +71,7 @@
       - email: contact@oaf.org.au
         domains:
           - "test.{{ theyvoteforyou_domain }}"
+          - "www.test.{{ theyvoteforyou_domain }}"
     github_users: []
   roles:
     - deploy-user

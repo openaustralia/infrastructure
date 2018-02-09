@@ -165,3 +165,13 @@ resource "dme_record" "www_ec2" {
   ttl         = 60
   gtdLocation = "DEFAULT"
 }
+
+resource "dme_record" "www_test_ec2" {
+  # theyvoteforyou.org.au
+  domainid    = "1828502"
+  type        = "CNAME"
+  name        = "www.test.ec2"
+  value       = "ec2"
+  ttl         = 60
+  gtdLocation = "DEFAULT"
+}
