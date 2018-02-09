@@ -1,2 +1,3 @@
 deploy  ALL = NOPASSWD: /usr/local/rvm/wrappers/default/bundle exec foreman export *
+deploy  ALL = NOPASSWD: /bin/systemctl enable theyvoteforyou.target
 deploy  ALL = NOPASSWD: /bin/systemctl restart theyvoteforyou.target
