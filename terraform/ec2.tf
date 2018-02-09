@@ -24,8 +24,7 @@ resource "aws_instance" "theyvoteforyou" {
   security_groups = ["${aws_security_group.theyvoteforyou.name}"]
 }
 
-# TODO: Rename
-resource "aws_eip" "bar" {
+resource "aws_eip" "theyvoteforyou" {
   instance = "${aws_instance.theyvoteforyou.id}"
 }
 
@@ -106,7 +105,7 @@ resource "dme_record" "ec2" {
   domainid    = "1828502"
   type        = "A"
   name        = "ec2"
-  value       = "${aws_eip.bar.public_ip}"
+  value       = "${aws_eip.theyvoteforyou.public_ip}"
   ttl         = 60
   gtdLocation = "DEFAULT"
 }
