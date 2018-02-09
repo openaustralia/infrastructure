@@ -51,3 +51,32 @@ resource "aws_security_group" "theyvoteforyou" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_db_instance" "main" {
+  # Start with 10GB of storage
+  allocated_storage          = 10
+  # Using magnetic just for testing/development
+  # TODO: For production use SSD for storage type
+  storage_type               = "standard"
+  engine                     = "mysql"
+  engine_version             = "5.6.37"
+  # This instance type is only for testing/development
+  instance_class             = "db.t2.small"
+  identifier                 = "main-database"
+  username                   = "admin"
+  password                   = "${var.rds_admin_password}"
+  publicly_accessible        = false
+  # Keep backups around for one week
+  backup_retention_period    = 7
+  # We want 3-3:30am Sydney time which is 4-4:30pm GMT
+  backup_window              = "16:00-16:30"
+  # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
+  maintenance_window         = "Sun:17:00-Sun:17:30"
+  # TODO: Change this to true for production
+  multi_az                   = false
+  auto_minor_version_upgrade = true
+  # TODO: Switch to false for production use
+  apply_immediately          = true
+  # TODO: Set to false for production
+  skip_final_snapshot        = true
+}

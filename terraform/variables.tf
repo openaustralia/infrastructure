@@ -8,3 +8,4 @@ variable "ec2_region" {
   # Sydney
   default = "ap-southeast-2"
 }
+variable "rds_admin_password" {}
