@@ -19,7 +19,7 @@ resource "aws_instance" "theyvoteforyou" {
   tags {
     Name = "theyvoteforyou"
   }
-  vpc_security_group_ids = ["${aws_security_group.theyvoteforyou.id}"]
+  security_groups = ["${aws_security_group.theyvoteforyou.name}"]
 }
 
 resource "aws_security_group" "theyvoteforyou" {
