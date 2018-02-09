@@ -28,10 +28,19 @@
 
     - name: Create theyvoteforyou database on RDS instance
       mysql_db:
-        name: theyvoteforyou
         login_host: "{{ rds.instance.endpoint }}"
         login_user: admin
         login_password: "{{ rds_admin_password }}"
+        name: theyvoteforyou
+
+    - name: Create a theyvoteforyou user with access to the database
+      mysql_user:
+        login_host: "{{ rds.instance.endpoint }}"
+        login_user: admin
+        login_password: "{{ rds_admin_password }}"
+        name: theyvoteforyou
+        password: "{{ theyvoteforyou_mysql_password }}"
+        priv: 'theyvoteforyou.*:ALL'
 
     - name: Install nginx (for the benefit of certbot)
       apt: pkg=nginx
