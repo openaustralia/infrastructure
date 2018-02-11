@@ -1,5 +1,5 @@
 ---
-# tasks file for roles/internal/theyvoteforyou-mysql
+# tasks file for roles/internal/mysql
 
 - name: Install mysql server
   apt: pkg=mysql-server

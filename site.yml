@@ -14,7 +14,7 @@
 
 - hosts: mysql
   roles:
-    - theyvoteforyou-mysql
+    - mysql
 
 - hosts: righttoknow
   roles:
