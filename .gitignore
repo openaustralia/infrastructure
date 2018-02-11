@@ -6,6 +6,8 @@ ec2-provisioning-test.retry
 terraform/.terraform
 terraform/secrets.auto.tfvars
 terraform/terraform.tfstate.*
+site.retry
+ubuntu-xenial-16.04-cloudimg-console.log
 
 # These certificates are generated for each user and shouldn't be checked in
 certificates/myCA.key
