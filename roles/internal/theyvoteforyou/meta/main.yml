@@ -1,7 +1,6 @@
 ---
 dependencies:
   - role: base-server
-  - role: theyvoteforyou-mysql
   - role: abtris.nginx-passenger
   - role: rvm_io.ruby
     # TODO: How do we get it to use what's in the .ruby-version file?
