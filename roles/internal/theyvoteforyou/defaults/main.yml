@@ -4,4 +4,4 @@ theyvoteforyou_ssl_certificate_path: /etc/ssl/theyvoteforyou.org.au.dev.pem
 theyvoteforyou_ssl_certificate_key_path: /etc/ssl/private/theyvoteforyou.org.au.dev.key
 theyvoteforyou_test_ssl_certificate_path: /etc/ssl/test.theyvoteforyou.org.au.dev.pem
 theyvoteforyou_test_ssl_certificate_key_path: /etc/ssl/private/test.theyvoteforyou.org.au.dev.key
-theyvoteforyou_domain: theyvoteforyou.org.au
+theyvoteforyou_domain: theyvoteforyou.org.au.dev
