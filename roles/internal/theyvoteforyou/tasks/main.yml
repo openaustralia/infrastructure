@@ -1,19 +1,32 @@
 ---
-- name: Create theyvoteforyou database
+- name: Create theyvoteforyou databases
   mysql_db:
     login_host: "{{ mysql_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: theyvoteforyou
+    name: "theyvoteforyou-{{ item }}"
+  with_items:
+    - production
+    - staging
 
-- name: Create a theyvoteforyou user with access to the database
+- name: Create theyvoteforyou user with access to the database (production)
   mysql_user:
     login_host: "{{ mysql_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: theyvoteforyou
-    password: "{{ theyvoteforyou_mysql_password }}"
-    priv: 'theyvoteforyou.*:ALL'
+    name: theyvoteforyou-production
+    password: "{{ theyvoteforyou_production_mysql_password }}"
+    priv: '{{ item }}.*:ALL'
+    host: "%"
+
+- name: Create theyvoteforyou user with access to the database (staging)
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: theyvoteforyou-staging
+    password: "{{ theyvoteforyou_staging_mysql_password }}"
+    priv: '{{ item }}.*:ALL'
     host: "%"
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
@@ -29,26 +42,48 @@
     - /srv/www/staging
     - /srv/www/staging/shared
 
-- name: Copy application configuration files
+- name: Copy application settings
   copy:
-    src: "{{item}}"
-    dest: /srv/www/production/shared/config/
+    src: settings.yml
+    dest: "/srv/www/{{ item }}/shared/config/"
     owner: deploy
     group: deploy
   with_items:
-    - settings.yml
+    - production
+    - staging
   notify: nginx reload
 
-- name: Copy application configuration templates
+- name: Copy application database configuration
   template:
-    src: "{{item}}"
-    dest: /srv/www/production/shared/config/
+    src: "database-{{ item }}.yml"
+    dest: "/srv/www/{{ item }}/shared/config/database.yml"
     owner: deploy
     group: deploy
   with_items:
-    - secrets.yml
-    - newrelic.yml
-    - database.yml
+    - production
+    - staging
+  notify: nginx reload
+
+- name: Copy application secrets
+  template:
+    src: secrets.yml
+    dest: "/srv/www/{{ item }}/shared/config/"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
+  notify: nginx reload
+
+- name: Copy application newrelic configuration
+  template:
+    src: newrelic.yml
+    dest: "/srv/www/{{ item }}/shared/config/"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
   notify: nginx reload
 
 - name: Ensure packages to build gem native extensions are installed

@@ -1,6 +1,0 @@
-production:
-  adapter: mysql2
-  host: {{ mysql_host }}
-  database: theyvoteforyou
-  username: theyvoteforyou
-  password: "{{ theyvoteforyou_mysql_password }}"

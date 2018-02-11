@@ -1,0 +1,6 @@
+production:
+  adapter: mysql2
+  host: {{ mysql_host }}
+  database: theyvoteforyou-production
+  username: theyvoteforyou-production
+  password: "{{ theyvoteforyou_production_mysql_password }}"
