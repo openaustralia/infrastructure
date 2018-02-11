@@ -1,2 +1,5 @@
 ---
 # handlers file for roles/internal/theyvoteforyou-mysql
+
+- name: mysql restart
+  service: name=mysql state=restarted

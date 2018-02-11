@@ -12,6 +12,10 @@
     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
     changed_when: False
 
+- hosts: mysql
+  roles:
+    - theyvoteforyou-mysql
+
 - hosts: righttoknow
   roles:
     - righttoknow

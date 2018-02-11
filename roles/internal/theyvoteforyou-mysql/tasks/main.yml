@@ -7,11 +7,15 @@
 - name: Install dependency for following command
   apt: pkg=python-mysqldb
 
-- name: Create theyvoteforyou database
-  mysql_db: name=theyvoteforyou
+- name: Update mysql config to bind to public ip
+  copy:
+    src: mysqld.cnf
+    dest: /etc/mysql/mysql.conf.d
+  notify: mysql restart
 
-- name: Create a theyvoteforyou user with access to the database
+- name: Create admin user
   mysql_user:
-    name: theyvoteforyou
-    password: "{{ theyvoteforyou_mysql_password }}"
-    priv: 'theyvoteforyou.*:ALL'
+    name: admin
+    password: "{{ rds_admin_password }}"
+    priv: '*.*:ALL,GRANT'
+    host: '%'

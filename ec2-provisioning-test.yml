@@ -32,25 +32,6 @@
         region: "{{ ec2_region }}"
       register: rds
 
-    - name: Install mysql_db requirement
-      apt: pkg=python-mysqldb
-
-    - name: Create theyvoteforyou database on RDS instance
-      mysql_db:
-        login_host: "{{ rds.instance.endpoint }}"
-        login_user: admin
-        login_password: "{{ rds_admin_password }}"
-        name: theyvoteforyou
-
-    - name: Create a theyvoteforyou user with access to the database
-      mysql_user:
-        login_host: "{{ rds.instance.endpoint }}"
-        login_user: admin
-        login_password: "{{ rds_admin_password }}"
-        name: theyvoteforyou
-        password: "{{ theyvoteforyou_mysql_password }}"
-        priv: 'theyvoteforyou.*:ALL'
-
     - name: Install nginx (for the benefit of certbot)
       apt: pkg=nginx
 
@@ -91,5 +72,7 @@
   become: true
   roles:
     - theyvoteforyou
+  vars:
+    mysql_host: "{{ rds.instance.endpoint }}"
   vars_files:
     - encrypted_vars/theyvoteforyou.yml
