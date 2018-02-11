@@ -24,15 +24,3 @@ dependencies:
   - role: azavea.elasticsearch
     elasticsearch_bind_host: 127.0.0.1
     java_version: "8u151*"
-  - role: Stouts.backup
-    backup_gpg_pw: "{{ theyvoteforyou_backup_gpg_pw }}"
-    backup_target_user: "{{ theyvoteforyou_backup_target_user }}"
-    backup_target_pass: "{{ theyvoteforyou_backup_target_pass }}"
-    backup_max_age: 6M
-    backup_profiles:
-      - name: automysqlbackup
-        schedule: 0 4 * * *
-        source: /var/lib/automysqlbackup
-        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
-        target: "s3://s3.amazonaws.com/oaf-backups/theyvoteforyou/{{ inventory_hostname }}"
-  - role: MaximeThoonsen.automysqlbackup
