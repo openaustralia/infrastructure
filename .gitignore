@@ -13,3 +13,5 @@ certificates/myCA.pem
 certificates/theyvoteforyou.org.au.dev.key
 roles/internal/theyvoteforyou/files/theyvoteforyou.org.au.dev.key
 roles/internal/theyvoteforyou/files/theyvoteforyou.org.au.dev.pem
+roles/internal/theyvoteforyou/files/test.theyvoteforyou.org.au.dev.key
+roles/internal/theyvoteforyou/files/test.theyvoteforyou.org.au.dev.pem

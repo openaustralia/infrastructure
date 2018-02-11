@@ -49,36 +49,19 @@
     mode: 0644
   with_items:
     - theyvoteforyou.org.au.dev.pem
-    - test.theyvoteforyou.org.au.pem
-    - theyvoteforyou.org.au_chain.pem
+    - test.theyvoteforyou.org.au.dev.pem
   notify: nginx reload
 
-- name: Copy self-signed development SSL key
+- name: Copy SSL keys
   copy:
-    src: theyvoteforyou.org.au.dev.key
-    dest: /etc/ssl/private/theyvoteforyou.org.au.dev.key
+    src: "{{ item }}"
+    dest: /etc/ssl/private/
     owner: root
     group: ssl-cert
     mode: 0640
-  notify: nginx reload
-
-# TODO Add a real certificate for test
-- name: Copy self-signed test SSL key
-  copy:
-    src: test.theyvoteforyou.org.au.key
-    dest: /etc/ssl/private/test.theyvoteforyou.org.au.key
-    owner: root
-    group: ssl-cert
-    mode: 0640
-  notify: nginx reload
-
-- name: Copy production SSL key
-  copy:
-    src: theyvoteforyou.org.au.key
-    dest: /etc/ssl/private/theyvoteforyou.org.au.key
-    owner: root
-    group: ssl-cert
-    mode: 0640
+  with_items:
+    - theyvoteforyou.org.au.dev.key
+    - test.theyvoteforyou.org.au.dev.key
   notify: nginx reload
 
 - name: Copy test/test password for staging site
