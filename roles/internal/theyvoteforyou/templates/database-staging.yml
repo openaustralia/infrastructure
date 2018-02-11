@@ -1,6 +1,6 @@
 production:
   adapter: mysql2
   host: {{ mysql_host }}
-  database: theyvoteforyou-staging
-  username: theyvoteforyou-staging
+  database: tvfy-staging
+  username: tvfy-staging
   password: "{{ theyvoteforyou_staging_mysql_password }}"
