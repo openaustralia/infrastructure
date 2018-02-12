@@ -42,6 +42,10 @@ resource "aws_eip" "theyvoteforyou" {
   instance = "${aws_instance.theyvoteforyou.id}"
 }
 
+data "aws_security_group" "default" {
+  name = "default"
+}
+
 resource "aws_security_group" "theyvoteforyou" {
   name        = "theyvoteforyou"
   description = "theyvoteforyou security group"
@@ -65,6 +69,15 @@ resource "aws_security_group" "theyvoteforyou" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # TODO: Remove this once migration is complete and we don't
+  # need the ssh tunnel running on theyvoteforyou
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups = ["${data.aws_security_group.default.id}"]
   }
 
   # Allow everything going out
