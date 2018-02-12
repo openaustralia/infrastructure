@@ -46,18 +46,14 @@
     certbot_auto_renew_hour: 7
     certbot_create_if_missing: yes
     certbot_certs:
-      # TODO: Update the domains that we'll be generating the certificate for
-      # In production they should be at least:
-      # theyvoteforyou.org.au
-      # www.theyvoteforyou.org.au
-      # theyvoteforyou.org
-      # www.theyvoteforyou.org
-      # theyvoteforyou.com.au
-      # www.theyvoteforyou.com.au
       - email: contact@oaf.org.au
         domains:
           - "{{ theyvoteforyou_domain }}"
           - www."{{ theyvoteforyou_domain }}"
+          - theyvoteforyou.org
+          - www.theyvoteforyou.org
+          - theyvoteforyou.com.au
+          - www.theyvoteforyou.com.au
       - email: contact@oaf.org.au
         domains:
           - "test.{{ theyvoteforyou_domain }}"

@@ -1,4 +1,7 @@
 ---
+- name: Install dependency for following command
+  apt: pkg=python-mysqldb
+
 - name: Create theyvoteforyou databases
   mysql_db:
     login_host: "{{ mysql_host }}"
@@ -104,12 +107,11 @@
     - test.theyvoteforyou.org.au.dev.pem
   notify: nginx reload
 
-- name: Copy SSL keys
+# TODO: Only run this in development
+- name: Copy SSL keys for development
   copy:
     src: "{{ item }}"
     dest: /etc/ssl/private/
-    owner: root
-    group: ssl-cert
     mode: 0640
   with_items:
     - theyvoteforyou.org.au.dev.key
@@ -185,9 +187,11 @@
   tags:
     - dns
   with_items:
-    - {type: "A", name: "", value: "103.243.244.10"}
+    # TODO: Move this setting to terraform
+    - {type: "A", name: "", value: "54.252.204.159"}
     - {type: "CNAME", name: "www",    value: ""}
     - {type: "CNAME", name: "test",   value: ""}
+    - {type: "CNAME", name: "www.test",   value: ""}
     - {type: "CNAME", name: "email",  value: "cuttlefish.io."}
     - {type: "CNAME", name: "email2", value: "cuttlefish.oaf.org.au."}
     - {type: "MX", name: "", value: "1 aspmx.l.google.com."}
@@ -212,7 +216,8 @@
   tags:
     - dns
   with_items:
-    - {type: "A", name: "", value: "103.243.244.10"}
+    # TODO: Move this setting to terraform
+    - {type: "A", name: "", value: "54.252.204.159"}
     - {type: "CNAME", name: "www",    value: ""}
 
 - name: DNS setup for theyvoteforyou.com.au
@@ -229,5 +234,6 @@
   tags:
     - dns
   with_items:
-    - {type: "A", name: "", value: "103.243.244.10"}
+    # TODO: Move this setting to terraform
+    - {type: "A", name: "", value: "54.252.204.159"}
     - {type: "CNAME", name: "www",    value: ""}

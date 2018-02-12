@@ -16,4 +16,4 @@ theyvoteforyou_staging_mysql_password: !vault |
           3266323763333366350a363262336430323738653131623237643138663436363132353664386263
           63373333373733303962396235633666396563313234333063633634366635323862
 # Until this is being used properly in production disable the cron
-theyvoteforyou_cron_enabled: false
+theyvoteforyou_cron_enabled: true
