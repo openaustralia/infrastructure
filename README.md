@@ -226,3 +226,18 @@ To restore the latest backup to `/mnt/restore` you'd run `duply automysqlbackup 
 ## Generating CA certificates and SSL certificates
 
 See certificates/README.md for more information.
+
+## Database migration
+
+To do the database migration from kedumba to RDS we're making use of the database migration service
+on AWS. To access the database on kedumba (which is not exposed to the internet) we need to setup
+an SSH tunnel. Using theyvoteforyou server on EC2 to do this:
+As the `deploy` user,
+```
+ssh-keygen -t rsa
+```
+Then copy the public key over to kedumba and put it in `~/.ssh/authorized_keys`. Then,
+```
+apt install autossh
+autossh -p 2506 deploy@kedumba.oaf.org.au -N -L 0.0.0.0:3306:localhost:3306 &
+```
