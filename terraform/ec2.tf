@@ -36,6 +36,7 @@ resource "aws_instance" "theyvoteforyou" {
     Name = "theyvoteforyou"
   }
   security_groups = ["${aws_security_group.theyvoteforyou.name}"]
+  disable_api_termination = true
 }
 
 resource "aws_eip" "theyvoteforyou" {
