@@ -77,11 +77,10 @@ resource "aws_security_group" "theyvoteforyou" {
 }
 
 resource "aws_db_instance" "main" {
-  # Start with 10GB of storage
-  allocated_storage          = 10
-  # Using magnetic just for testing/development
-  # TODO: For production use SSD for storage type
-  storage_type               = "standard"
+  # kedumba has a 150GB disk so let's start with 50GB of database
+  allocated_storage          = 50
+  # Using general purpose SSD
+  storage_type               = "gp2"
   engine                     = "mysql"
   engine_version             = "5.6.37"
   # This instance type is only for testing/development
@@ -96,13 +95,11 @@ resource "aws_db_instance" "main" {
   backup_window              = "16:00-16:30"
   # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
   maintenance_window         = "Sun:17:00-Sun:17:30"
-  # TODO: Change this to true for production
-  multi_az                   = false
+  multi_az                   = true
   auto_minor_version_upgrade = true
   # TODO: Switch to false for production use
   apply_immediately          = true
-  # TODO: Set to false for production
-  skip_final_snapshot        = true
+  skip_final_snapshot        = false
   vpc_security_group_ids = ["${aws_security_group.main_database.id}"]
 }
 
