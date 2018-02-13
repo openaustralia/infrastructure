@@ -16,7 +16,6 @@ server {
 
 server {
   listen 443 ssl http2;
-  server_name test.{{ planningalerts_domain }};
   server_name www.test.{{ planningalerts_domain }};
   server_name api.test.{{ planningalerts_domain }};
 
