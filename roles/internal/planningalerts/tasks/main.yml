@@ -45,26 +45,26 @@
     - sphinx.yml
   notify: nginx reload
 
-- name: Copy SSL certificates
+# TODO: Only run this in development
+- name: Copy SSL certificates for development
   copy:
     src: "{{ item }}"
     dest: /etc/ssl/
-    owner: root
-    group: root
     mode: 0644
   with_items:
     - planningalerts.org.au.dev.pem
-    - planningalerts.org.au_chain.pem
-    - api.planningalerts.org.au_chain.pem
+    - test.planningalerts.org.au.dev.pem
   notify: nginx reload
 
-- name: Copy self-signed development SSL key
+# TODO: Only run this in development
+- name: Copy SSL keys for development
   copy:
-    content: "{{ planningalerts_development_ssl_key }}"
-    dest: /etc/ssl/private/planningalerts.org.au.dev.key
-    owner: root
-    group: ssl-cert
+    src: "{{ item }}"
+    dest: /etc/ssl/private/
     mode: 0640
+  with_items:
+    - planningalerts.org.au.dev.key
+    - test.planningalerts.org.au.dev.key
   notify: nginx reload
 
 - name: Copy production SSL key
