@@ -11,6 +11,10 @@ variable "ec2_region" {
 variable "rds_admin_password" {}
 variable "dnsmadeeasy_akey" {}
 variable "dnsmadeeasy_skey" {}
+variable "cloudflare_email" {
+  default = "matthew@oaf.org.au"
+}
+variable "cloudflare_token" {}
 variable "theyvoteforyou_dme_domainid" {
   default = "1828502"
 }
