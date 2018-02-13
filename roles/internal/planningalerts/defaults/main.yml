@@ -2,3 +2,7 @@
 # defaults file for planningalerts
 mysql_host: 192.168.10.17
 planningalerts_domain: planningalerts.org.au.dev
+planningalerts_production_ssl_certificate_path: /etc/ssl/planningalerts.org.au.dev.pem
+planningalerts_production_ssl_certificate_key_path: /etc/ssl/private/planningalerts.org.au.dev.key
+planningalerts_staging_ssl_certificate_path: /etc/ssl/test.planningalerts.org.au.dev.pem
+planningalerts_staging_ssl_certificate_key_path: /etc/ssl/private/test.planningalerts.org.au.dev.key
