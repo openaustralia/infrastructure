@@ -1,4 +1,7 @@
 ---
+# TODO: Installed memcached
+# memcached is used by the throttler and I'm pretty sure it's used for caching too
+
 - name: Create planningalerts databases
   mysql_db:
     login_host: "{{ mysql_host }}"
