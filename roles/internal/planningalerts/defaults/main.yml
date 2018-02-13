@@ -1,2 +1,3 @@
 ---
 # defaults file for planningalerts
+mysql_host: 192.168.10.17

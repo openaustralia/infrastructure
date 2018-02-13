@@ -2,6 +2,36 @@
 - include_vars: encrypted.yml
 - include_vars: encrypted_vars/dnsmadeeasy.yml
 
+- name: Create planningalerts databases
+  mysql_db:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: "pa-{{ item }}"
+  with_items:
+    - production
+    - staging
+
+- name: Create planningalerts user with access to the database (production)
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: pa-production
+    password: "{{ planningalerts_production_mysql_password }}"
+    priv: 'pa-production.*:ALL'
+    host: "%"
+
+- name: Create planningalerts user with access to the database (staging)
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: pa-staging
+    password: "{{ planningalerts_staging_mysql_password }}"
+    priv: 'pa-staging.*:ALL'
+    host: "%"
+
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
     state: directory
