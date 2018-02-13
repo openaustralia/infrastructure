@@ -73,6 +73,7 @@ server {
   listen 80;
   server_name www.planningalerts.org.au;
   server_name api.planningalerts.org.au;
+  # TODO: Remove this line below
   server_name www.applicationtracking.planning.nsw.gov.au;
 
   root /srv/www/current/public;
