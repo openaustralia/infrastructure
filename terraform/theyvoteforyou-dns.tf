@@ -1,9 +1,51 @@
+## theyvoteforyou.org.au
+
+# A records
 resource "cloudflare_record" "root" {
   domain = "theyvoteforyou.org.au"
   name   = "theyvoteforyou.org.au"
   type   = "A"
   value  = "${aws_eip.theyvoteforyou.public_ip}"
 }
+
+# CNAME records
+
+resource "cloudflare_record" "www" {
+  domain   = "theyvoteforyou.org.au"
+  name     = "www.theyvoteforyou.org.au"
+  type     = "CNAME"
+  value    = "theyvoteforyou.org.au"
+}
+
+resource "cloudflare_record" "test" {
+  domain   = "theyvoteforyou.org.au"
+  name     = "test.theyvoteforyou.org.au"
+  type     = "CNAME"
+  value    = "theyvoteforyou.org.au"
+}
+
+resource "cloudflare_record" "www_test" {
+  domain   = "theyvoteforyou.org.au"
+  name     = "www.test.theyvoteforyou.org.au"
+  type     = "CNAME"
+  value    = "theyvoteforyou.org.au"
+}
+
+resource "cloudflare_record" "email" {
+  domain   = "theyvoteforyou.org.au"
+  name     = "email.theyvoteforyou.org.au"
+  type     = "CNAME"
+  value    = "cuttlefish.io"
+}
+
+resource "cloudflare_record" "email2" {
+  domain   = "theyvoteforyou.org.au"
+  name     = "email2.theyvoteforyou.org.au"
+  type     = "CNAME"
+  value    = "cuttlefish.oaf.org.au"
+}
+
+# MX records
 
 resource "cloudflare_record" "mx1" {
   domain   = "theyvoteforyou.org.au"
@@ -45,6 +87,8 @@ resource "cloudflare_record" "mx5" {
   value    = "aspmx3.googlemail.com"
 }
 
+# TXT records
+
 resource "cloudflare_record" "spf" {
   domain   = "theyvoteforyou.org.au"
   name     = "theyvoteforyou.org.au"
@@ -59,40 +103,7 @@ resource "cloudflare_record" "cuttlefish" {
   value    = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0toFOrXAOcbnS8LNeKQsetYEO4Qh1RLGCx9+prCDeXBgs0obFCPWyanqxiPL6WEZCv+Vj4TCBPfoVCR1G0hszOZIA1QCEx0tG4v3dE2QsS3tSVCl9ax1h0oi4fC5aJ7XdxI+e2JVcWwmSSCLoKbkJYpj+6VBr86jUZl6f3JeUH/RuIeS6jIHRFmM6Mz/BfzloxM2wbDK320DUs3yWkL3/RcwkT6ebI9oS+ZWIxKXAgEcreTG0JltgPR/ABPFNzms4mAtLwPojF/FAYzGCj6diGbB61LNcMwe0MrutvLucclhnSefG5E3GVNqLrQA1oXzwFLFsq1H0x8rFccm+GNAuQIDAQAB"
 }
 
-resource "cloudflare_record" "email" {
-  domain   = "theyvoteforyou.org.au"
-  name     = "email.theyvoteforyou.org.au"
-  type     = "CNAME"
-  value    = "cuttlefish.io"
-}
-
-resource "cloudflare_record" "email2" {
-  domain   = "theyvoteforyou.org.au"
-  name     = "email2.theyvoteforyou.org.au"
-  type     = "CNAME"
-  value    = "cuttlefish.oaf.org.au"
-}
-
-resource "cloudflare_record" "test" {
-  domain   = "theyvoteforyou.org.au"
-  name     = "test.theyvoteforyou.org.au"
-  type     = "CNAME"
-  value    = "theyvoteforyou.org.au"
-}
-
-resource "cloudflare_record" "www_test" {
-  domain   = "theyvoteforyou.org.au"
-  name     = "www.test.theyvoteforyou.org.au"
-  type     = "CNAME"
-  value    = "theyvoteforyou.org.au"
-}
-
-resource "cloudflare_record" "www" {
-  domain   = "theyvoteforyou.org.au"
-  name     = "www.theyvoteforyou.org.au"
-  type     = "CNAME"
-  value    = "theyvoteforyou.org.au"
-}
+## theyvoteforyou.org
 
 resource "cloudflare_record" "alt1_root" {
   domain   = "theyvoteforyou.org"
@@ -107,6 +118,8 @@ resource "cloudflare_record" "alt1_www" {
   type     = "CNAME"
   value    = "theyvoteforyou.org"
 }
+
+## theyvoteforyou.com.au
 
 resource "cloudflare_record" "alt2_root" {
   domain   = "theyvoteforyou.com.au"
