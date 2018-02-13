@@ -119,6 +119,7 @@
   copy:
     src: deploy_service_control
     dest: /etc/sudoers.d/
+    validate: visudo -cf %s
 
 # TODO: We should have the option to disable this
 - name: Set up PlanningAlerts daily scrape and email job
