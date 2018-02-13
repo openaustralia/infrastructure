@@ -107,3 +107,31 @@ resource "cloudflare_record" "www" {
   type     = "CNAME"
   value    = "theyvoteforyou.org.au"
 }
+
+resource "cloudflare_record" "alt1_root" {
+  domain   = "theyvoteforyou.org"
+  name     = "theyvoteforyou.org"
+  type     = "A"
+  value    = "${aws_eip.theyvoteforyou.public_ip}"
+}
+
+resource "cloudflare_record" "alt1_www" {
+  domain   = "theyvoteforyou.org"
+  name     = "www.theyvoteforyou.org"
+  type     = "CNAME"
+  value    = "theyvoteforyou.org"
+}
+
+resource "cloudflare_record" "alt2_root" {
+  domain   = "theyvoteforyou.com.au"
+  name     = "theyvoteforyou.com.au"
+  type     = "A"
+  value    = "${aws_eip.theyvoteforyou.public_ip}"
+}
+
+resource "cloudflare_record" "alt2_www" {
+  domain   = "theyvoteforyou.com.au"
+  name     = "www.theyvoteforyou.com.au"
+  type     = "CNAME"
+  value    = "theyvoteforyou.com.au"
+}
