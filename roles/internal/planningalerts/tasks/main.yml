@@ -41,8 +41,8 @@
     group: deploy
     path: '{{item}}'
   with_items:
-    - /srv/www
-    - /srv/www/shared
+    - /srv/www/production
+    - /srv/www/production/shared
 
 - name: Ensure packages to build gem native extensions are installed
   apt:
@@ -56,7 +56,7 @@
 - name: Copy application configuration
   template:
     src: "{{ item }}"
-    dest: /srv/www/shared/
+    dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
   with_items:
@@ -67,7 +67,7 @@
 - name: Copy static application configuration
   copy:
     src: '{{item}}'
-    dest: /srv/www/shared/
+    dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
   with_items:
@@ -144,4 +144,4 @@
     name: planningalerts_scrape_and_email
     user: deploy
     hour: 12
-    job: "cd /srv/www/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"
+    job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"

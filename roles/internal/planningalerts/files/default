@@ -4,7 +4,7 @@ server {
   listen 80;
   server_name planningalerts.org.au.dev;
 
-  root /srv/www/current/public;
+  root /srv/www/production/current/public;
   passenger_enabled on;
 }
 
@@ -13,7 +13,7 @@ server {
   listen 443 ssl spdy;
   server_name planningalerts.org.au.dev;
 
-  root /srv/www/current/public;
+  root /srv/www/production/current/public;
   passenger_enabled on;
 
   location ^~ /assets/ {
@@ -37,7 +37,7 @@ server {
   listen 80;
   server_name test.planningalerts.org.au;
 
-  root /srv/www/current/public;
+  root /srv/www/production/current/public;
   passenger_enabled on;
 
   auth_basic "Staging Site";
@@ -76,7 +76,7 @@ server {
   # TODO: Remove this line below
   server_name www.applicationtracking.planning.nsw.gov.au;
 
-  root /srv/www/current/public;
+  root /srv/www/production/current/public;
   passenger_enabled on;
 }
 
@@ -85,7 +85,7 @@ server {
 #   listen 443 ssl spdy;
 #   server_name www.planningalerts.org.au;
 #
-#   root /srv/www/current/public;
+#   root /srv/www/production/current/public;
 #   passenger_enabled on;
 #
 #   location ^~ /assets/ {
@@ -109,7 +109,7 @@ server {
 #   listen 443 ssl spdy;
 #   server_name api.planningalerts.org.au;
 #
-#   root /srv/www/current/public;
+#   root /srv/www/production/current/public;
 #   passenger_enabled on;
 #
 #   ssl on;
