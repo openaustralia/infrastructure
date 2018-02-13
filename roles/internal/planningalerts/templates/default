@@ -2,8 +2,8 @@
 ## HTTP
 server {
   listen 80;
-  server_name planningalerts.org.au.dev;
-  server_name www.planningalerts.org.au.dev;
+  server_name {{ planningalerts_domain }};
+  server_name www.{{ planningalerts_domain }};
 
   root /srv/www/production/current/public;
   passenger_enabled on;
@@ -12,8 +12,8 @@ server {
 ## HTTPS
 server {
   listen 443 ssl spdy;
-  server_name planningalerts.org.au.dev;
-  server_name www.planningalerts.org.au.dev;
+  server_name {{ planningalerts_domain }};
+  server_name www.{{ planningalerts_domain }};
 
   root /srv/www/production/current/public;
   passenger_enabled on;
@@ -37,8 +37,8 @@ server {
 # Staging
 server {
   listen 80;
-  server_name test.planningalerts.org.au.dev;
-  server_name www.test.planningalerts.org.au.dev;
+  server_name test.{{ planningalerts_domain }};
+  server_name www.test.{{ planningalerts_domain }};
 
   root /srv/www/staging/current/public;
   passenger_enabled on;
@@ -49,8 +49,8 @@ server {
 
 server {
   listen 443 ssl spdy;
-  server_name test.planningalerts.org.au.dev;
-  server_name www.test.planningalerts.org.au.dev;
+  server_name test.{{ planningalerts_domain }};
+  server_name www.test.{{ planningalerts_domain }};
 
   root /srv/www/staging/current/public;
   passenger_enabled on;

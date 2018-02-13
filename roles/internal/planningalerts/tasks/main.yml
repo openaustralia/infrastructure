@@ -149,7 +149,7 @@
   notify: nginx restart
 
 - name: Copy nginx site configuration
-  copy:
+  template:
     src: default
     dest: /etc/nginx/sites-available/
   notify: nginx reload
