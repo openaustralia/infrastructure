@@ -11,3 +11,10 @@ variable "ec2_region" {
 variable "rds_admin_password" {}
 variable "dnsmadeeasy_akey" {}
 variable "dnsmadeeasy_skey" {}
+variable "theyvoteforyou_dme_domainid" {
+  default = "1828502"
+}
+# Default ttl to use for all records in this domain
+variable "theyvoteforyou_dme_ttl" {
+  default = 60
+}
