@@ -115,7 +115,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       host.vm.network :private_network, ip: ip
       host.vm.hostname = hostname
       # For each host set up some common aliases
-      host.hostsupdater.aliases = ["test.#{hostname}", "www.#{hostname}"]
+      host.hostsupdater.aliases = [
+        "test.#{hostname}",
+        "www.#{hostname}",
+        "www.test.#{hostname}",
+        "api.#{hostname}"
+      ]
     end
   end
 end
