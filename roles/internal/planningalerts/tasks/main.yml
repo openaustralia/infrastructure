@@ -99,24 +99,6 @@
     - test.planningalerts.org.au.dev.key
   notify: nginx reload
 
-- name: Copy production SSL key
-  copy:
-    content: "{{ planningalerts_production_ssl_key }}"
-    dest: /etc/ssl/private/planningalerts.org.au.key
-    owner: root
-    group: ssl-cert
-    mode: 0640
-  notify: nginx reload
-
-- name: Copy API SSL key
-  copy:
-    content: "{{ planningalerts_api_ssl_key }}"
-    dest: /etc/ssl/private/api.planningalerts.org.au.key
-    owner: root
-    group: ssl-cert
-    mode: 0640
-  notify: nginx reload
-
 - name: Copy nginx main configuration
   copy:
     src: nginx.conf
