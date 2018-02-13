@@ -95,12 +95,11 @@
   with_items:
     - libmysqlclient-dev
 
-- name: Copy SSL certificates
+# TODO: Only run this in development
+- name: Copy SSL certificates for development
   copy:
     src: "{{ item }}"
     dest: /etc/ssl/
-    owner: root
-    group: root
     mode: 0644
   with_items:
     - theyvoteforyou.org.au.dev.pem
