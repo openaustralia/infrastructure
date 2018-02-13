@@ -77,7 +77,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "theyvoteforyou"   => ["theyvoteforyou.org.au.dev"],
       "oaf"              => ["oaf.org.au.dev"],
       "openaustralia"    => ["openaustralia.org.au.dev"],
-      "mysql"            => ["mysql.dev"]
+      "mysql"            => ["mysql.dev"],
+      "development"      => [
+        "righttoknow.org.au.dev",
+        "planningalerts.org.au.dev",
+        "electionleaflets.org.au.dev",
+        "theyvoteforyou.org.au.dev",
+        "oaf.org.au.dev",
+        "openaustralia.org.au.dev",
+        "mysql.dev"
+      ]
     }
   end
 

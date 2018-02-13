@@ -72,7 +72,6 @@
     - throttling.yml
   notify: nginx reload
 
-# TODO: Only run this in development
 - name: Copy SSL certificates for development
   copy:
     src: "{{ item }}"
@@ -81,9 +80,10 @@
   with_items:
     - planningalerts.org.au.dev.pem
     - test.planningalerts.org.au.dev.pem
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
   notify: nginx reload
 
-# TODO: Only run this in development
 - name: Copy SSL keys for development
   copy:
     src: "{{ item }}"
@@ -93,6 +93,8 @@
   with_items:
     - planningalerts.org.au.dev.key
     - test.planningalerts.org.au.dev.key
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
   notify: nginx reload
 
 - name: Copy nginx main configuration
