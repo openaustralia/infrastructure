@@ -2,8 +2,13 @@ server {
   listen 80;
   server_name test.{{ planningalerts_domain }};
   server_name www.test.{{ planningalerts_domain }};
-  server_name api.test.{{ planningalerts_domain }};
   rewrite ^/(.*) https://www.test.{{ planningalerts_domain }}/$1 permanent;
+}
+
+server {
+  listen 80;
+  server_name api.test.{{ planningalerts_domain }};
+  rewrite ^/(.*) https://api.test.{{ planningalerts_domain }}/$1 permanent;
 }
 
 server {
