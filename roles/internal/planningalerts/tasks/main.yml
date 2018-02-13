@@ -154,18 +154,7 @@
     dest: /etc/nginx/sites-available/
   notify: nginx reload
 
-# TODO: Get the application to generate this on each deploy
-- name: Copy application upstart service configuration
-  copy:
-    src: '{{item}}'
-    dest: /etc/init/
-  with_items:
-    - planningalerts.conf
-    - planningalerts-sphinx-1.conf
-    - planningalerts-sphinx.conf
-    - planningalerts-worker-1.conf
-    - planningalerts-worker.conf
-
+# TODO: This needs to be changed to handle systemd
 - name: Allow deploy user to control services
   copy:
     src: deploy_service_control
