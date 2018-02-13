@@ -1,3 +1,4 @@
 ---
 # defaults file for planningalerts
 mysql_host: 192.168.10.17
+planningalerts_domain: planningalerts.org.au.dev

@@ -1,7 +1,7 @@
 # Stores application configuration settings
 module Configuration
   # URL Stuff
-  HOST = 'www.planningalerts.org.au'
+  HOST = 'www.{{ planningalerts_domain }}'
 
   # See https://morph.io/api
   MORPH_API_KEY = "{{ morph_api_key }}"
