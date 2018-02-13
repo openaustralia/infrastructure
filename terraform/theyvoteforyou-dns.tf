@@ -1,17 +1,3 @@
-# Configure the DNSMadeEasy provider
-provider "dme" {
-  version    = "~> 0.1"
-  akey       = "${var.dnsmadeeasy_akey}"
-  skey       = "${var.dnsmadeeasy_skey}"
-  usesandbox = false
-}
-
-provider "cloudflare" {
-  version = "~> 0.1"
-  email   = "${var.cloudflare_email}"
-  token   = "${var.cloudflare_token}"
-}
-
 resource "cloudflare_record" "root" {
   domain = "theyvoteforyou.org.au"
   name   = "theyvoteforyou.org.au"

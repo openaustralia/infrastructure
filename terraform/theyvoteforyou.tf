@@ -1,14 +1,6 @@
 # (We're still using Ansible for configuring the servers themselves and
 # the normal application deployment is still done with capistrano)
 
-# Configure the AWS Provider
-provider "aws" {
-  version = "~> 1.8"
-  access_key = "${var.aws_access_key}"
-  secret_key = "${var.aws_secret_key}"
-  region     = "${var.ec2_region}"
-}
-
 # Get the AMI for Ubuntu 16.04. Lock it to a specific version so that we don't
 # keep re-provisioning the servers when the AMI gets updated
 data "aws_ami" "ubuntu" {
