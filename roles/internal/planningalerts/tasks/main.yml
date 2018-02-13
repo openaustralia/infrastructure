@@ -1,8 +1,8 @@
 ---
-# TODO: Installed memcached
-# memcached is used by the throttler and I'm pretty sure it's used for caching too
-# TODO: setup test instance
 # TODO: Get background workers running at startup
+
+- name: Install memcached
+  apt: pkg=memcached
 
 - name: Create planningalerts databases
   mysql_db:
