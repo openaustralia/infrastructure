@@ -150,8 +150,23 @@
 
 - name: Copy nginx site configuration
   template:
-    src: default
+    src: "{{ item }}"
     dest: /etc/nginx/sites-available/
+  with_items:
+    - default
+    - production
+    - staging
+  notify: nginx reload
+
+- name: Enable sites
+  file:
+    src: /etc/nginx/sites-available/{{ item }}
+    dest: /etc/nginx/sites-enabled/{{ item }}
+    state: link
+  with_items:
+    - default
+    - production
+    - staging
   notify: nginx reload
 
 # TODO: This needs to be changed to handle systemd
