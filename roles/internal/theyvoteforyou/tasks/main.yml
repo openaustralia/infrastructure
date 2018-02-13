@@ -178,8 +178,7 @@
     account_key: "{{ dnsmadeeasy_key }}"
     account_secret: "{{ dnsmadeeasy_secret }}"
     domain: "theyvoteforyou.org.au"
-    # TODO: Raise it back up to 1800 when migration is complete
-    record_ttl: 60
+    record_ttl: 1800
     state: present
     record_name: "{{ item.name }}"
     record_type: "{{ item.type }}"
@@ -207,8 +206,7 @@
     account_key: "{{ dnsmadeeasy_key }}"
     account_secret: "{{ dnsmadeeasy_secret }}"
     domain: "theyvoteforyou.org"
-    # TODO: Raise it back up to 1800 when migration is complete
-    record_ttl: 60
+    record_ttl: 1800
     state: present
     record_name: "{{ item.name }}"
     record_type: "{{ item.type }}"
@@ -225,8 +223,7 @@
     account_key: "{{ dnsmadeeasy_key }}"
     account_secret: "{{ dnsmadeeasy_secret }}"
     domain: "theyvoteforyou.com.au"
-    # TODO: Raise it back up to 1800 when migration is complete
-    record_ttl: 60
+    record_ttl: 1800
     state: present
     record_name: "{{ item.name }}"
     record_type: "{{ item.type }}"
