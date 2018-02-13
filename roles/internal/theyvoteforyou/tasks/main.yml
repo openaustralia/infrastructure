@@ -111,6 +111,7 @@
   copy:
     src: "{{ item }}"
     dest: /etc/ssl/private/
+    group: ssl-cert
     mode: 0640
   with_items:
     - theyvoteforyou.org.au.dev.key
