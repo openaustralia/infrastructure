@@ -1,4 +1,3 @@
-# An experiment in setting up the OAF infrastructure on EC2 using terraform
 # (We're still using Ansible for configuring the servers themselves and
 # the normal application deployment is still done with capistrano)
 
