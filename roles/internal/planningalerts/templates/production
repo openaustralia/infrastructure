@@ -1,5 +1,3 @@
-# TODO: Handle api subdomain
-
 server {
   listen 80;
   server_name {{ planningalerts_domain }};
@@ -7,10 +5,20 @@ server {
   rewrite ^/(.*) https://www.{{ planningalerts_domain }}/$1 permanent;
 }
 
+# Serve api over http as well as https
+server {
+  listen 80;
+  server_name api.{{ planningalerts_domain }};
+
+  root /srv/www/production/current/public;
+  passenger_enabled on;
+}
+
 server {
   listen 443 ssl http2;
   server_name {{ planningalerts_domain }};
   server_name www.{{ planningalerts_domain }};
+  server_name api.{{ planningalerts_domain }};
 
   root /srv/www/production/current/public;
   passenger_enabled on;

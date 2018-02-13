@@ -5,10 +5,20 @@ server {
   rewrite ^/(.*) https://www.test.{{ planningalerts_domain }}/$1 permanent;
 }
 
+# Serve api over http as well as https
+server {
+  listen 80;
+  server_name api.test.{{ planningalerts_domain }};
+
+  root /srv/www/production/current/public;
+  passenger_enabled on;
+}
+
 server {
   listen 443 ssl http2;
   server_name test.{{ planningalerts_domain }};
   server_name www.test.{{ planningalerts_domain }};
+  server_name api.test.{{ planningalerts_domain }};
 
   root /srv/www/staging/current/public;
   passenger_enabled on;
