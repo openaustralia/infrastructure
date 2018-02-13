@@ -1,0 +1,6 @@
+production:
+  adapter: mysql2
+  host: {{ mysql_host }}
+  database: pa-production
+  username: pa-production
+  password: "{{ planningalerts_production_mysql_password }}"

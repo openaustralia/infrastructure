@@ -1,5 +1,0 @@
-production:
-  adapter: mysql2
-  host: localhost
-  database: planningalerts
-  username: root
