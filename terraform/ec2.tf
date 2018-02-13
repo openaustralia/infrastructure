@@ -29,8 +29,9 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "theyvoteforyou" {
   ami =  "${data.aws_ami.ubuntu.id}"
-  # t2.micro doesn't give us enough memory
-  instance_type = "t2.small"
+  # t2.small was running at 100% cpu on the production load (due to the ruby web
+  # processes) and was failing to index elasticsearch (probably because of memory)
+  instance_type = "t2.medium"
   key_name = "test"
   tags {
     Name = "theyvoteforyou"
@@ -97,8 +98,12 @@ resource "aws_db_instance" "main" {
   storage_type               = "gp2"
   engine                     = "mysql"
   engine_version             = "5.6.37"
-  # This instance type is only for testing/development
-  instance_class             = "db.t2.small"
+  # We went from db.t2.small to db.t2.medium before we discovered that the
+  # database migration service hadn't migrated the databases indexes. Oops!!
+  # We might be able to go back down to small in the short term but would
+  # rather leave us with spare capacity in the short term while we iron out
+  # the kinks rather than dashing around upping capacity to debug problems.
+  instance_class             = "db.t2.medium"
   identifier                 = "main-database"
   username                   = "admin"
   password                   = "${var.rds_admin_password}"
