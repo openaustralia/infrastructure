@@ -1,0 +1,9 @@
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = test.planningalerts.org.au.dev
+DNS.2 = www.test.planningalerts.org.au.dev
+DNS.3 = api.test.planningalerts.org.au.dev

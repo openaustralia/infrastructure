@@ -17,3 +17,7 @@ roles/internal/theyvoteforyou/files/theyvoteforyou.org.au.dev.key
 roles/internal/theyvoteforyou/files/theyvoteforyou.org.au.dev.pem
 roles/internal/theyvoteforyou/files/test.theyvoteforyou.org.au.dev.key
 roles/internal/theyvoteforyou/files/test.theyvoteforyou.org.au.dev.pem
+roles/internal/planningalerts/files/planningalerts.org.au.dev.key
+roles/internal/planningalerts/files/planningalerts.org.au.dev.pem
+roles/internal/planningalerts/files/test.planningalerts.org.au.dev.key
+roles/internal/planningalerts/files/test.planningalerts.org.au.dev.pem

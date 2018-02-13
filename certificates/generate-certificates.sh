@@ -3,7 +3,8 @@
 # Generates certificates for local development. A single certificate, that
 # is unique to you, is added to your browser
 
-domains=( "theyvoteforyou.org.au.dev" "test.theyvoteforyou.org.au.dev" )
+domains=( "theyvoteforyou.org.au.dev" "test.theyvoteforyou.org.au.dev"
+          "planningalerts.org.au.dev" "test.planningalerts.org.au.dev" )
 
 # Generates a private key with passphrase "abcd" (but only if it doesn't already exist)
 if [ ! -f myCA.key ]; then
@@ -46,5 +47,5 @@ do
 done
 
 # Move certificate into the right place
-mv theyvoteforyou.org.au.dev.key theyvoteforyou.org.au.dev.pem ../roles/internal/theyvoteforyou/files
-mv test.theyvoteforyou.org.au.dev.key test.theyvoteforyou.org.au.dev.pem ../roles/internal/theyvoteforyou/files
+mv theyvoteforyou.org.au.dev.key theyvoteforyou.org.au.dev.pem test.theyvoteforyou.org.au.dev.key test.theyvoteforyou.org.au.dev.pem ../roles/internal/theyvoteforyou/files
+mv planningalerts.org.au.dev.key planningalerts.org.au.dev.pem test.planningalerts.org.au.dev.key test.planningalerts.org.au.dev.pem ../roles/internal/planningalerts/files
