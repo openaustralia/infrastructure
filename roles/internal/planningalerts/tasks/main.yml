@@ -1,6 +1,4 @@
 ---
-- include_vars: encrypted_vars/dnsmadeeasy.yml
-
 - name: Create planningalerts databases
   mysql_db:
     login_host: "{{ mysql_host }}"
