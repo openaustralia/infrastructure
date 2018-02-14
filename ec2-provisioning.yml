@@ -3,9 +3,12 @@
 # Run this like so:
 # ansible-playbook -i ec2-hosts ec2-provisioning.yml
 
+# To only run this for planningalerts:
+# ansible-playbook -i ec2-hosts ec2-provisioning.yml -l planningalerts
+
 # Use terraform (see terraform directory) to actually provision ec2 infrastructure
 
-- hosts: theyvoteforyou
+- hosts: ec2
   become: true
   gather_facts: False
 
@@ -14,7 +17,7 @@
     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
     changed_when: False
 
-- hosts: theyvoteforyou
+- hosts: ec2
   become: true
   tasks:
     - name: Install pip
@@ -32,6 +35,9 @@
         region: "{{ ec2_region }}"
       register: rds
 
+- hosts: theyvoteforyou
+  become: true
+  tasks:
     - name: Install nginx (for the benefit of certbot)
       apt: pkg=nginx
 
@@ -72,3 +78,10 @@
     mysql_host: "{{ rds.instance.endpoint }}"
   vars_files:
     - encrypted_vars/theyvoteforyou.yml
+
+- hosts: planningalerts
+  become: true
+  roles:
+    - planningalerts
+  vars:
+    mysql_host: "{{ rds.instance.endpoint }}"

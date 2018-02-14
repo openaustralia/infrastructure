@@ -1,5 +1,9 @@
 [ec2]
 theyvoteforyou.org.au
+ec2.planningalerts.org.au
 
 [theyvoteforyou]
 theyvoteforyou.org.au
+
+[planningalerts]
+ec2.planningalerts.org.au
