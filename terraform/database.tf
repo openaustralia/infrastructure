@@ -15,8 +15,10 @@ resource "aws_db_instance" "main" {
   username                   = "admin"
   password                   = "${var.rds_admin_password}"
   publicly_accessible        = false
-  # Keep backups around for one week
-  backup_retention_period    = 7
+  # Put the backup retention period to its maximum until we figure out what's a
+  # good overall backup scheme
+  # TODO: Set this to its final value
+  backup_retention_period    = 35
   # We want 3-3:30am Sydney time which is 4-4:30pm GMT
   backup_window              = "16:00-16:30"
   # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
