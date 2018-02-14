@@ -6,6 +6,14 @@ resource "cloudflare_record" "pa_root" {
   value  = "103.243.244.10"
 }
 
+# TODO: Remove ec2 subdomains after migration is complete
+resource "cloudflare_record" "pa_ec2" {
+  domain = "planningalerts.org.au"
+  name   = "ec2.planningalerts.org.au"
+  type   = "A"
+  value  = "${aws_eip.planningalerts.public_ip}"
+}
+
 # CNAME records
 
 resource "cloudflare_record" "pa_www" {
@@ -41,6 +49,42 @@ resource "cloudflare_record" "pa_api_test" {
   name   = "api.test.planningalerts.org.au"
   type   = "CNAME"
   value  = "planningalerts.org.au"
+}
+
+# TODO: Remove ec2 subdomains after migration is complete
+resource "cloudflare_record" "pa_www_ec2" {
+  domain = "planningalerts.org.au"
+  name   = "www.ec2.planningalerts.org.au"
+  type   = "CNAME"
+  value  = "ec2.planningalerts.org.au"
+}
+
+resource "cloudflare_record" "pa_api_ec2" {
+  domain = "planningalerts.org.au"
+  name   = "api.ec2.planningalerts.org.au"
+  type   = "CNAME"
+  value  = "ec2.planningalerts.org.au"
+}
+
+resource "cloudflare_record" "pa_test_ec2" {
+  domain = "planningalerts.org.au"
+  name   = "test.ec2.planningalerts.org.au"
+  type   = "CNAME"
+  value  = "ec2.planningalerts.org.au"
+}
+
+resource "cloudflare_record" "pa_www_test_ec2" {
+  domain = "planningalerts.org.au"
+  name   = "www.test.ec2.planningalerts.org.au"
+  type   = "CNAME"
+  value  = "ec2.planningalerts.org.au"
+}
+
+resource "cloudflare_record" "pa_api_test_ec2" {
+  domain = "planningalerts.org.au"
+  name   = "api.test.ec2.planningalerts.org.au"
+  type   = "CNAME"
+  value  = "ec2.planningalerts.org.au"
 }
 
 resource "cloudflare_record" "pa_email" {
