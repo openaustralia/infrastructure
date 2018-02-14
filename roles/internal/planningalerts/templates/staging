@@ -18,8 +18,8 @@ server {
   rewrite ^/(.*) https://www.test.{{ planningalerts_domain }}/$1 permanent;
 
   ssl on;
-  ssl_certificate {{ planningalerts_staging_ssl_certificate_path }};
-  ssl_certificate_key {{ planningalerts_staging_ssl_certificate_key_path }};
+  ssl_certificate /etc/letsencrypt/live/test.{{ planningalerts_domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/test.{{ planningalerts_domain }}/privkey.pem;
 
   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
   ssl_prefer_server_ciphers on;
@@ -45,8 +45,8 @@ server {
   }
 
   ssl on;
-  ssl_certificate {{ planningalerts_staging_ssl_certificate_path }};
-  ssl_certificate_key {{ planningalerts_staging_ssl_certificate_key_path }};
+  ssl_certificate /etc/letsencrypt/live/test.{{ planningalerts_domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/test.{{ planningalerts_domain }}/privkey.pem;
 
   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
   ssl_prefer_server_ciphers on;

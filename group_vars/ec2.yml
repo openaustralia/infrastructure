@@ -10,10 +10,6 @@ theyvoteforyou_ssl_certificate_path: "/etc/letsencrypt/live/{{ theyvoteforyou_do
 theyvoteforyou_ssl_certificate_key_path: "/etc/letsencrypt/live/{{ theyvoteforyou_domain }}/privkey.pem"
 theyvoteforyou_test_ssl_certificate_path: "/etc/letsencrypt/live/test.{{ theyvoteforyou_domain }}/fullchain.pem"
 theyvoteforyou_test_ssl_certificate_key_path: "/etc/letsencrypt/live/test.{{ theyvoteforyou_domain }}/privkey.pem"
-planningalerts_production_ssl_certificate_path: "/etc/letsencrypt/live/{{ planningalerts_domain }}/fullchain.pem"
-planningalerts_production_ssl_certificate_key_path: "/etc/letsencrypt/live/{{ planningalerts_domain }}/privkey.pem"
-planningalerts_staging_ssl_certificate_path: "/etc/letsencrypt/live/test.{{ planningalerts_domain }}/fullchain.pem"
-planningalerts_staging_ssl_certificate_key_path: "/etc/letsencrypt/live/test.{{ planningalerts_domain }}/privkey.pem"
 aws_access_key: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           65383634623531393132376534633864623636336438643430393232366136656536663864393238
