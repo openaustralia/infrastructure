@@ -176,10 +176,10 @@
     dest: /etc/sudoers.d/
     validate: visudo -cf %s
 
-# TODO: We should have the option to disable this
-- name: Set up PlanningAlerts daily scrape and email job
+- name: Set up (or remove) PlanningAlerts daily scrape and email job
   cron:
     name: planningalerts_scrape_and_email
     user: deploy
     hour: 12
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"
+    state: "{{ planningalerts_cron_enabled | ternary('present', 'absent')}}"
