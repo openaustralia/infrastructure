@@ -1,7 +1,7 @@
-# This is a test playbook for configuring an ec2 instance for theyvoteforyou
+# This is a playbook for configuring an ec2 instance for theyvoteforyou
 
 # Run this like so:
-# ansible-playbook -i ec2-hosts ec2-provisioning-test.yml
+# ansible-playbook -i ec2-hosts ec2-provisioning.yml
 
 # Use terraform (see terraform directory) to actually provision ec2 infrastructure
 

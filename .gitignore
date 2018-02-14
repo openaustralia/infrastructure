@@ -2,7 +2,7 @@
 roles/external
 test.pem
 set-aws-access-keys.sh
-ec2-provisioning-test.retry
+ec2-provisioning.retry
 terraform/.terraform
 terraform/secrets.auto.tfvars
 terraform/terraform.tfstate.*
