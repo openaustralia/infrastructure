@@ -3,13 +3,6 @@ theyvoteforyou_domain: theyvoteforyou.org.au
 planningalerts_domain: ec2.planningalerts.org.au
 ansible_user: ubuntu
 ansible_ssh_private_key_file: 'test.pem'
-# Override the default path in the theyvoteforyou role
-# TODO: Probably want let's encrypt to be the default and override for development
-# TODO: Install development certs in the same place as let's encrypt then we can remove this config
-theyvoteforyou_ssl_certificate_path: "/etc/letsencrypt/live/{{ theyvoteforyou_domain }}/fullchain.pem"
-theyvoteforyou_ssl_certificate_key_path: "/etc/letsencrypt/live/{{ theyvoteforyou_domain }}/privkey.pem"
-theyvoteforyou_test_ssl_certificate_path: "/etc/letsencrypt/live/test.{{ theyvoteforyou_domain }}/fullchain.pem"
-theyvoteforyou_test_ssl_certificate_key_path: "/etc/letsencrypt/live/test.{{ theyvoteforyou_domain }}/privkey.pem"
 aws_access_key: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           65383634623531393132376534633864623636336438643430393232366136656536663864393238

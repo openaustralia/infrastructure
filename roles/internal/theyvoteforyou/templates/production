@@ -24,8 +24,8 @@ server {
   }
 
   ssl on;
-  ssl_certificate {{ theyvoteforyou_ssl_certificate_path }};
-  ssl_certificate_key {{ theyvoteforyou_ssl_certificate_key_path }};
+  ssl_certificate /etc/letsencrypt/live/{{ theyvoteforyou_domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{ theyvoteforyou_domain }}/privkey.pem;
 
   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
   ssl_prefer_server_ciphers on;

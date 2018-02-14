@@ -95,27 +95,40 @@
   with_items:
     - libmysqlclient-dev
 
+# Create fake let's encrypt directories when in development
+- name: Create fake let's encrypt directories when in development
+  file:
+    state: directory
+    path: "/etc/letsencrypt/live/{{ item }}"
+  with_items:
+    - theyvoteforyou.org.au.dev
+    - test.theyvoteforyou.org.au.dev
+  when: "'development' in group_names"
+
+# We need to setup the SSL certificates before we try to configure nginx
+# because otherwise nginx will try to look for non-existent certificates
 - name: Copy SSL certificates for development
   copy:
-    src: "{{ item }}"
-    dest: /etc/ssl/
+    src: "{{ item }}.pem"
+    # We're faking it as if these are let's encrypt certs. Makes for less magic config
+    dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
     mode: 0644
   with_items:
-    - theyvoteforyou.org.au.dev.pem
-    - test.theyvoteforyou.org.au.dev.pem
+    - theyvoteforyou.org.au.dev
+    - test.theyvoteforyou.org.au.dev
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: nginx reload
 
 - name: Copy SSL keys for development
   copy:
-    src: "{{ item }}"
-    dest: /etc/ssl/private/
+    src: "{{ item }}.key"
+    dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
     group: ssl-cert
     mode: 0640
   with_items:
-    - theyvoteforyou.org.au.dev.key
-    - test.theyvoteforyou.org.au.dev.key
+    - theyvoteforyou.org.au.dev
+    - test.theyvoteforyou.org.au.dev
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: nginx reload
