@@ -32,24 +32,3 @@ resource "aws_db_instance" "main" {
   skip_final_snapshot        = false
   vpc_security_group_ids = ["${aws_security_group.main_database.id}"]
 }
-
-resource "aws_security_group" "main_database" {
-  name        = "main_database"
-  description = "main database security group"
-
-  # TODO: Limit ingoing and outgoing traffic to within our vpc
-  ingress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # Allow everything going out
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
