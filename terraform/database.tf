@@ -14,7 +14,9 @@ resource "aws_db_instance" "main" {
   identifier                 = "main-database"
   username                   = "admin"
   password                   = "${var.rds_admin_password}"
-  publicly_accessible        = false
+  # TODO: Switch the database back to not being publicly accessible as soon
+  # as the migrations from octopus are finished.
+  publicly_accessible        = true
   # Put the backup retention period to its maximum until we figure out what's a
   # good overall backup scheme
   # TODO: Set this to its final value
