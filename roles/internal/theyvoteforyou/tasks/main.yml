@@ -169,8 +169,3 @@
     weekday: 1-5
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake application:load:daily RAILS_ENV=production"
   when: theyvoteforyou_cron_enabled
-
-- include_vars:
-    file: encrypted_vars/dnsmadeeasy.yml
-  tags:
-    - dns

@@ -25,8 +25,6 @@
 - hosts: planningalerts
   roles:
     - planningalerts
-  vars_files:
-    - encrypted_vars/planningalerts.yml
 
 - hosts: electionleaflets
   roles:
@@ -37,8 +35,6 @@
 - hosts: theyvoteforyou
   roles:
     - theyvoteforyou
-  vars_files:
-    - encrypted_vars/theyvoteforyou.yml
 
 - hosts: oaf
   roles:

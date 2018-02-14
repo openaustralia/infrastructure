@@ -8,7 +8,7 @@
 
 # Use terraform (see terraform directory) to actually provision ec2 infrastructure
 
-- hosts: ec2
+- hosts: all
   become: true
   gather_facts: False
 
@@ -76,8 +76,6 @@
     - theyvoteforyou
   vars:
     mysql_host: "{{ rds.instance.endpoint }}"
-  vars_files:
-    - encrypted_vars/theyvoteforyou.yml
 
 - hosts: planningalerts
   become: true
