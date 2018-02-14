@@ -120,6 +120,33 @@
   when: "'development' in group_names"
   notify: nginx reload
 
+- name: Install nginx now (for the benefit of certbot)
+  apt: pkg=nginx
+  when: "'ec2' in group_names"
+
+- name: Install certificate using certbot
+  include_role:
+    name: geerlingguy.certbot
+  vars:
+    certbot_auto_renew_user: deploy
+    certbot_auto_renew_minute: 10
+    certbot_auto_renew_hour: 7
+    certbot_create_if_missing: yes
+    certbot_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - "{{ theyvoteforyou_domain }}"
+          - www."{{ theyvoteforyou_domain }}"
+          - theyvoteforyou.org
+          - www.theyvoteforyou.org
+          - theyvoteforyou.com.au
+          - www.theyvoteforyou.com.au
+      - email: contact@oaf.org.au
+        domains:
+          - "test.{{ theyvoteforyou_domain }}"
+          - "www.test.{{ theyvoteforyou_domain }}"
+  when: "'ec2' in group_names"
+
 - name: Copy test/test password for staging site
   copy:
     src: htpasswd

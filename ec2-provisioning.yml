@@ -37,41 +37,6 @@
 
 - hosts: theyvoteforyou
   become: true
-  tasks:
-    - name: Install nginx (for the benefit of certbot)
-      apt: pkg=nginx
-
-# This needs to run after the two DNS entries for the hosts are added
-# It also needs to be run after nginx has been installed
-# And it depends on the deploy user being created
-- hosts: theyvoteforyou
-  become: true
-  vars:
-    certbot_auto_renew_user: deploy
-    certbot_auto_renew_minute: 10
-    certbot_auto_renew_hour: 7
-    certbot_create_if_missing: yes
-    certbot_certs:
-      - email: contact@oaf.org.au
-        domains:
-          - "{{ theyvoteforyou_domain }}"
-          - www."{{ theyvoteforyou_domain }}"
-          - theyvoteforyou.org
-          - www.theyvoteforyou.org
-          - theyvoteforyou.com.au
-          - www.theyvoteforyou.com.au
-      - email: contact@oaf.org.au
-        domains:
-          - "test.{{ theyvoteforyou_domain }}"
-          - "www.test.{{ theyvoteforyou_domain }}"
-    github_users: []
-  roles:
-    - deploy-user
-    - geerlingguy.certbot
-
-# TODO: Don't want to run dns update stuff
-- hosts: theyvoteforyou
-  become: true
   roles:
     - theyvoteforyou
   vars:
