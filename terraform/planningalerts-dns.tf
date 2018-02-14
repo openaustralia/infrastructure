@@ -29,6 +29,20 @@ resource "cloudflare_record" "pa_test" {
   value  = "planningalerts.org.au"
 }
 
+resource "cloudflare_record" "pa_www_test" {
+  domain = "planningalerts.org.au"
+  name   = "www.test.planningalerts.org.au"
+  type   = "CNAME"
+  value  = "planningalerts.org.au"
+}
+
+resource "cloudflare_record" "pa_api_test" {
+  domain = "planningalerts.org.au"
+  name   = "api.test.planningalerts.org.au"
+  type   = "CNAME"
+  value  = "planningalerts.org.au"
+}
+
 resource "cloudflare_record" "pa_email" {
   domain = "planningalerts.org.au"
   name   = "email.planningalerts.org.au"
