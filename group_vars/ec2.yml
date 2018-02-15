@@ -1,6 +1,6 @@
 ---
 theyvoteforyou_domain: theyvoteforyou.org.au
-planningalerts_domain: ec2.planningalerts.org.au
+planningalerts_domain: planningalerts.org.au
 ansible_user: ubuntu
 ansible_ssh_private_key_file: 'test.pem'
 aws_access_key: !vault |
