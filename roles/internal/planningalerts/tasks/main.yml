@@ -183,11 +183,12 @@
           - "{{ planningalerts_domain }}"
           - www."{{ planningalerts_domain }}"
           - api."{{ planningalerts_domain }}"
-      - email: contact@oaf.org.au
-        domains:
-          - "test.{{ planningalerts_domain }}"
-          - "www.test.{{ planningalerts_domain }}"
-          - "api.test.{{ planningalerts_domain }}"
+      # TODO: Reenable this as soon as possible
+      # - email: contact@oaf.org.au
+      #   domains:
+      #     - "test.{{ planningalerts_domain }}"
+      #     - "www.test.{{ planningalerts_domain }}"
+      #     - "api.test.{{ planningalerts_domain }}"
   when: "'ec2' in group_names"
 
 - name: Copy nginx main configuration
@@ -220,7 +221,8 @@
   with_items:
     - default
     - production
-    - staging
+    # TODO: Enable staging again when we can generate a certificate for it
+    # - staging
   notify: nginx reload
 
 # TODO: This needs to be changed to handle systemd
