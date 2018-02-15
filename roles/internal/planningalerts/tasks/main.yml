@@ -103,9 +103,6 @@
     - staging
   notify: nginx reload
 
-- debug:
-    msg: "morph_api_key: {{ morph_api_key }}"
-
 - name: Copy application environment variables
   template:
     src: "env.{{ item }}"
