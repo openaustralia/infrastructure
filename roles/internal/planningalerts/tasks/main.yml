@@ -58,17 +58,6 @@
     - libxslt1-dev
     - sphinxsearch
 
-- name: Copy application configuration
-  template:
-    src: "configuration-{{ item }}.rb"
-    dest: /srv/www/{{ item }}/shared/configuration.rb
-    owner: deploy
-    group: deploy
-  with_items:
-    - production
-    - staging
-  notify: nginx reload
-
 - name: Copy application database configuration
   template:
     src: "database-{{ item }}.yml"
@@ -113,6 +102,23 @@
     - production
     - staging
   notify: nginx reload
+
+- debug:
+    msg: "morph_api_key: {{ morph_api_key }}"
+
+- name: Copy application environment variables
+  template:
+    src: "env.{{ item }}"
+    # Naming of the file .env.production is a little misleading (in staging environment)
+    # Probably should just be called "env" and capistrano will need updating too
+    # TODO: Fix this
+    dest: "/srv/www/{{ item }}/shared/.env.production"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
+  notify: nginx restart
 
 - name: Ensure the log directories exist
   file:
