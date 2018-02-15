@@ -114,6 +114,16 @@
     - staging
   notify: nginx reload
 
+- name: Ensure the log directories exist
+  file:
+    state: directory
+    path: "/srv/www/{{ item }}/shared/log"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
+
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
   file:
