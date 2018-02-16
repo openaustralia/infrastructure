@@ -183,12 +183,11 @@
           - "{{ planningalerts_domain }}"
           - www."{{ planningalerts_domain }}"
           - api."{{ planningalerts_domain }}"
-      # TODO: Reenable this as soon as possible
-      # - email: contact@oaf.org.au
-      #   domains:
-      #     - "test.{{ planningalerts_domain }}"
-      #     - "www.test.{{ planningalerts_domain }}"
-      #     - "api.test.{{ planningalerts_domain }}"
+      - email: contact@oaf.org.au
+        domains:
+          - "test.{{ planningalerts_domain }}"
+          - "www.test.{{ planningalerts_domain }}"
+          - "api.test.{{ planningalerts_domain }}"
   when: "'ec2' in group_names"
 
 - name: Copy nginx main configuration
