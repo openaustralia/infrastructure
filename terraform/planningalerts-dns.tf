@@ -3,7 +3,7 @@ resource "cloudflare_record" "pa_root" {
   domain = "planningalerts.org.au"
   name   = "planningalerts.org.au"
   type   = "A"
-  value  = "103.243.244.10"
+  value  = "${aws_eip.planningalerts.public_ip}"
 }
 
 # TODO: Remove ec2 subdomains after migration is complete
