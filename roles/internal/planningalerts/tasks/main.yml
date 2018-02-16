@@ -220,8 +220,7 @@
   with_items:
     - default
     - production
-    # TODO: Enable staging again when we can generate a certificate for it
-    # - staging
+    - staging
   notify: nginx reload
 
 # TODO: This needs to be changed to handle systemd
