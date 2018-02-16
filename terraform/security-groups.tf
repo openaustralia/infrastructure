@@ -23,6 +23,14 @@ resource "aws_security_group" "webserver" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow pings from hosts on the internet
+  ingress {
+    protocol = "icmp"
+    from_port = 8
+    to_port = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # Allow everything going out
   egress {
     from_port = 0
@@ -60,6 +68,14 @@ resource "aws_security_group" "theyvoteforyou" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow pings from hosts on the internet
+  ingress {
+    protocol = "icmp"
+    from_port = 8
+    to_port = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
 
