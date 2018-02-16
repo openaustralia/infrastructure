@@ -8,7 +8,9 @@ server {
 server {
   listen 80;
   server_name api.{{ planningalerts_domain }};
-  rewrite ^/(.*) https://api.{{ planningalerts_domain }}/$1 permanent;
+
+  root /srv/www/production/current/public;
+  passenger_enabled on;
 }
 
 server {
