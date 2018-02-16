@@ -1,3 +1,4 @@
+## oaf.org.au
 # A records
 resource "cloudflare_record" "oaf_root" {
   domain = "oaf.org.au"
@@ -151,4 +152,110 @@ resource "cloudflare_record" "oaf_cuttlefish_domainkey" {
   name   = "cuttlefish._domainkey.cuttlefish.oaf.org.au"
   type   = "TXT"
   value  = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvEPfY69ZLYEn+I8rXaRLpTTb9c8AAEdjlUIPAX5nZ2cPYRxA8eCO/AYgXGXXdvGYWUm7sDkil6oSlqZjLx3au31AOoPNimi8FT2QjSgDp/Qkd403ACW314Aio4lo39y+un4GK0ih6KDuJAcxSftoGd9DFViBkVUs8Cs/WhFnc2dkhKTpCtt8Mji+bNtTOYsFwAg8LC3tDnWg+V3UTqqFQBi476DemGPVjxtpe48uFjCQpGg8T0uW54cIKWiC3PWCU0Ksj3HVMhE8P33McW/VFyGAx+nDlc0i6VY3zZi2i86O9Z84j0bJm/607lFK/pCa/Rv8hSJz5Ksk2EkD0NKh0QIDAQAB"
+}
+
+## openaustraliafoundation.org.au
+
+# A records
+
+resource "cloudflare_record" "oaf_alt_root" {
+  domain = "openaustraliafoundation.org.au"
+  name   = "openaustraliafoundation.org.au"
+  type   = "A"
+  value  = "103.243.244.10"
+}
+
+resource "cloudflare_record" "oaf_alt_kedumba" {
+  domain = "openaustraliafoundation.org.au"
+  name   = "kedumba.openaustraliafoundation.org.au"
+  type   = "A"
+  value  = "103.243.244.10"
+}
+
+# CNAME records
+resource "cloudflare_record" "oaf_alt_www" {
+  domain = "openaustraliafoundation.org.au"
+  name   = "www.openaustraliafoundation.org.au"
+  type   = "CNAME"
+  value  = "openaustraliafoundation.org.au"
+}
+
+resource "cloudflare_record" "oaf_alt_test" {
+  domain = "openaustraliafoundation.org.au"
+  name   = "test.openaustraliafoundation.org.au"
+  type   = "CNAME"
+  value  = "openaustraliafoundation.org.au"
+}
+
+# MX records
+resource "cloudflare_record" "oaf_alt_mx1" {
+  domain   = "openaustraliafoundation.org.au"
+  name     = "openaustraliafoundation.org.au"
+  type     = "MX"
+  priority = 10
+  value    = "aspmx.l.google.com"
+}
+
+resource "cloudflare_record" "oaf_alt_mx2" {
+  domain   = "openaustraliafoundation.org.au"
+  name     = "openaustraliafoundation.org.au"
+  type     = "MX"
+  priority = 20
+  value    = "alt1.aspmx.l.google.com"
+}
+
+resource "cloudflare_record" "oaf_alt_mx3" {
+  domain   = "openaustraliafoundation.org.au"
+  name     = "openaustraliafoundation.org.au"
+  type     = "MX"
+  priority = 20
+  value    = "alt2.aspmx.l.google.com"
+}
+
+resource "cloudflare_record" "oaf_alt_mx4" {
+  domain   = "openaustraliafoundation.org.au"
+  name     = "openaustraliafoundation.org.au"
+  type     = "MX"
+  priority = 30
+  value    = "aspmx2.googlemail.com"
+}
+
+resource "cloudflare_record" "oaf_alt_mx5" {
+  domain   = "openaustraliafoundation.org.au"
+  name     = "openaustraliafoundation.org.au"
+  type     = "MX"
+  priority = 30
+  value    = "aspmx3.googlemail.com"
+}
+
+resource "cloudflare_record" "oaf_alt_mx6" {
+  domain   = "openaustraliafoundation.org.au"
+  name     = "openaustraliafoundation.org.au"
+  type     = "MX"
+  priority = 30
+  value    = "aspmx4.googlemail.com"
+}
+
+resource "cloudflare_record" "oaf_alt_mx7" {
+  domain   = "openaustraliafoundation.org.au"
+  name     = "openaustraliafoundation.org.au"
+  type     = "MX"
+  priority = 30
+  value    = "aspmx5.googlemail.com"
+}
+
+resource "cloudflare_record" "oaf_alt_kedumba_mx" {
+  domain   = "openaustraliafoundation.org.au"
+  name     = "kedumba.openaustraliafoundation.org.au"
+  type     = "MX"
+  priority = 10
+  value    = "kedumba.openaustraliafoundation.org.au"
+}
+
+# TXT records
+resource "cloudflare_record" "oaf_alt_spf" {
+  domain = "openaustraliafoundation.org.au"
+  name   = "openaustraliafoundation.org.au"
+  type   = "TXT"
+  value  = "v=spf1 a include:_spf.google.com ~all"
 }
