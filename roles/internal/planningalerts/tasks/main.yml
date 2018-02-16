@@ -1,6 +1,4 @@
 ---
-# TODO: Get background workers running at startup
-
 - name: Install memcached
   apt: pkg=memcached
 
@@ -223,7 +221,6 @@
     - staging
   notify: nginx reload
 
-# TODO: This needs to be changed to handle systemd
 - name: Allow deploy user to control services
   copy:
     src: deploy_service_control
