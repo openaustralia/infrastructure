@@ -19,12 +19,6 @@ server {
   root /srv/www/production/current/public;
   passenger_enabled on;
 
-  # TODO: Remove this BEFORE we switch this over to production
-  # Remove this after we've switched kedumba planningalerts to
-  # using the RDS database.
-  auth_basic "Staging Site";
-  auth_basic_user_file htpasswd;
-
   location ^~ /assets/ {
     gzip_static on;
     expires max;
