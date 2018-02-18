@@ -5,6 +5,7 @@ resource "aws_instance" "jamison" {
     Name = "jamison"
   }
   security_groups = ["${aws_security_group.jamison.name}"]
+  disable_api_termination = true
 }
 
 resource "aws_eip" "jamison" {
@@ -21,6 +22,7 @@ resource "aws_instance" "octopus" {
     Name = "octopus"
   }
   security_groups = ["${aws_security_group.octopus.name}"]
+  disable_api_termination = true
 }
 
 resource "aws_eip" "octopus" {
