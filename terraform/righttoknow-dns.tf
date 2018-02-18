@@ -3,8 +3,7 @@ resource "cloudflare_record" "rtk_root" {
   domain = "righttoknow.org.au"
   name   = "righttoknow.org.au"
   type   = "A"
-  # TODO: Get this value from elsewhere
-  value  = "54.79.92.207"
+  value  = "${aws_eip.octopus.public_ip}"
 }
 
 # CNAME records
