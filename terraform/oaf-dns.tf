@@ -4,7 +4,8 @@ resource "cloudflare_record" "oaf_root" {
   domain = "oaf.org.au"
   name   = "oaf.org.au"
   type   = "A"
-  value  = "103.243.244.10"
+  # TODO: Get this elastic IP from AWS automatically
+  value  = "54.79.92.207"
 }
 
 resource "cloudflare_record" "oaf_cuttlefish" {
@@ -162,7 +163,8 @@ resource "cloudflare_record" "oaf_alt_root" {
   domain = "openaustraliafoundation.org.au"
   name   = "openaustraliafoundation.org.au"
   type   = "A"
-  value  = "103.243.244.10"
+  # TODO: Get this elastic IP from AWS automatically
+  value  = "54.79.92.207"
 }
 
 resource "cloudflare_record" "oaf_alt_kedumba" {
