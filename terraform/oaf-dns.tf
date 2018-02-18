@@ -4,15 +4,14 @@ resource "cloudflare_record" "oaf_root" {
   domain = "oaf.org.au"
   name   = "oaf.org.au"
   type   = "A"
-  # TODO: Get this elastic IP from AWS automatically
-  value  = "54.79.92.207"
+  value  = "${aws_eip.octopus.public_ip}"
 }
 
 resource "cloudflare_record" "oaf_cuttlefish" {
   domain = "oaf.org.au"
   name   = "cuttlefish.oaf.org.au"
   type   = "A"
-  value  = "23.239.22.35"
+  value  = "${var.cuttlefish_ipv4}"
 }
 
 resource "cloudflare_record" "oaf_kedumba" {
@@ -27,7 +26,7 @@ resource "cloudflare_record" "oaf_aaaa_cuttlefish" {
   domain = "oaf.org.au"
   name   = "cuttlefish.oaf.org.au"
   type   = "AAAA"
-  value  = "2600:3c01::f03c:91ff:fe89:1913"
+  value  = "${var.cuttlefish_ipv6}"
 }
 
 # CNAME records
@@ -145,7 +144,7 @@ resource "cloudflare_record" "oaf_cuttlefish_spf" {
   domain = "oaf.org.au"
   name   = "cuttlefish.oaf.org.au"
   type   = "TXT"
-  value  = "v=spf1 include:_spf.google.com ip4:23.239.22.35 ip6:2600:3c01::f03c:91ff:fe89:1913 -all"
+  value  = "v=spf1 include:_spf.google.com ip4:${var.cuttlefish_ipv4} ip6:${var.cuttlefish_ipv6} -all"
 }
 
 resource "cloudflare_record" "oaf_cuttlefish_domainkey" {
@@ -163,8 +162,7 @@ resource "cloudflare_record" "oaf_alt_root" {
   domain = "openaustraliafoundation.org.au"
   name   = "openaustraliafoundation.org.au"
   type   = "A"
-  # TODO: Get this elastic IP from AWS automatically
-  value  = "54.79.92.207"
+  value  = "${aws_eip.octopus.public_ip}"
 }
 
 resource "cloudflare_record" "oaf_alt_kedumba" {

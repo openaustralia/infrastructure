@@ -22,3 +22,11 @@ variable "theyvoteforyou_dme_domainid" {
 variable "theyvoteforyou_dme_ttl" {
   default = 60
 }
+# TODO: Get this automatically by managing Linode infrastructure with terraform
+variable "cuttlefish_ipv4" {
+  default = "23.239.22.35"
+}
+# TODO: Get this automatically by managing Linode infrastructure with terraform
+variable "cuttlefish_ipv6" {
+  default = "2600:3c01::f03c:91ff:fe89:1913"
+}
