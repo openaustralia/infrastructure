@@ -117,3 +117,30 @@ resource "aws_security_group" "main_database" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_security_group" "jamison" {
+  # TODO Change this
+  description = "launch-wizard-3 created 2018-02-19T05:58:53.596+11:00"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow pings from hosts on the internet
+  ingress {
+    protocol = "icmp"
+    from_port = 8
+    to_port = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
