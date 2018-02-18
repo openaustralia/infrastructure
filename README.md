@@ -2,6 +2,12 @@
 
 ** THIS IS A WORK IN PROGRESS **
 
+It is (as of 19 Feb 2018) being used to setup and configure servers for:
+* planningalerts
+* theyvoteforyou
+
+The other sites are being worked on right now.
+
 We currently use four servers with the following websites running on each server:
 
 1. Linode server 1:
