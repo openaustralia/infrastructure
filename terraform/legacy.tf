@@ -9,6 +9,9 @@ resource "aws_instance" "jamison" {
 
 resource "aws_eip" "jamison" {
   instance = "${aws_instance.jamison.id}"
+  tags {
+    Name = "jamison"
+  }
 }
 
 resource "aws_instance" "octopus" {
@@ -22,4 +25,7 @@ resource "aws_instance" "octopus" {
 
 resource "aws_eip" "octopus" {
   instance = "${aws_instance.octopus.id}"
+  tags {
+    Name = "octopus"
+  }
 }

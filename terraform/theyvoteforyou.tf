@@ -16,4 +16,7 @@ resource "aws_instance" "theyvoteforyou" {
 
 resource "aws_eip" "theyvoteforyou" {
   instance = "${aws_instance.theyvoteforyou.id}"
+  tags {
+    Name = "theyvoteforyou"
+  }
 }

@@ -13,4 +13,7 @@ resource "aws_instance" "planningalerts" {
 
 resource "aws_eip" "planningalerts" {
   instance = "${aws_instance.planningalerts.id}"
+  tags {
+    Name = "planningalerts"
+  }
 }
