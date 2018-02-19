@@ -79,20 +79,3 @@
 
 - name: Copy msmtp configuration
   template: src=msmtprc dest=/etc/
-
-- name: DNS setup for openaustralia.org.au
-  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="openaustralia.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
-  tags:
-    - dns
-  with_items:
-    - {type: "A", name: "",        value: "103.243.244.10"}
-    - {type: "CNAME", name: "www", value:  ""}
-    - {type: "CNAME", name: "data", value: ""}
-    - {type: "MX", name: "", value: "10 aspmx.l.google.com."}
-    - {type: "MX", name: "", value: "20 alt1.aspmx.l.google.com."}
-    - {type: "MX", name: "", value: "20 alt2.aspmx.l.google.com."}
-    - {type: "MX", name: "", value: "30 aspmx2.googlemail.com."}
-    - {type: "MX", name: "", value: "30 aspmx3.googlemail.com."}
-    - {type: "MX", name: "", value: "30 aspmx4.googlemail.com."}
-    - {type: "MX", name: "", value: "30 aspmx5.googlemail.com."}
-    - {type: "TXT", name: "", value: '"v=spf1 a include:_spf.google.com ~all"'}
