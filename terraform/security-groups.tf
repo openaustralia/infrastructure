@@ -143,6 +143,14 @@ resource "aws_security_group" "jamison" {
     to_port = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  # Allow everything going out
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_security_group" "octopus" {
@@ -184,6 +192,14 @@ resource "aws_security_group" "octopus" {
     protocol = "icmp"
     from_port = 8
     to_port = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow everything going out
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
