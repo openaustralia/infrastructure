@@ -76,24 +76,3 @@
 
 - name: Cron for email alerts
   cron: name="email alerts" minute="*/5" user=deploy job="cd /srv/www/current/tools && php alertomatic.php" state=present
-
-- name: DNS setup
-  dnsmadeeasy: account_key={{ dnsmadeeasy_key }} account_secret={{ dnsmadeeasy_secret }} domain="electionleaflets.org.au" record_ttl=1800 state=present record_name="{{ item.name }}" record_type="{{ item.type }}" record_value='{{ item.value }}'
-  tags:
-    - dns
-  with_items:
-    - {type: "A", name: "", value: "103.243.244.10"}
-    - {type: "CNAME", name: "federal2010", value: ""}
-    - {type: "CNAME", name: "test",        value: ""}
-    - {type: "CNAME", name: "www",         value: ""}
-    # TODO Do we need this record?
-    - {type: "CNAME", name: "googleffffffffc7db8b0c", value: "google.com."}
-    - {type: "HTTPRED", name: "tickets", value: "http://tickets.openaustraliafoundation.org.au/browse/EL"}
-    - {type: "MX", name: "", value: "10 aspmx.l.google.com."}
-    - {type: "MX", name: "", value: "20 alt1.aspmx.l.google.com."}
-    - {type: "MX", name: "", value: "20 alt2.aspmx.l.google.com."}
-    - {type: "MX", name: "", value: "30 aspmx2.googlemail.com."}
-    - {type: "MX", name: "", value: "30 aspmx3.googlemail.com."}
-    - {type: "MX", name: "", value: "30 aspmx4.googlemail.com."}
-    - {type: "MX", name: "", value: "30 aspmx5.googlemail.com."}
-    - {type: "TXT", name: "", value: '"v=spf1 a include:_spf.google.com ~all"'}
