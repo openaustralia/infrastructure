@@ -43,6 +43,3 @@ honeybadger_api_key: !vault |
           6464353335363837320a653038393432393536663530356139646365356265616562323635656534
           6431
 google_analytics_code: UA-3107958-15
-# TODO These keys are replicated in the roles. Remove this duplication
-dnsmadeeasy_key: "{{ encrypted_dnsmadeeasy_key }}"
-dnsmadeeasy_secret: "{{ encrypted_dnsmadeeasy_secret }}"

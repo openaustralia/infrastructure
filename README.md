@@ -169,58 +169,6 @@ cap -S stage=development deploy:setup_db
 * HTTPS
 * Staging/production web server config
 
-## DNS Setup
-
-To do a dry-run for any DNS update on theyvoteforyou
-```
-ansible-playbook --check --tags=dns -i development-hosts --limit=theyvoteforyou site.yml
-```
-
-The DNS setup for theyvoteforyou is up to date as of 5 Feb 2018.
-
-**WARNING**: The other domains haven't been recently checked yet
-
-We're using Ansible to setup DNS for each project. The tasks that do that are currently in the
-associated role. So, for instance the tasks to setup the oaf.org.au domain are in the `oaf` role.
-
-All the tasks use a default ttl of 1800 seconds (30 mins). Before changing anything drop the ttl to
-something like 300 seconds (5 mins) or 60 seconds (1 min) so that any changes you make will
-propagate quickly. Now wait around 1 hour.
-
-Let's say we have the following line in one of the tasks for setting up the DNS
-```
-- {type: "CNAME", name: "test", value: ""}
-```
-
-This says make `test` a `CNAME` for the root of the domain. Let's say we want to change that so
-it points to another domain `foo.com`.
-
-Simply change the line to read
-```
-- {type: "CNAME", name: "test", value: "foo.com."}
-```
-And rerun ansible (or Vagrant).
-
-Ansible will see that there is already a record for `CNAME` `test` and change that to its new value.
-
-For records that can have multiple values per type such as `TXT` records it works a little differently.
-It will only treat something as the same record if it has the same value as well.
-
-So, for instance you can remove a particular `TXT` record by doing
-```
-dnsmadeeasy: account_key=xxxx account_secret=xxxx domain="foo.com" record_ttl=1800 state=absent record_name="" record_type="TXT" record_value='"v=spf1 a include:_spf.google.com ~all"'
-```
-
-but if I do
-```
-dnsmadeeasy: account_key=xxxx account_secret=xxxx domain="foo.com" record_ttl=1800 state=present record_name="" record_type="TXT" record_value='some text'
-```
-
-it will always add a new record unless there is already a `TXT` record with the value `some text` on the
-root of the domain.
-
-To add a new domain, first you will need to add the domain in [DNSMadeEasy web console](https://cp.dnsmadeeasy.com/). Then, you can copy the Ansible dnsmadeeasy task template from any of the roles that use it remembering to change the `domain=` parameter to the new domain name.
-
 ## Backups
 
 Data directories of servers are backed up to S3 using Duply. For most servers this means backing up the automysqlbackup directory.

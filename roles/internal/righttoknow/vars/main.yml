@@ -8,6 +8,3 @@ alaveteli_recaptcha_private_key: '{{ encrypted_alaveteli_recaptcha_private_key }
 righttoknow_development_ssl_key: '{{ encrypted_development_ssl_key }}'
 righttoknow_test_ssl_key: '{{ encrypted_righttoknow_test_ssl_key }}'
 righttoknow_production_ssl_key: '{{ encrypted_righttoknow_production_ssl_key }}'
-# TODO These keys are replicated in the roles. Remove this duplication
-dnsmadeeasy_key: "{{ encrypted_dnsmadeeasy_key }}"
-dnsmadeeasy_secret: "{{ encrypted_dnsmadeeasy_secret }}"

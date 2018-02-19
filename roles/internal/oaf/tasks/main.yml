@@ -1,6 +1,5 @@
 ---
 - include_vars: encrypted.yml
-- include_vars: encrypted_vars/dnsmadeeasy.yml
 
 # TODO Extract php-mysql-apache role
 - name: Install required packages
