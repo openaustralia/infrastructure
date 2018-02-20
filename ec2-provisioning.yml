@@ -37,6 +37,8 @@
         instance_name: main-database
         region: "{{ ec2_region }}"
       register: rds
+      # Run this task even when running ansible-playbook with "--check"
+      check_mode: no
 
 - hosts: theyvoteforyou
   become: true
