@@ -5,12 +5,15 @@ resource "aws_db_instance" "main" {
   storage_type               = "gp2"
   engine                     = "mysql"
   engine_version             = "5.6.37"
-  # We went from db.t2.small to db.t2.medium before we discovered that the
-  # database migration service hadn't migrated the databases indexes. Oops!!
-  # We might be able to go back down to small in the short term but would
-  # rather leave us with spare capacity in the short term while we iron out
-  # the kinks rather than dashing around upping capacity to debug problems.
-  instance_class             = "db.t2.medium"
+  # 1. We went from db.t2.small to db.t2.medium before we discovered that the
+  #    database migration service hadn't migrated the databases indexes. Oops!!
+  #    We might be able to go back down to small in the short term but would
+  #    rather leave us with spare capacity in the short term while we iron out
+  #    the kinks rather than dashing around upping capacity to debug problems.
+  # 2. With db.t2.medium it turned out we were running out of cpu credits
+  #    after a few days. So, upping to db.m4.large as the smallest "standard"
+  #    database instance
+  instance_class             = "db.m4.large"
   identifier                 = "main-database"
   username                   = "admin"
   password                   = "${var.rds_admin_password}"
