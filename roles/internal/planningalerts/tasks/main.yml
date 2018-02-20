@@ -232,5 +232,6 @@
     name: planningalerts_scrape_and_email
     user: deploy
     hour: 12
+    minute: 0
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"
     state: "{{ planningalerts_cron_enabled | ternary('present', 'absent')}}"
