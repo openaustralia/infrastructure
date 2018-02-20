@@ -41,4 +41,9 @@
     src: nrsysmond.cfg
     dest: /etc/newrelic
 
+- name: Start newrelic server monitor
+  service:
+    name: newrelic-sysmond
+    state: started
+
 # TODO: Add byobu and enable it by default
