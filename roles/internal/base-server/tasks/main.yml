@@ -17,3 +17,8 @@
     dest: /etc/localtime
     state: link
   notify: Update timezone
+
+# TODO: Install newrelic monitor agent
+# See https://rpm.newrelic.com/accounts/154944/servers/get_started
+
+# TODO: Add byobu and enable it by default 
