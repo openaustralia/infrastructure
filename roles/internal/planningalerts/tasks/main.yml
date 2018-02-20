@@ -101,6 +101,14 @@
     - staging
   notify: nginx reload
 
+- name: Copy application new relic configuration (only for production)
+  template:
+    src: newrelic.yml
+    dest: /srv/www/production/shared
+    owner: deploy
+    group: deploy
+  notify: nginx reload
+
 - name: Copy application environment variables
   template:
     src: "env.{{ item }}"
