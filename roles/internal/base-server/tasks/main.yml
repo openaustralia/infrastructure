@@ -18,9 +18,6 @@
     state: link
   notify: Update timezone
 
-# TODO: Install newrelic monitor agent
-# See https://rpm.newrelic.com/accounts/154944/servers/get_started
-
 - name: Add apt repository for new relic
   apt_repository:
     repo: deb http://apt.newrelic.com/debian/ newrelic non-free
