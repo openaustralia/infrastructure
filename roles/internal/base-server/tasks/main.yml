@@ -36,4 +36,9 @@
     pkg: newrelic-sysmond
     update_cache: yes
 
+- name: Configure newrelic server monitor
+  template:
+    src: nrsysmond.cfg
+    dest: /etc/newrelic
+
 # TODO: Add byobu and enable it by default
