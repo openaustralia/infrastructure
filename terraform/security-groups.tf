@@ -156,19 +156,19 @@ resource "aws_security_group" "jamison" {
 resource "aws_security_group" "octopus" {
   # TODO Change this
   description = "for main instance"
-  
-  # TODO: Remove this
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 
   # ssh is running on port 2506
   ingress {
     from_port   = 2506
     to_port     = 2506
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow incoming email (for righttoknow)
+  ingress {
+    from_port   = 25
+    to_port     = 25
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
