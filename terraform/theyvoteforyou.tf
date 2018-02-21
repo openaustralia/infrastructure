@@ -10,7 +10,7 @@ resource "aws_instance" "theyvoteforyou" {
   tags {
     Name = "theyvoteforyou"
   }
-  security_groups = ["${aws_security_group.theyvoteforyou.name}"]
+  security_groups = ["${aws_security_group.webserver.name}"]
   disable_api_termination = true
 }
 
