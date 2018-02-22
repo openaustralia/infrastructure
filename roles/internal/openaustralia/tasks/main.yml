@@ -93,7 +93,7 @@
     - rewrite
 
 - name: Copy across the php config
-  template: src=php.ini dest=/etc/php5/{{ item }}/
+  template: src=php.ini dest=/etc/php/5.6/{{ item }}/
   notify: reload apache
   with_items:
     - apache2
