@@ -4,10 +4,10 @@
 
 // *******************************************************************************
 // MySQL database.
-define ("DB_HOST", "localhost");
-define ("DB_USER", "root");
-define ("DB_PASSWORD", "");
-define ("DB_NAME", "openaustralia");
+define ("DB_HOST", "{{ mysql_host }}");
+define ("DB_USER", "oa-production");
+define ("DB_PASSWORD", "{{ openaustralia_production_mysql_password }}");
+define ("DB_NAME", "oa-production");
 
 // *******************************************************************************
 // Domains.
