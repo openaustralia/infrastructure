@@ -122,12 +122,6 @@ galaxy_info:
   #- web
 dependencies:
   - role: base-server
-  # TODO: Move over to external mysql
-  - role: ANXS.mysql
-    mysql_bind_address: '127.0.0.1'
-    mysql_root_password: ''
-    mysql_databases:
-      - name: openaustralia
   - role: rvm_io.ruby
     rvm1_rubies:
       # Picking similar one installed on the old server (and used by openaustralia.org)

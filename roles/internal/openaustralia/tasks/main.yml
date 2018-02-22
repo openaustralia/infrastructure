@@ -1,6 +1,39 @@
 ---
 - include_vars: encrypted.yml
 
+- name: Install dependency for ansible mysql_db module
+  apt: pkg=python-mysqldb
+
+- name: Create openaustralia databases
+  mysql_db:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: "oa-{{ item }}"
+  with_items:
+    - production
+    - staging
+
+- name: Create openaustralia user with access to the database (production)
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: oa-production
+    password: "{{ openaustralia_production_mysql_password }}"
+    priv: 'oa-production.*:ALL'
+    host: "%"
+
+- name: Create openaustralia user with access to the database (staging)
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: oa-staging
+    password: "{{ openaustralia_staging_mysql_password }}"
+    priv: 'oa-staging.*:ALL'
+    host: "%"
+
 # TODO: Add staging site
 - name: Ensure that directories exist
   file: path={{ item }} owner=deploy group=deploy state=directory
