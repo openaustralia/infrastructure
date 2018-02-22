@@ -131,6 +131,9 @@ dependencies:
     rvm1_rubies:
       # Picking similar one installed on the old server (and used by openaustralia.org)
       - ruby-1.8.7-p374
+    rvm1_install_flags: '--auto-dotfiles'      # Remove --user-install from defaults
+    rvm1_install_path: /usr/local/rvm          # Set to system location
+    rvm1_user: root                            # Need root account to access system location
     # Increase timeout on curl. For some reason some requests are taking too long
     rvm1_ruby_install_flags: "--max-time 20"
     # Don't want us updating rvm on every run by default
