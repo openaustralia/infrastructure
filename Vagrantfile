@@ -104,7 +104,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Use this so that you don't need to give the machine name for all vagrant
   # commands. Set this to whatever you're most working on at the moment.
-  primary_host = "planningalerts.org.au.dev"
+  primary_host = "openaustralia.org.au.dev"
 
   hosts.each do |hostname, ip|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
