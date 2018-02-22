@@ -11,15 +11,22 @@
     - "/srv/www/shared/images/mps"
     - "/srv/www/shared/images/mpsL"
 
+# Install php5 on xenial requires a few more jumps than usual
+- name: Add repo for installing php5
+  apt_repository:
+    repo: 'ppa:ondrej/php'
+
 # TODO Extract php-mysql-apache role
 - name: Install required packages
-  apt: name={{ item }} state=present
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
   with_items:
-    - php5
-    - php5-curl
-    - php5-mysql
+    - php5.6
+    - php5.6-curl
+    - php5.6-mysql
     - apache2
-    - libapache2-mod-php5
+    - libapache2-mod-php5.6
     - imagemagick
     - libmagickcore-dev
     - libmagickwand-dev
