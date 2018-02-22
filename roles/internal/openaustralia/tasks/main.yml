@@ -1,6 +1,7 @@
 ---
 - include_vars: encrypted.yml
 
+# TODO: Add staging site
 - name: Ensure that directories exist
   file: path={{ item }} owner=deploy group=deploy state=directory
   with_items:
@@ -78,3 +79,5 @@
 
 - name: Copy msmtp configuration
   template: src=msmtprc dest=/etc/
+
+# TODO: Add cron jobs

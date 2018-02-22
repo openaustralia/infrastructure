@@ -122,6 +122,7 @@ galaxy_info:
   #- web
 dependencies:
   - role: base-server
+  # TODO: Move over to external mysql
   - role: ANXS.mysql
     mysql_bind_address: '127.0.0.1'
     mysql_root_password: ''
@@ -141,3 +142,4 @@ dependencies:
     # Use round-robin pool of gpg key servers to avoid timeout
     rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
   - role: MaximeThoonsen.automysqlbackup
+  # TODO: Add backups (for non-mysql data)
