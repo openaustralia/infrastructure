@@ -234,13 +234,17 @@
     job: VERBOSE=true /srv/www/current/twfy/scripts/morningupdate
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
 
-# TODO: Setup MAILTO to go to web-administrators@openaustralia.org and common slack channel
+# For development just make the output of cron get mailed to me
+# TODO: Setup MAILTO to go to web-administrators@openaustralia.org and common slack channel for production
+- cronvar:
+    name: MAILTO
+    user: deploy
+    value: matthew@oaf.org.au
 
 # For cross-domain redirects it would be good if we could do those at cloudflare.
 # Otherwise, we should probably have a "redirect" role which handles cross-domain
 # redirects for all domains
 
-# TODO: Add cron jobs
 # TODO: Add data.openaustralia.org.au
 # TODO: I have faint memory of rsync service for data.openaustralia.org.au
 # TODO: Add redirects for software.openaustralia.org.au?
