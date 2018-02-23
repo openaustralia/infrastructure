@@ -104,11 +104,19 @@
   notify: reload apache
 
 - name: Copy across the application config
-  template: src=general dest=/srv/www/shared/
+  template:
+    src: general
+    dest: /srv/www/shared/
+    owner: deploy
+    group: deploy
   notify: reload apache
 
 - name: Copy across the parser config
-  template: src=configuration.yml dest=/srv/www/shared/parser_configuration.yml
+  template:
+    src: configuration.yml
+    dest: /srv/www/shared/parser_configuration.yml
+    owner: deploy
+    group: deploy
 
 # TODO: Setup redirects on the default host
 - name: Enable virtual host
