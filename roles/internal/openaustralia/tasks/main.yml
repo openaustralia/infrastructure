@@ -69,6 +69,59 @@
     - msmtp
     - libdbi-perl
     - libdbd-mysql-perl
+    - php5.6-dev
+    - libxapian-dev
+
+# Matching the version number of libxapian-dev above
+- name: Download xapian bindings source
+  get_url:
+    url: https://oligarchy.co.uk/xapian/1.2.22/xapian-bindings-1.2.22.tar.xz
+    dest: /home/deploy
+    owner: deploy
+    group: deploy
+    checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
+
+- name: Unpack xapian bindings source
+  unarchive:
+      src: /home/deploy/xapian-bindings-1.2.22.tar.xz
+      dest: /home/deploy
+      remote_src: yes
+      owner: deploy
+      group: deploy
+
+- name: Configure xapian bindings
+  command: ./configure --with-php
+  args:
+    chdir: /home/deploy/xapian-bindings-1.2.22
+    creates: /home/deploy/xapian-bindings-1.2.22/Makefile
+  become_user: deploy
+
+- name: Compile xapian bindings
+  command: make
+  args:
+    chdir: /home/deploy/xapian-bindings-1.2.22
+    creates: /home/deploy/xapian-bindings-1.2.22/php/xapian.la
+  become_user: deploy
+
+- name: Install xapian bindings
+  command: make install
+  args:
+    chdir: /home/deploy/xapian-bindings-1.2.22
+    creates: /usr/lib/php/20131226/xapian.so
+  notify: reload apache
+
+- name: Configure php for xapian bindings
+  template:
+    src: xapian.ini
+    dest: /etc/php/5.6/mods-available
+  notify: reload apache
+
+- name: Enable xapian for php
+  file:
+    state: link
+    src: /etc/php/5.6/mods-available/xapian.ini
+    dest: /etc/php/5.6/apache2/conf.d/30-xapian.ini
+  notify: reload apache
 
 - name: Install required gems
   gem: name={{ item.name }} version={{ item.version }} user_install=no state=present
@@ -133,4 +186,3 @@
   template: src=msmtprc dest=/etc/
 
 # TODO: Add cron jobs
-# TODO: Add search (xapian)
