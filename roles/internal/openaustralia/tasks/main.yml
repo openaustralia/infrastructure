@@ -190,6 +190,52 @@
 - name: Copy msmtp configuration
   template: src=msmtprc dest=/etc/
 
+# daily update at night for MP data (regmem, data from Public Whip etc.)
+- name: Set up cron job for daily update
+  cron:
+    name: dailyupdate
+    user: deploy
+    hour: 1
+    minute: 37
+    job: /srv/www/current/twfy/scripts/dailyupdate
+    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+
+# every week early Sunday grab weekly range of data
+- name: Set up cron job for weekly update
+  cron:
+    name: weeklyupdate
+    user: deploy
+    hour: 4
+    minute: 23
+    weekday: 0
+    job: /srv/www/current/twfy/scripts/weeklyupdate
+    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+
+# TODO: not sure of the path here
+# Email updates (Going at 10am to give me time to fix things if necessary)
+- name: Set up cron job for email alerts
+  cron:
+    name: alertmailer
+    user: deploy
+    hour: 10
+    minute: 0
+    weekday: "1-5"
+    job: php -q alertmailer.php
+    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+
+# Morning update (Australian Hansard is supposed to be up by 9am the next working day)
+- name: Set up cron job for morning updates
+  cron:
+    name: morningupdate
+    user: deploy
+    hour: 9
+    minute: 5
+    weekday: "1-5"
+    job: VERBOSE=true $HOME/morningupdate
+    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+
+# TODO: Setup MAILTO to go to web-administrators@openaustralia.org and common slack channel
+
 # For cross-domain redirects it would be good if we could do those at cloudflare.
 # Otherwise, we should probably have a "redirect" role which handles cross-domain
 # redirects for all domains
