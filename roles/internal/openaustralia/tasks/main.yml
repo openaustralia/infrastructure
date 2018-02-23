@@ -220,7 +220,7 @@
     hour: 10
     minute: 0
     weekday: "1-5"
-    job: php -q alertmailer.php
+    job: php -q /srv/www/current/twfy/scripts/alertmailer.php
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
 
 # Morning update (Australian Hansard is supposed to be up by 9am the next working day)
@@ -231,7 +231,7 @@
     hour: 9
     minute: 5
     weekday: "1-5"
-    job: VERBOSE=true $HOME/morningupdate
+    job: VERBOSE=true /srv/www/current/twfy/scripts/morningupdate
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
 
 # TODO: Setup MAILTO to go to web-administrators@openaustralia.org and common slack channel
