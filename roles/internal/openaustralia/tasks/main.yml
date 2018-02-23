@@ -123,6 +123,8 @@
     dest: /etc/php/5.6/apache2/conf.d/30-xapian.ini
   notify: reload apache
 
+# TODO: It would be cleaner if gems were installed as part of the capistrano install
+# Then, we could use the Gemfile rather than duplicating this information here
 - name: Install required gems
   gem: name={{ item.name }} version={{ item.version }} user_install=no state=present
   with_items:
@@ -185,4 +187,12 @@
 - name: Copy msmtp configuration
   template: src=msmtprc dest=/etc/
 
+# For cross-domain redirects it would be good if we could do those at cloudflare.
+# Otherwise, we should probably have a "redirect" role which handles cross-domain
+# redirects for all domains
+
 # TODO: Add cron jobs
+# TODO: Add data.openaustralia.org.au
+# TODO: I have faint memory of rsync service for data.openaustralia.org.au
+# TODO: Add redirects for software.openaustralia.org.au?
+# TODO: Add backups for member images, xml files, cached downloads, register of member's interests

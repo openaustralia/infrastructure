@@ -30,6 +30,7 @@ resource "cloudflare_record" "oa_test" {
   value  = "openaustralia.org"
 }
 
+# TODO: This should point at oaf.org.au
 resource "cloudflare_record" "oa_blog" {
   domain = "openaustralia.org"
   name   = "blog.openaustralia.org"
