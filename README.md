@@ -169,6 +169,12 @@ cap -S stage=development deploy:setup_db
 * HTTPS
 * Staging/production web server config
 
+#### Don't use Google Chrome
+
+Don't use Google Chrome for development with the openaustralia site because they helpfully (read
+not helpfully and rudely) made **every single site in the .dev domain redirect to https**. So,
+for the time being (until we make openaustralia redirect to use https) use Firefox instead.
+
 ## Backups
 
 Data directories of servers are backed up to S3 using Duply. For most servers this means backing up the automysqlbackup directory.
