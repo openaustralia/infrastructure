@@ -73,9 +73,9 @@
   with_items:
     - {name: nokogiri,      version: 1.4.4}
     - {name: mini_portile,  version: 0.6.2}
-    - {name: mechanize,     version: 1.0.0}
+    - {name: mechanize,     version: 0.9.2}
     - {name: activesupport, version: 3.0.4}
-    - {name: builder,       version: 3.0.0}
+    - {name: builder,       version: 2.1.2}
     - {name: rmagick,       version: 2.15.4}
     - {name: htmlentities,  version: 4.2.1}
     - {name: log4r,         version: 1.1.8}
