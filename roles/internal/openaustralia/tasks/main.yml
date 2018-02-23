@@ -34,6 +34,12 @@
     priv: 'oa-staging.*:ALL'
     host: "%"
 
+# TODO: Add SSL certificate for:
+# openaustralia.org.au
+# www.openaustralia.org.au
+# openaustralia.org
+# www.openaustralia.org
+
 # TODO: Add staging site
 - name: Ensure that directories exist
   file: path={{ item }} owner=deploy group=deploy state=directory
