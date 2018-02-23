@@ -234,6 +234,8 @@
     job: VERBOSE=true /srv/www/current/twfy/scripts/morningupdate
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
 
+# TODO: Do I need to make sure a MTA is installed for this to work?
+
 # For development just make the output of cron get mailed to me
 # TODO: Setup MAILTO to go to web-administrators@openaustralia.org and common slack channel for production
 - cronvar:
