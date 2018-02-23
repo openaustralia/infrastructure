@@ -43,6 +43,7 @@
     - "/srv/www/shared/config"
     - "/srv/www/shared/images/mps"
     - "/srv/www/shared/images/mpsL"
+    - "/srv/www/shared/searchdb"
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
@@ -71,6 +72,8 @@
     - libdbd-mysql-perl
     - php5.6-dev
     - libxapian-dev
+    - xapian-tools
+    - libsearch-xapian-perl
 
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
