@@ -18,7 +18,7 @@ resource "cloudflare_record" "oaf_kedumba" {
   domain = "oaf.org.au"
   name   = "kedumba.oaf.org.au"
   type   = "A"
-  value  = "103.243.244.10"
+  value  = "${var.old_kedumba_ip}"
 }
 
 # AAAA records
@@ -169,7 +169,7 @@ resource "cloudflare_record" "oaf_alt_kedumba" {
   domain = "openaustraliafoundation.org.au"
   name   = "kedumba.openaustraliafoundation.org.au"
   type   = "A"
-  value  = "103.243.244.10"
+  value  = "${var.old_kedumba_ip}"
 }
 
 # CNAME records

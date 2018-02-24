@@ -12,7 +12,7 @@ resource "cloudflare_record" "oa_kedumba" {
   domain = "openaustralia.org"
   name   = "kedumba.openaustralia.org"
   type   = "A"
-  value  = "103.243.244.10"
+  value  = "${var.old_kedumba_ip}"
 }
 
 # CNAME records
