@@ -28,6 +28,6 @@ resource "aws_instance" "kedumba" {
 resource "aws_eip" "kedumba" {
   instance = "${aws_instance.kedumba.id}"
   tags {
-    Name = "octopus"
+    Name = "kedumba"
   }
 }
