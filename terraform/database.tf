@@ -28,8 +28,7 @@ resource "aws_db_instance" "main" {
   maintenance_window         = "Sun:17:00-Sun:17:30"
   multi_az                   = true
   auto_minor_version_upgrade = true
-  # TODO: Switch to false for production use
-  apply_immediately          = true
+  apply_immediately          = false
   skip_final_snapshot        = false
   vpc_security_group_ids = ["${aws_security_group.main_database.id}"]
 }
