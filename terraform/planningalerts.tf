@@ -7,8 +7,10 @@ resource "aws_instance" "planningalerts" {
   # instances of this to run at the same time until the memory was exhausted
   # and the server crashed. So, upped the instance size just to be on the
   # safe size.
-  # TODO: Check if we can safely go back down to t2.medium
-  instance_type = "t2.large"
+  # After a couple of days of seeing the memory behaviour around 12pm
+  # with the new instance size we realised we could in fact move back down
+  # to the smaller t2.medium.
+  instance_type = "t2.medium"
   key_name = "test"
   tags {
     Name = "planningalerts"
