@@ -197,6 +197,13 @@ resource "cloudflare_record" "oa_alt_root" {
   value  = "${aws_eip.kedumba.public_ip}"
 }
 
+resource "cloudflare_record" "oa_alt_ec2" {
+  domain = "openaustralia.org.au"
+  name   = "ec2.openaustralia.org.au"
+  type   = "A"
+  value  = "${aws_eip.openaustralia.public_ip}"
+}
+
 # CNAME records
 
 resource "cloudflare_record" "oa_alt_www" {
@@ -206,11 +213,39 @@ resource "cloudflare_record" "oa_alt_www" {
   value  = "openaustralia.org.au"
 }
 
+resource "cloudflare_record" "oa_alt_www_ec2" {
+  domain = "openaustralia.org.au"
+  name   = "www.ec2.openaustralia.org.au"
+  type   = "CNAME"
+  value  = "ec2.openaustralia.org.au"
+}
+
 resource "cloudflare_record" "oa_alt_data" {
   domain = "openaustralia.org.au"
   name   = "data.openaustralia.org.au"
   type   = "CNAME"
   value  = "openaustralia.org.au"
+}
+
+resource "cloudflare_record" "oa_alt_data_ec2" {
+  domain = "openaustralia.org.au"
+  name   = "data.ec2.openaustralia.org.au"
+  type   = "CNAME"
+  value  = "ec2.openaustralia.org.au"
+}
+
+resource "cloudflare_record" "oa_alt_test_ec2" {
+  domain = "openaustralia.org.au"
+  name   = "test.ec2.openaustralia.org.au"
+  type   = "CNAME"
+  value  = "ec2.openaustralia.org.au"
+}
+
+resource "cloudflare_record" "oa_alt_www_test_ec2" {
+  domain = "openaustralia.org.au"
+  name   = "www.test.ec2.openaustralia.org.au"
+  type   = "CNAME"
+  value  = "ec2.openaustralia.org.au"
 }
 
 # MX records
