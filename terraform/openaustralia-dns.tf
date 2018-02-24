@@ -4,7 +4,7 @@ resource "cloudflare_record" "oa_root" {
   domain = "openaustralia.org"
   name   = "openaustralia.org"
   type   = "A"
-  value  = "54.79.92.207"
+  value  = "${aws_eip.octopus.public_ip}"
 }
 
 # TODO: Remove this
@@ -194,7 +194,7 @@ resource "cloudflare_record" "oa_alt_root" {
   domain = "openaustralia.org.au"
   name   = "openaustralia.org.au"
   type   = "A"
-  value  = "54.79.92.207"
+  value  = "${aws_eip.octopus.public_ip}"
 }
 
 # CNAME records

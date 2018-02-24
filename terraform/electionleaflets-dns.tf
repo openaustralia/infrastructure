@@ -3,7 +3,7 @@ resource "cloudflare_record" "el_root" {
   domain = "electionleaflets.org.au"
   name   = "electionleaflets.org.au"
   type   = "A"
-  value  = "54.79.92.207"
+  value  = "${aws_eip.octopus.public_ip}"
 }
 
 # CNAME records
