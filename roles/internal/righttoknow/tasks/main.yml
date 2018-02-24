@@ -1,6 +1,4 @@
 ---
-- include_vars: encrypted.yml
-
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
     state: directory
