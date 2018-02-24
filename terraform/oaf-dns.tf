@@ -21,6 +21,13 @@ resource "cloudflare_record" "oaf_kedumba" {
   value  = "${aws_eip.kedumba.public_ip}"
 }
 
+resource "cloudflare_record" "oaf_jamison" {
+  domain = "oaf.org.au"
+  name   = "jamison.oaf.org.au"
+  type   = "A"
+  value  = "${aws_eip.jamison.public_ip}"
+}
+
 # AAAA records
 resource "cloudflare_record" "oaf_aaaa_cuttlefish" {
   domain = "oaf.org.au"
