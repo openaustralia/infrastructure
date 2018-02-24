@@ -15,18 +15,18 @@ resource "aws_eip" "jamison" {
   }
 }
 
-resource "aws_instance" "octopus" {
+resource "aws_instance" "kedumba" {
   ami = "ami-33ab5251"
   instance_type = "t2.large"
   tags {
-    Name = "octopus"
+    Name = "kedumba"
   }
   security_groups = ["${aws_security_group.octopus.name}"]
   disable_api_termination = true
 }
 
 resource "aws_eip" "octopus" {
-  instance = "${aws_instance.octopus.id}"
+  instance = "${aws_instance.kedumba.id}"
   tags {
     Name = "octopus"
   }
