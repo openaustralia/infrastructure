@@ -85,25 +85,28 @@
   copy: src=ssl-unified.crt dest=/etc/ssl/righttoknow.org.au.dev.pem owner=root group=root mode=0644
   notify: nginx reload
 
-- name: Add development private SSL key
-  copy: content="{{ righttoknow_development_ssl_key }}" dest=/etc/ssl/private/righttoknow.org.au.dev.key owner=root group=ssl-cert mode=0640
-  notify: nginx reload
+# TODO: implement new way of doing development keys
+# - name: Add development private SSL key
+#   copy: content="{{ righttoknow_development_ssl_key }}" dest=/etc/ssl/private/righttoknow.org.au.dev.key owner=root group=ssl-cert mode=0640
+#   notify: nginx reload
 
 - name: Add test self signed SSL certificate
   copy: src=test.righttoknow.org.au.pem dest=/etc/ssl/test.righttoknow.org.au.pem owner=root group=root mode=0644
   notify: nginx reload
 
-- name: Add test private SSL key
-  copy: content="{{ righttoknow_test_ssl_key }}" dest=/etc/ssl/private/test.righttoknow.org.au.key owner=root group=ssl-cert mode=0640
-  notify: nginx reload
+# TODO: implement new way of doing development keys
+# - name: Add test private SSL key
+#   copy: content="{{ righttoknow_test_ssl_key }}" dest=/etc/ssl/private/test.righttoknow.org.au.key owner=root group=ssl-cert mode=0640
+#   notify: nginx reload
 
-- name: Add production self signed SSL certificate
-  copy: src=www.righttoknow.org.au_chain.pem dest=/etc/ssl/www.righttoknow.org.au_chain.pem owner=root group=root mode=0644
-  notify: nginx reload
-
-- name: Add production private SSL key
-  copy: content="{{ righttoknow_production_ssl_key }}" dest=/etc/ssl/private/www.righttoknow.org.au.key owner=root group=ssl-cert mode=0640
-  notify: nginx reload
+# TODO: Use let's encrypt to generate production SSL certs
+# - name: Add production self signed SSL certificate
+#   copy: src=www.righttoknow.org.au_chain.pem dest=/etc/ssl/www.righttoknow.org.au_chain.pem owner=root group=root mode=0644
+#   notify: nginx reload
+#
+# - name: Add production private SSL key
+#   copy: content="{{ righttoknow_production_ssl_key }}" dest=/etc/ssl/private/www.righttoknow.org.au.key owner=root group=ssl-cert mode=0640
+#   notify: nginx reload
 
 - name: Add alaveteli crontab entry
   cron: name="foi-alert-tracks" minute="0,10,20,30,40,50" job="/bin/bash -l -c 'sudo /etc/init.d/foi-alert-tracks check'"
