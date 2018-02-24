@@ -25,7 +25,7 @@ resource "aws_instance" "kedumba" {
   disable_api_termination = true
 }
 
-resource "aws_eip" "octopus" {
+resource "aws_eip" "kedumba" {
   instance = "${aws_instance.kedumba.id}"
   tags {
     Name = "octopus"

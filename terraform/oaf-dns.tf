@@ -4,7 +4,7 @@ resource "cloudflare_record" "oaf_root" {
   domain = "oaf.org.au"
   name   = "oaf.org.au"
   type   = "A"
-  value  = "${aws_eip.octopus.public_ip}"
+  value  = "${aws_eip.kedumba.public_ip}"
 }
 
 resource "cloudflare_record" "oaf_cuttlefish" {
@@ -18,7 +18,7 @@ resource "cloudflare_record" "oaf_kedumba" {
   domain = "oaf.org.au"
   name   = "kedumba.oaf.org.au"
   type   = "A"
-  value  = "${aws_eip.octopus.public_ip}"
+  value  = "${aws_eip.kedumba.public_ip}"
 }
 
 # AAAA records
@@ -162,14 +162,14 @@ resource "cloudflare_record" "oaf_alt_root" {
   domain = "openaustraliafoundation.org.au"
   name   = "openaustraliafoundation.org.au"
   type   = "A"
-  value  = "${aws_eip.octopus.public_ip}"
+  value  = "${aws_eip.kedumba.public_ip}"
 }
 
 resource "cloudflare_record" "oaf_alt_kedumba" {
   domain = "openaustraliafoundation.org.au"
   name   = "kedumba.openaustraliafoundation.org.au"
   type   = "A"
-  value  = "${aws_eip.octopus.public_ip}"
+  value  = "${aws_eip.kedumba.public_ip}"
 }
 
 # CNAME records
