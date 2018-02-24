@@ -21,7 +21,7 @@ resource "aws_instance" "kedumba" {
   tags {
     Name = "kedumba"
   }
-  security_groups = ["${aws_security_group.octopus.name}"]
+  security_groups = ["${aws_security_group.kedumba.name}"]
   disable_api_termination = true
 }
 

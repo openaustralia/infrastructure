@@ -100,7 +100,7 @@ resource "aws_security_group" "jamison" {
   }
 }
 
-resource "aws_security_group" "octopus" {
+resource "aws_security_group" "kedumba" {
   # TODO Change this
   description = "for main instance"
 
