@@ -30,6 +30,3 @@ variable "cuttlefish_ipv4" {
 variable "cuttlefish_ipv6" {
   default = "2600:3c01::f03c:91ff:fe89:1913"
 }
-variable "old_kedumba_ip" {
-  default = "103.243.244.10"
-}
