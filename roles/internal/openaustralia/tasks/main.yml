@@ -32,11 +32,66 @@
     priv: 'oa-staging.*:ALL'
     host: "%"
 
-# TODO: Add SSL certificate for:
-# openaustralia.org.au
-# www.openaustralia.org.au
-# openaustralia.org
-# www.openaustralia.org
+# Create fake let's encrypt directories when in development
+- name: Create fake let's encrypt directories when in development
+  file:
+    state: directory
+    path: "/etc/letsencrypt/live/{{ item }}"
+  with_items:
+    - openaustralia.org.au.dev
+    - test.openaustralia.org.au.dev
+  when: "'development' in group_names"
+
+# We need to setup the SSL certificates before we try to configure nginx
+# because otherwise nginx will try to look for non-existent certificates
+- name: Copy SSL certificates for development
+  copy:
+    src: "{{ item }}.pem"
+    # We're faking it as if these are let's encrypt certs. Makes for less magic config
+    dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
+    mode: 0644
+  with_items:
+    - openaustralia.org.au.dev
+    - test.openaustralia.org.au.dev
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
+  notify: reload apache
+
+- name: Copy SSL keys for development
+  copy:
+    src: "{{ item }}.key"
+    dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
+    mode: 0640
+  with_items:
+    - openaustralia.org.au.dev
+    - test.openaustralia.org.au.dev
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
+  notify: reload apache
+
+- name: Install nginx now (for the benefit of certbot)
+  apt: pkg=nginx
+  when: "'ec2' in group_names"
+
+- name: Install certificate using certbot
+  include_role:
+    name: geerlingguy.certbot
+  vars:
+    certbot_auto_renew_user: deploy
+    certbot_auto_renew_minute: 10
+    certbot_auto_renew_hour: 7
+    certbot_create_if_missing: yes
+    certbot_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - "{{ openaustralia_domain }}"
+          - www."{{ openaustralia_domain }}"
+          # TODO: for production include openaustralia.org as well as openaustralia.org.au as well
+      - email: contact@oaf.org.au
+        domains:
+          - "test.{{ openaustralia_domain }}"
+          - "www.test.{{ openaustralia_domain }}"
+  when: "'ec2' in group_names"
 
 # TODO: Add staging site
 - name: Ensure that directories exist
