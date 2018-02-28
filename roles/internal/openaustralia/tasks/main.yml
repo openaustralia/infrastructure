@@ -222,7 +222,9 @@
     - cli
 
 - name: Copy across the apache config
-  template: src=openaustralia.org.au.dev.conf dest=/etc/apache2/sites-available/
+  template:
+    src: production
+    dest: /etc/apache2/sites-available/
   notify: reload apache
 
 - name: Copy across the application config
@@ -242,11 +244,16 @@
 
 # TODO: Setup redirects on the default host
 - name: Enable virtual host
-  file: src="../sites-available/openaustralia.org.au.dev.conf" dest="/etc/apache2/sites-enabled/openaustralia.org.au.dev.conf" state=link
+  file:
+    src: /etc/apache2/sites-available/production
+    dest: /etc/apache2/sites-enabled/production
+    state: link
   notify: reload apache
 
 - name: Disable default virtual host
-  file: dest="/etc/apache2/sites-enabled/000-default.conf" state=absent
+  file:
+    dest: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
   notify: reload apache
 
 - name: Copy msmtp configuration
