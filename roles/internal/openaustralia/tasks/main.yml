@@ -69,8 +69,8 @@
   when: "'development' in group_names"
   notify: reload apache
 
-- name: Install nginx now (for the benefit of certbot)
-  apt: pkg=nginx
+- name: Install apache now (for the benefit of certbot)
+  apt: pkg=apache2
   when: "'ec2' in group_names"
 
 - name: Install certificate using certbot
@@ -81,6 +81,8 @@
     certbot_auto_renew_minute: 10
     certbot_auto_renew_hour: 7
     certbot_create_if_missing: yes
+    certbot_create_standalone_stop_services:
+      - apache2
     certbot_certs:
       - email: contact@oaf.org.au
         domains:
