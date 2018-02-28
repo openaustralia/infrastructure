@@ -95,7 +95,6 @@
           - "www.test.{{ openaustralia_domain }}"
   when: "'ec2' in group_names"
 
-# TODO: Add staging site
 - name: Ensure that directories exist
   file: path={{ item }} owner=deploy group=deploy state=directory
   with_items:
@@ -105,6 +104,12 @@
     - "/srv/www/production/shared/images/mps"
     - "/srv/www/production/shared/images/mpsL"
     - "/srv/www/production/shared/searchdb"
+    - "/srv/www/staging/log"
+    - "/srv/www/staging/releases"
+    - "/srv/www/staging/shared/config"
+    - "/srv/www/staging/shared/images/mps"
+    - "/srv/www/staging/shared/images/mpsL"
+    - "/srv/www/staging/shared/searchdb"
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
@@ -227,36 +232,40 @@
     dest: /etc/apache2/sites-available/
   with_items:
     - production
+    - staging
     - 000-default
   notify: reload apache
 
 - name: Copy across the application config
   template:
-    src: general
-    dest: /srv/www/production/shared/
+    src: "general/{{ item }}"
+    dest: /srv/www/{{ item }}/shared/general
     owner: deploy
     group: deploy
+  with_items:
+    - production
+    - staging
   notify: reload apache
 
 - name: Copy across the parser config
   template:
-    src: configuration.yml
-    dest: /srv/www/production/shared/parser_configuration.yml
+    src: "parser_configuration/{{ item }}.yml"
+    dest: "/srv/www/{{ item }}/shared/parser_configuration.yml"
     owner: deploy
     group: deploy
+  with_items:
+    - production
+    - staging
 
-- name: Enable virtual host
+- name: Enable virtual hosts
   file:
-    src: /etc/apache2/sites-available/production.conf
-    dest: /etc/apache2/sites-enabled/production.conf
+    src: /etc/apache2/sites-available/{{ item }}.conf
+    dest: /etc/apache2/sites-enabled/{{ item }}.conf
     state: link
-  notify: reload apache
-
-- name: Enable default virtual host
-  file:
-    src: /etc/apache2/sites-available/000-default.conf
-    dest: /etc/apache2/sites-enabled/000-default.conf
-    state: link
+  with_items:
+    - production
+    - staging
+    - 000-default
   notify: reload apache
 
 - name: Copy msmtp configuration
@@ -265,46 +274,58 @@
 # daily update at night for MP data (regmem, data from Public Whip etc.)
 - name: Set up cron job for daily update
   cron:
-    name: dailyupdate
+    name: "dailyupdate {{ item }}"
     user: deploy
     hour: 1
     minute: 37
-    job: /srv/www/production/current/twfy/scripts/dailyupdate
+    job: "/srv/www/{{ item }}/current/twfy/scripts/dailyupdate"
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
 
 # every week early Sunday grab weekly range of data
 - name: Set up cron job for weekly update
   cron:
-    name: weeklyupdate
+    name: "weeklyupdate {{ item }}"
     user: deploy
     hour: 4
     minute: 23
     weekday: 0
-    job: /srv/www/production/current/twfy/scripts/weeklyupdate
+    job: "/srv/www/{{ item }}/current/twfy/scripts/weeklyupdate"
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
 
 # TODO: not sure of the path here
 # Email updates (Going at 10am to give me time to fix things if necessary)
 - name: Set up cron job for email alerts
   cron:
-    name: alertmailer
+    name: "alertmailer {{ item }}"
     user: deploy
     hour: 10
     minute: 0
     weekday: "1-5"
-    job: php -q /srv/www/production/current/twfy/scripts/alertmailer.php
+    job: "php -q /srv/www/{{ item }}/current/twfy/scripts/alertmailer.php"
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
 
 # Morning update (Australian Hansard is supposed to be up by 9am the next working day)
 - name: Set up cron job for morning updates
   cron:
-    name: morningupdate
+    name: "morningupdate {{ item }}"
     user: deploy
     hour: 9
     minute: 5
     weekday: "1-5"
-    job: VERBOSE=true /srv/www/production/current/twfy/scripts/morningupdate
+    job: "VERBOSE=true /srv/www/{{ item }}/current/twfy/scripts/morningupdate"
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
 
 # TODO: Do I need to make sure a MTA is installed for this to work?
 
