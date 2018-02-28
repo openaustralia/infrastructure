@@ -1,7 +1,7 @@
 ---
 dependencies:
   - role: deploy-user
-    github_users: ['mlandauer', 'henare']
+    github_users: ['mlandauer', 'henare', 'jamezpolley']
   - role: MichaelRigart.aliases
     aliases_list:
       - {user: deploy, alias: root}
