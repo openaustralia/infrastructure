@@ -228,12 +228,20 @@
 
 - name: Copy across the apache configs
   template:
-    src: "apache/{{ item }}.conf"
-    dest: /etc/apache2/sites-available/
+    src: apache/stage.conf
+    dest: "/etc/apache2/sites-available/{{ item }}.conf"
+  vars:
+    stage: "{{ item }}"
+    domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ openaustralia_domain }}"
   with_items:
     - production
     - staging
-    - 000-default
+  notify: reload apache
+
+- name: Copy across the apache default config
+  template:
+    src: apache/000-default.conf
+    dest: /etc/apache2/sites-available/
   notify: reload apache
 
 - name: Copy across the application config
