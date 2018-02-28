@@ -223,7 +223,7 @@
 
 - name: Copy across the apache config
   template:
-    src: production.conf
+    src: apache/production.conf
     dest: /etc/apache2/sites-available/
   notify: reload apache
 
