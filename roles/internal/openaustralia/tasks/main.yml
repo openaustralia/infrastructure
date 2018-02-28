@@ -221,10 +221,13 @@
     - apache2
     - cli
 
-- name: Copy across the apache config
+- name: Copy across the apache configs
   template:
-    src: apache/production.conf
+    src: "apache/{{ item }}.conf"
     dest: /etc/apache2/sites-available/
+  with_items:
+    - production
+    - 000-default
   notify: reload apache
 
 - name: Copy across the application config
@@ -242,7 +245,6 @@
     owner: deploy
     group: deploy
 
-# TODO: Setup redirects on the default host
 - name: Enable virtual host
   file:
     src: /etc/apache2/sites-available/production.conf
@@ -250,10 +252,11 @@
     state: link
   notify: reload apache
 
-- name: Disable default virtual host
+- name: Enable default virtual host
   file:
+    src: /etc/apache2/sites-available/000-default.conf
     dest: /etc/apache2/sites-enabled/000-default.conf
-    state: absent
+    state: link
   notify: reload apache
 
 - name: Copy msmtp configuration
