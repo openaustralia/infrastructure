@@ -21,3 +21,7 @@ roles/internal/planningalerts/files/planningalerts.org.au.dev.key
 roles/internal/planningalerts/files/planningalerts.org.au.dev.pem
 roles/internal/planningalerts/files/test.planningalerts.org.au.dev.key
 roles/internal/planningalerts/files/test.planningalerts.org.au.dev.pem
+roles/internal/openaustralia/files/openaustralia.org.au.dev.key
+roles/internal/openaustralia/files/openaustralia.org.au.dev.pem
+roles/internal/openaustralia/files/test.openaustralia.org.au.dev.key
+roles/internal/openaustralia/files/test.openaustralia.org.au.dev.pem
