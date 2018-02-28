@@ -40,7 +40,7 @@ do
   echo "Generate certificate for $domain..."
   openssl x509 -req -in $domain.csr -CA myCA.pem -CAkey myCA.key \
     -CAcreateserial -out $domain.pem -days 1825 -sha256 \
-    -extfile $domain.ext -passin pass:abcd
+    -extfile ext/$domain.ext -passin pass:abcd
 
   # Remove intermediate files
   rm $domain.csr myCA.srl
