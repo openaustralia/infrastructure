@@ -99,12 +99,12 @@
 - name: Ensure that directories exist
   file: path={{ item }} owner=deploy group=deploy state=directory
   with_items:
-    - "/srv/www/log"
-    - "/srv/www/releases"
-    - "/srv/www/shared/config"
-    - "/srv/www/shared/images/mps"
-    - "/srv/www/shared/images/mpsL"
-    - "/srv/www/shared/searchdb"
+    - "/srv/www/production/log"
+    - "/srv/www/production/releases"
+    - "/srv/www/production/shared/config"
+    - "/srv/www/production/shared/images/mps"
+    - "/srv/www/production/shared/images/mpsL"
+    - "/srv/www/production/shared/searchdb"
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
@@ -230,7 +230,7 @@
 - name: Copy across the application config
   template:
     src: general
-    dest: /srv/www/shared/
+    dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
   notify: reload apache
@@ -238,7 +238,7 @@
 - name: Copy across the parser config
   template:
     src: configuration.yml
-    dest: /srv/www/shared/parser_configuration.yml
+    dest: /srv/www/production/shared/parser_configuration.yml
     owner: deploy
     group: deploy
 
@@ -266,7 +266,7 @@
     user: deploy
     hour: 1
     minute: 37
-    job: /srv/www/current/twfy/scripts/dailyupdate
+    job: /srv/www/production/current/twfy/scripts/dailyupdate
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
 
 # every week early Sunday grab weekly range of data
@@ -277,7 +277,7 @@
     hour: 4
     minute: 23
     weekday: 0
-    job: /srv/www/current/twfy/scripts/weeklyupdate
+    job: /srv/www/production/current/twfy/scripts/weeklyupdate
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
 
 # TODO: not sure of the path here
@@ -289,7 +289,7 @@
     hour: 10
     minute: 0
     weekday: "1-5"
-    job: php -q /srv/www/current/twfy/scripts/alertmailer.php
+    job: php -q /srv/www/production/current/twfy/scripts/alertmailer.php
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
 
 # Morning update (Australian Hansard is supposed to be up by 9am the next working day)
@@ -300,7 +300,7 @@
     hour: 9
     minute: 5
     weekday: "1-5"
-    job: VERBOSE=true /srv/www/current/twfy/scripts/morningupdate
+    job: VERBOSE=true /srv/www/production/current/twfy/scripts/morningupdate
     state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
 
 # TODO: Do I need to make sure a MTA is installed for this to work?

@@ -21,7 +21,7 @@ define ("COOKIEDOMAIN", "{{ openaustralia_domain }}");
 define ("CONTACTEMAIL", "contact@openaustralia.org");
 
 // File system path to the top directory of this Theyworkforyou installation
-define ("BASEDIR","/srv/www/current/twfy/www/docs/");
+define ("BASEDIR","/srv/www/production/current/twfy/www/docs/");
 
 // Webserver path to 'top' directory of the site (possibly just "/"). For example,
 // if the site is at 'http://www.yourdomain.com/public/theyworkforyou',
@@ -47,11 +47,11 @@ define ("DEBUGTAG", 'debug');
 define ("TIMEZONE", "Australia/Sydney");
 
 // XML files and other scraped data stored as files
-define ("RAWDATA", "/srv/www/shared/pwdata/");
-define ('PWMEMBERS', '/srv/www/shared/pwdata/members/');
+define ("RAWDATA", "/srv/www/production/shared/pwdata/");
+define ('PWMEMBERS', '/srv/www/production/shared/pwdata/members/');
 
 // Path to directory where automated database backups are stored (by scripts/dumpallforbackup)
-define ("DBBACKUP", "/srv/www/shared/backup/");
+define ("DBBACKUP", "/srv/www/production/shared/backup/");
 
 // *******************************************************************************
 // If you've unpacked the tar file normally, and set the paths correctly above,
@@ -73,7 +73,7 @@ define ("REGMEMPDFPATH", "regmem/scan/");
 define ("METADATAPATH", BASEDIR . "/../includes/easyparliament/metadata.php");
 
 // Search related. If non-empty will use XAPIAN search instead of mysql search
-define ("XAPIANDB", '/srv/www/shared/searchdb');
+define ("XAPIANDB", '/srv/www/production/shared/searchdb');
 
 // Location of the parliamentary recess data file. You can access this remotely
 // from the main theyworkforyou site if you use
