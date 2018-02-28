@@ -93,6 +93,9 @@
           - "www.test.{{ openaustralia_domain }}"
   when: "'ec2' in group_names"
 
+- apache2_module:
+    name: ssl
+
 # TODO: Add staging site
 - name: Ensure that directories exist
   file: path={{ item }} owner=deploy group=deploy state=directory
