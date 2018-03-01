@@ -229,6 +229,15 @@
     - apache2
     - cli
 
+- name: Copy test/test password
+  copy:
+    src: htpasswd
+    dest: /srv/www/{{ item }}/shared
+  with_items:
+    - production
+    - staging
+  notify: reload apache
+
 - name: Copy across the apache configs
   template:
     src: stage.conf
@@ -237,6 +246,7 @@
     stage: "{{ item }}"
     domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ openaustralia_domain }}"
     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
+    password_protect: "{{ item == 'staging' }}"
   with_items:
     - production
     - staging
@@ -363,4 +373,3 @@
 # TODO: Add redirects for software.openaustralia.org.au?
 # TODO: Add backups for member images, xml files, cached downloads, register of member's interests
 # TODO: Install newrelic for php
-# TODO: Add password to staging site
