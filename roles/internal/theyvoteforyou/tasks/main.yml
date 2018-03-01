@@ -124,7 +124,6 @@
   copy:
     src: "{{ item }}.key"
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
-    group: ssl-cert
     mode: 0640
   with_items:
     - theyvoteforyou.org.au.dev

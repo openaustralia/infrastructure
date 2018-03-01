@@ -162,7 +162,6 @@
   copy:
     src: "{{ item }}.key"
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
-    group: ssl-cert
     mode: 0640
   with_items:
     - planningalerts.org.au.dev
