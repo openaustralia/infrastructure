@@ -1,4 +1,57 @@
 ---
+# We want this directory to exist in development too so that
+# things are as consistent as possible
+# Basically everything in /data is stuff we want backed up that
+# isn't the database
+- name: Create data mountpoint
+  file:
+    state: directory
+    path: /data
+
+# On EC2 we're using a seperate EBS volume to hold application data
+- name: Create filesystem on attached block storage
+  filesystem:
+    fstype: ext4
+    dev: /dev/xvdh
+  when: "'ec2' in group_names"
+
+- name: Mount /data filesystem
+  mount:
+    path: /data
+    src: /dev/xvdh
+    fstype: ext4
+    state: mounted
+  when: "'ec2' in group_names"
+
+- name: Create directories in /data
+  file:
+    path: "/data/{{ item[0] }}/{{ item[1] }}"
+    owner: deploy
+    group: deploy
+    state: directory
+  with_nested:
+    - ['production', 'staging']
+    - ['images/mps', 'images/mpsL', 'pwdata']
+
+- name: Ensure that directories in /srv/www exist
+  file:
+    path: "/srv/www/{{ item[0] }}/{{ item[1] }}"
+    owner: deploy
+    group: deploy
+    state: directory
+  with_nested:
+    - ['production', 'staging']
+    - ['log', 'releases', 'shared/config', 'shared/searchdb']
+
+- name: Link directories in /srv/www to /data
+  file:
+    state: link
+    src: "/data/{{ item[0] }}/{{ item[1] }}"
+    dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
+  with_nested:
+    - ['production', 'staging']
+    - ['images', 'pwdata']
+
 - name: Install dependency for ansible mysql_db module
   apt: pkg=python-mysqldb
 
@@ -94,28 +147,6 @@
           - "test.{{ openaustralia_domain }}"
           - "www.test.{{ openaustralia_domain }}"
   when: "'ec2' in group_names"
-
-- name: Ensure that directories exist
-  file:
-    path: "/srv/www/{{ item }}"
-    owner: deploy
-    group: deploy
-    state: directory
-  with_items:
-    - production/log
-    - production/releases
-    - production/shared/config
-    - production/shared/images/mps
-    - production/shared/images/mpsL
-    - production/shared/searchdb
-    - production/shared/pwdata
-    - staging/log
-    - staging/releases
-    - staging/shared/config
-    - staging/shared/images/mps
-    - staging/shared/images/mpsL
-    - staging/shared/searchdb
-    - staging/shared/pwdata
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
