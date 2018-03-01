@@ -241,6 +241,13 @@ resource "cloudflare_record" "oa_alt_test_ec2" {
   value  = "ec2.openaustralia.org.au"
 }
 
+resource "cloudflare_record" "oa_alt_data_test_ec2" {
+  domain = "openaustralia.org.au"
+  name   = "data.test.ec2.openaustralia.org.au"
+  type   = "CNAME"
+  value  = "ec2.openaustralia.org.au"
+}
+
 resource "cloudflare_record" "oa_alt_www_test_ec2" {
   domain = "openaustralia.org.au"
   name   = "www.test.ec2.openaustralia.org.au"
