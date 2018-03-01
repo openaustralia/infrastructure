@@ -4,10 +4,10 @@
 
 # The root directory of the patched Australian version of the TheyWorkForYou
 # website.
-web_root: "/srv/www/production/current"
+web_root: "/srv/www/{{ stage }}/current"
 
-html_cache_path: "/srv/www/production/shared/html_cache"
-log_path: "/srv/www/production/shared/parser.log"
+html_cache_path: "/srv/www/{{ stage }}/shared/html_cache"
+log_path: "/srv/www/{{ stage }}/shared/parser.log"
 
 # Should hopefully not have to change anything below here
 

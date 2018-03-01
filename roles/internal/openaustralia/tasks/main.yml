@@ -261,10 +261,12 @@
 
 - name: Copy across the parser config
   template:
-    src: "parser_configuration/{{ item }}.yml"
-    dest: "/srv/www/{{ item }}/shared/parser_configuration.yml"
+    src: parser_configuration.yml
+    dest: "/srv/www/{{ item }}/shared"
     owner: deploy
     group: deploy
+  vars:
+    stage: "{{ item }}"
   with_items:
     - production
     - staging
