@@ -39,3 +39,8 @@ resource "aws_volume_attachment" "openaustralia_data" {
   volume_id   = "${aws_ebs_volume.openaustralia_data.id}"
   instance_id = "${aws_instance.openaustralia.id}"
 }
+
+# TODO: backup EBS volume by taking daily snapshots
+# This can be automated using Cloudwatch. See:
+# https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/TakeScheduledSnapshot.html
+# https://www.terraform.io/docs/providers/aws/r/cloudwatch_event_rule.html
