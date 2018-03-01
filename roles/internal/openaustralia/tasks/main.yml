@@ -108,12 +108,14 @@
     - production/shared/images/mps
     - production/shared/images/mpsL
     - production/shared/searchdb
+    - production/shared/pwdata
     - staging/log
     - staging/releases
     - staging/shared/config
     - staging/shared/images/mps
     - staging/shared/images/mpsL
     - staging/shared/searchdb
+    - staging/shared/pwdata
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
@@ -374,7 +376,6 @@
 # Otherwise, we should probably have a "redirect" role which handles cross-domain
 # redirects for all domains
 
-# TODO: Add data.openaustralia.org.au
 # TODO: I have faint memory of rsync service for data.openaustralia.org.au
 # TODO: Add redirects for software.openaustralia.org.au?
 # TODO: Add backups for member images, xml files, cached downloads, register of member's interests
