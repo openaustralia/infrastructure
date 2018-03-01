@@ -31,7 +31,7 @@
     state: directory
   with_nested:
     - ['production', 'staging']
-    - ['images/mps', 'images/mpsL', 'pwdata']
+    - ['images/mps', 'images/mpsL', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old']
 
 - name: Ensure that directories in /srv/www exist
   file:
@@ -50,7 +50,18 @@
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
     - ['production', 'staging']
-    - ['images', 'pwdata']
+    - ['images', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old']
+
+- name: Link file alerts-lastsent in /srv/www to /data
+  file:
+    state: link
+    src: "/data/{{ item }}/alerts-lastsent"
+    dest: "/srv/www/{{ item }}/shared/alerts-lastsent"
+    # Doing this because the src file might not yet exist and that's okay
+    force: yes
+  with_items:
+    - production
+    - staging
 
 - name: Install dependency for ansible mysql_db module
   apt: pkg=python-mysqldb
