@@ -5,15 +5,15 @@
 // *******************************************************************************
 // MySQL database.
 define ("DB_HOST", "{{ mysql_host }}");
-define ("DB_USER", "oa-staging");
-define ("DB_PASSWORD", "{{ openaustralia_staging_mysql_password }}");
-define ("DB_NAME", "oa-staging");
+define ("DB_USER", "oa-{{ stage }}");
+define ("DB_PASSWORD", "{{ db_password }}");
+define ("DB_NAME", "oa-{{ stage }}");
 
 // *******************************************************************************
 // Domains.
 // Set this to the domain you are hosting on. If you're running locally, this will be "localhost"
-define ("DOMAIN", "test.{{ openaustralia_domain }}");
-define ("COOKIEDOMAIN", "test.{{ openaustralia_domain }}");
+define ("DOMAIN", "{{ domain }}");
+define ("COOKIEDOMAIN", "{{ domain }}");
 
 // General 'Contact us' type email address. Point this at a real address if you
 // want the site generated email to come to you. Can be overridden for other mails below.
@@ -21,7 +21,7 @@ define ("COOKIEDOMAIN", "test.{{ openaustralia_domain }}");
 define ("CONTACTEMAIL", "contact@openaustralia.org");
 
 // File system path to the top directory of this Theyworkforyou installation
-define ("BASEDIR","/srv/www/staging/current/twfy/www/docs/");
+define ("BASEDIR","/srv/www/{{ stage }}/current/twfy/www/docs/");
 
 // Webserver path to 'top' directory of the site (possibly just "/"). For example,
 // if the site is at 'http://www.yourdomain.com/public/theyworkforyou',
@@ -47,11 +47,11 @@ define ("DEBUGTAG", 'debug');
 define ("TIMEZONE", "Australia/Sydney");
 
 // XML files and other scraped data stored as files
-define ("RAWDATA", "/srv/www/staging/shared/pwdata/");
-define ('PWMEMBERS', '/srv/www/staging/shared/pwdata/members/');
+define ("RAWDATA", "/srv/www/{{ stage }}/shared/pwdata/");
+define ('PWMEMBERS', '/srv/www/{{ stage }}/shared/pwdata/members/');
 
 // Path to directory where automated database backups are stored (by scripts/dumpallforbackup)
-define ("DBBACKUP", "/srv/www/staging/shared/backup/");
+define ("DBBACKUP", "/srv/www/{{ stage }}/shared/backup/");
 
 // *******************************************************************************
 // If you've unpacked the tar file normally, and set the paths correctly above,
@@ -73,11 +73,11 @@ define ("REGMEMPDFPATH", "regmem/scan/");
 define ("METADATAPATH", BASEDIR . "/../includes/easyparliament/metadata.php");
 
 // Search related. If non-empty will use XAPIAN search instead of mysql search
-define ("XAPIANDB", '/srv/www/staging/shared/searchdb');
+define ("XAPIANDB", '/srv/www/{{ stage }}/shared/searchdb');
 
 // Location of the parliamentary recess data file. You can access this remotely
 // from the main theyworkforyou site if you use
-define ("RECESSFILE","http://www.test.{{ openaustralia_domain }}/pwdata/parl-recesses.txt");
+define ("RECESSFILE","http://www.{{ domain }}/pwdata/parl-recesses.txt");
 // AND amend your global php.ini to 'allow_url_fopen = On'
 //define ("RECESSFILE", RAWDATA . "/parl-recesses.txt");
 

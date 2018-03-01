@@ -246,10 +246,14 @@
 
 - name: Copy across the application config
   template:
-    src: "general/{{ item }}"
-    dest: /srv/www/{{ item }}/shared/general
+    src: general
+    dest: "/srv/www/{{ item }}/shared"
     owner: deploy
     group: deploy
+  vars:
+    db_password: "{{ item == 'production' | ternary(openaustralia_production_mysql_password, openaustralia_staging_mysql_password) }}"
+    stage: "{{ item }}"
+    domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ openaustralia_domain }}"
   with_items:
     - production
     - staging
