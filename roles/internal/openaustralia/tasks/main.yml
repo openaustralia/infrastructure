@@ -228,7 +228,7 @@
 
 - name: Copy across the apache configs
   template:
-    src: apache/stage.conf
+    src: stage.conf
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
   vars:
     stage: "{{ item }}"
@@ -240,7 +240,7 @@
 
 - name: Copy across the apache default config
   template:
-    src: apache/000-default.conf
+    src: 000-default.conf
     dest: /etc/apache2/sites-available/
   notify: reload apache
 
