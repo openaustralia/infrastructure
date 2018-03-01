@@ -246,7 +246,9 @@
     stage: "{{ item }}"
     domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ openaustralia_domain }}"
     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
-    password_protect: "{{ item == 'staging' }}"
+    # TODO: Once in production only put a password on staging
+    # password_protect: "{{ item == 'staging' }}"
+    password_protect: true
   with_items:
     - production
     - staging
