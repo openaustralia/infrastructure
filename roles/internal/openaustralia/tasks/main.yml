@@ -236,6 +236,7 @@
   vars:
     stage: "{{ item }}"
     domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ openaustralia_domain }}"
+    newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
   with_items:
     - production
     - staging
