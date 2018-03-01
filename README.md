@@ -49,6 +49,7 @@ Our current plan is to separate the different sites currently running on kedumba
 
 For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/).
 For configuration management you will need [Ansible](http://docs.ansible.com/).
+For deploying code you'll need [capistrano](http://capistranorb.com/)
 
 Also
 ```
