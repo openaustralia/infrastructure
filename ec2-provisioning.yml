@@ -6,6 +6,9 @@
 # To only run this for planningalerts:
 # ansible-playbook -i ec2-hosts ec2-provisioning.yml -l planningalerts
 
+# To only run this for openaustralia:
+# ansible-playbook -i ec2-hosts ec2-provisioning.yml -l openaustralia
+
 # To show the value of an encrypted variable:
 # ansible planningalerts -i ec2-hosts -m debug -a 'var=planningalerts_production_mysql_password'
 
@@ -51,5 +54,12 @@
   become: true
   roles:
     - planningalerts
+  vars:
+    mysql_host: "{{ rds.instance.endpoint }}"
+
+- hosts: openaustralia
+  become: true
+  roles:
+    - openaustralia
   vars:
     mysql_host: "{{ rds.instance.endpoint }}"
