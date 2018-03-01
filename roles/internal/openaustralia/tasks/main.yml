@@ -96,20 +96,24 @@
   when: "'ec2' in group_names"
 
 - name: Ensure that directories exist
-  file: path={{ item }} owner=deploy group=deploy state=directory
+  file:
+    path: "/srv/www/{{ item }}"
+    owner: deploy
+    group: deploy
+    state: directory
   with_items:
-    - "/srv/www/production/log"
-    - "/srv/www/production/releases"
-    - "/srv/www/production/shared/config"
-    - "/srv/www/production/shared/images/mps"
-    - "/srv/www/production/shared/images/mpsL"
-    - "/srv/www/production/shared/searchdb"
-    - "/srv/www/staging/log"
-    - "/srv/www/staging/releases"
-    - "/srv/www/staging/shared/config"
-    - "/srv/www/staging/shared/images/mps"
-    - "/srv/www/staging/shared/images/mpsL"
-    - "/srv/www/staging/shared/searchdb"
+    - production/log
+    - production/releases
+    - production/shared/config
+    - production/shared/images/mps
+    - production/shared/images/mpsL
+    - production/shared/searchdb
+    - staging/log
+    - staging/releases
+    - staging/shared/config
+    - staging/shared/images/mps
+    - staging/shared/images/mpsL
+    - staging/shared/searchdb
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
