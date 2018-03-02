@@ -291,7 +291,7 @@
 
 - name: Copy across the apache configs
   template:
-    src: stage.conf
+    src: apache/stage.conf
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
   vars:
     stage: "{{ item }}"
@@ -307,7 +307,7 @@
 
 - name: Copy across the other apache configs
   template:
-    src: "{{ item }}.conf"
+    src: "apache/{{ item }}.conf"
     dest: /etc/apache2/sites-available/
   with_items:
     - 000-default
