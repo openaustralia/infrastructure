@@ -47,19 +47,13 @@
   become: true
   roles:
     - theyvoteforyou
-  vars:
-    mysql_host: "{{ rds.instance.endpoint }}"
 
 - hosts: planningalerts
   become: true
   roles:
     - planningalerts
-  vars:
-    mysql_host: "{{ rds.instance.endpoint }}"
 
 - hosts: openaustralia
   become: true
   roles:
     - openaustralia
-  vars:
-    mysql_host: "{{ rds.instance.endpoint }}"
