@@ -1,5 +1,16 @@
-# Playbook for development VMs on your local box
----
+# Run this like so:
+# ansible-playbook -i ec2-hosts site.yml
+
+# To only run this for planningalerts:
+# ansible-playbook -i ec2-hosts site.yml -l planningalerts
+
+# To only run this for openaustralia:
+# ansible-playbook -i ec2-hosts site.yml -l openaustralia
+
+# To show the value of an encrypted variable:
+# ansible planningalerts -i ec2-hosts -m debug -a 'var=planningalerts_production_mysql_password'
+
+# Use terraform (see terraform directory) to actually provision ec2 infrastructure
 
 # Ubuntu 16.04 LTS doesn't come with python pre-installed. We need that for
 # Ansible to work (for the gather facts). So install python first
@@ -12,30 +23,57 @@
     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
     changed_when: False
 
+- hosts: ec2
+  become: true
+  tasks:
+    - name: Install pip
+      apt: pkg=python-pip
+
+    - name: Install boto which is required for EC2 stuff
+      pip: name=boto
+
+    - name: Get information about the RDS instance
+      rds:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        command: facts
+        instance_name: main-database
+        region: "{{ ec2_region }}"
+      register: rds
+      # Run this task even when running ansible-playbook with "--check"
+      check_mode: no
+
 - hosts: mysql
+  become: true
   roles:
     - mysql
 
 - hosts: righttoknow
+  become: true
   roles:
     - righttoknow
 
 - hosts: planningalerts
+  become: true
   roles:
     - planningalerts
 
 - hosts: electionleaflets
+  become: true
   roles:
     - electionleaflets
 
 - hosts: theyvoteforyou
+  become: true
   roles:
     - theyvoteforyou
 
 - hosts: oaf
+  become: true
   roles:
     - oaf
 
 - hosts: openaustralia
+  become: true
   roles:
     - openaustralia

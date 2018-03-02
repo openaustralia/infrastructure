@@ -60,9 +60,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "site.yml"
 
-    # Doing this here so we don't need to put in the playbook
-    ansible.become = true
-
     # Uncomment the following line if you want some verbose output from ansible
     #ansible.verbose = "vv"
 
