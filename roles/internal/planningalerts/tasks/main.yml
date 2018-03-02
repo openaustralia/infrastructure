@@ -243,3 +243,15 @@
     minute: 0
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"
     state: "{{ planningalerts_cron_enabled | ternary('present', 'absent')}}"
+
+# TODO: Do we want scraping and email to happen for staging too?
+
+# TODO: Do we need to actually install an MTA?
+
+# TODO: Make this mail to different addresses for development/production
+- name: Mail output of cron
+  cronvar:
+    name: MAILTO
+    user: deploy
+    value: web-administrators@openaustralia.org,q8z3f5c7d7g4e7m2@oaf.slack.com
+  when: "'ec2' in group_names"
