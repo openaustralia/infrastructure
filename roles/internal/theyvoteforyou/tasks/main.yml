@@ -209,3 +209,15 @@
     weekday: 1-5
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake application:load:daily RAILS_ENV=production"
   when: theyvoteforyou_cron_enabled
+
+- name: Install postfix so we can mail out from cron jobs
+  apt:
+    pkg: postfix
+
+# TODO: Make this mail to different addresses for development/production
+- name: Mail output of cron
+  cronvar:
+    name: MAILTO
+    user: deploy
+    value: web-administrators@openaustralia.org,j1u3z8i7h9w0q8o4@oaf.slack.com
+  when: "'ec2' in group_names"
