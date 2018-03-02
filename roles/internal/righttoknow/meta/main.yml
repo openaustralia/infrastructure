@@ -134,8 +134,6 @@ dependencies:
       - deploy
   - role: Stouts.backup
     backup_gpg_pw: "{{ righttoknow_backup_gpg_pw }}"
-    backup_target_user: "{{ righttoknow_backup_target_user }}"
-    backup_target_pass: "{{ righttoknow_backup_target_pass }}"
     backup_max_age: 6M
     backup_profiles:
       - name: autopostgresqlbackup
