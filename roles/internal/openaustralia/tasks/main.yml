@@ -237,7 +237,10 @@
   file:
     state: link
     src: /etc/php/5.6/mods-available/xapian.ini
-    dest: /etc/php/5.6/apache2/conf.d/30-xapian.ini
+    dest: "/etc/php/5.6/{{ item }}/conf.d/30-xapian.ini"
+  with_items:
+    - apache2
+    - cli
   notify: reload apache
 
 # TODO: It would be cleaner if gems were installed as part of the capistrano install
