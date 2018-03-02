@@ -246,7 +246,9 @@
 
 # TODO: Do we want scraping and email to happen for staging too?
 
-# TODO: Do we need to actually install an MTA?
+- name: Install postfix so we can mail out from cron jobs
+  apt:
+    pkg: postfix
 
 # TODO: Make this mail to different addresses for development/production
 - name: Mail output of cron
