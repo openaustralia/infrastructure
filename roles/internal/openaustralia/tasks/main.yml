@@ -430,7 +430,5 @@
 # redirects for all domains
 
 # TODO: I have faint memory of rsync service for data.openaustralia.org.au
-# TODO: Add redirects for software.openaustralia.org.au?
-# TODO: Add redirects for blog.openaustralia.org
 
 # TODO: Install newrelic for php
