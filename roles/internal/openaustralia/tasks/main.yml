@@ -311,6 +311,7 @@
     dest: /etc/apache2/sites-available/
   with_items:
     - 000-default
+    - data
     - software
   notify: reload apache
 
@@ -350,6 +351,7 @@
     - production
     - staging
     - 000-default
+    - data
     - software
   notify: reload apache
 
