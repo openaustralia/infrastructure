@@ -135,4 +135,12 @@ dependencies:
     # rvm1_rvm_check_for_updates: false
     # Use round-robin pool of gpg key servers to avoid timeout
     rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
-  # TODO: Add backups (for non-mysql data)
+  - role: Stouts.backup
+    backup_gpg_pw: "{{ openaustralia_backup_gpg_pw }}"
+    backup_max_age: 6M
+    backup_profiles:
+      - name: openaustralia_data
+        schedule: 0 2 * * *
+        source: /data
+        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
+        target: "s3://s3.amazonaws.com/oaf-backups/openaustralia/{{ inventory_hostname }}/data"

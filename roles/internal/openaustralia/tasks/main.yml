@@ -423,5 +423,4 @@
 
 # TODO: I have faint memory of rsync service for data.openaustralia.org.au
 # TODO: Add redirects for software.openaustralia.org.au?
-# TODO: Add backups for member images, xml files, cached downloads, register of member's interests
 # TODO: Install newrelic for php
