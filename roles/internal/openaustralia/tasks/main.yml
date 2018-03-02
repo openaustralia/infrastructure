@@ -408,7 +408,9 @@
     - production
     - staging
 
-# TODO: Do I need to make sure a MTA is installed for this to work?
+- name: Install postfix so we can mail out from cron jobs
+  apt:
+    pkg: postfix
 
 # For development just make the output of cron get mailed to me
 # TODO: Setup MAILTO to go to web-administrators@openaustralia.org and common slack channel for production
