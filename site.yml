@@ -19,8 +19,6 @@
 - hosts: righttoknow
   roles:
     - righttoknow
-  vars_files:
-    - encrypted_vars/righttoknow.yml
 
 - hosts: planningalerts
   roles:
@@ -29,8 +27,6 @@
 - hosts: electionleaflets
   roles:
     - electionleaflets
-  vars_files:
-    - encrypted_vars/electionleaflets.yml
 
 - hosts: theyvoteforyou
   roles:
