@@ -227,9 +227,23 @@ resource "cloudflare_record" "oa_alt_data" {
   value  = "openaustralia.org.au"
 }
 
+resource "cloudflare_record" "oa_alt_software" {
+  domain = "openaustralia.org.au"
+  name   = "software.openaustralia.org.au"
+  type   = "CNAME"
+  value  = "openaustralia.org.au"
+}
+
 resource "cloudflare_record" "oa_alt_data_ec2" {
   domain = "openaustralia.org.au"
   name   = "data.ec2.openaustralia.org.au"
+  type   = "CNAME"
+  value  = "ec2.openaustralia.org.au"
+}
+
+resource "cloudflare_record" "oa_alt_software_ec2" {
+  domain = "openaustralia.org.au"
+  name   = "software.ec2.openaustralia.org.au"
   type   = "CNAME"
   value  = "ec2.openaustralia.org.au"
 }
