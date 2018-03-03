@@ -366,7 +366,8 @@
     hour: 1
     minute: 37
     job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./dailyupdate"
-    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+    # TODO Enable cron job for production
+    state: "{{ (openaustralia_cron_enabled and stage == 'staging') | ternary('present', 'absent')}}"
   with_items:
     - production
     - staging
@@ -380,7 +381,8 @@
     minute: 23
     weekday: 0
     job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./weeklyupdate"
-    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+    # TODO Enable cron job for production
+    state: "{{ (openaustralia_cron_enabled and stage == 'staging') | ternary('present', 'absent')}}"
   with_items:
     - production
     - staging
@@ -395,7 +397,8 @@
     minute: 0
     weekday: "1-5"
     job: "cd /srv/www/{{ item }}/current/twfy/scripts && php -q alertmailer.php"
-    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+    # TODO Enable cron job for production
+    state: "{{ (openaustralia_cron_enabled and stage == 'staging') | ternary('present', 'absent')}}"
   with_items:
     - production
     - staging
@@ -409,7 +412,8 @@
     minute: 5
     weekday: "1-5"
     job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true ./morningupdate"
-    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
+    # TODO Enable cron job for production
+    state: "{{ (openaustralia_cron_enabled and stage == 'staging') | ternary('present', 'absent')}}"
   with_items:
     - production
     - staging
@@ -418,8 +422,7 @@
   apt:
     pkg: postfix
 
-# For development just make the output of cron get mailed to me
-# TODO: Setup MAILTO to go to web-administrators@openaustralia.org and common slack channel for production
+# For local development (under vagrant we don't want the cron jobs generating email)
 - cronvar:
     name: MAILTO
     user: deploy
