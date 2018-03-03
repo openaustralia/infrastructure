@@ -220,6 +220,20 @@ resource "cloudflare_record" "oa_alt_www_ec2" {
   value  = "ec2.openaustralia.org.au"
 }
 
+resource "cloudflare_record" "oa_alt_test" {
+  domain = "openaustralia.org.au"
+  name   = "test.openaustralia.org.au"
+  type   = "CNAME"
+  value  = "ec2.openaustralia.org.au"
+}
+
+resource "cloudflare_record" "oa_alt_www_test" {
+  domain = "openaustralia.org.au"
+  name   = "www.test.openaustralia.org.au"
+  type   = "CNAME"
+  value  = "ec2.openaustralia.org.au"
+}
+
 resource "cloudflare_record" "oa_alt_data" {
   domain = "openaustralia.org.au"
   name   = "data.openaustralia.org.au"
