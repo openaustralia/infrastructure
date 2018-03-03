@@ -1,14 +1,13 @@
 resource "aws_instance" "openaustralia" {
   ami =  "${data.aws_ami.ubuntu.id}"
-  # TODO: For production increase this to something sensible
+  # We're going to see if we can get by with this small instance for the time being
   instance_type = "t2.small"
   key_name = "test"
   tags {
     Name = "openaustralia"
   }
   security_groups = ["${aws_security_group.webserver.name}"]
-  # TODO: For production enable this
-  disable_api_termination = false
+  disable_api_termination = true
 }
 
 resource "aws_eip" "openaustralia" {
