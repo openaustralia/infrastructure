@@ -134,6 +134,15 @@ resource "aws_security_group" "kedumba" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # TODO: Remove this once all database migrations from kedumba are complete
+  ingress {
+    description = "Allow database migration service access to database on kedumba"
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    security_groups = ["${data.aws_security_group.default.id}"]
+  }
+
   # Allow pings from hosts on the internet
   ingress {
     protocol = "icmp"
