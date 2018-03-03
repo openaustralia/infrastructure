@@ -423,7 +423,8 @@
 - cronvar:
     name: MAILTO
     user: deploy
-    value: matthew@oaf.org.au
+    value: web-administrators@openaustralia.org,q8z3f5c7d7g4e7m2@oaf.slack.com
+  when: "'ec2' in group_names"
 
 # For cross-domain redirects it would be good if we could do those at cloudflare.
 # Otherwise, we should probably have a "redirect" role which handles cross-domain
