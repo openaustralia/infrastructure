@@ -122,15 +122,18 @@ Then, we might consider, if it makes sense moving cuttlefish and morph.io to AWS
 
 ## Requirements
 
+### Install Vagrant, Ansible and Capistrano
 For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/).
 For configuration management you will need [Ansible](http://docs.ansible.com/).
 For deploying code you'll need [capistrano](http://capistranorb.com/)
 
+### Install vagrant-hostsupdater
 Also
 ```
 $ vagrant plugin install vagrant-hostsupdater
 ```
 
+### Add the Ansible Vault password
 Create a file in your home directory `.infrastructure_ansible_vault_pass.txt` with the secret
 password used to encrypt the secret info in this repo
 
@@ -138,6 +141,9 @@ Install required external roles with
 ```
 ansible-galaxy install -r roles/requirements.yml -p roles/external
 ```
+
+## Generating SSL certificates for development
+See certificates/README.md for more information.
 
 ## Provisioning
 
@@ -162,9 +168,9 @@ If you just want to provision a single server:
 
     ansible-playbook -i ec2-hosts site.yml -l planningalerts
 
-## Notes for deploying
+## Deploying
 
-### Right To Know
+### Deploying Right To Know to your local development server
 
 For the time being you will need to use the `update-rbenv-deploy` branch of the OpenAustralia
 Foundation Alaveteli repo as it contains some small fixes to allow capistrano to work with rbenv.
@@ -197,15 +203,28 @@ bundle exec cap -S stage=development xapian:rebuild_index
 * Varnish
 * Email
 
-### PlanningAlerts
+### Deploying PlanningAlerts
 
-After provisioning, deploy from the [PlanningAlerts repository](https://github.com/openaustralia/planningalerts-app/):
+After provisioning, deploy from the [PlanningAlerts repository](https://github.com/openaustralia/planningalerts-app/).
 
+#### Deploying PlanningAlerts to your local development server
+The first time run:
 ```
 bundle exec cap -S stage=development deploy:setup deploy:cold foreman:start
 ```
 
-### Electionleaflets
+Thereafter:
+```
+bundle exec cap -S stage=development deploy
+```
+
+#### Deploying PlanningAlerts to production
+
+```
+bundle exec cap -S stage=production deploy
+```
+
+### Deploying Electionleaflets to your local development server
 
 After provisioning, deploy from Electionleaflets repository
 ```
@@ -217,65 +236,60 @@ cap -S stage=development deploy:setup_db
 
 * Django maps app (not worth doing?)
 
-### They Vote For You
+### Deploying They Vote For You
 
 After provisioning, set up and deploy from the
 [Public Whip repository](https://github.com/openaustralia/publicwhip/)
 using Capistrano:
 
-On ec2 (if deploying for the first time)
+#### Deploying They Vote For You to your local development server
+If deploying for the first time:
 ```
-bundle exec cap ec2 deploy app:db:seed app:searchkick:reindex:all
+bundle exec cap development deploy app:db:seed app:searchkick:reindex:all
 ```
 
-TODO: Deploying for development
+Thereafter:
+```
+bundle exec cap development deploy
+```
 
-### OpenAustralia
+#### Deploying They Vote For You to production
+
+```
+bundle exec cap production deploy
+```
+
+### Deploying OpenAustralia
 
 After provisioning, set up the database and deploy from the OpenAustralia repository:
+
+#### Deploying OpenAustralia to your local development server
+If deploying for the first time:
+```
+cap -S stage=development deploy deploy:setup_db
+```
+
+Thereafter:
 ```
 cap -S stage=development deploy
-cap -S stage=development deploy:setup_db
 ```
 
-#### TODOS
+#### Deploying OpenAustralia to production
 
-* Email (test sending, setup Cuttlefish)
-* Cronjobs
-* Set up data.openaustralia.org
-* Backups
-* HTTPS
-* Staging/production web server config
+```
+cap -S stage=production deploy
+```
 
-#### Don't use Google Chrome
+## Backups
+
+Data directories of servers are backed up to S3 using Duply.
+
+Using the `data_directory` profile as an example, to run a backup manually you'd log in as root and run `duply data_directory backup`.
+
+To restore the latest backup to `/mnt/restore` you'd run `duply data_directory restore /mnt/restore`.
+
+## Don't use Google Chrome
 
 Don't use Google Chrome for development with the openaustralia site because they helpfully (read
 not helpfully and rudely) made **every single site in the .dev domain redirect to https**. So,
 for the time being (until we make openaustralia redirect to use https) use Firefox instead.
-
-## Backups
-
-Data directories of servers are backed up to S3 using Duply. For most servers this means backing up the automysqlbackup directory.
-
-Using the `automysqlbackup` profile as an example, to run a backup manually you'd log in as root and run `duply automysqlbackup backup`.
-
-To restore the latest backup to `/mnt/restore` you'd run `duply automysqlbackup restore /mnt/restore`.
-
-## Generating CA certificates and SSL certificates
-
-See certificates/README.md for more information.
-
-## Database migration
-
-To do the database migration from kedumba to RDS we're making use of the database migration service
-on AWS. To access the database on kedumba (which is not exposed to the internet) we need to setup
-an SSH tunnel. Using theyvoteforyou server on EC2 to do this:
-As the `deploy` user,
-```
-ssh-keygen -t rsa
-```
-Then copy the public key over to kedumba and put it in `~/.ssh/authorized_keys`. Then,
-```
-apt install autossh
-autossh -p 2506 deploy@kedumba.oaf.org.au -N -L 0.0.0.0:3306:localhost:3306 &
-```
