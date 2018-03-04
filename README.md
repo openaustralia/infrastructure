@@ -66,12 +66,19 @@ of different tools. We use different tools for different things.
 * Ansible: To configure individual servers - install packages, create directory
   structures, install SSL certificates, configure cron jobs, create databases,
   etc..
+* Vagrant: For local development of the Ansible setups for the servers. The
+  vagrant boxes are not designed for doing application development. For that
+  go to the individual application repositories.
 * Capistrano: For application deployment. This is what installs the actual
   web application and updates the database schema.
 
 Each application has its own repository and this is where application deployment
 is done from. This repository just contains the Terraform and Ansible configuration
 for the servers.
+
+A little note on terminology:
+* "provisioning" - we use this to mean configuring the server with Ansible.
+* "deployment" - we use to mean installing or updating the web application with Capistrano.
 
 ## Current state of this work (as of 5 March 2018)
 
@@ -110,7 +117,8 @@ On Linode running as separate VMs with automated server configuration:
   https://github.com/openaustralia/morph/tree/master/provisioning
 
 We are actively working to complete the Ansible setups required to migrate
-all running services off of kedumba and jamison.
+all running services off of kedumba and jamison. That is the immediate priority.
+Then, we might consider, if it makes sense moving cuttlefish and morph.io to AWS as well.
 
 ## Requirements
 
@@ -133,7 +141,7 @@ ansible-galaxy install -r roles/requirements.yml -p roles/external
 
 ## Provisioning
 
-### Development
+### Provisioning local development servers using Vagrant
 
 In development you set up and provision a server using Vagrant. You probably only want to run
 one machine so you can bring it up with:
@@ -144,13 +152,15 @@ If it's already up you can re-run Ansible provisioning with:
 
     vagrant provision righttoknow.org.au.dev
 
-### Staging
+### Provisioning production servers
 
-**This is untested**
+Provision all running servers with:
 
-Provision a running server with:
+    ansible-playbook -i ec2-hosts site.yml
 
-    ansible-playbook site.yml -i staging --limit=righttoknow
+If you just want to provision a single server:
+
+    ansible-playbook -i ec2-hosts site.yml -l planningalerts
 
 ## Notes for deploying
 
