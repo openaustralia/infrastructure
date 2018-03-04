@@ -152,7 +152,8 @@
         domains:
           - "{{ openaustralia_domain }}"
           - www."{{ openaustralia_domain }}"
-          # TODO: for production include openaustralia.org as well as openaustralia.org.au as well
+          - openaustralia.org
+          - www.openaustralia.org
       - email: contact@oaf.org.au
         domains:
           - "test.{{ openaustralia_domain }}"
