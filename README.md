@@ -236,8 +236,8 @@ bundle exec cap -S stage=production deploy
 
 After provisioning, deploy from Electionleaflets repository
 ```
-cap -S stage=development deploy
-cap -S stage=development deploy:setup_db
+bundle exec cap -S stage=development deploy
+bundle exec cap -S stage=development deploy:setup_db
 ```
 
 #### TODOS
