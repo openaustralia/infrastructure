@@ -439,6 +439,12 @@
     pkg: newrelic-php5
     update_cache: yes
 
+- name: Configure newrelic php monitor
+  template:
+    src: newrelic.ini
+    dest: /etc/php/5.6/mods-available/
+  notify: reload apache
+
 - name: Enable newrelic for php
   file:
     state: link
