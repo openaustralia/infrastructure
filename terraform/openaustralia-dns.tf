@@ -4,7 +4,7 @@ resource "cloudflare_record" "oa_root" {
   domain = "openaustralia.org"
   name   = "openaustralia.org"
   type   = "A"
-  value  = "${aws_eip.kedumba.public_ip}"
+  value  = "${aws_eip.openaustralia.public_ip}"
 }
 
 # TODO: Remove this
@@ -194,7 +194,7 @@ resource "cloudflare_record" "oa_alt_root" {
   domain = "openaustralia.org.au"
   name   = "openaustralia.org.au"
   type   = "A"
-  value  = "${aws_eip.kedumba.public_ip}"
+  value  = "${aws_eip.openaustralia.public_ip}"
 }
 
 resource "cloudflare_record" "oa_alt_ec2" {
