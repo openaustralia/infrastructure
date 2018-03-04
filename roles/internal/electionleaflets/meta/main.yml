@@ -122,11 +122,6 @@ galaxy_info:
   #- web
 dependencies:
   - role: base-server
-  - role: ANXS.mysql
-    mysql_bind_address: '127.0.0.1'
-    mysql_root_password: ''
-    mysql_databases:
-      - name: electionleaflets
   - role: Stouts.backup
     backup_profiles:
       - name: automysqlbackup

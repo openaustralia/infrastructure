@@ -10,14 +10,47 @@
     - libapache2-mod-php
     - python-mysqldb
 
+- name: Create electionleaflets databases
+  mysql_db:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: "el-{{ item }}"
+  with_items:
+    - production
+    - staging
+
+- name: Create electionleaflets user with access to the database (production)
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: el-production
+    password: "{{ electionleaflets_production_mysql_password }}"
+    priv: 'el-production.*:ALL'
+    host: "%"
+
+- name: Create electionleaflets user with access to the database (staging)
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: el-staging
+    password: "{{ electionleaflets_staging_mysql_password }}"
+    priv: 'el-staging.*:ALL'
+    host: "%"
+
 # The rest of the deploy directories get created by running "cap deploy:setup"
 - name: Ensure that directories exist
   file: path={{ item }} owner=deploy group=deploy state=directory
   with_items:
     - "/srv/www"
     - "/srv/www/log"
-    - "/srv/www/shared"
-    - "/srv/www/shared/config"
+    - "/srv/www/production/shared"
+    - "/srv/www/production/shared/config"
+    - "/srv/www/staging"
+    - "/srv/www/staging/shared"
+    - "/srv/www/staging/shared/config"
 
 - name: Ensure that shared data directories exist and are writeable
   file: path={{ item }} owner=deploy group=www-data mode=775 state=directory
@@ -34,15 +67,15 @@
     - "/srv/www/shared/data/images/medium"
     - "/srv/www/shared/data/images/thumbnail"
 
-# TODO Add a password to mysql root user
-
-- name: Create mysql electionleaflets database
-  mysql_db: name=electionleaflets state=present
-  notify: reload apache
-
-- name: Create mysql electionleaflets user
-  mysql_user: name=electionleaflets password={{ db_password }} priv=electionleaflets.*:ALL state=present
-  notify: reload apache
+- name: Copy application database configuration
+  template:
+    src: "database-{{ item }}.yml"
+    dest: "/srv/www/{{ item }}/shared/config/database.yml"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
 
 - name: Electionleaflets main config
   template: src=general.php dest=/srv/www/shared/config/

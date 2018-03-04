@@ -1,0 +1,6 @@
+production:
+  adapter: mysql2
+  host: {{ mysql_host }}
+  database: el-staging
+  username: el-staging
+  password: "{{ electionleaflets_staging_mysql_password }}"
