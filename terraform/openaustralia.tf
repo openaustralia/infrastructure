@@ -26,8 +26,8 @@ resource "aws_ebs_volume" "openaustralia_data" {
     availability_zone = "ap-southeast-2c"
     # 10 Gb is an educated guess based on seeing how much space is taken up
     # on kedumba.
-    # TODO: This might need to be increased for production
-    size = 10
+    # After loading real data in we upped it to 20GB
+    size = 20
     type = "gp2"
     tags {
         Name = "openaustralia_data"
