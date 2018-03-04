@@ -424,4 +424,17 @@
 
 # TODO: I have faint memory of rsync service for data.openaustralia.org.au
 
-# TODO: Install newrelic for php
+- name: Add apt key for new relic
+  apt_key:
+    url: https://download.newrelic.com/548C16BF.gpg
+    id: 548C16BF
+
+- name: Add apt repository for new relic
+  apt_repository:
+    repo: deb http://apt.newrelic.com/debian/ newrelic non-free
+    filename: newrelic.list
+
+- name: Install newrelic php monitor
+  apt:
+    pkg: newrelic-php5
+    update_cache: yes
