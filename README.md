@@ -150,13 +150,13 @@ See certificates/README.md for more information.
 ### Provisioning local development servers using Vagrant
 
 In development you set up and provision a server using Vagrant. You probably only want to run
-one machine so you can bring it up with:
+one main server and the mysql server so you can bring it up with:
 
-    vagrant up righttoknow.org.au.dev
+    vagrant up planningalerts.org.au.dev mysql.dev
 
 If it's already up you can re-run Ansible provisioning with:
 
-    vagrant provision righttoknow.org.au.dev
+    vagrant provision planningalerts.org.au.dev
 
 ### Provisioning production servers
 
