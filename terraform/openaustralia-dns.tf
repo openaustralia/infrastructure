@@ -7,14 +7,6 @@ resource "cloudflare_record" "oa_root" {
   value  = "${aws_eip.openaustralia.public_ip}"
 }
 
-# TODO: Remove this
-resource "cloudflare_record" "oa_kedumba" {
-  domain = "openaustralia.org"
-  name   = "kedumba.openaustralia.org"
-  type   = "A"
-  value  = "${aws_eip.kedumba.public_ip}"
-}
-
 # CNAME records
 resource "cloudflare_record" "oa_www" {
   domain = "openaustralia.org"
