@@ -364,8 +364,7 @@
     hour: 1
     minute: 37
     job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./dailyupdate"
-    # TODO Enable cron job for production
-    state: "{{ (openaustralia_cron_enabled and item == 'staging') | ternary('present', 'absent')}}"
+    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
   with_items:
     - production
     - staging
@@ -379,8 +378,7 @@
     minute: 23
     weekday: 0
     job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./weeklyupdate"
-    # TODO Enable cron job for production
-    state: "{{ (openaustralia_cron_enabled and item == 'staging') | ternary('present', 'absent')}}"
+    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
   with_items:
     - production
     - staging
@@ -394,8 +392,7 @@
     minute: 0
     weekday: "1-5"
     job: "cd /srv/www/{{ item }}/current/twfy/scripts && php -q alertmailer.php"
-    # TODO Enable cron job for production
-    state: "{{ (openaustralia_cron_enabled and item == 'staging') | ternary('present', 'absent')}}"
+    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
   with_items:
     - production
     - staging
@@ -409,8 +406,7 @@
     minute: 5
     weekday: "1-5"
     job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true ./morningupdate"
-    # TODO Enable cron job for production
-    state: "{{ (openaustralia_cron_enabled and item == 'staging') | ternary('present', 'absent')}}"
+    state: "{{ openaustralia_cron_enabled | ternary('present', 'absent')}}"
   with_items:
     - production
     - staging
