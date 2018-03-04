@@ -165,7 +165,6 @@
   apt_repository:
     repo: 'ppa:ondrej/php'
 
-# TODO Extract php-mysql-apache role
 - name: Install required packages
   apt:
     name: "{{ item }}"
@@ -386,7 +385,6 @@
     - production
     - staging
 
-# TODO: not sure of the path here
 # Email updates (Going at 10am to give me time to fix things if necessary)
 - name: Set up cron job for email alerts
   cron:
