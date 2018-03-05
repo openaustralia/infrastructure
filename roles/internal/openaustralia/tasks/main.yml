@@ -41,7 +41,7 @@
     state: directory
   with_nested:
     - ['production', 'staging']
-    - ['log', 'releases', 'shared/config', 'shared/searchdb']
+    - ['log', 'releases', 'shared/config', 'shared/searchdb', 'shared/rss/mp']
 
 - name: Link directories in /srv/www to /data
   file:
@@ -189,6 +189,7 @@
     - libxapian-dev
     - xapian-tools
     - libsearch-xapian-perl
+    - libxml-rss-perl
 
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
