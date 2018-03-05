@@ -312,6 +312,7 @@
     - 000-default
     - data
     - software
+    - blog
   notify: reload apache
 
 - name: Copy across the application config
@@ -352,6 +353,7 @@
     - 000-default
     - data
     - software
+    - blog
   notify: reload apache
 
 - name: Copy msmtp configuration
@@ -455,5 +457,3 @@
     - apache2
     - cli
   notify: reload apache
-
-# TODO: blog.openaustralia.org
