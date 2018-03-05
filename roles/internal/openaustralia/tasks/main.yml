@@ -41,7 +41,7 @@
     state: directory
   with_nested:
     - ['production', 'staging']
-    - ['log', 'releases', 'shared/config', 'shared/searchdb', 'shared/rss/mp']
+    - ['log', 'releases', 'shared/config', 'shared/searchdb', 'shared/rss/mp', 'shared/sitemaps']
 
 - name: Link directories in /srv/www to /data
   file:
@@ -190,6 +190,7 @@
     - xapian-tools
     - libsearch-xapian-perl
     - libxml-rss-perl
+    - libmysqlclient-dev
 
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
@@ -266,6 +267,8 @@
     - {name: rspec,         version: 2.5.0}
     - {name: rcov,          version: 0.9.9}
     - {name: i18n,          version: 0.5.0}
+    - {name: activerecord,  version: 2.3.11}
+    - {name: mysql,         version: 2.9.1}
 
 - name: Enable apache modules
   apache2_module: state=present name={{ item }}
