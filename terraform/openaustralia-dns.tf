@@ -37,14 +37,6 @@ resource "cloudflare_record" "oa_data" {
   value  = "openaustralia.org"
 }
 
-# TODO: Remove this?
-resource "cloudflare_record" "oa_git" {
-  domain = "openaustralia.org"
-  name   = "git.openaustralia.org"
-  type   = "CNAME"
-  value  = "openaustralia.org"
-}
-
 resource "cloudflare_record" "oa_software" {
   domain = "openaustralia.org"
   name   = "software.openaustralia.org"
@@ -52,57 +44,9 @@ resource "cloudflare_record" "oa_software" {
   value  = "openaustralia.org"
 }
 
-# TODO: Remove this?
-resource "cloudflare_record" "oa_wiki" {
-  domain = "openaustralia.org"
-  name   = "wiki.openaustralia.org"
-  type   = "CNAME"
-  value  = "openaustralia.org"
-}
-
-# TODO: Remove this?
-resource "cloudflare_record" "oa_calendar" {
-  domain = "openaustralia.org"
-  name   = "calendar.openaustralia.org"
-  type   = "CNAME"
-  value  = "ghs.google.com"
-}
-
-# TODO: Remove this?
-resource "cloudflare_record" "oa_groups" {
-  domain = "openaustralia.org"
-  name   = "groups.openaustralia.org"
-  type   = "CNAME"
-  value  = "ghs.google.com"
-}
-
 resource "cloudflare_record" "oa_hackfest" {
   domain = "openaustralia.org"
   name   = "hackfest.openaustralia.org"
-  type   = "CNAME"
-  value  = "ghs.google.com"
-}
-
-# TODO: Remove this?
-resource "cloudflare_record" "oa_mail" {
-  domain = "openaustralia.org"
-  name   = "mail.openaustralia.org"
-  type   = "CNAME"
-  value  = "ghs.google.com"
-}
-
-# TODO: Remove this?
-resource "cloudflare_record" "oa_start" {
-  domain = "openaustralia.org"
-  name   = "start.openaustralia.org"
-  type   = "CNAME"
-  value  = "ghs.google.com"
-}
-
-# TODO: Remove this?
-resource "cloudflare_record" "oa_wave" {
-  domain = "openaustralia.org"
-  name   = "wave.openaustralia.org"
   type   = "CNAME"
   value  = "ghs.google.com"
 }
