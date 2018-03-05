@@ -1,7 +1,7 @@
 [ec2]
 theyvoteforyou.org.au
 planningalerts.org.au
-ec2.openaustralia.org.au
+openaustralia.org.au
 
 [theyvoteforyou]
 theyvoteforyou.org.au
@@ -10,4 +10,4 @@ theyvoteforyou.org.au
 planningalerts.org.au
 
 [openaustralia]
-ec2.openaustralia.org.au
+openaustralia.org.au
