@@ -178,7 +178,7 @@
   include_role:
     name: geerlingguy.certbot
   vars:
-    certbot_auto_renew_user: deploy
+    certbot_auto_renew_user: root
     certbot_auto_renew_minute: 10
     certbot_auto_renew_hour: 7
     certbot_create_if_missing: yes
