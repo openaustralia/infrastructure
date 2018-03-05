@@ -1,7 +1,8 @@
 resource "aws_instance" "openaustralia" {
   ami =  "${data.aws_ami.ubuntu.id}"
-  # We're going to see if we can get by with this small instance for the time being
-  instance_type = "t2.small"
+  # Running sitemap generation (a ruby process, suprise, surprise) pegged the
+  # memory usage on a t2.small. So, upping to a t2.medium.
+  instance_type = "t2.medium"
   key_name = "test"
   tags {
     Name = "openaustralia"
