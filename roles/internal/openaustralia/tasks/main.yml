@@ -419,7 +419,7 @@
 - cronvar:
     name: MAILTO
     user: deploy
-    value: web-administrators@openaustralia.org,q8z3f5c7d7g4e7m2@oaf.slack.com
+    value: web-administrators@openaustralia.org,z4e3a8v8r4p0f9z1@oaf.slack.com
   when: "'ec2' in group_names"
 
 # TODO: I have faint memory of rsync service for data.openaustralia.org.au
