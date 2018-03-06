@@ -2,12 +2,13 @@
 - name: Install packages required by Electionleaflets
   apt: name={{ item }} state=present
   with_items:
-    - php5
-    - php5-imap
-    - php5-gd
-    - php5-mysql
+    - php7.0
+    - php-imap
+    - php-gd
+    - php-mysql
     - apache2
-    - libapache2-mod-php5
+    - libapache2-mod-php
+    - python-mysqldb
 
 # The rest of the deploy directories get created by running "cap deploy:setup"
 - name: Ensure that directories exist
