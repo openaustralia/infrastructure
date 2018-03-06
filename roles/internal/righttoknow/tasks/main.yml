@@ -40,6 +40,7 @@
   file:
     src: "/srv/www/current/commonlib/bin/run-with-lockfile.sh"
     dest: "/usr/bin/run-with-lockfile"
+    force: true
     state: link
 
 - name: Create database
