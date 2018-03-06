@@ -5,7 +5,8 @@
 
 domains=( "theyvoteforyou.org.au.dev" "test.theyvoteforyou.org.au.dev"
           "planningalerts.org.au.dev" "test.planningalerts.org.au.dev"
-          "openaustralia.org.au.dev"  "test.openaustralia.org.au.dev" )
+          "openaustralia.org.au.dev"  "test.openaustralia.org.au.dev"
+          "righttoknow.org.au.dev"    "test.righttoknow.org.au.dev" )
 
 # Generates a private key with passphrase "abcd" (but only if it doesn't already exist)
 if [ ! -f myCA.key ]; then
@@ -51,3 +52,4 @@ done
 mv theyvoteforyou.org.au.dev.key theyvoteforyou.org.au.dev.pem test.theyvoteforyou.org.au.dev.key test.theyvoteforyou.org.au.dev.pem ../roles/internal/theyvoteforyou/files
 mv planningalerts.org.au.dev.key planningalerts.org.au.dev.pem test.planningalerts.org.au.dev.key test.planningalerts.org.au.dev.pem ../roles/internal/planningalerts/files
 mv openaustralia.org.au.dev.key openaustralia.org.au.dev.pem test.openaustralia.org.au.dev.key test.openaustralia.org.au.dev.pem ../roles/internal/openaustralia/files
+mv righttoknow.org.au.dev.key righttoknow.org.au.dev.pem test.righttoknow.org.au.dev.key test.righttoknow.org.au.dev.pem ../roles/internal/righttoknow/files
