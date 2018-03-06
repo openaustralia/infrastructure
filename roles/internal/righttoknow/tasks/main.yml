@@ -80,32 +80,44 @@
   template: src=general.yml dest=/srv/www/shared/ owner=deploy group=deploy
   notify: nginx restart
 
-- name: Add development self signed SSL certificate
-  copy: src=ssl-unified.crt dest=/etc/ssl/righttoknow.org.au.dev.pem owner=root group=root mode=0644
-  notify: nginx reload
+# Create fake let's encrypt directories when in development
+- name: Create fake let's encrypt directories when in development
+  file:
+    state: directory
+    path: "/etc/letsencrypt/live/{{ item }}"
+  with_items:
+    - "{{ righttoknow_domain }}"
+    - "test.{{ righttoknow_domain }}"
+  when: "'development' in group_names"
 
-# TODO: implement new way of doing development keys
-# - name: Add development private SSL key
-#   copy: content="{{ righttoknow_development_ssl_key }}" dest=/etc/ssl/private/righttoknow.org.au.dev.key owner=root group=ssl-cert mode=0640
-#   notify: nginx reload
+# We need to setup the SSL certificates before we try to configure nginx
+# because otherwise nginx will try to look for non-existent certificates
+- name: Copy SSL certificates for development
+  copy:
+    src: "{{ item }}.pem"
+    # We're faking it as if these are let's encrypt certs. Makes for less magic config
+    dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
+    mode: 0644
+  with_items:
+    - "{{ righttoknow_domain }}"
+    - "test.{{ righttoknow_domain }}"
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
+  notify: nginx restart
 
-- name: Add test self signed SSL certificate
-  copy: src=test.righttoknow.org.au.pem dest=/etc/ssl/test.righttoknow.org.au.pem owner=root group=root mode=0644
-  notify: nginx reload
-
-# TODO: implement new way of doing development keys
-# - name: Add test private SSL key
-#   copy: content="{{ righttoknow_test_ssl_key }}" dest=/etc/ssl/private/test.righttoknow.org.au.key owner=root group=ssl-cert mode=0640
-#   notify: nginx reload
+- name: Copy SSL keys for development
+  copy:
+    src: "{{ item }}.key"
+    dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
+    mode: 0640
+  with_items:
+    - "{{ righttoknow_domain }}"
+    - "test.{{ righttoknow_domain }}"
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
+  notify: nginx restart
 
 # TODO: Use let's encrypt to generate production SSL certs
-# - name: Add production self signed SSL certificate
-#   copy: src=www.righttoknow.org.au_chain.pem dest=/etc/ssl/www.righttoknow.org.au_chain.pem owner=root group=root mode=0644
-#   notify: nginx reload
-#
-# - name: Add production private SSL key
-#   copy: content="{{ righttoknow_production_ssl_key }}" dest=/etc/ssl/private/www.righttoknow.org.au.key owner=root group=ssl-cert mode=0640
-#   notify: nginx reload
 
 - name: Add alaveteli crontab entry
   cron: name="foi-alert-tracks" minute="0,10,20,30,40,50" job="/bin/bash -l -c 'sudo /etc/init.d/foi-alert-tracks check'"
