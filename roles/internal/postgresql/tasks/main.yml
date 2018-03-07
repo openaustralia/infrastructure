@@ -4,3 +4,9 @@
 - name: Install postgresql server
   apt:
     pkg: postgresql
+
+- name: Update postgresql config to bind to public ip
+  copy:
+    src: postgresql.conf
+    dest: /etc/postgresql/9.5/main
+  notify: postgresql restart
