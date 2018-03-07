@@ -9,6 +9,12 @@
     - /srv/www
     - /srv/www/shared
 
+# TODO: Extract variable
+- name: Set the ruby version for the alaveteli deploy
+  copy:
+    content: 2.0.0-p598
+    dest: /srv/www/shared/rbenv-version
+
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 # TODO When gem is already installed stop it from saying something has changed
 - name: Install bundler gem
