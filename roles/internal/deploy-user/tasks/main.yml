@@ -11,14 +11,12 @@
   with_items: "{{ github_users }}"
 
 - name: Create authorized_keys for deploy from the file that just downloaded
-  authorized_key: user=deploy key="{{ lookup('file', item) }}"
-  with_fileglob:
-    - /tmp/*.github_authorized_keys
+  authorized_key: user=deploy key="{{ lookup('file', '/tmp/{{ item }}.github_authorized_keys') }}"
+  with_items: "{{ github_users }}"
 
 - name: Create authorized_keys for root from the file that just downloaded
-  authorized_key: user=root key="{{ lookup('file', item) }}"
-  with_fileglob:
-    - /tmp/*.github_authorized_keys
+  authorized_key: user=root key="{{ lookup('file', '/tmp/{{ item }}.github_authorized_keys') }}"
+  with_items: "{{ github_users }}"
   register: add_authorized_keys
 
 - name: Only allow ssh access with keys
