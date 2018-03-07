@@ -3,7 +3,7 @@ resource "cloudflare_record" "opengovernment_root" {
   domain = "opengovernment.org.au"
   name   = "opengovernment.org.au"
   type   = "A"
-  value  = "54.79.92.207"
+  value  = "${aws_eip.kedumba.public_ip}"
 }
 
 # CNAME records
@@ -60,8 +60,7 @@ resource "cloudflare_record" "opengovernment_spf" {
   domain = "opengovernment.org.au"
   name   = "opengovernment.org.au"
   type   = "TXT"
-  # TODO: Fix the IP address in the SPF record
-  value  = "v=spf1 include:_spf.google.com ip4:23.239.22.35 ~all"
+  value  = "v=spf1 include:_spf.google.com ip4:${var.cuttlefish_ipv4} ~all"
 }
 
 resource "cloudflare_record" "opengovernment_google_site_verification" {

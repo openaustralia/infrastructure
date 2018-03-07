@@ -3,7 +3,7 @@ resource "cloudflare_record" "morph_root" {
   domain = "morph.io"
   name   = "morph.io"
   type   = "A"
-  value  = "173.255.208.251"
+  value  = "${var.morph_ipv4}"
 }
 
 # CNAME records
