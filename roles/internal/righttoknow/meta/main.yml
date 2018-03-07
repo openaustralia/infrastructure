@@ -127,11 +127,13 @@ dependencies:
   - role: abtris.nginx-passenger
   - role: zzet.rbenv
     rbenv:
-      env: system
+      env: user
       version: v0.4.0
       default_ruby: 2.0.0-p598
       rubies:
         - version: 2.0.0-p598
+    rbenv_users:
+      - deploy
   - role: Stouts.backup
     backup_gpg_pw: "{{ righttoknow_backup_gpg_pw }}"
     backup_max_age: 6M

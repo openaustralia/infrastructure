@@ -10,10 +10,11 @@
     - /srv/www/shared
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
-# We need to run "rbenv rehash" so that everyone can use bundler
+# TODO When gem is already installed stop it from saying something has changed
 - name: Install bundler gem
-  command: bash -lc "gem install bundler && rbenv rehash"
-  creates: /usr/local/rbenv/shims/bundle
+  command: bash -lc "gem install bundler"
+  become: true
+  become_user: deploy
 
 - name: Add mySociety Debian Package Repository key
   apt_key: url="https://debian.mysociety.org/debian.mysociety.org.gpg.key"
