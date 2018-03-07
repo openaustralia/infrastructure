@@ -11,6 +11,12 @@
     dest: /etc/postgresql/9.5/main
   notify: postgresql restart
 
+- name: Allow all connections from the outside world
+  copy:
+    src: pg_hba.conf
+    dest: /etc/postgresql/9.5/main
+  notify: postgresql restart
+
 - name: Install dependency for postgresql_user
   apt: pkg=python-psycopg2
 
