@@ -10,3 +10,13 @@
     src: postgresql.conf
     dest: /etc/postgresql/9.5/main
   notify: postgresql restart
+
+- name: Install dependency for postgresql_user
+  apt: pkg=python-psycopg2
+
+- name: Create admin user
+  postgresql_user:
+    name: admin
+    password: "{{ rds_admin_password }}"
+    role_attr_flags: CREATEDB
+  become_user: postgres
