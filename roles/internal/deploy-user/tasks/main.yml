@@ -21,12 +21,14 @@
   authorized_key:
     user: deploy
     key: "{{ lookup('file', '/tmp/{{ item }}.github_authorized_keys') }}"
+    comment: "{{ item }}"
   with_items: "{{ github_users }}"
 
 - name: Create authorized_keys for root from the file that just downloaded
   authorized_key:
     user: root
     key: "{{ lookup('file', '/tmp/{{ item }}.github_authorized_keys') }}"
+    comment: "{{ item }}"
   with_items: "{{ github_users }}"
   register: add_authorized_keys
 
