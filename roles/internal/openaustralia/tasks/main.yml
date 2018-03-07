@@ -461,3 +461,11 @@
     - apache2
     - cli
   notify: reload apache
+
+# For some reason on Ubuntu 16.04 php is commented out of the mime types list
+# This causes a request to /api/key to 404. So make content negotiation work by
+# adding it back in
+- name: Make content negotiation work again for php
+  lineinfile:
+    path: /etc/mime.types
+    line: 'application/x-httpd-php phtml pht php'
