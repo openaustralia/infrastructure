@@ -174,3 +174,5 @@
     name: deploy
     groups: adm
     append: yes
+
+# TODO: Setup alaveteli service in /etc/init.d?
