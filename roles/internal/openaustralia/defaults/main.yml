@@ -1,5 +1,4 @@
 ---
 # defaults file for openaustralia
-mysql_host: 192.168.10.17
 openaustralia_cron_enabled: true
 openaustralia_domain: openaustralia.org.au.dev
