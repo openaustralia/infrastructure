@@ -15,13 +15,7 @@ variable "cloudflare_email" {
   default = "matthew@oaf.org.au"
 }
 variable "cloudflare_token" {}
-variable "theyvoteforyou_dme_domainid" {
-  default = "1828502"
-}
-# Default ttl to use for all records in this domain
-variable "theyvoteforyou_dme_ttl" {
-  default = 60
-}
+
 # TODO: Get this automatically by managing Linode infrastructure with terraform
 variable "cuttlefish_ipv4" {
   default = "23.239.22.35"
