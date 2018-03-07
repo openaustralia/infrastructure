@@ -1,2 +1,6 @@
 ---
 # tasks file for postgresql
+
+- name: Install postgresql server
+  apt:
+    pkg: postgresql

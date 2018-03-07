@@ -71,6 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "oaf"              => ["oaf.org.au.dev"],
       "openaustralia"    => ["openaustralia.org.au.dev"],
       "mysql"            => ["mysql.dev"],
+      "postgresql"       => ["postgresql.dev"],
       "development"      => [
         "righttoknow.org.au.dev",
         "planningalerts.org.au.dev",
@@ -78,7 +79,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "theyvoteforyou.org.au.dev",
         "oaf.org.au.dev",
         "openaustralia.org.au.dev",
-        "mysql.dev"
+        "mysql.dev",
+        "postgresql.dev"
       ]
     }
   end
@@ -96,7 +98,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "theyvoteforyou.org.au.dev"   => "192.168.10.14",
     "oaf.org.au.dev"              => "192.168.10.15",
     "openaustralia.org.au.dev"    => "192.168.10.16",
-    "mysql.dev"                   => "192.168.10.17"
+    "mysql.dev"                   => "192.168.10.17",
+    "postgresql.dev"              => "192.168.10.18"
   }
 
   # Use this so that you don't need to give the machine name for all vagrant

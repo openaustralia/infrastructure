@@ -48,6 +48,11 @@
   roles:
     - mysql
 
+- hosts: postgresql
+  become: true
+  roles:
+    - postgresql
+
 - hosts: righttoknow
   become: true
   roles:
