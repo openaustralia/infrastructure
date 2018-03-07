@@ -19,13 +19,17 @@ define('SMARTY_PATH', DATA_DIR . '/smarty_compile');
 define('TEMPLATE_DIR', ROOT_DIR . '/templates');
 define('CACHE_DIR', DATA_DIR . '/cache');
 
-// Define the database details
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'electionleaflets');
-define('DB_USER', 'electionleaflets');
-define('DB_PASS', '{{ db_password }}');
+// *******************************************************************************
+// MySQL database.
+define ("DB_HOST", "{{ mysql_host }}");
+define ("DB_USER", "el-{{ stage }}");
+define ("DB_PASSWORD", "{{ db_password }}");
+define ("DB_NAME", "el-{{ stage }}");
 define('DATETIMEFORMAT_SQL',	"Y-m-d H:i:s"); // 2006-06-02 12:23:23
 define('SQL_DEBUG_LEVEL', 0);
+
+// *******************************************************************************
+
 
 define("CURRENT_ELECTION", "7");
 define("BANNER", true);

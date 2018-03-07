@@ -1,13 +1,20 @@
 ---
+
+# Install php5 on xenial requires a few more jumps than usual
+- name: Add repo for installing php5
+  apt_repository:
+    repo: 'ppa:ondrej/php'
+
 - name: Install packages required by Electionleaflets
   apt: name={{ item }} state=present
   with_items:
-    - php7.0
-    - php-imap
-    - php-gd
-    - php-mysql
+    - php5.6
+    - php5.6-imap
+    - php5.6-gd
+    - php5.6-mysql
+    - php5.6-mbstring
     - apache2
-    - libapache2-mod-php
+    - libapache2-mod-php5.6
     - python-mysqldb
 
 - name: Create electionleaflets databases
@@ -78,7 +85,15 @@
     - staging
 
 - name: Electionleaflets main config
-  template: src=general.php dest=/srv/www/shared/config/
+  template:
+    src: general.php
+    dest: /srv/www/{{ item }}/shared/config/
+  vars:
+    stage: "{{ item }}"
+  with_items:
+    - production
+    - test
+    - development
   notify: reload apache
 
 - name: Copy across the main apache config
