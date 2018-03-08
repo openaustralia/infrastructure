@@ -183,7 +183,7 @@ development:
   repository: git://github.com/openaustralia/alaveteli.git
   server: righttoknow.org.au.dev
   user: deploy
-  deploy_to: /srv/www
+  deploy_to: /srv/www/production
   rails_env: production
 ```
 
