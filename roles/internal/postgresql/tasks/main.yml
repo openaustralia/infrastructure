@@ -40,5 +40,5 @@
   postgresql_user:
     name: admin
     password: "{{ rds_admin_password }}"
-    role_attr_flags: CREATEDB
+    role_attr_flags: CREATEDB,CREATEROLE
   become_user: postgres
