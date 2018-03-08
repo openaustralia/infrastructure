@@ -14,9 +14,9 @@
 
 NAME=foi-purge-varnish
 DAEMON=/home/deploy/.rbenv/shims/ruby
-DAEMON_ARGS="/srv/www/current/script/runner --daemon PurgeRequest.purge_all_loop"
-PIDFILE=/srv/www/shared/pids/foi-purge-varnish.pid
-LOGFILE=/srv/www/shared/log/foi-purge-varnish.log
+DAEMON_ARGS="/srv/www/production/current/script/runner --daemon PurgeRequest.purge_all_loop"
+PIDFILE=/srv/www/production/shared/pids/foi-purge-varnish.pid
+LOGFILE=/srv/www/production/shared/log/foi-purge-varnish.log
 DUSER=deploy
 # Set RAILS_ENV - not needed if using config/rails_env.rb
 RAILS_ENV=production

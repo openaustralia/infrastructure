@@ -138,6 +138,6 @@ dependencies:
     backup_profiles:
       - name: righttoknow_files
         schedule: 0 2 * * *
-        source: /srv/www/shared/files
+        source: /srv/www/production/shared/files
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/righttoknow_files"

@@ -8,7 +8,7 @@ server {
   listen 80;
   server_name righttoknow.org.au.dev;
 
-  root /srv/www/current/public;
+  root /srv/www/production/current/public;
   passenger_enabled on;
   passenger_ruby /home/deploy/.rbenv/shims/ruby;
 }
@@ -24,7 +24,7 @@ server {
     add_header Cache-Control public;
   }
 
-  root /srv/www/current/public;
+  root /srv/www/production/current/public;
   passenger_enabled on;
   passenger_ruby /home/deploy/.rbenv/shims/ruby;
 

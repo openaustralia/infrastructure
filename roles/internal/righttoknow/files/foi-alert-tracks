@@ -14,9 +14,9 @@
 
 NAME=foi-alert-tracks
 DAEMON=/home/deploy/.rbenv/shims/ruby
-DAEMON_ARGS="/srv/www/current/script/runner --daemon TrackMailer.alert_tracks_loop"
-PIDFILE=/srv/www/shared/pids/foi-alert-tracks.pid
-LOGFILE=/srv/www/shared/log/foi-alert-tracks.log
+DAEMON_ARGS="/srv/www/production/current/script/runner --daemon TrackMailer.alert_tracks_loop"
+PIDFILE=/srv/www/production/shared/pids/foi-alert-tracks.pid
+LOGFILE=/srv/www/production/shared/log/foi-alert-tracks.log
 DUSER=deploy
 RAILS_ENV=production
 
