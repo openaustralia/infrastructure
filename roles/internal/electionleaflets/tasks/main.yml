@@ -92,8 +92,7 @@
     stage: "{{ item }}"
   with_items:
     - production
-    - test
-    - development
+    - staging
   notify: reload apache
 
 - name: Copy across the main apache config

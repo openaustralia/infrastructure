@@ -3,7 +3,7 @@
 define('DEVSITE', false);
 
 // Paths
-define('VHOST_DIR', '/srv/www');
+define('VHOST_DIR', '/srv/www/{{ stage }}');
 define('ROOT_DIR', VHOST_DIR . '/current');
 define('INCLUDE_DIR', ROOT_DIR . '/includes');
 define('PEAR_DIR', INCLUDE_DIR . '/PEAR');
