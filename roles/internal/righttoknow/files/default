@@ -6,6 +6,7 @@
 ## HTTP
 server {
   listen 80;
+  # TODO: Extract domain name
   server_name righttoknow.org.au.dev;
 
   root /srv/www/production/current/public;
@@ -15,7 +16,9 @@ server {
 
 # HTTPS
 server {
+  # TODO: Switch to http2
   listen 443 ssl spdy;
+  # TODO: Extract domain name
   server_name righttoknow.org.au.dev;
 
   location ^~ /assets/ {

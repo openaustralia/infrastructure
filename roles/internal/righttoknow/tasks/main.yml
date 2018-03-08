@@ -73,6 +73,7 @@
 - name: Install lockfile-progs for run-with-lockfile.sh
   apt: name=lockfile-progs
 
+# TODO: How do we handle production/staging here?
 - name: Link run-with-lockfile.sh so it's available system-wide
   file:
     src: "/srv/www/production/current/commonlib/bin/run-with-lockfile.sh"
