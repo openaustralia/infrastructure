@@ -1,20 +1,36 @@
 ---
 # tasks file for postgresql
 
-- name: Install postgresql server
+- name: Add postgresql apt repository
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
+    filename: pgdg
+
+- name: Import postgresql repository signing key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    id: ACCC4CF8
+
+# Installing a slightly older version of postgresql just to ensure that
+# pg_dump on the client side doesn't barf on an "-i" option. A very strange
+# reason to stick to an older version of postgres I know but as mentioned
+# elsewhere when we upgrade to the current latest alaveteli we won't
+# have this problem
+- name: Install postgresql 9.4 server
   apt:
-    pkg: postgresql
+    pkg: postgresql-9.4
+  update_cache: true
 
 - name: Update postgresql config to bind to public ip
   copy:
     src: postgresql.conf
-    dest: /etc/postgresql/9.5/main
+    dest: /etc/postgresql/9.4/main
   notify: postgresql restart
 
 - name: Allow all connections from the outside world
   copy:
     src: pg_hba.conf
-    dest: /etc/postgresql/9.5/main
+    dest: /etc/postgresql/9.4/main
   notify: postgresql restart
 
 - name: Install dependency for postgresql_user
