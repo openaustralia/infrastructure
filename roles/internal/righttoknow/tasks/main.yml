@@ -22,11 +22,33 @@
   become: true
   become_user: deploy
 
-- name: Add mySociety Debian Package Repository key
-  apt_key: url="https://debian.mysociety.org/debian.mysociety.org.gpg.key"
+# - name: Add mySociety Debian Package Repository key
+#   apt_key: url="https://debian.mysociety.org/debian.mysociety.org.gpg.key"
+#
+# - name: Add mySociety Debian Package Repository
+#   apt_repository: repo="deb http://debian.mysociety.org squeeze main"
 
-- name: Add mySociety Debian Package Repository
-  apt_repository: repo="deb http://debian.mysociety.org squeeze main"
+- name: Add postgresql apt repository
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
+    filename: pgdg
+
+- name: Import postgresql repository signing key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    id: ACCC4CF8
+
+# We're using a slightly older postgres client so that pg_dump still
+# works with "-i" which would cause a rails migration to fail otherwise.
+# This will be fixed by upgrading to the latest alavetelli.
+# TODO: Not sure if postgresql-client-9.5 gets installed somewhere along the way too
+- name: Install postgresql-client-9.4
+  apt:
+    pkg: "{{ item }}"
+    update_cache: true
+  with_items:
+    - postgresql-client-9.4
+    - libpq-dev
 
 - name: Install packages required by Alaveteli
   apt: name={{ item }} state=present
@@ -36,7 +58,8 @@
     - libmagickwand-dev
     - xapian-tools
     - uuid-dev
-    - wkhtmltopdf-static
+    # TODO: We need to install wkhtmltopdf
+    # - wkhtmltopdf-static
     - pdftk
 
 # For some unknown reason on Ubuntu 16.04 Magick-config isn't in the path
@@ -57,11 +80,25 @@
     force: true
     state: link
 
+- name: Install dependency for postgresql_db
+  apt: pkg=python-psycopg2
+
 - name: Create database
-  postgresql_db: name=alaveteli
+  postgresql_db:
+    login_host: "{{ postgresql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: alaveteli
 
 - name: Create posgresql role
-  postgresql_user: db=alaveteli name=alaveteli password={{ db_password }}
+  postgresql_user:
+    login_host: "{{ postgresql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    db: alaveteli
+    name: alaveteli
+    password: "{{ db_password }}"
+    priv: ALL
 
 - name: Copy over database configuration for application
   template: src=database.yml dest=/srv/www/shared/database.yml owner=deploy group=deploy

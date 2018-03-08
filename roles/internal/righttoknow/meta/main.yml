@@ -122,8 +122,6 @@ galaxy_info:
   #- web
 dependencies:
   - role: base-server
-  - role: ANXS.postgresql
-    postgresql_ext_install_dev_headers: yes
   - role: abtris.nginx-passenger
   - role: zzet.rbenv
     rbenv:
@@ -138,19 +136,8 @@ dependencies:
     backup_gpg_pw: "{{ righttoknow_backup_gpg_pw }}"
     backup_max_age: 6M
     backup_profiles:
-      - name: autopostgresqlbackup
-        schedule: 0 4 * * *
-        source: /var/lib/autopostgresqlbackup
-        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
-        target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/autopostgresqlbackup"
       - name: righttoknow_files
         schedule: 0 2 * * *
         source: /srv/www/shared/files
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/righttoknow_files"
-  - role: MaximeThoonsen.autopostgresqlbackup
-
-  # List your role dependencies here, one per line. Only
-  # dependencies available via galaxy should be listed here.
-  # Be sure to remove the '[]' above if you add dependencies
-  # to this list.
