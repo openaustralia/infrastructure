@@ -1,4 +1,7 @@
 ---
+- name: Install memcached
+  apt: pkg=memcached
+
 - name: Install dependency for following command
   apt: pkg=python-mysqldb
 
