@@ -141,3 +141,20 @@ dependencies:
         source: /srv/www/production/shared/files
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/righttoknow_files"
+  - role: nickhammond.logrotate
+    logrotate_scripts:
+      # This is the log rotation scheme required by Alaveteli
+      # See http://alaveteli.org/docs/installing/email/#logging
+      - name: mail
+        path: /var/log/mail/mail.log
+        options:
+          - rotate 30
+          - daily
+          - dateext
+          - missingok
+          - notifempty
+          - compress
+          - delaycompress
+          - sharedscripts
+          - postrotate reload rsyslog >/dev/null 2>&1 || true
+          - endscript
