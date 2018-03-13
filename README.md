@@ -200,7 +200,6 @@ bundle exec cap -S stage=development xapian:rebuild_index
 
 #### TODOS
 
-* Varnish
 * Email
 
 ### Deploying PlanningAlerts
