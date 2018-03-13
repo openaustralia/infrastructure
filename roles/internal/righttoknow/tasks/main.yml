@@ -253,8 +253,10 @@
   copy:
     src: master.cf
     dest: /etc/postfix
+  notify: restart postfix
 
 - name: Update postfix main.cf
   template:
     src: main.cf
     dest: /etc/postfix
+  notify: restart postfix
