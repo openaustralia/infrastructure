@@ -124,9 +124,9 @@
 
 # TODO: Fix this for ubuntu 16.04
 - name: Copy init scripts for daemons
-  copy:
-    dest: /etc/init.d/
+  template:
     src: "{{ item }}"
+    dest: /etc/init.d/
     mode: 0755
   with_items:
     - foi-alert-tracks
