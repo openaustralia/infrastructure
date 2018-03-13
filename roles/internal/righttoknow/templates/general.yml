@@ -66,7 +66,8 @@ FORCE_REGISTRATION_ON_NEW_REQUEST: false
 
 ## Incoming email
 # Your email domain, e.g. 'foifa.com'
-INCOMING_EMAIL_DOMAIN: 'righttoknow.org.au'
+# Use the same domain for staging and production
+INCOMING_EMAIL_DOMAIN: '{{ righttoknow_domain }}'
 
 # An optional prefix to help you distinguish FOI requests, e.g. 'foi+'
 INCOMING_EMAIL_PREFIX: '{{ incoming_email_prefix }}'
