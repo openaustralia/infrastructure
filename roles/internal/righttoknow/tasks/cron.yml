@@ -1,19 +1,24 @@
-# TODO: Add staging
 - name: Add alaveteli crontab entry
   cron:
     user: root
     name: "foi-alert-tracks"
     minute: "0,10,20,30,40,50"
-    job: "/bin/bash -l -c 'sudo /etc/init.d/foi-alert-tracks check'"
-    cron_file: "production"
+    job: "/bin/bash -l -c 'sudo /etc/init.d/foi-alert-tracks-{{ item }} check'"
+    cron_file: "{{ item }}"
+  with_items:
+    - production
+    - staging
 
 - name: Add alaveteli crontab entry
   cron:
     user: root
     name: "foi-purge-varnish"
     minute: "0,10,20,30,40,50"
-    job: "/bin/bash -l -c 'sudo /etc/init.d/foi-purge-varnish check'"
-    cron_file: "production"
+    job: "/bin/bash -l -c 'sudo /etc/init.d/foi-purge-varnish-{{ item }} check'"
+    cron_file: "{{ item }}"
+  with_items:
+    - production
+    - staging
 
 - name: Add alaveteli crontab entry
   cron:
