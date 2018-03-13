@@ -1,19 +1,22 @@
 ---
-- name: Ensure that deploy owns /srv/www and /srv/www/shared
+- name: Ensure that deploy owns application directories
   file:
     state: directory
     owner: deploy
     group: deploy
-    path: "{{item}}"
-  with_items:
-    - /srv/www/production
-    - /srv/www/production/shared
+    path: "/srv/www/{{ item[0] }}/{{ item[1] }}"
+  with_nested:
+    - ['production', 'staging']
+    - ['', 'shared']
 
 # TODO: Extract variable
 - name: Set the ruby version for the alaveteli deploy
   copy:
     content: 2.0.0-p598
-    dest: /srv/www/production/shared/rbenv-version
+    dest: /srv/www/{{ item }}/shared/rbenv-version
+  with_items:
+    - production
+    - staging
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 # TODO When gem is already installed stop it from saying something has changed
@@ -89,20 +92,36 @@
     login_host: "{{ postgresql_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: alaveteli
+    name: "rtk-{{ item }}"
+  with_items:
+    - production
+    - staging
 
 - name: Create posgresql role
   postgresql_user:
     login_host: "{{ postgresql_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    db: alaveteli
-    name: alaveteli
-    password: "{{ db_password }}"
+    db: "rtk-{{ item }}"
+    name: "rtk-{{ item }}"
+    password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
     priv: ALL
+  with_items:
+    - production
+    - staging
 
 - name: Copy over database configuration for application
-  template: src=database.yml dest=/srv/www/production/shared/database.yml owner=deploy group=deploy
+  template:
+    src: database.yml
+    dest: "/srv/www/{{ item }}/shared/database.yml"
+    owner: deploy
+    group: deploy
+  vars:
+    - stage: "{{ item }}"
+    - password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
+  with_items:
+    - production
+    - staging
   notify: nginx restart
 
 - name: Copy init scripts for daemons
