@@ -193,7 +193,8 @@
     incoming_email_prefix: "foi+"
     staging_site: "0"
     ga_code: "UA-3107958-10"
-    override_all_public_body_request_emails: ""
+    # TODO: For production change this to ""
+    override_all_public_body_request_emails: "contact@righttoknow.org.au"
     stage: production
   notify: nginx restart
 
