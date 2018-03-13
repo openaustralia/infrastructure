@@ -6,7 +6,8 @@
 domains=( "theyvoteforyou.org.au.dev" "test.theyvoteforyou.org.au.dev"
           "planningalerts.org.au.dev" "test.planningalerts.org.au.dev"
           "openaustralia.org.au.dev"  "test.openaustralia.org.au.dev"
-          "righttoknow.org.au.dev"    "test.righttoknow.org.au.dev" )
+          "righttoknow.org.au.dev"    "test.righttoknow.org.au.dev"
+          "dev.morph.io")
 
 # Generates a private key with passphrase "abcd" (but only if it doesn't already exist)
 if [ ! -f myCA.key ]; then

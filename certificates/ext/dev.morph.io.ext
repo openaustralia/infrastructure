@@ -1,0 +1,10 @@
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = dev.morph.io
+DNS.2 = api.dev.morph.io
+DNS.3 = faye.dev.morph.io
+DNS.4 = help.dev.morph.io
