@@ -1,14 +1,12 @@
-# Production
-
-# TODO: Add staging
+# TODO: Add optional password protection
+# TODO: Seperate new relic app name for production and staging?
 
 ## HTTP
 server {
   listen 80;
-  # TODO: Extract domain name
-  server_name righttoknow.org.au.dev;
+  server_name {{ domain }};
 
-  root /srv/www/production/current/public;
+  root /srv/www/{{ stage }}/current/public;
   passenger_enabled on;
   passenger_ruby /home/deploy/.rbenv/shims/ruby;
 }
@@ -17,8 +15,7 @@ server {
 server {
   # TODO: Switch to http2
   listen 443 ssl spdy;
-  # TODO: Extract domain name
-  server_name righttoknow.org.au.dev;
+  server_name {{ domain }};
 
   location ^~ /assets/ {
     gzip_static on;
@@ -26,13 +23,13 @@ server {
     add_header Cache-Control public;
   }
 
-  root /srv/www/production/current/public;
+  root /srv/www/{{ stage }}/current/public;
   passenger_enabled on;
   passenger_ruby /home/deploy/.rbenv/shims/ruby;
 
   ssl on;
-  ssl_certificate /etc/letsencrypt/live/righttoknow.org.au.dev/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/righttoknow.org.au.dev/privkey.pem;
+  ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
 
   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
   ssl_prefer_server_ciphers on;

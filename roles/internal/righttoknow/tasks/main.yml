@@ -154,14 +154,19 @@
     mode: 644
   notify: nginx reload
 
-# TODO: Add staging
 - name: Copy nginx config for the app
   template:
     src: stage
-    dest: /etc/nginx/sites-available/production
+    dest: /etc/nginx/sites-available/{{ item }}
     owner: root
     group: root
     mode: 644
+  vars:
+    domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ righttoknow_domain }}"
+    stage: "{{ item }}"
+  with_items:
+    - production
+    - staging
   notify: nginx reload
 
 - name: Copy nginx site configuration
@@ -171,7 +176,7 @@
   with_items:
     - default
     - production
-    # TODO: Add staging
+    - staging
   notify: nginx reload
 
 # TODO: Add staging
