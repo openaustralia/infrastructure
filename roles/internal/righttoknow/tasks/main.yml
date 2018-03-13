@@ -259,7 +259,7 @@
   copy:
     src: 50-default.conf
     dest: /etc/rsyslog.d
-  
+  notify: restart rsyslog
 
 # TODO: Set up log rotation for postfix logs. See http://alaveteli.org/docs/installing/email/#logging
 # TODO: Set up MX records for ec2 subdomain
