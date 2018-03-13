@@ -169,10 +169,11 @@
     - staging
   notify: nginx reload
 
-- name: Copy nginx site configuration
-  template:
-    src: "{{ item }}"
-    dest: /etc/nginx/sites-available/
+- name: Enable sites
+  file:
+    src: /etc/nginx/sites-available/{{ item }}
+    dest: /etc/nginx/sites-enabled/{{ item }}
+    state: link
   with_items:
     - default
     - production
