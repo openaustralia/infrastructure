@@ -64,6 +64,7 @@
     # TODO: We need to install wkhtmltopdf
     # - wkhtmltopdf-static
     - pdftk
+    - lockfile-progs
 
 # For some unknown reason on Ubuntu 16.04 Magick-config isn't in the path
 # after installing imagemagick above
@@ -72,9 +73,6 @@
     state: link
     src: /usr/lib/x86_64-linux-gnu/ImageMagick-6.8.9/bin-Q16/Magick-config
     dest: /usr/local/bin/Magick-config
-
-- name: Install lockfile-progs for run-with-lockfile.sh
-  apt: name=lockfile-progs
 
 # TODO: How do we handle production/staging here?
 - name: Link run-with-lockfile.sh so it's available system-wide
