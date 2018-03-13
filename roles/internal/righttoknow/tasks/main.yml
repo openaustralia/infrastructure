@@ -255,3 +255,8 @@
   copy:
     src: master.cf
     dest: /etc/postfix
+
+- name: Update postfix main.cf
+  template:
+    src: main.cf
+    dest: /etc/postfix
