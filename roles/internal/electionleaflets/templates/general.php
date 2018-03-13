@@ -1,6 +1,6 @@
 <?php
 
-define('DEVSITE', false);
+define('DEVSITE', true);
 
 // Paths
 define('VHOST_DIR', '/srv/www/{{ stage }}');
@@ -26,7 +26,7 @@ define ("DB_USER", "el-{{ stage }}");
 define ("DB_PASSWORD", "{{ db_password }}");
 define ("DB_NAME", "el-{{ stage }}");
 define('DATETIMEFORMAT_SQL',	"Y-m-d H:i:s"); // 2006-06-02 12:23:23
-define('SQL_DEBUG_LEVEL', 0);
+define('SQL_DEBUG_LEVEL', 5); // sets DB_DataObject::debug_level; set to 0 for prod
 
 // *******************************************************************************
 
