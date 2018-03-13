@@ -238,3 +238,9 @@
     src: default.vcl
     dest: /etc/varnish
   notify: restart varnish
+
+- name: Update varnish startup config
+  copy:
+    src: varnish.service
+    dest: /lib/systemd/system/varnish.service
+  notify: restart varnish
