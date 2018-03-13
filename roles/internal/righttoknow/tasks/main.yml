@@ -229,4 +229,11 @@
 
 # TODO: Set up incoming email handling including separate email and server address for staging
 
-# TODO: Install Varnish
+- name: Install varnish
+  apt:
+    pkg: varnish
+
+- name: Update varnish config
+  copy:
+    src: default.vcl
+    dest: /etc/varnish
