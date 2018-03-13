@@ -6,17 +6,6 @@ server {
   listen 80;
   server_name {{ domain }};
 
-  root /srv/www/{{ stage }}/current/public;
-  passenger_enabled on;
-  passenger_ruby /home/deploy/.rbenv/shims/ruby;
-}
-
-# HTTPS
-server {
-  # TODO: Switch to http2
-  listen 443 ssl spdy;
-  server_name {{ domain }};
-
   location ^~ /assets/ {
     gzip_static on;
     expires max;
@@ -26,6 +15,15 @@ server {
   root /srv/www/{{ stage }}/current/public;
   passenger_enabled on;
   passenger_ruby /home/deploy/.rbenv/shims/ruby;
+}
+
+# Only sending https through varnish for the time being
+
+# HTTPS
+server {
+  # TODO: Switch to http2
+  listen 443 ssl spdy;
+  server_name {{ domain }};
 
   ssl on;
   ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
@@ -35,4 +33,20 @@ server {
   ssl_prefer_server_ciphers on;
   ssl_session_cache  builtin:1000  shared:SSL:10m;
   ssl_ciphers 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4';
+
+  location / {
+    # Pass the request on to Varnish.
+    proxy_pass  http://127.0.0.1:6081;
+
+    # Pass a bunch of headers to the downstream server, so they'll know what's going on.
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    # Most web apps can be configured to read this header and understand that the current session is actually HTTPS.
+    proxy_set_header X-Forwarded-Proto https;
+
+    # We expect the downstream servers to redirect to the right hostname, so don't do any rewrites here.
+    proxy_redirect off;
+  }
 }
