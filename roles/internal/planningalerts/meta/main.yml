@@ -13,8 +13,16 @@ dependencies:
     rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
   - role: nickhammond.logrotate
     logrotate_scripts:
-      - name: rails
-        path: "/srv/www/shared/log/*.log"
+      - name: production
+        path: "/srv/www/production/shared/log/*.log"
+        options:
+          - daily
+          - rotate 30
+          - compress
+          - missingok
+          - copytruncate
+      - name: staging
+        path: "/srv/www/staging/shared/log/*.log"
         options:
           - daily
           - rotate 30
