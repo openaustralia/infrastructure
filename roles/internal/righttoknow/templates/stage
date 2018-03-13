@@ -3,7 +3,7 @@
 
 ## HTTP
 server {
-  listen 80;
+  listen 8000;
   server_name {{ domain }};
 
   location ^~ /assets/ {
@@ -36,7 +36,7 @@ server {
 
   location / {
     # Pass the request on to Varnish.
-    proxy_pass  http://127.0.0.1:6081;
+    proxy_pass  http://127.0.0.1;
 
     # Pass a bunch of headers to the downstream server, so they'll know what's going on.
     proxy_set_header Host $host;
