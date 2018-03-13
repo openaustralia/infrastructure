@@ -303,3 +303,5 @@
 # TODO: Send output of cron via email to a sensible place
 
 # TODO: Setup alaveteli service in /etc/init.d?
+
+# TODO: Set up incoming email handling including separate email and server address for staging
