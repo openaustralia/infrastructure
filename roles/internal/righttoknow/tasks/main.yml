@@ -180,13 +180,24 @@
     - staging
   notify: nginx reload
 
-# TODO: Add staging
+
 - name: Copy across the main Alaveteli config
   template:
     src: general.yml
-    dest: /srv/www/production/shared/
+    dest: /srv/www/{{ item }}/shared/
     owner: deploy
     group: deploy
+  vars:
+    domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ righttoknow_domain }}"
+    site_name: "Right To Know{{ (item == 'staging') | ternary(' (STAGING)', '') }}"
+    incoming_email_prefix: "{{ (item == 'staging') | ternary('foitest+', 'foi+')}}"
+    staging_site: "{{ (item == 'staging') | ternary('1', '0')}}"
+    ga_code: "{{ (item == 'staging') | ternary('', 'UA-3107958-10')}}"
+    override_all_public_body_request_emails: "{{ (item == 'staging') | ternary('contact@righttoknow.org.au', '')}}"
+    stage: "{{ item }}"
+  with_items:
+    - production
+    - staging
   notify: nginx restart
 
 - import_tasks: certificates.yml
