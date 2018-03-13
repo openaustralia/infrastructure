@@ -7,6 +7,8 @@
 # server.  In this case, apache + Passenger running on port 80
 #
 
+vcl 4.0;
+
 backend default {
     .host = "127.0.0.1";
     .port = "8000";
@@ -30,7 +32,7 @@ sub vcl_recv {
 
 
     # Sanitise X-Forwarded-For...
-    remove req.http.X-Forwarded-For;
+    unset req.http.X-Forwarded-For;
     set req.http.X-Forwarded-For = client.ip;
 
     # Remove Google Analytics, has_js, and last-seen cookies
@@ -40,52 +42,55 @@ sub vcl_recv {
     if (req.http.Accept-Encoding) {
         if (req.url ~ "\.(jpg|jpeg|png|gif|gz|tgz|bz2|tbz|mp3|ogg|swf|flv|pdf|ico)$") {
             # No point in compressing these
-            remove req.http.Accept-Encoding;
+            unset req.http.Accept-Encoding;
         } elsif (req.http.Accept-Encoding ~ "gzip") {
             set req.http.Accept-Encoding = "gzip";
         } elsif (req.http.Accept-Encoding ~ "deflate") {
             set req.http.Accept-Encoding = "deflate";
         } else {
             # unknown algorithm
-            remove req.http.Accept-Encoding;
+            unset req.http.Accept-Encoding;
         }
     }
 
     # Ignore empty cookies
     if (req.http.Cookie ~ "^\s*$") {
-        remove req.http.Cookie;
+        unset req.http.Cookie;
     }
 
-    if (req.request != "GET" &&
-       req.request != "HEAD" &&
-       req.request != "POST" &&
-       req.request != "PUT" &&
-       req.request != "PURGE" &&
-       req.request != "DELETE" ) {
+    if (req.method != "GET" &&
+       req.method != "HEAD" &&
+       req.method != "POST" &&
+       req.method != "PUT" &&
+       req.method != "PURGE" &&
+       req.method != "DELETE" ) {
         # We don't allow any other methods.
-        error 405 "Method Not Allowed";
+        return (synth(405, "Method Not Allowed"));
     }
 
-    if (req.request != "GET" && req.request != "HEAD" && req.request != "PURGE") {
+    if (req.method != "GET" && req.method != "HEAD" && req.method != "PURGE") {
         /* We only deal with GET and HEAD by default, the rest get passed direct to backend */
         return (pass);
     }
 
     # Ignore Cookies on images...
     if (req.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico)(\?.*|)$") {
-        remove req.http.Cookie;
-        return (lookup);
+        unset req.http.Cookie;
+        return (hash);
     }
 
     if (req.http.Authorization || req.http.Cookie) {
         return (pass);
     }
     # Let's have a little grace
-    set req.grace = 30s;
+    #
+    # This is now handled in vcl_hit.
+    #
+    # set req.grace = 30s;
     # Handle PURGE requests
-    if (req.request == "PURGE") {
+    if (req.method == "PURGE") {
       if (!client.ip ~ purge) {
-         error 405 "Not allowed.";
+         return (synth(405, "Not allowed."));
       }
 
       # For an explanation of the followng roundabout way of defining
@@ -95,16 +100,16 @@ sub vcl_recv {
       # TODO: in Varnish 2.x, the following would be
       # purge("obj.http.x-url ~ " req.url);
       ban("obj.http.x-url ~ " + req.url);
-      error 200 "Banned";
+      return (synth(200, "Banned"));
     }
-    return (lookup);
+    return (hash);
 }
 
-sub vcl_fetch {
-    set beresp.http.x-url = req.url;
-    if (req.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico|txt)(\?.*|)$") {
+sub vcl_backend_response {
+    set beresp.http.x-url = bereq.url;
+    if (bereq.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico|txt)(\?.*|)$") {
     # Ignore backend headers..
-        remove beresp.http.set-Cookie;
+        unset beresp.http.set-Cookie;
         set beresp.ttl = 3600s;
         return (deliver);
     }
@@ -134,7 +139,7 @@ sub vcl_fetch {
 #        set req.hash += req.http.X-Forwarded-Proto;
 #    }
 #
-#    return (hash);
+#    return (lookup);
 #}
 
 # Varnish 3 version of vcl_hash
@@ -153,6 +158,5 @@ sub vcl_hash {
         hash_data(req.http.X-Forwarded-Proto);
     }
 
-    return (hash);
+    return (lookup);
 }
-
