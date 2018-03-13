@@ -255,5 +255,11 @@
     - transport
   notify: restart postfix
 
+- name: Configure postfix logs to go to their own directory
+  copy:
+    src: 50-default.conf
+    dest: /etc/rsyslog.d
+  
+
 # TODO: Set up log rotation for postfix logs. See http://alaveteli.org/docs/installing/email/#logging
 # TODO: Set up MX records for ec2 subdomain
