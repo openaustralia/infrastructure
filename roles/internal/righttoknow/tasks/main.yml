@@ -177,3 +177,5 @@
 # TODO: Setup alaveteli service in /etc/init.d?
 
 # TODO: Set up incoming email handling including separate email and server address for staging
+
+# TODO: Install Varnish
