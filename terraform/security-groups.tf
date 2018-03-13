@@ -65,6 +65,27 @@ resource "aws_security_group" "main_database" {
   }
 }
 
+resource "aws_security_group" "postgresql" {
+  name        = "postgresql"
+  description = "For postgresql databases"
+
+  # TODO: Limit ingoing and outgoing traffic to within our vpc
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow everything going out
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_security_group" "jamison" {
   # TODO Change this
   description = "launch-wizard-3 created 2018-02-19T05:58:53.596+11:00"

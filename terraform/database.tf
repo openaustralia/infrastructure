@@ -30,5 +30,36 @@ resource "aws_db_instance" "main" {
   auto_minor_version_upgrade = true
   apply_immediately          = false
   skip_final_snapshot        = false
-  vpc_security_group_ids = ["${aws_security_group.main_database.id}"]
+  vpc_security_group_ids     = ["${aws_security_group.main_database.id}"]
+}
+
+# TODO: Do we want to explicitly set the available zone?
+resource "aws_db_instance" "postgresql" {
+  # Storage is currently set to the minimum
+  # TODO: For production increase storage
+  allocated_storage          = 20
+  # Using general purpose SSD
+  storage_type               = "gp2"
+  engine                     = "postgres"
+  engine_version             = "9.4.15"
+  # TODO: For production change this to something sensible
+  instance_class             = "db.t2.micro"
+  identifier                 = "postgresql"
+  username                   = "root"
+  password                   = "${var.rds_admin_password}"
+  publicly_accessible        = false
+  # TODO: For production increase backup_retention_period to 35
+  backup_retention_period    = 1
+  # We want 3-3:30am Sydney time which is 4-4:30pm GMT
+  backup_window              = "16:00-16:30"
+  # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
+  maintenance_window         = "Sun:17:00-Sun:17:30"
+  # TODO: For production set multi_az to true
+  multi_az = false
+  auto_minor_version_upgrade = true
+  # TODO: For production change apply_immediately to false
+  apply_immediately          = true
+  # TODO: For production change skip_final_snapshot to false
+  skip_final_snapshot        = true
+  vpc_security_group_ids     = ["${aws_security_group.postgresql.id}"]
 }
