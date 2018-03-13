@@ -181,23 +181,36 @@
   notify: nginx reload
 
 
-- name: Copy across the main Alaveteli config
+- name: Copy across the main Alaveteli config (production)
   template:
     src: general.yml
-    dest: /srv/www/{{ item }}/shared/
+    dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
   vars:
-    domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ righttoknow_domain }}"
-    site_name: "Right To Know{{ (item == 'staging') | ternary(' (STAGING)', '') }}"
-    incoming_email_prefix: "{{ (item == 'staging') | ternary('foitest+', 'foi+')}}"
-    staging_site: "{{ (item == 'staging') | ternary('1', '0')}}"
-    ga_code: "{{ (item == 'staging') | ternary('', 'UA-3107958-10')}}"
-    override_all_public_body_request_emails: "{{ (item == 'staging') | ternary('contact@righttoknow.org.au', '')}}"
-    stage: "{{ item }}"
-  with_items:
-    - production
-    - staging
+    domain: "{{ righttoknow_domain }}"
+    site_name: "Right To Know"
+    incoming_email_prefix: "foi+"
+    staging_site: "0"
+    ga_code: "UA-3107958-10"
+    override_all_public_body_request_emails: ""
+    stage: production
+  notify: nginx restart
+
+- name: Copy across the main Alaveteli config (staging)
+  template:
+    src: general.yml
+    dest: /srv/www/staging/shared/
+    owner: deploy
+    group: deploy
+  vars:
+    domain: "test.{{ righttoknow_domain }}"
+    site_name: "Right To Know (STAGING)"
+    incoming_email_prefix: "foitest+"
+    staging_site: "1"
+    ga_code: ""
+    override_all_public_body_request_emails: "contact@righttoknow.org.au"
+    stage: staging
   notify: nginx restart
 
 - import_tasks: certificates.yml
