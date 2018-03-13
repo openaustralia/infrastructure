@@ -237,3 +237,4 @@
   copy:
     src: default.vcl
     dest: /etc/varnish
+  notify: restart varnish

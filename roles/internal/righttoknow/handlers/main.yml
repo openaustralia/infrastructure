@@ -1,2 +1,6 @@
 ---
 # handlers file for righttoknow
+- name: restart varnish
+  service:
+    name: varnish
+    state: restarted
