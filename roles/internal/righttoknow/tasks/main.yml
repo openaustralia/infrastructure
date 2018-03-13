@@ -225,10 +225,6 @@
 
 # TODO: Send output of cron via email to a sensible place
 
-# TODO: Setup alaveteli service in /etc/init.d?
-
-# TODO: Set up incoming email handling including separate email and server address for staging
-
 - name: Install varnish
   apt:
     pkg: varnish
@@ -258,3 +254,6 @@
     - main.cf
     - transport
   notify: restart postfix
+
+# TODO: Set up log rotation for postfix logs. See http://alaveteli.org/docs/installing/email/#logging
+# TODO: Set up MX records for ec2 subdomain
