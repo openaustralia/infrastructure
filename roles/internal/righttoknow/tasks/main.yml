@@ -260,3 +260,9 @@
     src: main.cf
     dest: /etc/postfix
   notify: restart postfix
+
+- name: Update postfix transport
+  template:
+    src: transport
+    dest: /etc/postfix
+  notify: restart postfix

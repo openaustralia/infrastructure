@@ -1,0 +1,3 @@
+/^alavetelitest.*/ alavetelitest:
+/^alaveteli.*/ alaveteli:
+/@righttoknow.org.au$/ smtp:

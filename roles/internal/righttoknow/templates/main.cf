@@ -39,3 +39,7 @@ mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
 inet_protocols = all
+# For Alaveteli
+transport_maps = regexp:/etc/postfix/transport
+# Increase the size limit above the Google Apps limit of 25 MB
+message_size_limit = 30720000
