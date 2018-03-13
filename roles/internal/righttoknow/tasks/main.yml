@@ -122,15 +122,16 @@
     - staging
   notify: nginx restart
 
-# TODO: Fix this for ubuntu 16.04
-- name: Copy init scripts for daemons
+- name: Copy init scripts
   template:
-    src: "{{ item }}"
-    dest: /etc/init.d/
+    src: "{{ item[1] }}"
+    dest: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
     mode: 0755
-  with_items:
-    - foi-alert-tracks
-    - foi-purge-varnish
+  vars:
+    - stage: "{{ item[0] }}"
+  with_nested:
+    - ['production', 'staging']
+    - ['foi-alert-tracks', 'foi-purge-varnish']
 
 - name: Generate the overall nginx config
   template:

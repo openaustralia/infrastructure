@@ -12,11 +12,11 @@
 #
 # foi-purge-varnish Start the Alaveteli email purge-varnish daemon
 
-NAME=foi-purge-varnish
+NAME=foi-purge-varnish-{{ stage }}
 DAEMON=/home/deploy/.rbenv/shims/ruby
-DAEMON_ARGS="/srv/www/production/current/script/runner --daemon PurgeRequest.purge_all_loop"
-PIDFILE=/srv/www/production/shared/pids/foi-purge-varnish.pid
-LOGFILE=/srv/www/production/shared/log/foi-purge-varnish.log
+DAEMON_ARGS="/srv/www/{{ stage }}/current/script/runner --daemon PurgeRequest.purge_all_loop"
+PIDFILE=/srv/www/{{ stage }}/shared/pids/foi-purge-varnish.pid
+LOGFILE=/srv/www/{{ stage }}/shared/log/foi-purge-varnish.log
 DUSER=deploy
 # Set RAILS_ENV - not needed if using config/rails_env.rb
 RAILS_ENV=production

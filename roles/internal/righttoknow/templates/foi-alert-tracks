@@ -12,11 +12,11 @@
 #
 # foi-alert-tracks Start the Alaveteli email alert daemon
 
-NAME=foi-alert-tracks
+NAME=foi-alert-tracks-{{ stage }}
 DAEMON=/home/deploy/.rbenv/shims/ruby
-DAEMON_ARGS="/srv/www/production/current/script/runner --daemon TrackMailer.alert_tracks_loop"
-PIDFILE=/srv/www/production/shared/pids/foi-alert-tracks.pid
-LOGFILE=/srv/www/production/shared/log/foi-alert-tracks.log
+DAEMON_ARGS="/srv/www/{{ stage }}/current/script/runner --daemon TrackMailer.alert_tracks_loop"
+PIDFILE=/srv/www/{{ stage }}/shared/pids/foi-alert-tracks.pid
+LOGFILE=/srv/www/{{ stage }}/shared/log/foi-alert-tracks.log
 DUSER=deploy
 RAILS_ENV=production
 
@@ -79,4 +79,3 @@ else
     echo " failed"
     exit 1
 fi
-
