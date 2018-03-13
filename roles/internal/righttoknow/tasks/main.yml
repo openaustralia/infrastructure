@@ -244,3 +244,14 @@
     src: varnish.service
     dest: /lib/systemd/system/varnish.service
   notify: restart varnish
+
+- name: Install postfix for email handling
+  apt:
+    pkg: postfix
+
+# TODO: Check that in production 'mydestination' in master.cf is being set properly
+
+- name: Update postfix master.cf
+  copy:
+    src: master.cf
+    dest: /etc/postfix
