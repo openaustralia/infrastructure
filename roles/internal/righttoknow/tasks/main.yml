@@ -249,20 +249,12 @@
   apt:
     pkg: postfix
 
-- name: Update postfix master.cf
-  copy:
-    src: master.cf
-    dest: /etc/postfix
-  notify: restart postfix
-
-- name: Update postfix main.cf
+- name: Update postfix configuration
   template:
-    src: main.cf
+    src: "{{ item }}"
     dest: /etc/postfix
-  notify: restart postfix
-
-- name: Update postfix transport
-  template:
-    src: transport
-    dest: /etc/postfix
+  with_items:
+    - master.cf
+    - main.cf
+    - transport
   notify: restart postfix
