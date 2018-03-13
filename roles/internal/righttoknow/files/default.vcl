@@ -28,17 +28,10 @@ sub vcl_recv {
         set req.http.host = regsub(req.http.host, "^ipv6\.(.*)","www\.\1");
    }
 
-    # Pass through anything that's not Right to Know production
-    if (req.http.host != "www.righttoknow.org.au") {
-        # Sanitise X-Forwarded-For...
-        # Only do this for sites that aren't Right To Know production. This is
-        # because it gets proxied twice: Apache > Varnish > Apache so we retain
-        # the X-Forwarded-For from the first Apache hit so it gets passed on.
-        remove req.http.X-Forwarded-For;
-        set req.http.X-Forwarded-For = client.ip;
 
-        return(pass);
-    }
+    # Sanitise X-Forwarded-For...
+    remove req.http.X-Forwarded-For;
+    set req.http.X-Forwarded-For = client.ip;
 
     # Remove Google Analytics, has_js, and last-seen cookies
     set req.http.Cookie = regsuball(req.http.Cookie, "(^|;\s*)(__[a-z]+|has_js|has_seen_country_message|seen_foi2)=[^;]*", "");
