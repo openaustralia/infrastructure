@@ -35,4 +35,28 @@
   when: "'development' in group_names"
   notify: nginx restart
 
-# TODO: Use let's encrypt to generate production SSL certs
+- name: Install nginx now (for the benefit of certbot)
+  apt: pkg=nginx
+  when: "'ec2' in group_names"
+
+# TODO: When (if) we use a newer version of certbot add "--post-hook" to restart nginx after renew
+- name: Install certificate using certbot
+  include_role:
+    name: geerlingguy.certbot
+  vars:
+    certbot_auto_renew_user: root
+    certbot_auto_renew_minute: 10
+    certbot_auto_renew_hour: 7
+    certbot_create_if_missing: yes
+    certbot_create_standalone_stop_services:
+      - varnish
+    certbot_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - "{{ righttoknow_domain }}"
+          - www."{{ righttoknow_domain }}"
+      - email: contact@oaf.org.au
+        domains:
+          - "test.{{ righttoknow_domain }}"
+          - "www.test.{{ righttoknow_domain }}"
+  when: "'ec2' in group_names"
