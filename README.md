@@ -185,6 +185,20 @@ development:
   user: deploy
   deploy_to: /srv/www/production
   rails_env: production
+ec2-production:
+  branch: update-rbenv-deploy
+  repository: git://github.com/openaustralia/alaveteli.git
+  server: ec2.righttoknow.org.au
+  user: deploy
+  deploy_to: /srv/www/production
+  rails_env: production
+ec2-staging:
+  branch: update-rbenv-deploy
+  repository: git://github.com/openaustralia/alaveteli.git
+  server: ec2.righttoknow.org.au
+  user: deploy
+  deploy_to: /srv/www/staging
+  rails_env: production
 ```
 
 This adds an extra staging for the capistrano deploy called `development`. This will deploy to your
