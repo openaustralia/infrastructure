@@ -39,7 +39,18 @@
         command: facts
         instance_name: main-database
         region: "{{ ec2_region }}"
-      register: rds
+      register: rds_mysql
+      # Run this task even when running ansible-playbook with "--check"
+      check_mode: no
+
+    - name: Get information about the postgresql RDS instance
+      rds:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        command: facts
+        instance_name: postgresql
+        region: "{{ ec2_region }}"
+      register: rds_postgresql
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
 
