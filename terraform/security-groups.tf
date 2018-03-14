@@ -88,7 +88,7 @@ resource "aws_security_group" "postgresql" {
 
 resource "aws_security_group" "jamison" {
   name = "jamison"
-  # TODO Change this
+  # TODO: Change this to "For small legacy instance"
   description = "launch-wizard-3 created 2018-02-19T05:58:53.596+11:00"
 
   ingress {
@@ -123,8 +123,9 @@ resource "aws_security_group" "jamison" {
 }
 
 resource "aws_security_group" "kedumba" {
+  # TODO: Change this "kedumba"
   name = "octopus"
-  # TODO Change this
+  # TODO: Change this to "For main legacy instance"
   description = "for main instance"
 
   # ssh is running on port 2506
