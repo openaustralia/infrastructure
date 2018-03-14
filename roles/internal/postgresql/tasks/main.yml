@@ -36,9 +36,9 @@
 - name: Install dependency for postgresql_user
   apt: pkg=python-psycopg2
 
-- name: Create admin user
+- name: Create root user
   postgresql_user:
-    name: admin
+    name: root
     password: "{{ rds_admin_password }}"
     role_attr_flags: CREATEDB,CREATEROLE
   become_user: postgres
