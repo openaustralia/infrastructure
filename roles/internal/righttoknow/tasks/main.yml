@@ -131,7 +131,7 @@
     - stage: "{{ item[0] }}"
   with_nested:
     - ['production', 'staging']
-    - ['foi-alert-tracks', 'foi-purge-varnish']
+    - ['foi-alert-tracks', 'foi-purge-varnish', 'alaveteli']
 
 - name: Generate the overall nginx config
   template:
