@@ -24,6 +24,7 @@ define('CACHE_DIR', DATA_DIR . '/cache');
 define ("DB_HOST", "{{ mysql_host }}");
 define ("DB_USER", "el-{{ stage }}");
 define ("DB_PASSWORD", "{{ db_password }}");
+define ("DB_PASS", "{{ db_password }}");
 define ("DB_NAME", "el-{{ stage }}");
 define('DATETIMEFORMAT_SQL',	"Y-m-d H:i:s"); // 2006-06-02 12:23:23
 define('SQL_DEBUG_LEVEL', 5); // sets DB_DataObject::debug_level; set to 0 for prod

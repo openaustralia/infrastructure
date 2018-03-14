@@ -90,6 +90,7 @@
     dest: /srv/www/{{ item }}/shared/config/
   vars:
     stage: "{{ item }}"
+    db_password: "{{ (item == 'production') | ternary(electionleaflets_production_mysql_password, electionleaflets_staging_mysql_password) }}"
   with_items:
     - production
     - staging
