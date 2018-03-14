@@ -212,10 +212,6 @@ bundle exec cap -S stage=development deploy:migrate
 bundle exec cap -S stage=development xapian:rebuild_index
 ```
 
-#### TODOS
-
-* Email
-
 ### Deploying PlanningAlerts
 
 After provisioning, deploy from the [PlanningAlerts repository](https://github.com/openaustralia/planningalerts-app/).
