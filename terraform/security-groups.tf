@@ -87,6 +87,7 @@ resource "aws_security_group" "postgresql" {
 }
 
 resource "aws_security_group" "jamison" {
+  name = "jamison"
   # TODO Change this
   description = "launch-wizard-3 created 2018-02-19T05:58:53.596+11:00"
 
@@ -122,6 +123,7 @@ resource "aws_security_group" "jamison" {
 }
 
 resource "aws_security_group" "kedumba" {
+  name = "octopus"
   # TODO Change this
   description = "for main instance"
 
