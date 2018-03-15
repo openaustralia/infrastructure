@@ -6,7 +6,10 @@ resource "aws_instance" "righttoknow" {
   tags {
     Name = "righttoknow"
   }
-  security_groups = ["${aws_security_group.webserver.name}"]
+  security_groups = [
+    "${aws_security_group.webserver.name}",
+    "${aws_security_group.incoming_email.name}"
+  ]
   # TODO: For production set disable_api_termination to true
   disable_api_termination = false
 }

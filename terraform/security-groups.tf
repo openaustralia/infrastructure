@@ -121,6 +121,17 @@ resource "aws_security_group" "jamison" {
   }
 }
 
+resource "aws_security_group" "incoming_email" {
+  name = "incoming_email"
+  description = "Allows incoming email"
+  ingress {
+    from_port   = 25
+    to_port     = 25
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_security_group" "kedumba" {
   name = "octopus"
   description = "for main instance"
