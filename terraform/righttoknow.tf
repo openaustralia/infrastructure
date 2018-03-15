@@ -1,7 +1,7 @@
 resource "aws_instance" "righttoknow" {
   ami =  "${data.aws_ami.ubuntu.id}"
-  # TODO: For production probably will need to be t2.medium at a minimum
-  instance_type = "t2.small"
+  # Changed it from t2.small to t2.medium because provisioning was very slow
+  instance_type = "t2.medium"
   key_name = "test"
   tags {
     Name = "righttoknow"
