@@ -40,6 +40,7 @@ recipient_delimiter = +
 inet_interfaces = all
 inet_protocols = all
 # For Alaveteli
+virtual_alias_maps = regexp:/etc/postfix/regexp
 transport_maps = regexp:/etc/postfix/transport
 # Increase the size limit above the Google Apps limit of 25 MB
 message_size_limit = 30720000
