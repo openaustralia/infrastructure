@@ -47,7 +47,8 @@ resource "aws_db_instance" "postgresql" {
   identifier                 = "postgresql"
   username                   = "root"
   password                   = "${var.rds_admin_password}"
-  publicly_accessible        = false
+  # TODO: For production (as soon as any data is loaded ) switch to false
+  publicly_accessible        = true
   # TODO: For production increase backup_retention_period to 35
   backup_retention_period    = 1
   # We want 3-3:30am Sydney time which is 4-4:30pm GMT
