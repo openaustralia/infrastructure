@@ -7,6 +7,7 @@ resource "aws_security_group" "webserver" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   ingress {
@@ -14,6 +15,7 @@ resource "aws_security_group" "webserver" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   ingress {
@@ -21,6 +23,7 @@ resource "aws_security_group" "webserver" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   # Allow pings from hosts on the internet
@@ -29,6 +32,7 @@ resource "aws_security_group" "webserver" {
     from_port = 8
     to_port = -1
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   # Allow everything going out
@@ -37,6 +41,7 @@ resource "aws_security_group" "webserver" {
     to_port = 0
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }
 
@@ -54,6 +59,7 @@ resource "aws_security_group" "main_database" {
     to_port     = 3306
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   # Allow everything going out
@@ -62,6 +68,7 @@ resource "aws_security_group" "main_database" {
     to_port = 0
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }
 
@@ -75,6 +82,7 @@ resource "aws_security_group" "postgresql" {
     to_port     = 5432
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   # Allow everything going out
@@ -83,6 +91,7 @@ resource "aws_security_group" "postgresql" {
     to_port = 0
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }
 
@@ -95,6 +104,7 @@ resource "aws_security_group" "jamison" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   ingress {
@@ -102,6 +112,7 @@ resource "aws_security_group" "jamison" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   # Allow pings from hosts on the internet
@@ -110,6 +121,7 @@ resource "aws_security_group" "jamison" {
     from_port = 8
     to_port = -1
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   # Allow everything going out
@@ -118,6 +130,7 @@ resource "aws_security_group" "jamison" {
     to_port = 0
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }
 
@@ -129,6 +142,7 @@ resource "aws_security_group" "incoming_email" {
     to_port     = 25
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }
 
@@ -142,6 +156,7 @@ resource "aws_security_group" "kedumba" {
     to_port     = 2506
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   # Allow incoming email (for righttoknow)
@@ -150,6 +165,7 @@ resource "aws_security_group" "kedumba" {
     to_port     = 25
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   ingress {
@@ -157,6 +173,7 @@ resource "aws_security_group" "kedumba" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   ingress {
@@ -164,6 +181,7 @@ resource "aws_security_group" "kedumba" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   # TODO: Remove this once all database migrations from kedumba are complete
@@ -181,6 +199,7 @@ resource "aws_security_group" "kedumba" {
     from_port = 8
     to_port = -1
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 
   # Allow everything going out
@@ -189,5 +208,6 @@ resource "aws_security_group" "kedumba" {
     to_port = 0
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }
