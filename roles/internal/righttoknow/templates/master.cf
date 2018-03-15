@@ -123,8 +123,8 @@ mailman   unix  -       n       n       -       -       pipe
   ${nexthop} ${user}
 
 # Alaveteli
-# TODO: Test that using bash here works and is necessary to get the right ruby version
+# TODO: Figure out some better way of doing this
 alavetelitest unix  -       n       n       -       50      pipe
-  flags=R user=deploy argv=/bin/bash -l -c '/srv/www/staging/current/script/mailin'
+  flags=R user=deploy argv=/srv/www/staging/shared/run.sh /srv/www/staging/current/script/mailin
 alaveteli     unix  -       n       n       -       50      pipe
-  flags=R user=deploy argv=/bin/bash -l -c '/srv/www/production/current/script/mailin'
+  flags=R user=deploy argv=/srv/www/production/shared/run.sh /srv/www/production/current/script/mailin

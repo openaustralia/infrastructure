@@ -26,6 +26,16 @@
     - production
     - staging
 
+- name: Install wrapper script for setting correct version of ruby in path
+  template:
+    src: run.sh
+    dest: /srv/www/{{ item }}/shared
+    # Make it executable
+    mode: 0755
+  with_items:
+    - production
+    - staging
+
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 # TODO When gem is already installed stop it from saying something has changed
 - name: Install bundler gem
