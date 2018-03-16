@@ -148,7 +148,7 @@
 
 - name: Copy init scripts
   template:
-    src: "{{ item[1] }}"
+    src: "init/{{ item[1] }}"
     dest: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
     mode: 0755
   vars:
@@ -157,21 +157,18 @@
     - ['production', 'staging']
     - ['foi-alert-tracks', 'foi-purge-varnish', 'alaveteli']
 
-- name: Generate the overall nginx config
+- name: Generate nginx config
   template:
-    src: nginx.conf
-    dest: /etc/nginx/nginx.conf
-  notify: nginx reload
-
-- name: Copy test/test password for staging site
-  copy:
-    src: htpasswd
-    dest: /etc/nginx/
+    src: "nginx/{{ item }}"
+    dest: /etc/nginx
+  with_items:
+    - nginx.conf
+    - htpasswd
   notify: nginx reload
 
 - name: Copy nginx config for the app redirects
   template:
-    src: default
+    src: nginx/default
     dest: /etc/nginx/sites-available
     owner: root
     group: root
@@ -180,7 +177,7 @@
 
 - name: Copy nginx config for the app
   template:
-    src: stage
+    src: nginx/stage
     dest: /etc/nginx/sites-available/{{ item }}
     owner: root
     group: root
@@ -203,7 +200,6 @@
     - production
     - staging
   notify: nginx reload
-
 
 - name: Copy across the main Alaveteli config (production)
   template:
@@ -271,7 +267,7 @@
 
 - name: Update postfix configuration
   template:
-    src: "{{ item }}"
+    src: "postfix/{{ item }}"
     dest: /etc/postfix
   with_items:
     - master.cf
