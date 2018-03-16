@@ -9,10 +9,9 @@
     - ['production', 'staging']
     - ['', 'shared']
 
-# TODO: Extract variable
 - name: Set the ruby version for the alaveteli deploy
   copy:
-    content: 2.0.0-p598
+    content: "{{ ruby_version }}"
     dest: /srv/www/{{ item }}/shared/rbenv-version
   with_items:
     - production
