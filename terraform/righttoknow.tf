@@ -24,8 +24,8 @@ resource "aws_eip" "righttoknow" {
 
 resource "aws_ebs_volume" "righttoknow_data" {
     availability_zone = "ap-southeast-2c"
-    # TODO: For production figure out how big this thing needs to be
-    size = 10
+    # 7.8 GB is current used on kedumba for shared/files. So, let's use 20 GB here.
+    size = 20
     type = "gp2"
     tags {
         Name = "righttoknow_data"
