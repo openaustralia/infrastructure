@@ -159,7 +159,7 @@ FORWARD_NONBOUNCE_RESPONSES_TO: web-administrators@openaustralia.org
 # http://code.google.com/p/wkhtmltopdf/downloads/list
 # If the command is not present, a text-only version will be rendered
 # instead.
-HTML_TO_PDF_COMMAND: /usr/bin/wkhtmltopdf
+HTML_TO_PDF_COMMAND: /usr/bin/wkhtmltopdf-static
 
 # TODO: Send this to slack as well
 

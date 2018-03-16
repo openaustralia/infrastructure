@@ -43,12 +43,6 @@
   become: true
   become_user: deploy
 
-# - name: Add mySociety Debian Package Repository key
-#   apt_key: url="https://debian.mysociety.org/debian.mysociety.org.gpg.key"
-#
-# - name: Add mySociety Debian Package Repository
-#   apt_repository: repo="deb http://debian.mysociety.org squeeze main"
-
 - name: Add postgresql apt repository
   apt_repository:
     repo: deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
@@ -71,6 +65,16 @@
     - postgresql-client-9.4
     - libpq-dev
 
+- name: Add mySociety Debian Package Repository key
+  apt_key:
+    url: https://debian.mysociety.org/debian.mysociety.org.gpg.key
+
+# It looks like squeeze (very old) is the latest version of Debian
+# that wkhtmltopdf-static is compiled for. Hmmm...
+- name: Add mySociety Debian Package Repository
+  apt_repository:
+    repo: "deb http://debian.mysociety.org squeeze main"
+
 - name: Install packages required by Alaveteli
   apt: name={{ item }} state=present
   with_items:
@@ -79,8 +83,7 @@
     - libmagickwand-dev
     - xapian-tools
     - uuid-dev
-    # TODO: We need to install wkhtmltopdf
-    # - wkhtmltopdf-static
+    - wkhtmltopdf-static
     - pdftk
     - lockfile-progs
     - python-yaml
