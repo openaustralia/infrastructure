@@ -284,3 +284,4 @@
   notify: restart rsyslog
 
 # TODO: Move data files to /data and backup from there
+# TODO: Install memcached and configure for righttoknow
