@@ -136,11 +136,11 @@ dependencies:
     backup_gpg_pw: "{{ righttoknow_backup_gpg_pw }}"
     backup_max_age: 6M
     backup_profiles:
-      - name: righttoknow_files
+      - name: righttoknow_data
         schedule: 0 2 * * *
-        source: /srv/www/production/shared/files
+        source: /data
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
-        target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/righttoknow_files"
+        target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/data"
   - role: nickhammond.logrotate
     logrotate_scripts:
       # This is the log rotation scheme required by Alaveteli

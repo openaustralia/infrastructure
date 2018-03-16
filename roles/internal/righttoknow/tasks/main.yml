@@ -1,4 +1,38 @@
 ---
+# We want this directory to exist in development too so that
+# things are as consistent as possible
+# Basically everything in /data is stuff we want backed up that
+# isn't the database
+- name: Create data mountpoint
+  file:
+    state: directory
+    path: /data
+
+# On EC2 we're using a seperate EBS volume to hold application data
+- name: Create filesystem on attached block storage
+  filesystem:
+    fstype: ext4
+    dev: /dev/xvdh
+  when: "'ec2' in group_names"
+
+- name: Mount /data filesystem
+  mount:
+    path: /data
+    src: /dev/xvdh
+    fstype: ext4
+    state: mounted
+  when: "'ec2' in group_names"
+
+- name: Create directories in /data
+  file:
+    path: "/data/{{ item }}/files"
+    owner: deploy
+    group: deploy
+    state: directory
+  with_items:
+    - production
+    - staging
+
 - name: Ensure that deploy owns application directories
   file:
     state: directory
@@ -8,6 +42,15 @@
   with_nested:
     - ['production', 'staging']
     - ['', 'shared']
+
+- name: Link directories in /srv/www to /data
+  file:
+    state: link
+    src: "/data/{{ item }}/files"
+    dest: "/srv/www/{{ item }}/shared/files"
+  with_items:
+    - production
+    - staging
 
 - name: Set the ruby version for the alaveteli deploy
   copy:
