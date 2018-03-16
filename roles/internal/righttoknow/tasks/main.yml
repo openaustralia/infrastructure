@@ -128,6 +128,7 @@
     name: "rtk-{{ item }}"
     password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
     priv: ALL
+    no_password_changes: true
   with_items:
     - production
     - staging
