@@ -150,7 +150,9 @@
     src: /usr/lib/x86_64-linux-gnu/ImageMagick-6.8.9/bin-Q16/Magick-config
     dest: /usr/local/bin/Magick-config
 
-# TODO: How do we handle production/staging here?
+# The changes of there being differences between the production and staging version
+# of this script are extremely small. So, just using the production version.
+# This is used in cron jobs
 - name: Link run-with-lockfile.sh so it's available system-wide
   file:
     src: "/srv/www/production/current/commonlib/bin/run-with-lockfile.sh"
