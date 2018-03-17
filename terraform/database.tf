@@ -35,28 +35,25 @@ resource "aws_db_instance" "main" {
 
 # TODO: Do we want to explicitly set the available zone?
 resource "aws_db_instance" "postgresql" {
-  # Storage is currently set to the minimum
-  # TODO: For production increase storage
-  allocated_storage          = 20
+  # Backup of righttoknow database was about 18GB. So, let's start with 50
+  # like we did with the mysql database
+  allocated_storage          = 50
   # Using general purpose SSD
   storage_type               = "gp2"
   engine                     = "postgres"
   engine_version             = "9.4.15"
-  # TODO: For production change this to something sensible
-  instance_class             = "db.t2.micro"
+  # Let's start in production with db.t2.medium. We should watch the cpu credits
+  instance_class             = "db.t2.medium"
   identifier                 = "postgresql"
   username                   = "root"
   password                   = "${var.rds_admin_password}"
-  # TODO: For production (as soon as any data is loaded ) switch to false
-  publicly_accessible        = true
-  # TODO: For production increase backup_retention_period to 35
-  backup_retention_period    = 1
+  publicly_accessible        = false
+  backup_retention_period    = 35
   # We want 3-3:30am Sydney time which is 4-4:30pm GMT
   backup_window              = "16:00-16:30"
   # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
   maintenance_window         = "Sun:17:00-Sun:17:30"
-  # TODO: For production set multi_az to true
-  multi_az = false
+  multi_az = true
   auto_minor_version_upgrade = true
   # TODO: For production change apply_immediately to false
   apply_immediately          = true
