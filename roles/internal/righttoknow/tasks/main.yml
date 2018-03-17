@@ -68,6 +68,16 @@
     - production
     - staging
 
+- name: Add newrelic configuration
+  template:
+    src: newrelic.yml
+    dest: /srv/www/{{ item }}/shared
+  vars:
+    newrelic_app_name: "Right To Know{{ (item == 'production') | ternary('', ' Staging') }}"
+  with_items:
+    - production
+    - staging
+
 - name: Install wrapper script for setting correct version of ruby in path
   template:
     src: run.sh
@@ -331,4 +341,3 @@
 
 # TODO: Add ability to enable/disable cron jobs
 # TODO: Add optional password protection
-# TODO: Check that newrelic is configured in shared
