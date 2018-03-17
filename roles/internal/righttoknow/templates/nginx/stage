@@ -1,6 +1,3 @@
-# TODO: Add optional password protection
-# TODO: Seperate new relic app name for production and staging?
-
 ## HTTP
 server {
   listen 8000;
@@ -11,6 +8,11 @@ server {
 server {
   listen 8000;
   server_name www.{{ domain }};
+
+  {% if password_protect | bool -%}
+  auth_basic "{{ stage }}";
+  auth_basic_user_file htpasswd;
+  {% endif %}
 
   location ^~ /assets/ {
     gzip_static on;

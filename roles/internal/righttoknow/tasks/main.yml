@@ -240,6 +240,9 @@
   vars:
     domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ righttoknow_domain }}"
     stage: "{{ item }}"
+    # TODO: For production remove password protection on production, leave on staging
+    #password_protect: "{{ item == 'staging' }}"
+    password_protect: true
   with_items:
     - production
     - staging
