@@ -18,6 +18,9 @@ server {
     add_header Cache-Control public;
   }
 
+  # TODO: Serve attachments directly from the cache, if possible.
+  # See example apache config with alaveteli
+
   root /srv/www/{{ stage }}/current/public;
   passenger_enabled on;
   passenger_ruby /home/deploy/.rbenv/shims/ruby;

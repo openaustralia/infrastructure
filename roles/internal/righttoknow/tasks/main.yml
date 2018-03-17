@@ -99,7 +99,6 @@
 # We're using a slightly older postgres client so that pg_dump still
 # works with "-i" which would cause a rails migration to fail otherwise.
 # This will be fixed by upgrading to the latest alavetelli.
-# TODO: Not sure if postgresql-client-9.5 gets installed somewhere along the way too
 - name: Install postgresql-client-9.4
   apt:
     pkg: "{{ item }}"
@@ -329,3 +328,7 @@
 - name: Install memcached
   apt:
     pkg: memcached
+
+# TODO: Add ability to enable/disable cron jobs
+# TODO: Add optional password protection
+# TODO: Check that newrelic is configured in shared
