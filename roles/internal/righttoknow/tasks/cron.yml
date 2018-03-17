@@ -1,5 +1,15 @@
-# TODO: Send output of cron via email to a sensible place
 # TODO: Add ability to enable/disable cron jobs
+
+# For local development (under vagrant we don't want the cron jobs generating email)
+- cronvar:
+    name: MAILTO
+    # Also sends to #righttoknow-log slack channel
+    value: web-administrators@openaustralia.org,k6g2t1e7e6u1p0f2@oaf.slack.com
+    cron_file: "{{ item }}"
+  with_items:
+    - production
+    - staging
+  when: "'ec2' in group_names"
 
 - name: Add alaveteli crontab entry
   cron:
