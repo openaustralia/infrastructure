@@ -17,7 +17,10 @@ resource "aws_eip" "jamison" {
 
 resource "aws_instance" "kedumba" {
   ami = "ami-33ab5251"
-  instance_type = "t2.large"
+  # There's only a few services left on kedumba, the biggest
+  # one being righttoknow. So, we can drop the instance size down
+  # from t2.large to t2.medium
+  instance_type = "t2.medium"
   tags {
     Name = "kedumba"
   }
