@@ -241,7 +241,7 @@
     hour: 12
     minute: 0
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"
-    state: "{{ planningalerts_cron_enabled | ternary('present', 'absent')}}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
 # TODO: Do we want scraping and email to happen for staging too?
 
