@@ -326,4 +326,6 @@
     dest: /etc/rsyslog.d
   notify: restart rsyslog
 
-# TODO: Install memcached and configure for righttoknow
+- name: Install memcached
+  apt:
+    pkg: memcached
