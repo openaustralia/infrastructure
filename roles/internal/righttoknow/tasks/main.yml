@@ -340,5 +340,3 @@
 - name: Install memcached
   apt:
     pkg: memcached
-
-# TODO: Add optional password protection
