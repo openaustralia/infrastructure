@@ -295,8 +295,6 @@
     groups: adm
     append: yes
 
-# TODO: Send output of cron via email to a sensible place
-
 - name: Install varnish
   apt:
     pkg: varnish
@@ -338,5 +336,4 @@
   apt:
     pkg: memcached
 
-# TODO: Add ability to enable/disable cron jobs
 # TODO: Add optional password protection

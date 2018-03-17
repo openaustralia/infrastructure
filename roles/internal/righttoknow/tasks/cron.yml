@@ -1,3 +1,6 @@
+# TODO: Send output of cron via email to a sensible place
+# TODO: Add ability to enable/disable cron jobs
+
 - name: Add alaveteli crontab entry
   cron:
     user: root
