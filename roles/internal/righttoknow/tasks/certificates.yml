@@ -35,9 +35,12 @@
   when: "'development' in group_names"
   notify: nginx restart
 
-- name: Install varnish now (for the benefit of certbot)
+- name: Install varnish and nginx now (for the benefit of certbot)
   apt:
-    pkg: varnish
+    pkg: {{ item }}
+  with_items:
+    - varnish
+    - nginx
   when: "'ec2' in group_names"
 
 # TODO: When (if) we use a newer version of certbot add "--post-hook" to restart nginx after renew
@@ -51,6 +54,7 @@
     certbot_create_if_missing: yes
     certbot_create_standalone_stop_services:
       - varnish
+      - nginx
     certbot_certs:
       - email: contact@oaf.org.au
         domains:
