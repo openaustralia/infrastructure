@@ -46,3 +46,4 @@
   when: "'ec2' in group_names"
 
 # TODO: Add byobu and enable it by default
+# TODO: Install htop because it's awesome
