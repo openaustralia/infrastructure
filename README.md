@@ -172,36 +172,34 @@ If you just want to provision a single server:
 
 ### Deploying Right To Know to your local development server
 
-For the time being you will need to use the `update-rbenv-deploy` branch of the OpenAustralia
-Foundation Alaveteli repo as it contains some small fixes to allow capistrano to work with rbenv.
-
-In your checked out copy of the Alaveteli repo add the following to `config/deploy.yml`
+In your checked out copy (`production` branch) of the Alaveteli repo add the following to `config/deploy.yml`
 
 ```yaml
+production:
+  branch: production
+  repository: git://github.com/openaustralia/alaveteli.git
+  server: righttoknow.org.au
+  user: deploy
+  deploy_to: /srv/www/production
+  rails_env: production
+  daemon_name: alaveteli-production
+staging:
+  branch: staging
+  repository: git://github.com/openaustralia/alaveteli.git
+  server: righttoknow.org.au
+  user: deploy
+  deploy_to: /srv/www/staging
+  rails_env: production
+  daemon_name: alaveteli-staging
 development:
-  branch: update-rbenv-deploy
+  branch: production
   repository: git://github.com/openaustralia/alaveteli.git
   server: righttoknow.org.au.dev
   user: deploy
   deploy_to: /srv/www/production
   rails_env: production
   daemon_name: alaveteli-production
-ec2-production:
-  branch: update-rbenv-deploy
-  repository: git://github.com/openaustralia/alaveteli.git
-  server: ec2.righttoknow.org.au
-  user: deploy
-  deploy_to: /srv/www/production
-  rails_env: production
-  daemon_name: alaveteli-production
-ec2-staging:
-  branch: update-rbenv-deploy
-  repository: git://github.com/openaustralia/alaveteli.git
-  server: ec2.righttoknow.org.au
-  user: deploy
-  deploy_to: /srv/www/staging
-  rails_env: production
-  daemon_name: alaveteli-staging
+
 ```
 
 This adds an extra staging for the capistrano deploy called `development`. This will deploy to your
