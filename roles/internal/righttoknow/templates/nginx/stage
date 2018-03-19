@@ -9,6 +9,8 @@ server {
   listen 8000;
   server_name www.{{ domain }};
 
+  # If you need to access the "emergency user" and password_protect is enabled
+  # then you probably have to disable it temporarily
   {% if password_protect | bool -%}
   auth_basic "{{ stage }}";
   auth_basic_user_file htpasswd;
