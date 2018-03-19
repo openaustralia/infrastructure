@@ -1,6 +1,6 @@
 <?php
 
-define('DEVSITE', true);
+define('DEVSITE', {{ devsite }});
 
 // Paths
 define('VHOST_DIR', '/srv/www/{{ stage }}');
@@ -27,7 +27,7 @@ define ("DB_PASSWORD", "{{ db_password }}");
 define ("DB_PASS", "{{ db_password }}");
 define ("DB_NAME", "el-{{ stage }}");
 define('DATETIMEFORMAT_SQL',	"Y-m-d H:i:s"); // 2006-06-02 12:23:23
-define('SQL_DEBUG_LEVEL', 5); // sets DB_DataObject::debug_level; set to 0 for prod
+define('SQL_DEBUG_LEVEL', 0); // sets DB_DataObject::debug_level; set to 0 for prod
 
 // *******************************************************************************
 
@@ -36,9 +36,9 @@ define("CURRENT_ELECTION", "7");
 define("BANNER", true);
 
 //urls
-define("WWW_SERVER", "http://www.electionleaflets.org.au.dev");
-define("ADMIN_SERVER", "http://www.electionleaflets.org.au.dev");
-define("DOMAIN", "www.electionleaflets.org.au.dev");
+define("DOMAIN", "www.{{ domain|trim }}");
+define("WWW_SERVER", "http://" . DOMAIN );
+define("ADMIN_SERVER", "http://" . DOMAIN );
 
 //confirmation
 define("CONFIRMATION_BASE_URL", WWW_SERVER . '/confirmed.php?q=');
@@ -49,10 +49,10 @@ define("EMAIL_PREFIX", '[election leaflet] ');
 define("BUG_EMAIL_PREFIX", '[election leaflet bug]');
 
 //Email addresses
-define("CONTACT_EMAIL", 'contact@electionleaflets.org.au');
+define("CONTACT_EMAIL", 'team{{ email_suffix}}@electionleaflets.org.au');
 define("BUG_FROM_EMAIL", 'bugs@' . DOMAIN);
-define("BUG_TO_EMAIL", 'web-administrators@electionleaflets.org.au');
-define("LEAFLETS_EMAIL", 'leaflet@electionleaflets.org.au');
+define("BUG_TO_EMAIL", 'web-administrators{{ email_suffix }}@electionleaflets.org.au');
+define("LEAFLETS_EMAIL", 'leaflet{{ email_suffix }}@electionleaflets.org.au');
 
 //Site name
 define("SITE_NAME", "ElectionLeaflets.org.au");
@@ -123,7 +123,7 @@ define("COUNTRY_CODE_TLD", "au");
 // The area name, like 'constituencies' or 'electorates'. Needs approprate .htaccess rules for the URL
 define("AREA_NAMES", 'electorates');
 // google analytics
-define("GOOGLE_ANALYTICS_TRACKER",'UA-3107958-8');
+define("GOOGLE_ANALYTICS_TRACKER",'{{ analytics }}');
 
 // Admin area username and password
 define("ADMIN_USERNAME", '{{ admin_username }}');

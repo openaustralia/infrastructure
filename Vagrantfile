@@ -66,7 +66,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.groups = {
       "righttoknow"      => ["righttoknow.org.au.dev"],
       "planningalerts"   => ["planningalerts.org.au.dev"],
-      "electionleaflets" => ["electionleaflets.org.au.dev"],
+      "electionleaflets" => ["electionleaflets.org.au.test"],
       "theyvoteforyou"   => ["theyvoteforyou.org.au.dev"],
       "oaf"              => ["oaf.org.au.test"],
       "openaustralia"    => ["openaustralia.org.au.dev"],
@@ -76,7 +76,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "development"      => [
         "righttoknow.org.au.dev",
         "planningalerts.org.au.dev",
-        "electionleaflets.org.au.dev",
+        "electionleaflets.org.au.test",
         "theyvoteforyou.org.au.dev",
         "oaf.org.au.test",
         "openaustralia.org.au.dev",
@@ -96,7 +96,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   hosts = {
     "righttoknow.org.au.dev"      => "192.168.10.10",
     "planningalerts.org.au.dev"   => "192.168.10.11",
-    "electionleaflets.org.au.dev" => "192.168.10.12",
+    "electionleaflets.org.au.test" => "192.168.10.12",
     "theyvoteforyou.org.au.dev"   => "192.168.10.14",
     "oaf.org.au.test"              => "192.168.10.15",
     "openaustralia.org.au.dev"    => "192.168.10.16",

@@ -64,7 +64,7 @@
     path: "/srv/www/{{ item[0] }}/shared/data/{{ item[1] }}"
     owner: deploy
     group: www-data
-    mode: 775
+    mode: 0775
     state: directory
   with_nested:
     - ['production','staging']
@@ -106,6 +106,11 @@
   vars:
     stage: "{{ item }}"
     db_password: "{{ (item == 'production') | ternary(electionleaflets_production_mysql_password, electionleaflets_staging_mysql_password) }}"
+    domain: " {{ (item == 'staging') | ternary('test.', '') }}{{ electionleaflets_domain }}"
+    email_suffix: "{{ (item == 'production') | ternary('', '-test') }}"
+    s3_bucket: " {{ ( item == 'production') | ternary('electionleafletsaustralia', 'electionleafletstest2') }}"
+    analytics: " {{ ( item == 'production') | ternary('UA-3107958-8','UA-3107958-9')}}"
+    admin_password: " {{ ( item == 'production' ) | ternary(admin_password_production, admin_password_staging ) }}"
   with_items:
     - production
     - staging
@@ -120,11 +125,14 @@
   notify: reload apache
 
 - name: Copy across the apache config
-  template: src=electionleaflets.org.au.dev.conf dest=/etc/apache2/sites-available/
+  template: src={{ item }} dest=/etc/apache2/sites-available/
+  with_items:
+    - electionleaflets.org.au.test.conf
+    - electionleaflets-vhost-common.conf
   notify: reload apache
 
 - name: Enable virtual host
-  file: src="../sites-available/electionleaflets.org.au.dev.conf" dest="/etc/apache2/sites-enabled/electionleaflets.org.au.dev.conf" state=link
+  file: src="../sites-available/electionleaflets.org.au.test.conf" dest="/etc/apache2/sites-enabled/electionleaflets.org.au.test.conf" state=link
   notify: reload apache
 
 - name: Disable default virtual host

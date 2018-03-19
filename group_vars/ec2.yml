@@ -5,6 +5,7 @@ openaustralia_domain: openaustralia.org.au
 righttoknow_domain: righttoknow.org.au
 oaf_domain: oaf.org.au
 opengovernment_domain: opengovernment.org.au
+electionleaflets_domain: ec2.electionleaflets.org.au
 ansible_user: ubuntu
 ansible_ssh_private_key_file: 'test.pem'
 ec2_region: 'ap-southeast-2'
@@ -34,3 +35,4 @@ newrelic_license_key: !vault |
           3036623237376235640a326532616239656630646464363332663066396339613766313962633862
           66613562383738313836353931306565336365326133343432316633376164633464633039353832
           6263383833333431313061633364653463356230366231313134
+devsite: false
