@@ -1,5 +1,4 @@
-# TODO: Reenable cron after migration
-cron_enabled: false
+cron_enabled: true
 righttoknow_backup_gpg_pw: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           34376361323265383931646337646563626265353161353364366232623134623339396661366665
