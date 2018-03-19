@@ -60,30 +60,24 @@
     - "/srv/www/staging/shared/config"
 
 - name: Ensure that shared data directories exist and are writeable
-  file: path={{ item }} owner=deploy group=www-data mode=775 state=directory
-  with_items:
-    - "/srv/www/production/shared/data"
-    - "/srv/www/production/shared/data/smarty_compile"
-    - "/srv/www/production/shared/data/smarty_compile"
-    - "/srv/www/production/shared/data/cache"
-    - "/srv/www/production/shared/data/temp"
-    - "/srv/www/production/shared/data/images"
-    - "/srv/www/production/shared/data/images/small"
-    - "/srv/www/production/shared/data/images/original"
-    - "/srv/www/production/shared/data/images/large"
-    - "/srv/www/production/shared/data/images/medium"
-    - "/srv/www/production/shared/data/images/thumbnail"
-    - "/srv/www/staging/shared/data"
-    - "/srv/www/staging/shared/data/smarty_compile"
-    - "/srv/www/staging/shared/data/smarty_compile"
-    - "/srv/www/staging/shared/data/cache"
-    - "/srv/www/staging/shared/data/temp"
-    - "/srv/www/staging/shared/data/images"
-    - "/srv/www/staging/shared/data/images/small"
-    - "/srv/www/staging/shared/data/images/original"
-    - "/srv/www/staging/shared/data/images/large"
-    - "/srv/www/staging/shared/data/images/medium"
-    - "/srv/www/staging/shared/data/images/thumbnail"
+  file:
+    path: "/srv/www/{{ item[0] }}/shared/data/{{ item[1] }}"
+    owner: deploy
+    group: www-data
+    mode: 775
+    state: directory
+  with_nested:
+    - ['production','staging']
+    - - ''
+      - 'smarty_compile'
+      - 'cache'
+      - 'temp'
+      - 'images'
+      - 'images/small'
+      - 'images/original'
+      - 'images/large'
+      - 'images/medium'
+      - 'images/thumbnail'
 
 - name: Copy application database configuration
   template:
