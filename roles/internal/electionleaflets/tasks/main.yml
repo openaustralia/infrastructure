@@ -1,4 +1,66 @@
 ---
+# Create fake let's encrypt directories when in development
+- name: Create fake let's encrypt directories when in development
+  file:
+    state: directory
+    path: "/etc/letsencrypt/live/{{ item }}"
+  with_items:
+    - "{{ electionleaflets_domain }}"
+    - "test.{{ electionleaflets_domain }}"
+  when: "'development' in group_names"
+
+# We need to setup the SSL certificates before we try to configure nginx
+# because otherwise nginx will try to look for non-existent certificates
+- name: Copy SSL certificates for development
+  copy:
+    src: "{{ item }}.pem"
+    # We're faking it as if these are let's encrypt certs. Makes for less magic config
+    dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
+    mode: 0644
+  with_items:
+    - "{{ electionleaflets_domain }}"
+    - "test.{{ electionleaflets_domain }}"
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
+  notify: reload apache
+
+- name: Copy SSL keys for development
+  copy:
+    src: "{{ item }}.key"
+    dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
+    mode: 0640
+  with_items:
+    - "{{ electionleaflets_domain }}"
+    - "test.{{ electionleaflets_domain }}"
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
+  notify: reload apache
+
+- name: Install apache now (for the benefit of certbot)
+  apt: pkg=apache2
+  when: "'ec2' in group_names"
+
+# TODO: When (if) we use a newer version of certbot add "--post-hook" to restart apache after renew
+- name: Install certificate using certbot
+  include_role:
+    name: geerlingguy.certbot
+  vars:
+    certbot_auto_renew_user: root
+    certbot_auto_renew_minute: 10
+    certbot_auto_renew_hour: 7
+    certbot_create_if_missing: yes
+    certbot_create_standalone_stop_services:
+      - apache2
+    certbot_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - "{{ electionleaflets_domain }}"
+          - www."{{ electionleaflets_domain }}"
+      - email: contact@oaf.org.au
+        domains:
+          - "test.{{ electionleaflets_domain }}"
+          - "www.test.{{ electionleaflets_domain }}"
+  when: "'ec2' in group_names"
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
@@ -121,13 +183,16 @@
   notify: reload apache
 
 - name: Enable apache rewrite module
-  apache2_module: state=present name=rewrite
+  apache2_module: state=present name={{ item }}
   notify: reload apache
+  with_items:
+    - rewrite
+    - ssl
 
 - name: Copy across the apache config
   template: src={{ item }} dest=/etc/apache2/sites-available/
   with_items:
-    - electionleaflets.org.au.test.conf
+    - electionleaflets.org.au.dev.conf
     - electionleaflets-vhost-common.conf
   notify: reload apache
 
