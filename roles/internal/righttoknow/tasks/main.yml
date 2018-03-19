@@ -141,6 +141,9 @@
     - python-yaml
     - mutt
     - elinks
+    - poppler-utils
+    - wv
+    - catdoc
 
 # For some unknown reason on Ubuntu 16.04 Magick-config isn't in the path
 # after installing imagemagick above
