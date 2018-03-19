@@ -37,7 +37,7 @@
 
 - name: Install varnish and nginx now (for the benefit of certbot)
   apt:
-    pkg: {{ item }}
+    pkg: "{{ item }}"
   with_items:
     - varnish
     - nginx
