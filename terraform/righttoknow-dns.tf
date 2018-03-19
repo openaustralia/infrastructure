@@ -6,13 +6,6 @@ resource "cloudflare_record" "rtk_root" {
   value  = "${aws_eip.righttoknow.public_ip}"
 }
 
-resource "cloudflare_record" "rtk_ec2" {
-  domain = "righttoknow.org.au"
-  name   = "ec2.righttoknow.org.au"
-  type   = "A"
-  value  = "${aws_eip.righttoknow.public_ip}"
-}
-
 # CNAME records
 resource "cloudflare_record" "rtk_www" {
   domain = "righttoknow.org.au"
@@ -33,27 +26,6 @@ resource "cloudflare_record" "rtk_www_test" {
   name   = "www.test.righttoknow.org.au"
   type   = "CNAME"
   value  = "righttoknow.org.au"
-}
-
-resource "cloudflare_record" "rtk_www_ec2" {
-  domain = "righttoknow.org.au"
-  name   = "www.ec2.righttoknow.org.au"
-  type   = "CNAME"
-  value  = "ec2.righttoknow.org.au"
-}
-
-resource "cloudflare_record" "rtk_test_ec2" {
-  domain = "righttoknow.org.au"
-  name   = "test.ec2.righttoknow.org.au"
-  type   = "CNAME"
-  value  = "ec2.righttoknow.org.au"
-}
-
-resource "cloudflare_record" "rtk_www_test_ec2" {
-  domain = "righttoknow.org.au"
-  name   = "www.test.ec2.righttoknow.org.au"
-  type   = "CNAME"
-  value  = "ec2.righttoknow.org.au"
 }
 
 # MX records
@@ -104,14 +76,6 @@ resource "cloudflare_record" "rtk_server" {
   type     = "MX"
   priority = 10
   value    = "righttoknow.org.au"
-}
-
-resource "cloudflare_record" "rtk_mx_ec2" {
-  domain   = "righttoknow.org.au"
-  name     = "ec2.righttoknow.org.au"
-  type     = "MX"
-  priority = 10
-  value    = "ec2.righttoknow.org.au"
 }
 
 # TXT records
