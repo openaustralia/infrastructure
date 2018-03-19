@@ -13,8 +13,7 @@ resource "aws_instance" "righttoknow" {
     "${aws_security_group.incoming_email.name}"
   ]
   availability_zone = "${aws_ebs_volume.righttoknow_data.availability_zone}"
-  # TODO: For production set disable_api_termination to true
-  disable_api_termination = false
+  disable_api_termination = true
 }
 
 resource "aws_eip" "righttoknow" {
