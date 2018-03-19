@@ -30,11 +30,6 @@ sub vcl_recv {
         set req.http.host = regsub(req.http.host, "^ipv6\.(.*)","www\.\1");
    }
 
-
-    # Sanitise X-Forwarded-For...
-    unset req.http.X-Forwarded-For;
-    set req.http.X-Forwarded-For = client.ip;
-
     # Remove Google Analytics, has_js, and last-seen cookies
     set req.http.Cookie = regsuball(req.http.Cookie, "(^|;\s*)(__[a-z]+|has_js|has_seen_country_message|seen_foi2)=[^;]*", "");
 
