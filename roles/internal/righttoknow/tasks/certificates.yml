@@ -35,8 +35,9 @@
   when: "'development' in group_names"
   notify: nginx restart
 
-- name: Install nginx now (for the benefit of certbot)
-  apt: pkg=nginx
+- name: Install varnish now (for the benefit of certbot)
+  apt:
+    pkg: varnish
   when: "'ec2' in group_names"
 
 # TODO: When (if) we use a newer version of certbot add "--post-hook" to restart nginx after renew
