@@ -1,7 +1,9 @@
 resource "aws_instance" "righttoknow" {
   ami =  "${data.aws_ami.ubuntu.id}"
   # Changed it from t2.small to t2.medium because provisioning was very slow
-  instance_type = "t2.medium"
+  # Changed from t2.medium to t2.large because it was running out of memory
+  # when running script/rebuild-xapian-index
+  instance_type = "t2.large"
   key_name = "test"
   tags {
     Name = "righttoknow"
