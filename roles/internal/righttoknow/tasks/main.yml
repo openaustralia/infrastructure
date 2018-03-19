@@ -127,6 +127,7 @@
   apt_repository:
     repo: "deb http://debian.mysociety.org squeeze main"
 
+# TODO: Check this list against the list https://github.com/openaustralia/alaveteli/blob/update-rbenv-deploy/config/packages.generic
 - name: Install packages required by Alaveteli
   apt: name={{ item }} state=present
   with_items:
