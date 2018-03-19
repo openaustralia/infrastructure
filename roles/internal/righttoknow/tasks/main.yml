@@ -25,13 +25,13 @@
 
 - name: Create directories in /data
   file:
-    path: "/data/{{ item }}/files"
+    path: "/data/{{ item[0] }}/{{ item[1] }}"
     owner: deploy
     group: deploy
     state: directory
-  with_items:
-    - production
-    - staging
+  with_nested:
+    - ['production', 'staging']
+    - ['files', 'cache']
 
 - name: Ensure that deploy owns application directories
   file:
@@ -46,11 +46,11 @@
 - name: Link directories in /srv/www to /data
   file:
     state: link
-    src: "/data/{{ item }}/files"
-    dest: "/srv/www/{{ item }}/shared/files"
-  with_items:
-    - production
-    - staging
+    src: "/data/{{ item[0] }}/{{ item[1] }}"
+    dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
+  with_nested:
+    - ['production', 'staging']
+    - ['files', 'cache']
 
 - name: Set the ruby version for the alaveteli deploy
   copy:
