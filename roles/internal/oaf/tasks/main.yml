@@ -123,6 +123,16 @@
 
 # TODO: Upgrade openaustralia foundation theme every time if necessary
 
+# TODO: Pick out current domain from database before conversion and only do if necessary
+# TODO: When we support https don't always change to http
+
+- name: Convert domains in database
+  shell: "wp-cli --path=/var/www/html search-replace {{ item }}://www.openaustraliafoundation.org.au http://oaf.org.au.test"
+  become_user: www-data
+  with_items:
+    - http
+    - https
+
 # TODO: Maybe worth looking at the wp-cli civicrm integration for installing civicrm?
 # - name: download civicrm
 #   get_url:
