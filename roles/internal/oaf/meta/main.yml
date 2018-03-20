@@ -129,3 +129,5 @@ dependencies:
       - name: wordpress
       - name: civicrm
   - role: MaximeThoonsen.automysqlbackup
+
+# TODO: Add backups for wordpress files
