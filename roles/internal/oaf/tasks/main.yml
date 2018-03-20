@@ -1,13 +1,19 @@
 ---
-# TODO: We need to be using php 5.6
+# Install php5 on xenial requires a few more jumps than usual
+- name: Add repo for installing php5
+  apt_repository:
+    repo: 'ppa:ondrej/php'
+
+# We're using php 5.6 as that's the latest php supported by the
+# version of civicrm currently running in production
 # TODO Extract php-mysql-apache role
 - name: Install required packages
   apt: name={{ item }} state=present
   with_items:
-    - php5-mysql
-    - php5-curl
+    - php5.6-mysql
+    - php5.6-curl
     - apache2
-    - libapache2-mod-php5
+    - libapache2-mod-php5.6
     # TODO We'll need mod rewrite I think
   notify: reload apache
 
