@@ -80,7 +80,7 @@ A little note on terminology:
 * "provisioning" - we use this to mean configuring the server with Ansible.
 * "deployment" - we use to mean installing or updating the web application with Capistrano.
 
-## Current state of this work (as of 5 March 2018)
+## Current state of this work (as of 20 March 2018)
 
 This repo is being used to setup and configure servers on EC2 for:
 * planningalerts.org.au:
@@ -94,14 +94,14 @@ This repo is being used to setup and configure servers on EC2 for:
   - test.openaustralia.org.au
   - data.openaustralia.org.au
   - software.openaustralia.org.au
+* righttoknow.org.au:
+  - righttoknow.org.au
+  - test.righttoknow.org.au
 
 kedumba (configured by hand) is currently still hosting:
 * electionleaflets.org.au:
   - electionleaflets.org.au
   - test.electionleaflets.org.au
-* righttoknow.org.au:
-  - righttoknow.org.au
-  - test.righttoknow.org.au
 * cuttlefish.io
 * proxying for openaustraliafoundation.org.au (to jamison)
 * opengovernment.org.au
