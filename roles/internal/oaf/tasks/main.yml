@@ -133,38 +133,39 @@
     - wp-hide-pages
     - wp-super-cache
 
-- name: download civicrm
-  get_url:
-    url: https://download.civicrm.org/civicrm-4.6.36-wordpress.zip
-    dest: /tmp/civicrm-wordpress.zip
-
-- name: Install zip to handle download
-  apt:
-    name: zip
-    state: present
-
-- name: install civicrm
-  unarchive:
-    src: /tmp/civicrm-wordpress.zip
-    dest: /var/www/html/wp-content/plugins
-    owner: www-data
-    group: www-data
-    copy: no
-
-- name: Fix up civicrm plugin directory permissions
-  file:
-    path: /var/www/html/wp-content/plugins/civicrm
-    owner: www-data
-    group: www-data
-    state: directory
-    recurse: yes
-
-- name: Create civicrm files directory
-  file:
-    path: /var/www/html/wp-content/plugins/files
-    owner: www-data
-    group: www-data
-    state: directory
+# TODO: Maybe worth looking at the wp-cli civicrm integration for installing civicrm?
+# - name: download civicrm
+#   get_url:
+#     url: https://download.civicrm.org/civicrm-4.6.36-wordpress.zip
+#     dest: /tmp/civicrm-wordpress.zip
+#
+# - name: Install zip to handle download
+#   apt:
+#     name: zip
+#     state: present
+#
+# - name: install civicrm
+#   unarchive:
+#     src: /tmp/civicrm-wordpress.zip
+#     dest: /var/www/html/wp-content/plugins
+#     owner: www-data
+#     group: www-data
+#     copy: no
+#
+# - name: Fix up civicrm plugin directory permissions
+#   file:
+#     path: /var/www/html/wp-content/plugins/civicrm
+#     owner: www-data
+#     group: www-data
+#     state: directory
+#     recurse: yes
+#
+# - name: Create civicrm files directory
+#   file:
+#     path: /var/www/html/wp-content/plugins/files
+#     owner: www-data
+#     group: www-data
+#     state: directory
 
 - name: Apache config
   template:
