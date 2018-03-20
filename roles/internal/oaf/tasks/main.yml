@@ -133,6 +133,22 @@
     - wp-hide-pages
     - wp-super-cache
 
+# This theme is required by the openaustralia foundation theme
+- name: Install thematic theme
+  shell: "wp-cli --path='/var/www/html' theme install thematic --version=1.0.4"
+  args:
+    creates: /var/www/html/wp-content/themes/thematic/
+  become_user: www-data
+
+- name: Install openaustralia foundation theme
+  # Installs the latest on the master branch
+  shell: "wp-cli --path='/var/www/html' theme install https://github.com/openaustralia/oaf-thematic/archive/master.zip --activate"
+  args:
+    creates: /var/www/html/wp-content/themes/oaf-thematic/
+  become_user: www-data
+
+# TODO: Upgrade openaustralia foundation theme every time if necessary
+
 # TODO: Maybe worth looking at the wp-cli civicrm integration for installing civicrm?
 # - name: download civicrm
 #   get_url:
