@@ -1,4 +1,35 @@
 ---
+# TODO: Do we want a staging setup too?
+- name: Create database
+  mysql_db:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: "{{ item }}-production"
+  with_items:
+    - oaf
+    - civi
+
+- name: Create civi user with access to the database
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: civi-production
+    password: "{{ civicrm_production_mysql_password }}"
+    priv: 'civi-production.*:ALL'
+    host: "%"
+
+- name: Create oaf user with access to the database
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: oaf-production
+    password: "{{ oaf_production_mysql_password }}"
+    priv: 'oaf-production.*:ALL'
+    host: "%"
+
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
   apt_repository:
@@ -43,7 +74,7 @@
   become_user: www-data
 
 - name: configure wordpress
-  shell: "wp-cli --path='/var/www/html' core config --dbname=wordpress --dbuser=root"
+  shell: "wp-cli --path='/var/www/html' core config --dbname=oaf-production --dbuser=oaf-production --dbpass={{ oaf_production_mysql_password }} --dbhost={{ mysql_host }}"
   args:
     creates: /var/www/html/wp-config.php
   become_user: www-data
@@ -133,6 +164,7 @@
     dest: /etc/apache2/sites-available
   notify: reload apache
 
+# TODO: How does civicrm know its database credentials?
 # TODO: How are the oaf templates installed?
 # TODO: Switch over to centralised mysql
 # TODO: Use new certificates method
