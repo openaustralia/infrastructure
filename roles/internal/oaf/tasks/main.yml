@@ -178,3 +178,4 @@
 # TODO: Use new certificates method
 # TODO: Add certificates in production
 # TODO: Ensure that we're handling the alternative domain names
+# TODO: Create data directory
