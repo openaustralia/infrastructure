@@ -43,6 +43,7 @@
     name: newrelic-sysmond
     state: started
   # Only actually start the monitor in production
+  # TODO: Check that this also gets stopped in development
   when: "'ec2' in group_names"
 
 # TODO: Add byobu and enable it by default

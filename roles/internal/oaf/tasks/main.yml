@@ -102,3 +102,7 @@
   notify: reload apache
 
 # TODO: How are the oaf templates installed?
+# TODO: Switch over to centralised mysql
+# TODO: Use new certificates method
+# TODO: Add certificates in production
+# TODO: Ensure that we're handling the alternative domain names
