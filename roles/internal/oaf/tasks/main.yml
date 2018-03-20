@@ -79,10 +79,12 @@
     creates: /var/www/html/wp-config.php
   become_user: www-data
 
+# TODO: Is there a creates in this situation?
 - name: install wordpress
   shell: "wp-cli --path='/var/www/html' core install --url=http://oaf.org.au.dev --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
   become_user: www-data
 
+# TODO: Check latest list of plugins against production
 - name: Install wordpress plugins
   shell: "wp-cli --path='/var/www/html' plugin install {{ item }}"
   args:
