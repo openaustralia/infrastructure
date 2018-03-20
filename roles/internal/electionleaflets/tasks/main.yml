@@ -192,7 +192,7 @@
 - name: Copy across the apache config
   template: src={{ item }} dest=/etc/apache2/sites-available/
   with_items:
-    - electionleaflets.org.au.dev.conf
+    - electionleaflets.org.au.test.conf
     - electionleaflets-vhost-common.conf
   notify: reload apache
 
