@@ -36,7 +36,7 @@ define("CURRENT_ELECTION", "7");
 define("BANNER", true);
 
 //urls
-define("DOMAIN", "www.{{ domain|trim }}");
+define("DOMAIN", "www.{{ domain }}");
 define("WWW_SERVER", "http://" . DOMAIN );
 define("ADMIN_SERVER", "http://" . DOMAIN );
 

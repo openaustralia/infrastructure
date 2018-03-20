@@ -168,11 +168,11 @@
   vars:
     stage: "{{ item }}"
     db_password: "{{ (item == 'production') | ternary(electionleaflets_production_mysql_password, electionleaflets_staging_mysql_password) }}"
-    domain: " {{ (item == 'staging') | ternary('test.', '') }}{{ electionleaflets_domain }}"
+    domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ electionleaflets_domain }}"
     email_suffix: "{{ (item == 'production') | ternary('', '-test') }}"
-    s3_bucket: " {{ ( item == 'production') | ternary('electionleafletsaustralia', 'electionleafletstest2') }}"
-    analytics: " {{ ( item == 'production') | ternary('UA-3107958-8','UA-3107958-9')}}"
-    admin_password: " {{ ( item == 'production' ) | ternary(admin_password_production, admin_password_staging ) }}"
+    s3_bucket: "{{ ( item == 'production') | ternary('electionleafletsaustralia', 'electionleafletstest2') }}"
+    analytics: "{{ ( item == 'production') | ternary('UA-3107958-8','UA-3107958-9')}}"
+    admin_password: "{{ ( item == 'production' ) | ternary(admin_password_production, admin_password_staging ) }}"
   with_items:
     - production
     - staging
@@ -189,16 +189,25 @@
     - rewrite
     - ssl
 
-- name: Copy across the apache config
-  template: src={{ item }} dest=/etc/apache2/sites-available/
-  with_items:
-    - electionleaflets.org.au.test.conf
-    - electionleaflets-vhost-common.conf
+- name: Copy across the apache configs
+  template:
+    src: "{{ item[1] }}"
+    dest: "/etc/apache2/sites-available/{{ stage }}-{{ item[1] }}"
+  vars:
+    stage: "{{ item[0] }}"
+    domain: "{{ (stage == 'staging') | ternary('test.', '') }}{{ electionleaflets_domain }}"
+  with_nested:
+    - ['production', 'staging']
+    -  - electionleaflets.org.au.conf
+       - electionleaflets-vhost-common.conf
   notify: reload apache
 
-- name: Enable virtual host
-  file: src="../sites-available/electionleaflets.org.au.test.conf" dest="/etc/apache2/sites-enabled/electionleaflets.org.au.test.conf" state=link
+- name: Enable virtual hosts
+  file: src="../sites-available/{{ item }}-electionleaflets.org.au.conf" dest="/etc/apache2/sites-enabled/{{ item }}-electionleaflets.org.au.conf" state=link
   notify: reload apache
+  with_items:
+    - production
+    - staging
 
 - name: Disable default virtual host
   file: dest="/etc/apache2/sites-enabled/000-default.conf" state=absent
