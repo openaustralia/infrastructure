@@ -68,7 +68,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "planningalerts"   => ["planningalerts.org.au.dev"],
       "electionleaflets" => ["electionleaflets.org.au.dev"],
       "theyvoteforyou"   => ["theyvoteforyou.org.au.dev"],
-      "oaf"              => ["oaf.org.au.dev"],
+      "oaf"              => ["oaf.org.au.test"],
       "openaustralia"    => ["openaustralia.org.au.dev"],
       "mysql"            => ["mysql.dev"],
       "postgresql"       => ["postgresql.dev"],
@@ -77,7 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "planningalerts.org.au.dev",
         "electionleaflets.org.au.dev",
         "theyvoteforyou.org.au.dev",
-        "oaf.org.au.dev",
+        "oaf.org.au.test",
         "openaustralia.org.au.dev",
         "mysql.dev",
         "postgresql.dev"
@@ -96,7 +96,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "planningalerts.org.au.dev"   => "192.168.10.11",
     "electionleaflets.org.au.dev" => "192.168.10.12",
     "theyvoteforyou.org.au.dev"   => "192.168.10.14",
-    "oaf.org.au.dev"              => "192.168.10.15",
+    "oaf.org.au.test"              => "192.168.10.15",
     "openaustralia.org.au.dev"    => "192.168.10.16",
     "mysql.dev"                   => "192.168.10.17",
     "postgresql.dev"              => "192.168.10.18"
