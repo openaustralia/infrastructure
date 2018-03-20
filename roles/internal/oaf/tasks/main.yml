@@ -87,7 +87,7 @@
 
 # TODO: Is there a creates in this situation?
 - name: install wordpress
-  shell: "wp-cli --path='/var/www/html' core install --url=http://oaf.org.au.dev --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
+  shell: "wp-cli --path='/var/www/html' core install --url=http://oaf.org.au.test --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
   become_user: www-data
 
 # TODO: Check latest list of plugins against production
