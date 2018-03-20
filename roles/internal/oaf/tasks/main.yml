@@ -16,6 +16,7 @@
 - name: Set permissions
   file: path=/var/www/html owner=www-data group=www-data state=directory
 
+# TODO: See if there is another more sensible way we could install this
 - name: install wp-cli
   get_url:
     url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -80,6 +81,7 @@
     - wp-hide-pages
     - wp-super-cache
 
+# TODO: Is this the version of civic that we're currently using?
 - name: download civicrm
   get_url: url=http://sourceforge.net/projects/civicrm/files/civicrm-stable/4.5.8/civicrm-4.5.8-wordpress.zip dest=/tmp/civicrm-4.5.8-wordpress.zip
 
@@ -98,3 +100,5 @@
 - name: Apache config
   template: src=000-default.conf dest=/etc/apache2/sites-available
   notify: reload apache
+
+# TODO: How are the oaf templates installed?
