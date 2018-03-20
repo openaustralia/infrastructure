@@ -1,4 +1,8 @@
 ---
+- name: Install dependency for ansible mysql_db module
+  apt:
+    pkg: python-mysqldb
+
 # TODO: Do we want a staging setup too?
 - name: Create database
   mysql_db:
@@ -37,7 +41,8 @@
 
 # We're using php 5.6 as that's the latest php supported by the
 # version of civicrm currently running in production
-# TODO Extract php-mysql-apache role
+# TODO: Check latest packages required by civicrm
+# TODO: Check those required by wordpress
 - name: Install required packages
   apt: name={{ item }} state=present
   with_items:
@@ -45,6 +50,7 @@
     - php5.6-curl
     - apache2
     - libapache2-mod-php5.6
+    - mysql-client
     # TODO We'll need mod rewrite I think
   notify: reload apache
 
