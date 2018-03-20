@@ -18,10 +18,16 @@
   notify: reload apache
 
 - name: Remove default index.html
-  file: path=/var/www/html/index.html state=absent
+  file:
+    path: /var/www/html/index.html
+    state: absent
 
 - name: Set permissions
-  file: path=/var/www/html owner=www-data group=www-data state=directory
+  file:
+    path: /var/www/html
+    owner: www-data
+    group: www-data
+    state: directory
 
 # TODO: See if there is another more sensible way we could install this
 - name: install wp-cli
@@ -90,22 +96,41 @@
 
 # TODO: We want to install civicrm 4.6.36
 - name: download civicrm
-  get_url: url=http://sourceforge.net/projects/civicrm/files/civicrm-stable/4.5.8/civicrm-4.5.8-wordpress.zip dest=/tmp/civicrm-4.5.8-wordpress.zip
+  get_url:
+    url: http://sourceforge.net/projects/civicrm/files/civicrm-stable/4.5.8/civicrm-4.5.8-wordpress.zip dest=/tmp/civicrm-4.5.8-wordpress.zip
 
 - name: Install zip to handle download
-  apt: name=zip state=present
+  apt:
+    name: zip
+    state: present
 
 - name: install civicrm
-  unarchive: src=/tmp/civicrm-4.5.8-wordpress.zip dest=/var/www/html/wp-content/plugins owner=www-data group=www-data copy=no
+  unarchive:
+    src: /tmp/civicrm-4.5.8-wordpress.zip
+    dest: /var/www/html/wp-content/plugins
+    owner: www-data
+    group: www-data
+    copy: no
 
 - name: Fix up civicrm plugin directory permissions
-  file: path=/var/www/html/wp-content/plugins/civicrm owner=www-data group=www-data state=directory recurse=yes
+  file:
+    path: /var/www/html/wp-content/plugins/civicrm
+    owner: www-data
+    group: www-data
+    state: directory
+    recurse: yes
 
 - name: Create civicrm files directory
-  file: path=/var/www/html/wp-content/plugins/files owner=www-data group=www-data state=directory
+  file:
+    path: /var/www/html/wp-content/plugins/files
+    owner: www-data
+    group: www-data
+    state: directory
 
 - name: Apache config
-  template: src=000-default.conf dest=/etc/apache2/sites-available
+  template:
+    src: 000-default.conf
+    dest: /etc/apache2/sites-available
   notify: reload apache
 
 # TODO: How are the oaf templates installed?
