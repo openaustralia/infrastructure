@@ -137,6 +137,7 @@
     - wp-twittersearch
     - wp-hide-pages
     - wp-super-cache
+    - https://github.com/afragen/github-updater/archive/master.zip
 
 # This theme is required by the openaustralia foundation theme
 - name: Install thematic theme
