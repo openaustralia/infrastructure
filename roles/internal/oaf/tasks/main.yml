@@ -1,4 +1,6 @@
 ---
+- import_tasks: certificates.yml
+
 - name: Install dependency for ansible mysql_db module
   apt:
     pkg: python-mysqldb
@@ -61,10 +63,13 @@
     - mysql-client
   notify: reload apache
 
-- name: Enable apache mod rewrite
+- name: Enable apache modules
   apache2_module:
     state: present
-    name: rewrite
+    name: "{{ item }}"
+  with_items:
+    - rewrite
+    - ssl
   notify: reload apache
 
 - name: Remove default index.html
@@ -172,10 +177,9 @@
   become_user: www-data
 
 # TODO: Pick out current domain from database before conversion and only do if necessary
-# TODO: When we support https don't always change to http
 
 - name: Convert domains in database
-  shell: "wp-cli --path=/var/www/html search-replace {{ item }}://www.openaustraliafoundation.org.au http://oaf.org.au.test"
+  shell: "wp-cli --path=/var/www/html search-replace {{ item }}://www.openaustraliafoundation.org.au {{ item }}://www.oaf.org.au.test"
   become_user: www-data
   with_items:
     - http
@@ -229,12 +233,10 @@
     dest: /var/www/html/.htaccess
   notify: reload apache
 
-# TODO: How does civicrm know its database credentials?
-# TODO: How are the oaf templates installed?
-# TODO: Use new certificates method
 # TODO: Add certificates in production
 # TODO: Ensure that we're handling the alternative domain names
 # TODO: Create data directory
 # TODO: Figure out what's going on with twitter tracker
 # TODO: Set up cron for the civicrm mailer
 # TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
+# TODO: factor out domain name
