@@ -1,7 +1,7 @@
 resource "aws_instance" "oaf" {
   ami =  "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.small"
-  key_name = "test"
+  key_name = "deployer_key"
   tags {
     Name = "oaf"
   }
