@@ -189,21 +189,25 @@
     - rewrite
     - ssl
 
+- name: Copy the master vhost configs
+  template:
+    src: electionleaflets.org.au.conf
+    dest: /etc/apache2/sites-available/electionleaflets.org.au.conf
+
 - name: Copy across the apache configs
   template:
-    src: "{{ item[1] }}"
-    dest: "/etc/apache2/sites-available/{{ stage }}-{{ item[1] }}"
+    src: electionleaflets-vhost-common.conf
+    dest: "/etc/apache2/sites-available/{{ stage }}-electionleaflets-vhost-common.conf"
   vars:
-    stage: "{{ item[0] }}"
+    stage: "{{ item }}"
     domain: "{{ (stage == 'staging') | ternary('test.', '') }}{{ electionleaflets_domain }}"
-  with_nested:
-    - ['production', 'staging']
-    -  - electionleaflets.org.au.conf
-       - electionleaflets-vhost-common.conf
+  with_items:
+    - production
+    - staging
   notify: reload apache
 
 - name: Enable virtual hosts
-  file: src="../sites-available/{{ item }}-electionleaflets.org.au.conf" dest="/etc/apache2/sites-enabled/{{ item }}-electionleaflets.org.au.conf" state=link
+  file: src="../sites-available/electionleaflets.org.au.conf" dest="/etc/apache2/sites-enabled/electionleaflets.org.au.conf" state=link
   notify: reload apache
   with_items:
     - production
