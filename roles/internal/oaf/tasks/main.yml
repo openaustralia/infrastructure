@@ -246,10 +246,8 @@
     job: "/usr/bin/php /var/www/wp-content/plugins/civicrm/civicrm/bin/cli.php -u {{ civicrm_wordpress_username }} -p {{ civicrm_wordpress_password }} -e Job -a execute"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
-# TODO: Create data directory
 # TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
 # TODO: Check civicrm settings file in production
 # TODO: Install civicrm stripe extension automatically?
 # TODO: Check whether civicrm is using memcached
 # TODO: civicrm mailer server needs to be added to spf for all main domains
-# TODO: Backups for data directory

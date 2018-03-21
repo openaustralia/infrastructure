@@ -122,5 +122,14 @@ galaxy_info:
   #- web
 dependencies:
   - role: base-server
-
-# TODO: Add backups for wordpress files
+  # We're not backing up from a /data directory because we shouldn't need another disk
+  # to hold the data. So, instead just backing it up from it's natural place.
+  - role: Stouts.backup
+    backup_gpg_pw: "{{ backup_gpg_pw }}"
+    backup_max_age: 6M
+    backup_profiles:
+      - name: wordpress-uploads
+        schedule: 0 2 * * *
+        source: /var/www/html/wp-content/uploads
+        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
+        target: "s3://s3.amazonaws.com/oaf-backups/oaf/{{ inventory_hostname }}/wordpress-uploads"
