@@ -252,3 +252,4 @@
 # TODO: Install civicrm stripe extension automatically?
 # TODO: Check whether civicrm is using memcached
 # TODO: civicrm mailer server needs to be added to spf for all main domains
+# TODO: Backups for data directory
