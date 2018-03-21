@@ -137,7 +137,13 @@
     - wp-twittersearch
     - wp-hide-pages
     - wp-super-cache
-    - https://github.com/afragen/github-updater/archive/master.zip
+
+# creates has a different form so we're doing this separately from above
+- name: Install wordpress plugins
+  shell: "wp-cli --path='/var/www/html' plugin install --activate https://github.com/afragen/github-updater/archive/master.zip"
+  args:
+    creates: /var/www/html/wp-content/plugins/github-updater
+  become_user: www-data
 
 # This theme is required by the openaustralia foundation theme
 - name: Install thematic theme
@@ -149,14 +155,13 @@
 # This theme is dependent on there being a font called "museo-slab".
 # We're using typekit to provide that font. The typekit plugin needs
 # to point at a typekit kit that has the museo-slab font installed.
+# Updates to the theme are handled by the GitHub updater plugin
 - name: Install openaustralia foundation theme
   # Installs the latest on the master branch
   shell: "wp-cli --path='/var/www/html' theme install https://github.com/openaustralia/oaf-thematic/archive/master.zip --activate"
   args:
     creates: /var/www/html/wp-content/themes/oaf-thematic/
   become_user: www-data
-
-# TODO: Upgrade openaustralia foundation theme every time if necessary
 
 # TODO: Pick out current domain from database before conversion and only do if necessary
 # TODO: When we support https don't always change to http
