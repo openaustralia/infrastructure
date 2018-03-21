@@ -133,7 +133,7 @@ dependencies:
     rbenv_users:
       - deploy
   - role: Stouts.backup
-    backup_gpg_pw: "{{ righttoknow_backup_gpg_pw }}"
+    backup_gpg_pw: "{{ backup_gpg_pw }}"
     backup_max_age: 6M
     backup_profiles:
       - name: righttoknow_data

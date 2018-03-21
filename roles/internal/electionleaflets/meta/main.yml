@@ -128,7 +128,7 @@ dependencies:
     mysql_databases:
       - name: electionleaflets
   - role: Stouts.backup
-    backup_gpg_pw: "{{ electionleaflets_backup_gpg_pw }}"
+    backup_gpg_pw: "{{ backup_gpg_pw }}"
     backup_max_age: 6M
     backup_profiles:
       - name: automysqlbackup
