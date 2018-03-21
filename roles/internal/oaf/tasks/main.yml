@@ -119,6 +119,9 @@
     creates: /var/www/html/wp-content/themes/thematic/
   become_user: www-data
 
+# This theme is dependent on there being a font called "museo-slab".
+# We're using typekit to provide that font. The typekit plugin needs
+# to point at a typekit kit that has the museo-slab font installed.
 - name: Install openaustralia foundation theme
   # Installs the latest on the master branch
   shell: "wp-cli --path='/var/www/html' theme install https://github.com/openaustralia/oaf-thematic/archive/master.zip --activate"
