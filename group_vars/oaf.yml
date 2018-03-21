@@ -1,5 +1,5 @@
-admin_user: admin
 cron_enabled: true
+admin_user: admin
 admin_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           33303833636365336362363632393135643063383339313938333639373439633039373966323962
