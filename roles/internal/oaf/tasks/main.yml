@@ -246,8 +246,6 @@
     job: "/usr/bin/php /var/www/wp-content/plugins/civicrm/civicrm/bin/cli.php -u {{ civicrm_wordpress_username }} -p {{ civicrm_wordpress_password }} -e Job -a execute"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
-# TODO: Add certificates in production
-# TODO: Ensure that we're handling the alternative domain names
 # TODO: Create data directory
 # TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
 # TODO: Check civicrm settings file in production

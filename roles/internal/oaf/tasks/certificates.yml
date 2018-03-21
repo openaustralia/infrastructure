@@ -31,24 +31,25 @@
     pkg: apache
   when: "'ec2' in group_names"
 
-# # TODO: When (if) we use a newer version of certbot add "--post-hook" to restart nginx after renew
-# - name: Install certificate using certbot
-#   include_role:
-#     name: geerlingguy.certbot
-#   vars:
-#     certbot_auto_renew_user: root
-#     certbot_auto_renew_minute: 10
-#     certbot_auto_renew_hour: 7
-#     certbot_create_if_missing: yes
-#     certbot_create_standalone_stop_services:
-#       - apache
-#     certbot_certs:
-#       - email: contact@oaf.org.au
-#         domains:
-#           - "{{ righttoknow_domain }}"
-#           - www."{{ righttoknow_domain }}"
-#       - email: contact@oaf.org.au
-#         domains:
-#           - "test.{{ righttoknow_domain }}"
-#           - "www.test.{{ righttoknow_domain }}"
-#   when: "'ec2' in group_names"
+# TODO: When (if) we use a newer version of certbot add "--post-hook" to restart nginx after renew
+- name: Install certificate using certbot
+  include_role:
+    name: geerlingguy.certbot
+  vars:
+    certbot_auto_renew_user: root
+    certbot_auto_renew_minute: 10
+    certbot_auto_renew_hour: 7
+    certbot_create_if_missing: yes
+    certbot_create_standalone_stop_services:
+      - apache
+    certbot_certs:
+      - email: contact@oaf.org.au
+        domains:
+          # This is assuming that in production oaf_domain will be set to openaustraliafoundation.org.au
+          # TODO: When we change it to oaf.org.au, we will also need to update the alternate domain below
+          - "{{ oaf_domain }}"
+          - www."{{ oaf_domain }}"
+          # TODO: Uncomment below for production
+          # - oaf.org.au
+          # - www.oaf.org.au
+  when: "'ec2' in group_names"
