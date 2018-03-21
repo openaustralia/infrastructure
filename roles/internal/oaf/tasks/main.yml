@@ -257,4 +257,3 @@
 # TODO: civicrm mailer server needs to be added to spf for all main domains
 # TODO: Move to install path at /srv/www
 # TODO: Install postfix so that wordpress can send outgoing email
-# TODO: Configure RDS to allow triggers
