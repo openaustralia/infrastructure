@@ -4,24 +4,30 @@
     pkg: python-mysqldb
 
 # TODO: Do we want a staging setup too?
-- name: Create database
+- name: Create oaf database
   mysql_db:
     login_host: "{{ mysql_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: "{{ item }}-production"
-  with_items:
-    - oaf
-    - civi
+    name: oaf-production
+
+# For some inexplicable reason civicrm doesn't want dashes in the database name
+# So, using underscore instead
+- name: Create civicrm database
+  mysql_db:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: civi_production
 
 - name: Create civi user with access to the database
   mysql_user:
     login_host: "{{ mysql_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: civi-production
+    name: civi_production
     password: "{{ civicrm_production_mysql_password }}"
-    priv: 'civi-production.*:ALL'
+    priv: 'civi_production.*:ALL'
     host: "%"
 
 - name: Create oaf user with access to the database
