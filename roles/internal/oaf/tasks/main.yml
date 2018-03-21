@@ -231,8 +231,22 @@
     dest: /var/www/html/.htaccess
   notify: reload apache
 
+# This user is needed for the civicrm cron job command below
+# TODO: This will fail if user doesn't already exist. Make it create user if they don't exist
+- name: Create civicrm user
+  shell: "wp-cli --path=/var/www/html user update {{ civicrm_wordpress_username }} contact@oaf.org.au --role=Administrator --user_pass={{ civicrm_wordpress_password }} --first_name=Civicrm --last_name=User"
+  become_user: www-data
+
+- name: Setup civicrm cron
+  cron:
+    user: www-data
+    name: "master-civicrm-cron-job"
+    # Every 15 minutes
+    minute: "*/15"
+    job: "/usr/bin/php /var/www/wp-content/plugins/civicrm/civicrm/bin/cli.php -u {{ civicrm_wordpress_username }} -p {{ civicrm_wordpress_password }} -e Job -a execute"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+
 # TODO: Add certificates in production
 # TODO: Ensure that we're handling the alternative domain names
 # TODO: Create data directory
-# TODO: Set up cron for the civicrm mailer
 # TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
