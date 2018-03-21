@@ -104,6 +104,7 @@
   become_user: www-data
 
 # TODO: Is there a creates in this situation?
+# TODO: Why is the admin user not created with the administrator role?
 - name: install wordpress
   shell: "wp-cli --path='/var/www/html' core install --url=https://www.{{ oaf_domain }} --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
   become_user: www-data
@@ -255,3 +256,4 @@
 # TODO: Install civicrm stripe extension automatically?
 # TODO: civicrm mailer server needs to be added to spf for all main domains
 # TODO: Move to install path at /srv/www
+# TODO: Install postfix so that wordpress can send outgoing email
