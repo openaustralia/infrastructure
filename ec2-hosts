@@ -5,6 +5,8 @@ openaustralia.org.au
 righttoknow.org.au
 openaustraliafoundation.org.au
 opengovernment.org.au
+ec2.opengovernment.org.au
+ec2.electionleaflets.org.au
 
 [theyvoteforyou]
 theyvoteforyou.org.au
@@ -23,3 +25,7 @@ openaustraliafoundation.org.au
 
 [opengovernment]
 opengovernment.org.au
+ec2.opengovernment.org.au
+
+[electionleaflets]
+ec2.electionleaflets.org.au
