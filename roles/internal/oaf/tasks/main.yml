@@ -180,6 +180,31 @@
     - https
 
 # TODO: Maybe worth looking at the wp-cli civicrm integration for installing civicrm?
+
+- name: Install civicrm plugin
+  shell: "wp-cli --path=/var/www/html plugin install --activate https://download.civicrm.org/civicrm-4.6.36-wordpress.zip"
+  args:
+    creates: /var/www/html/wp-content/plugins/civicrm
+  become_user: www-data
+
+- name: Check if civicrm config file exists
+  stat:
+    path: /var/www/html/wp-content/plugins/civicrm/civicrm.settings.php
+  register: stat_result
+
+# Only give these instructions if civicrm hasn't yet been configured
+- name: display post install message
+  debug:
+    msg:
+      - 'Now go to http://oaf.org.au.test/wp-admin/options-general.php?page=civicrm-install'
+      - 'Fill in the following details:'
+      - '  MySQL server: {{ mysql_host }}'
+      - '  MySQL username: civi_production'
+      - '  MySQL password: {{ civicrm_production_mysql_password }}'
+      - '  MySQL database: civi_production'
+      - 'Then, press the button that says Check requirements and install civicrm'
+  when: stat_result.stat.exists == False
+
 # - name: download civicrm
 #   get_url:
 #     url: https://download.civicrm.org/civicrm-4.6.36-wordpress.zip
