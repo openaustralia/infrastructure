@@ -31,6 +31,7 @@ resource "aws_db_instance" "main" {
   apply_immediately          = false
   skip_final_snapshot        = false
   vpc_security_group_ids     = ["${aws_security_group.main_database.id}"]
+  parameter_group_name       = "${aws_db_parameter_group.triggers.name}"
 }
 
 # TODO: Do we want to explicitly set the available zone?
@@ -70,5 +71,6 @@ resource "aws_db_parameter_group" "triggers" {
   parameter {
     name  = "log_bin_trust_function_creators"
     value = 1
+    apply_method = "pending-reboot"
   }
 }
