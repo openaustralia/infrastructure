@@ -1,5 +1,3 @@
-# We put this here because actually most ec2 commands are run on localhost
-ec2_region: 'ap-southeast-2'
 rds_admin_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           65653232383664316332646336373535666531326261373135313038306562386534363631373365

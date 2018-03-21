@@ -6,6 +6,7 @@ righttoknow_domain: righttoknow.org.au
 oaf_domain: openaustraliafoundation.org.au
 ansible_user: ubuntu
 ansible_ssh_private_key_file: 'test.pem'
+ec2_region: 'ap-southeast-2'
 # TODO: We only need this key to have limited privileges. It currently has too many privileges.
 aws_access_key: !vault |
           $ANSIBLE_VAULT;1.1;AES256
