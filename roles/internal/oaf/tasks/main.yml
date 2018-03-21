@@ -138,8 +138,6 @@
     - scalable-vector-graphics-svg
     - subscribe-to-comments
     - tagaroo
-    # twitter-tracker appears to be a different version than on oaf.org.au
-    - twitter-tracker
     - twitter-widget-pro
     - typekit-fonts-for-wordpress
     - update-notifier
@@ -236,6 +234,5 @@
 # TODO: Add certificates in production
 # TODO: Ensure that we're handling the alternative domain names
 # TODO: Create data directory
-# TODO: Figure out what's going on with twitter tracker
 # TODO: Set up cron for the civicrm mailer
 # TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
