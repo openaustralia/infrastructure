@@ -55,6 +55,7 @@
     - php5.6-mysql
     - php5.6-curl
     - php5.6-xml
+    - php5.6-zip
     - apache2
     - libapache2-mod-php5.6
     - mysql-client
