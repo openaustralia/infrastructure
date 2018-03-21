@@ -214,9 +214,8 @@
   notify: reload apache
 
 # This user is needed for the civicrm cron job command below
-# TODO: This will fail if user doesn't already exist. Make it create user if they don't exist
 - name: Create civicrm user
-  shell: "wp-cli --path=/var/www/html user update {{ civicrm_wordpress_username }} contact@oaf.org.au --role=Administrator --user_pass={{ civicrm_wordpress_password }} --first_name=Civicrm --last_name=User"
+  shell: "wp-cli --path=/var/www/html user update {{ civicrm_wordpress_username }} contact@oaf.org.au --role=administrator --user_pass={{ civicrm_wordpress_password }} --first_name=Civicrm --last_name=User"
   become_user: www-data
 
 - name: Setup civicrm cron
