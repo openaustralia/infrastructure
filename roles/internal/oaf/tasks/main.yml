@@ -105,7 +105,7 @@
 
 # TODO: Is there a creates in this situation?
 - name: install wordpress
-  shell: "wp-cli --path='/var/www/html' core install --url=http://oaf.org.au.test --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
+  shell: "wp-cli --path='/var/www/html' core install --url=https://www.{{ oaf_domain }} --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
   become_user: www-data
 
 # These are the plugins that were activated in production on kedumba. We're
@@ -179,7 +179,7 @@
 # TODO: Pick out current domain from database before conversion and only do if necessary
 
 - name: Convert domains in database
-  shell: "wp-cli --path=/var/www/html search-replace {{ item }}://www.openaustraliafoundation.org.au {{ item }}://www.oaf.org.au.test"
+  shell: "wp-cli --path=/var/www/html search-replace {{ item }}://www.openaustraliafoundation.org.au {{ item }}://www.{{ oaf_domain }}"
   become_user: www-data
   with_items:
     - http
@@ -202,7 +202,7 @@
 - name: display post install message
   debug:
     msg:
-      - 'Now go to http://oaf.org.au.test/wp-admin/options-general.php?page=civicrm-install'
+      - 'Now go to https://www.{{ oaf_domain }}/wp-admin/options-general.php?page=civicrm-install'
       - 'Fill in the following details:'
       - '  MySQL server: {{ mysql_host }}'
       - '  MySQL username: civi_production'
@@ -239,4 +239,3 @@
 # TODO: Figure out what's going on with twitter tracker
 # TODO: Set up cron for the civicrm mailer
 # TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
-# TODO: factor out domain name

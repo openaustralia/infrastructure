@@ -4,3 +4,4 @@ postgresql_host: 192.168.10.18
 openaustralia_domain: openaustralia.org.au.dev
 planningalerts_domain: planningalerts.org.au.dev
 theyvoteforyou_domain: theyvoteforyou.org.au.dev
+oaf_domain: oaf.org.au.test

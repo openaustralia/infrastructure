@@ -2,16 +2,16 @@
 - name: Create fake let's encrypt directories when in development
   file:
     state: directory
-    path: "/etc/letsencrypt/live/oaf.org.au.test"
+    path: "/etc/letsencrypt/live/{{ oaf_domain }}"
   when: "'development' in group_names"
 
 # We need to setup the SSL certificates before we try to configure apache
 # because otherwise apache will try to look for non-existent certificates
 - name: Copy SSL certificates for development
   copy:
-    src: oaf.org.au.test.pem
+    src: "{{ oaf_domain }}.pem"
     # We're faking it as if these are let's encrypt certs. Makes for less magic config
-    dest: /etc/letsencrypt/live/oaf.org.au.test/fullchain.pem
+    dest: "/etc/letsencrypt/live/{{ oaf_domain }}/fullchain.pem"
     mode: 0644
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
@@ -19,8 +19,8 @@
 
 - name: Copy SSL keys for development
   copy:
-    src: oaf.org.au.test.key
-    dest: /etc/letsencrypt/live/oaf.org.au.test/privkey.pem
+    src: "{{ oaf_domain }}.key"
+    dest: /etc/letsencrypt/live/{{ oaf_domain }}/privkey.pem
     mode: 0640
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
