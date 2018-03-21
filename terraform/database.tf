@@ -60,3 +60,15 @@ resource "aws_db_instance" "postgresql" {
   skip_final_snapshot        = false
   vpc_security_group_ids     = ["${aws_security_group.postgresql.id}"]
 }
+
+# Allow triggers on mysql
+resource "aws_db_parameter_group" "triggers" {
+  name   = "allow-triggers"
+  description = "Allows triggers on mysql"
+  family = "mysql5.6"
+
+  parameter {
+    name  = "log_bin_trust_function_creators"
+    value = 1
+  }
+}
