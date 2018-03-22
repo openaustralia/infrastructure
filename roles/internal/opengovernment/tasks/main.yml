@@ -86,10 +86,18 @@
     src: advanced-custom-fields-pro.zip.encrypted
     dest: /tmp/advanced-custom-fields-pro.zip
 
+# creates has a different form so we're doing this separately from below
 - name: Install wordpress plugins
   shell: "wp-cli --path='/var/www/html' plugin install --activate /tmp/advanced-custom-fields-pro.zip"
   args:
     creates: /var/www/html/wp-content/plugins/advanced-custom-fields-pro
+  become_user: www-data
+
+# creates has a different form so we're doing this separately from below
+- name: Install wordpress plugins
+  shell: "wp-cli --path='/var/www/html' plugin install --activate https://github.com/afragen/github-updater/archive/master.zip"
+  args:
+    creates: /var/www/html/wp-content/plugins/github-updater
   become_user: www-data
 
 - name: Install wordpress plugins
