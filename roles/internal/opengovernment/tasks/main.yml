@@ -100,6 +100,7 @@
     creates: /var/www/html/wp-content/plugins/github-updater
   become_user: www-data
 
+# TODO: Consider installing caching plugin
 - name: Install wordpress plugins
   shell: "wp-cli --path='/var/www/html' plugin install --activate {{ item }}"
   args:
@@ -111,6 +112,14 @@
     - custom-post-type-ui
     - google-analytics-for-wordpress
     - wp-pagenavi
+
+# TODO: Updates to the theme are handled by the GitHub updater plugin
+- name: Install opengovernment theme
+  # Installs the latest on the master branch
+  shell: "wp-cli --path=/var/www/html theme install https://github.com/AOGPN/opengovernment.org.au/archive/master.zip --activate"
+  args:
+    creates: /var/www/html/wp-content/themes/opengovernment.org.au/
+  become_user: www-data
 
 
 - name: Apache config
