@@ -152,3 +152,6 @@
       - '  Username: {{ admin_user }}'
       - '  Password: {{ admin_password }}'
 
+# TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
+# TODO: Add newrelic application monitoring
+# TODO: Mail sent to www-data needs to go to root (or switch over to deploy user)
