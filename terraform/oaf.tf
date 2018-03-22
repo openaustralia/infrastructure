@@ -6,8 +6,7 @@ resource "aws_instance" "oaf" {
     Name = "oaf"
   }
   security_groups = ["${aws_security_group.webserver.name}"]
-  # TODO: For production set to true
-  disable_api_termination = false
+  disable_api_termination = true
 }
 
 resource "aws_eip" "oaf" {
