@@ -115,6 +115,15 @@ resource "aws_security_group" "jamison" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
+  # TODO: Remove this once all database migrations from jamison are complete
+  ingress {
+    description = "Allow database migration service access to database on jamison"
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    security_groups = ["${data.aws_security_group.default.id}"]
+  }
+
   # Allow pings from hosts on the internet
   ingress {
     protocol = "icmp"
