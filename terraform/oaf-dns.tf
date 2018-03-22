@@ -172,13 +172,6 @@ resource "cloudflare_record" "oaf_alt_kedumba" {
   value  = "${aws_eip.kedumba.public_ip}"
 }
 
-resource "cloudflare_record" "oaf_alt_ec2" {
-  domain = "openaustraliafoundation.org.au"
-  name   = "ec2.openaustraliafoundation.org.au"
-  type   = "A"
-  value  = "${aws_eip.oaf.public_ip}"
-}
-
 # CNAME records
 resource "cloudflare_record" "oaf_alt_www" {
   domain = "openaustraliafoundation.org.au"
@@ -192,13 +185,6 @@ resource "cloudflare_record" "oaf_alt_test" {
   name   = "test.openaustraliafoundation.org.au"
   type   = "CNAME"
   value  = "openaustraliafoundation.org.au"
-}
-
-resource "cloudflare_record" "oaf_alt_www_ec2" {
-  domain = "openaustraliafoundation.org.au"
-  name   = "www.ec2.openaustraliafoundation.org.au"
-  type   = "CNAME"
-  value  = "ec2.openaustraliafoundation.org.au"
 }
 
 # MX records
