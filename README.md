@@ -80,7 +80,7 @@ A little note on terminology:
 * "provisioning" - we use this to mean configuring the server with Ansible.
 * "deployment" - we use to mean installing or updating the web application with Capistrano.
 
-## Current state of this work (as of 20 March 2018)
+## Current state of this work (as of 23 March 2018)
 
 This repo is being used to setup and configure servers on EC2 for:
 * planningalerts.org.au:
@@ -97,18 +97,15 @@ This repo is being used to setup and configure servers on EC2 for:
 * righttoknow.org.au:
   - righttoknow.org.au
   - test.righttoknow.org.au
+* openaustraliafoundation.org.au:
+  - openaustraliafoundation.org.au
+  - CiviCRM
 
 kedumba (configured by hand) is currently still hosting:
 * electionleaflets.org.au:
   - electionleaflets.org.au
   - test.electionleaflets.org.au
-* cuttlefish.io
-* proxying for openaustraliafoundation.org.au (to jamison)
 * opengovernment.org.au
-
-jamison (configured by hand) is currently hosting:
-* openaustraliafoundation.org.au
-* CiviCRM
 
 On Linode running as separate VMs with automated server configuration:
 * cuttlefish.oaf.org.au - automated server configuration using Ansible at
@@ -117,7 +114,7 @@ On Linode running as separate VMs with automated server configuration:
   https://github.com/openaustralia/morph/tree/master/provisioning
 
 We are actively working to complete the Ansible setups required to migrate
-all running services off of kedumba and jamison. That is the immediate priority.
+all running services off of kedumba. That is the immediate priority.
 Then, we might consider, if it makes sense moving cuttlefish and morph.io to AWS as well.
 
 ## Requirements
