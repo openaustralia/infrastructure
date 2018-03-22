@@ -104,10 +104,15 @@
   become_user: www-data
 
 # TODO: Is there a creates in this situation?
-# TODO: Why is the admin user not created with the administrator role?
 - name: install wordpress
   shell: "wp-cli --path='/var/www/html' core install --url=https://www.{{ oaf_domain }} --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
   become_user: www-data
+
+# TODO: The admin user is not getting properly setup for some reason.
+# I've had to work around this by either setting the role by hand using wp-cli
+# and then also resetting the password in wordpress. it would be good to know
+# what's going on but I've spent enough time trying to figure this out and it's
+# somewhat academic as we'll be using a different database very quickly
 
 # These are the plugins that were activated in production on kedumba. We're
 # not bothering to install those that were installed but not activated.
@@ -267,3 +272,4 @@
 # TODO: Install civicrm stripe extension automatically?
 # TODO: civicrm mailer server needs to be added to spf for all main domains
 # TODO: Add newrelic application monitoring
+# TODO: Mail sent to www-data needs to go to root (or switch over to deploy user)
