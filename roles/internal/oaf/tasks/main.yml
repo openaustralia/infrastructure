@@ -236,6 +236,10 @@
     job: "/usr/bin/php /var/www/wp-content/plugins/civicrm/civicrm/bin/cli.php -u {{ civicrm_wordpress_username }} -p {{ civicrm_wordpress_password }} -e Job -a execute"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
+- name: Install postfix so users can reset passwords and cron jobs can mail out
+  apt:
+    pkg: postfix
+
 # Do these last two things last so that the message gets displayed at the end which
 # makes it useful to the person using this
 - name: Check if civicrm config file exists
@@ -258,10 +262,6 @@
       - '  MySQL database: civi_production'
       - 'Then, press the button that says Check requirements and install civicrm'
   when: stat_result.stat.exists == False
-
-- name: Install postfix so users can reset passwords and cron jobs can mail out
-  apt:
-    pkg: postfix
 
 # TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
 # TODO: Install civicrm stripe extension automatically?
