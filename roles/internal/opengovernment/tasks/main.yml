@@ -81,6 +81,30 @@
   become_user: www-data
 
 
+- name: Copy across Advanced Custom Fields Pro
+  copy:
+    src: advanced-custom-fields-pro.zip.encrypted
+    dest: /tmp/advanced-custom-fields-pro.zip
+
+- name: Install wordpress plugins
+  shell: "wp-cli --path='/var/www/html' plugin install --activate /tmp/advanced-custom-fields-pro.zip"
+  args:
+    creates: /var/www/html/wp-content/plugins/advanced-custom-fields-pro
+  become_user: www-data
+
+- name: Install wordpress plugins
+  shell: "wp-cli --path='/var/www/html' plugin install --activate {{ item }}"
+  args:
+    creates: /var/www/html/wp-content/plugins/{{ item }}
+  become_user: www-data
+  with_items:
+    - akismet
+    - breadcrumb-navxt
+    - custom-post-type-ui
+    - google-analytics-for-wordpress
+    - wp-pagenavi
+
+
 - name: Apache config
   template:
     src: 000-default.conf
