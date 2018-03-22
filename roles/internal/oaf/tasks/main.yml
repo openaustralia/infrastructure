@@ -264,7 +264,6 @@
     pkg: postfix
 
 # TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
-# TODO: Check civicrm settings file in production
 # TODO: Install civicrm stripe extension automatically?
 # TODO: civicrm mailer server needs to be added to spf for all main domains
-# TODO: Move to install path at /srv/www
+# TODO: Add newrelic application monitoring
