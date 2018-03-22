@@ -93,3 +93,8 @@
   become: true
   roles:
     - openaustralia
+
+- hosts: opengovernment
+  become: true
+  roles:
+    - opengovernment
