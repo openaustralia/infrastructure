@@ -49,7 +49,6 @@
           # TODO: When we change it to oaf.org.au, we will also need to update the alternate domain below
           - "{{ oaf_domain }}"
           - www."{{ oaf_domain }}"
-          # TODO: Uncomment below for production
-          # - oaf.org.au
-          # - www.oaf.org.au
+          - oaf.org.au
+          - www.oaf.org.au
   when: "'ec2' in group_names"
