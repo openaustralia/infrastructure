@@ -1,3 +1,4 @@
+# TODO: We can remove jamison pretty soon now
 resource "aws_instance" "jamison" {
   ami =  "ami-02211161"
   instance_type = "t2.small"
