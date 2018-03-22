@@ -4,7 +4,7 @@ resource "cloudflare_record" "oaf_root" {
   domain = "oaf.org.au"
   name   = "oaf.org.au"
   type   = "A"
-  value  = "${aws_eip.kedumba.public_ip}"
+  value  = "${aws_eip.oaf.public_ip}"
 }
 
 resource "cloudflare_record" "oaf_cuttlefish" {
@@ -169,7 +169,7 @@ resource "cloudflare_record" "oaf_alt_root" {
   domain = "openaustraliafoundation.org.au"
   name   = "openaustraliafoundation.org.au"
   type   = "A"
-  value  = "${aws_eip.kedumba.public_ip}"
+  value  = "${aws_eip.oaf.public_ip}"
 }
 
 resource "cloudflare_record" "oaf_alt_kedumba" {
