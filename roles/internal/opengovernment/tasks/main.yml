@@ -80,6 +80,9 @@
   shell: "wp-cli --path='/var/www/html' core install --url=https://{{ opengovernment_domain }} --title='Australian Open Government Partnership Civil Society Network' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
   become_user: www-data
 
+# Advanced Custom Fields Pro is unfortunately not an open source plugin.
+# We're using a license for a single site. So, we're including an encrypted
+# copy here of the plugin ready for installation
 
 - name: Copy across Advanced Custom Fields Pro
   copy:
@@ -136,7 +139,6 @@
     src: htaccess
     dest: /var/www/html/.htaccess
   notify: reload apache
-
 
 - name: Install postfix so users can reset passwords and cron jobs can mail out
   apt:
