@@ -1,0 +1,50 @@
+# Create fake let's encrypt directories when in development
+- name: Create fake let's encrypt directories when in development
+  file:
+    state: directory
+    path: "/etc/letsencrypt/live/{{ opengovernment_domain }}"
+  when: "'development' in group_names"
+
+# We need to setup the SSL certificates before we try to configure apache
+# because otherwise apache will try to look for non-existent certificates
+- name: Copy SSL certificates for development
+  copy:
+    src: "{{ opengovernment_domain }}.pem"
+    # We're faking it as if these are let's encrypt certs. Makes for less magic config
+    dest: "/etc/letsencrypt/live/{{ opengovernment_domain }}/fullchain.pem"
+    mode: 0644
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
+  notify: reload apache
+
+- name: Copy SSL keys for development
+  copy:
+    src: "{{ opengovernment_domain }}.key"
+    dest: /etc/letsencrypt/live/{{ opengovernment_domain }}/privkey.pem
+    mode: 0640
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
+  notify: reload apache
+
+- name: Install apache now (for the benefit of certbot)
+  apt:
+    pkg: apache2
+  when: "'ec2' in group_names"
+
+# TODO: When (if) we use a newer version of certbot add "--post-hook" to restart nginx after renew
+- name: Install certificate using certbot
+  include_role:
+    name: geerlingguy.certbot
+  vars:
+    certbot_auto_renew_user: root
+    certbot_auto_renew_minute: 10
+    certbot_auto_renew_hour: 7
+    certbot_create_if_missing: yes
+    certbot_create_standalone_stop_services:
+      - apache2
+    certbot_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - "{{ opengovernment_domain }}"
+          - www."{{ opengovernment_domain }}"
+  when: "'ec2' in group_names"

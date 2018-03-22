@@ -1,2 +1,102 @@
 ---
-# tasks file for opengovernment
+- import_tasks: certificates.yml
+
+- name: Install dependency for ansible mysql_db module
+  apt:
+    pkg: python-mysqldb
+
+# TODO: Do we want a staging setup too?
+- name: Create database
+  mysql_db:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: og-production
+
+- name: Create user with access to the database
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: og-production
+    password: "{{ opengovernment_production_mysql_password }}"
+    priv: 'og-production.*:ALL'
+    host: "%"
+
+- name: Install required packages
+  apt: name={{ item }} state=present
+  with_items:
+    - php-mysql
+    # - php-curl
+    # - php-xml
+    # - php-zip
+    - apache2
+    - libapache2-mod-php
+    - mysql-client
+  notify: reload apache
+
+- name: Enable apache modules
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - rewrite
+    - ssl
+  notify: reload apache
+
+- name: Remove default index.html
+  file:
+    path: /var/www/html/index.html
+    state: absent
+
+- name: Set permissions
+  file:
+    path: /var/www/html
+    owner: www-data
+    group: www-data
+    state: directory
+
+# TODO: See if there is another more sensible way we could install this
+- name: install wp-cli
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: "/usr/local/bin/wp-cli"
+    mode: 0755
+
+- name: download wordpress
+  shell: "wp-cli --path='/var/www/html' core download"
+  args:
+    creates: /var/www/html/index.php
+  become_user: www-data
+
+- name: configure wordpress
+  shell: "wp-cli --path='/var/www/html' core config --dbname=og-production --dbuser=og-production --dbpass={{ opengovernment_production_mysql_password }} --dbhost={{ mysql_host }}"
+  args:
+    creates: /var/www/html/wp-config.php
+  become_user: www-data
+
+# TODO: Is there a creates in this situation?
+- name: install wordpress
+  shell: "wp-cli --path='/var/www/html' core install --url=https://{{ opengovernment_domain }} --title='Australian Open Government Partnership Civil Society Network' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
+  become_user: www-data
+
+
+- name: Apache config
+  template:
+    src: 000-default.conf
+    dest: /etc/apache2/sites-available
+  notify: reload apache
+
+
+- name: Install postfix so users can reset passwords and cron jobs can mail out
+  apt:
+    pkg: postfix
+
+# Only give these instructions if civicrm hasn't yet been configured
+- name: display post install message
+  debug:
+    msg:
+      - 'Now you can login to the admin panel with:'
+      - '  Username: {{ admin_user }}'
+      - '  Password: {{ admin_password }}'
+
