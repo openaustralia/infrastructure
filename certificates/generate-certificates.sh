@@ -8,6 +8,7 @@ domains=( "theyvoteforyou.org.au.dev" "test.theyvoteforyou.org.au.dev"
           "openaustralia.org.au.dev"  "test.openaustralia.org.au.dev"
           "righttoknow.org.au.dev"    "test.righttoknow.org.au.dev"
           "oaf.org.au.test"
+          "opengovernment.org.au.test"
           "dev.morph.io")
 
 # Generates a private key with passphrase "abcd" (but only if it doesn't already exist)
@@ -56,3 +57,4 @@ mv planningalerts.org.au.dev.key planningalerts.org.au.dev.pem test.planningaler
 mv openaustralia.org.au.dev.key openaustralia.org.au.dev.pem test.openaustralia.org.au.dev.key test.openaustralia.org.au.dev.pem ../roles/internal/openaustralia/files
 mv righttoknow.org.au.dev.key righttoknow.org.au.dev.pem test.righttoknow.org.au.dev.key test.righttoknow.org.au.dev.pem ../roles/internal/righttoknow/files
 mv oaf.org.au.test.key oaf.org.au.test.pem ../roles/internal/oaf/files
+mv opengovernment.org.au.test.key opengovernment.org.au.test.pem ../roles/internal/opengovernment/files
