@@ -259,9 +259,12 @@
       - 'Then, press the button that says Check requirements and install civicrm'
   when: stat_result.stat.exists == False
 
+- name: Install postfix so users can reset passwords and cron jobs can mail out
+  apt:
+    pkg: postfix
+
 # TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
 # TODO: Check civicrm settings file in production
 # TODO: Install civicrm stripe extension automatically?
 # TODO: civicrm mailer server needs to be added to spf for all main domains
 # TODO: Move to install path at /srv/www
-# TODO: Install postfix so that wordpress can send outgoing email
