@@ -124,6 +124,22 @@
     creates: /var/www/html/wp-content/themes/opengovernment.org.au/
   become_user: www-data
 
+- name: Get current domain in database
+  shell: "wp-cli --path=/var/www/html option get siteurl"
+  become_user: www-data
+  register: siteurl_contents
+
+# TODO: Do we always want to convert urls to https?
+- name: Convert domains in database
+  shell: "wp-cli --path=/var/www/html search-replace {{ item }}://{{ current_siteurl }} {{ item }}://{{ new_siteurl }}"
+  become_user: www-data
+  vars:
+    current_siteurl: "{{ siteurl_contents.stdout | urlsplit('hostname') }}"
+    new_siteurl: "{{ opengovernment_domain }}"
+  when: current_siteurl != new_siteurl
+  with_items:
+    - http
+    - https
 
 - name: Apache config
   template:
