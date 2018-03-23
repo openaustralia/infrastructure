@@ -1,6 +1,7 @@
 resource "aws_instance" "opengovernment" {
   ami =  "${data.aws_ami.ubuntu.id}"
-  instance_type = "t2.small"
+  # Changed from t2.small to t2.micro based on usage in production
+  instance_type = "t2.micro"
   key_name = "deployer_key"
   tags {
     Name = "opengovernment"
