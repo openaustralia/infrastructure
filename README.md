@@ -100,12 +100,13 @@ This repo is being used to setup and configure servers on EC2 for:
 * openaustraliafoundation.org.au:
   - openaustraliafoundation.org.au
   - CiviCRM
+* opengovernment.org.au
 
 kedumba (configured by hand) is currently still hosting:
 * electionleaflets.org.au:
   - electionleaflets.org.au
   - test.electionleaflets.org.au
-* opengovernment.org.au
+* A cron job that uploads planningalerts data for a commercial client
 
 On Linode running as separate VMs with automated server configuration:
 * cuttlefish.oaf.org.au - automated server configuration using Ansible at
