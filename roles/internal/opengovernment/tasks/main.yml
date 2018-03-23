@@ -160,6 +160,29 @@
   apt:
     pkg: postfix
 
+- name: Add apt key for new relic
+  apt_key:
+    url: https://download.newrelic.com/548C16BF.gpg
+    id: 548C16BF
+
+- name: Add apt repository for new relic
+  apt_repository:
+    repo: deb http://apt.newrelic.com/debian/ newrelic non-free
+    filename: newrelic.list
+
+# Despite the name apparently this version of newrelic monitor also supports php 7.
+# See: https://discuss.newrelic.com/t/where-to-download-php7-agent/35807
+- name: Install newrelic php monitor
+  apt:
+    pkg: newrelic-php5
+    update_cache: yes
+
+- name: Configure newrelic php monitor
+  template:
+    src: newrelic.ini
+    dest: /etc/php/7.0/mods-available/
+  notify: reload apache
+
 # Only give these instructions if civicrm hasn't yet been configured
 - name: display post install message
   debug:
