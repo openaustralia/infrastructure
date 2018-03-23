@@ -6,7 +6,7 @@ resource "cloudflare_record" "opengovernment_root" {
   value  = "${aws_eip.kedumba.public_ip}"
 }
 
-resource "cloudflare_record" "opengovernment_root" {
+resource "cloudflare_record" "opengovernment_ec2" {
   domain = "opengovernment.org.au"
   name   = "ec2.opengovernment.org.au"
   type   = "A"
@@ -21,7 +21,7 @@ resource "cloudflare_record" "opengovernment_www" {
   value  = "opengovernment.org.au"
 }
 
-resource "cloudflare_record" "opengovernment_www" {
+resource "cloudflare_record" "opengovernment_www_ec2" {
   domain = "opengovernment.org.au"
   name   = "www.ec2.opengovernment.org.au"
   type   = "CNAME"
