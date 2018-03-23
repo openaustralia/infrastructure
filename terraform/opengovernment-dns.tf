@@ -3,7 +3,7 @@ resource "cloudflare_record" "opengovernment_root" {
   domain = "opengovernment.org.au"
   name   = "opengovernment.org.au"
   type   = "A"
-  value  = "${aws_eip.kedumba.public_ip}"
+  value  = "${aws_eip.opengovernment.public_ip}"
 }
 
 resource "cloudflare_record" "opengovernment_ec2" {
