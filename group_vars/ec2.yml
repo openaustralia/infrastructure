@@ -4,7 +4,7 @@ planningalerts_domain: planningalerts.org.au
 openaustralia_domain: openaustralia.org.au
 righttoknow_domain: righttoknow.org.au
 oaf_domain: openaustraliafoundation.org.au
-opengovernment_domain: ec2.opengovernment.org.au
+opengovernment_domain: opengovernment.org.au
 ansible_user: ubuntu
 ansible_ssh_private_key_file: 'test.pem'
 ec2_region: 'ap-southeast-2'
