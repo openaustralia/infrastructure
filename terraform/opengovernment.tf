@@ -6,8 +6,7 @@ resource "aws_instance" "opengovernment" {
     Name = "opengovernment"
   }
   security_groups = ["${aws_security_group.webserver.name}"]
-  # TODO: In production set to true
-  disable_api_termination = false
+  disable_api_termination = true
 }
 
 resource "aws_eip" "opengovernment" {
