@@ -1,2 +1,31 @@
 ---
-# tasks file for corelogic
+# This sets up an automated cron job for CoreLogic,
+# a commercial user of PlanningAlerts
+
+- name: Install planningalerts_xml_data_feed
+  become_user: deploy
+  git:
+    repo: 'https://github.com/openaustralia/planningalerts_xml_data_feed.git'
+    dest: /home/deploy/planningalerts_xml_data_feed
+
+- name: Set planningalerts_xml_data_feed environment variables
+  template:
+    src: env
+    dest: /home/deploy/planningalerts_xml_data_feed/.env
+    owner: deploy
+    group: deploy
+
+- name: Run bundler
+  bundler:
+    chdir: /home/deploy/planningalerts_xml_data_feed
+
+- name: Run planningalerts_xml_data_feed once per week with cron
+  cron:
+    name: CoreLogic (RP Data) weekly PlanningAlerts data feed
+    user: deploy
+    hour: 7
+    minute: 0
+    weekday: MON
+    job: "cd /home/deploy/planningalerts_xml_data_feed/ && /usr/local/bin/bundle exec dotenv rake transfer_applications[yesterday]"
+    # We only want this running on ec2
+    state: "{{ ('ec2' in group_names) | ternary('present', 'absent') }}"
