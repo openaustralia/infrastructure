@@ -80,12 +80,13 @@ A little note on terminology:
 * "provisioning" - we use this to mean configuring the server with Ansible.
 * "deployment" - we use to mean installing or updating the web application with Capistrano.
 
-## Current state of this work (as of 23 March 2018)
+## Current state of this work (as of 24 March 2018)
 
 This repo is being used to setup and configure servers on EC2 for:
 * planningalerts.org.au:
   - planningalerts.org.au
   - test.planningalerts.org.au
+  - A cron job that uploads planningalerts data for a commercial client
 * theyvoteforyou.org.au:
   - theyvoteforyou.org.au
   - test.theyvoteforyou.org.au
@@ -106,7 +107,6 @@ kedumba (configured by hand) is currently still hosting:
 * electionleaflets.org.au:
   - electionleaflets.org.au
   - test.electionleaflets.org.au
-* A cron job that uploads planningalerts data for a commercial client
 
 On Linode running as separate VMs with automated server configuration:
 * cuttlefish.oaf.org.au - automated server configuration using Ansible at
