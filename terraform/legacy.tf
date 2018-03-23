@@ -21,7 +21,8 @@ resource "aws_instance" "kedumba" {
   # There's only a few services left on kedumba, the biggest
   # one being righttoknow. So, we can drop the instance size down
   # from t2.large to t2.medium
-  instance_type = "t2.medium"
+  # Moved it to t2.small when oaf.org.au was moved off
+  instance_type = "t2.small"
   tags {
     Name = "kedumba"
   }
