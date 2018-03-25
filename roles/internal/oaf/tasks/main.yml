@@ -149,7 +149,6 @@
     - update-notifier
     - widget-context
     - widget-logic
-    - wordpress-https
     - wordpress-importer
     - wp-twittersearch
     - wp-hide-pages
