@@ -44,7 +44,8 @@ resource "aws_db_instance" "postgresql" {
   engine                     = "postgres"
   engine_version             = "9.4.15"
   # Let's start in production with db.t2.medium. We should watch the cpu credits
-  instance_class             = "db.t2.medium"
+  # Dropping down to db.t2.small because we're under-using
+  instance_class             = "db.t2.small"
   identifier                 = "postgresql"
   username                   = "root"
   password                   = "${var.rds_admin_password}"
