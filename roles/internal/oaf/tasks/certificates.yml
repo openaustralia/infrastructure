@@ -45,10 +45,8 @@
     certbot_certs:
       - email: contact@oaf.org.au
         domains:
-          # This is assuming that in production oaf_domain will be set to openaustraliafoundation.org.au
-          # TODO: When we change it to oaf.org.au, we will also need to update the alternate domain below
           - "{{ oaf_domain }}"
           - www."{{ oaf_domain }}"
-          - oaf.org.au
-          - www.oaf.org.au
+          - openaustraliafoundation.org.au
+          - www.openaustraliafoundation.org.au
   when: "'ec2' in group_names"
