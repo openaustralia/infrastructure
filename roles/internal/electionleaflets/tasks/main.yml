@@ -1,4 +1,74 @@
 ---
+# We want this directory to exist in development too so that
+# things are as consistent as possible
+# Basically everything in /data is stuff we want backed up that
+# isn't the database
+- name: Create data mountpoint
+  file:
+    state: directory
+    path: /data
+
+# On EC2 we're using a seperate EBS volume to hold application data
+- name: Create filesystem on attached block storage
+  filesystem:
+    fstype: ext4
+    dev: /dev/xvdh
+  when: "'ec2' in group_names"
+
+- name: Mount /data filesystem
+  mount:
+    path: /data
+    src: /dev/xvdh
+    fstype: ext4
+    state: mounted
+  when: "'ec2' in group_names"
+
+- name: Create directories in /data
+  file:
+    path: "/data/{{ item[0] }}/{{ item[1] }}"
+    owner: deploy
+    group: www-data
+    mode: 0775
+    state: directory
+  with_nested:
+    - ['production', 'staging']
+    - ['images/small', 'images/medium', 'images/large', 'images/thumbnail', 'images/original']
+
+# The rest of the deploy directories get created by running "cap deploy:setup"
+- name: Ensure that directories exist
+  file: path={{ item }} owner=deploy group=deploy state=directory
+  with_items:
+    - "/srv/www"
+    - "/srv/www/log"
+    - "/srv/www/production/shared"
+    - "/srv/www/production/shared/config"
+    - "/srv/www/staging"
+    - "/srv/www/staging/shared"
+    - "/srv/www/staging/shared/config"
+
+- name: Ensure that shared data directories exist and are writeable
+  file:
+    path: "/srv/www/{{ item[0] }}/shared/data/{{ item[1] }}"
+    owner: deploy
+    group: www-data
+    mode: 0775
+    state: directory
+  with_nested:
+    - ['production','staging']
+    - - ''
+      - 'smarty_compile'
+      - 'cache'
+      - 'temp'
+
+- name: Link directories in /srv/www to /data
+  file:
+    state: link
+    src: "/data/{{ item[0] }}/{{ item[1] }}"
+    dest: "/srv/www/{{ item[0] }}/shared/data/{{ item[1] }}"
+  with_nested:
+    - ['production', 'staging']
+    - - 'images'
+
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
   file:
@@ -75,6 +145,7 @@
     - php5.6-gd
     - php5.6-mysql
     - php5.6-mbstring
+    - php5.6-curl
     - apache2
     - libapache2-mod-php5.6
     - python-mysqldb
@@ -108,38 +179,6 @@
     password: "{{ electionleaflets_staging_mysql_password }}"
     priv: 'el-staging.*:ALL'
     host: "%"
-
-# The rest of the deploy directories get created by running "cap deploy:setup"
-- name: Ensure that directories exist
-  file: path={{ item }} owner=deploy group=deploy state=directory
-  with_items:
-    - "/srv/www"
-    - "/srv/www/log"
-    - "/srv/www/production/shared"
-    - "/srv/www/production/shared/config"
-    - "/srv/www/staging"
-    - "/srv/www/staging/shared"
-    - "/srv/www/staging/shared/config"
-
-- name: Ensure that shared data directories exist and are writeable
-  file:
-    path: "/srv/www/{{ item[0] }}/shared/data/{{ item[1] }}"
-    owner: deploy
-    group: www-data
-    mode: 0775
-    state: directory
-  with_nested:
-    - ['production','staging']
-    - - ''
-      - 'smarty_compile'
-      - 'cache'
-      - 'temp'
-      - 'images'
-      - 'images/small'
-      - 'images/original'
-      - 'images/large'
-      - 'images/medium'
-      - 'images/thumbnail'
 
 - name: Copy application database configuration
   template:
