@@ -40,8 +40,8 @@ aws_secret: !vault |
           6139653066656565623866396132613562336262323836343537
 s3_bucket: electionleafletsaustralia #Currently overridden in main.yml
 upload_mail_server: imap.gmail.com
-upload_mail_user: leaflets@openaustralia.org
-upload_mail_password: !vault |
+upload_mail_user_production: leaflets@openaustralia.org
+upload_mail_password_production: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           62383863653030666639636531613938323831613464383166383039366235396333616365313635
           3434306537353866633466396332633034336233376339650a613234353036346133323936396532
