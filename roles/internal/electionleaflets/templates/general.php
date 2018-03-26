@@ -49,10 +49,10 @@ define("EMAIL_PREFIX", '[election leaflet] ');
 define("BUG_EMAIL_PREFIX", '[election leaflet bug]');
 
 //Email addresses
-define("CONTACT_EMAIL", 'team{{ email_suffix}}@electionleaflets.org.au');
+define("CONTACT_EMAIL", 'team@electionleaflets.org.au');
 define("BUG_FROM_EMAIL", 'bugs@' . DOMAIN);
-define("BUG_TO_EMAIL", 'web-administrators{{ email_suffix }}@electionleaflets.org.au');
-define("LEAFLETS_EMAIL", 'leaflet{{ email_suffix }}@electionleaflets.org.au');
+define("BUG_TO_EMAIL", 'web-administrators@electionleaflets.org.au');
+define("LEAFLETS_EMAIL", 'leaflets{{ email_suffix }}@electionleaflets.org.au');
 
 //Site name
 define("SITE_NAME", "ElectionLeaflets.org.au");
