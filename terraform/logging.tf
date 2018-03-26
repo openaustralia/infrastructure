@@ -39,3 +39,8 @@ resource "aws_iam_role_policy" "logging" {
 }
 EOF
 }
+
+resource "aws_iam_instance_profile" "logging" {
+  name  = "logging"
+  role = "${aws_iam_role.logging.name}"
+}
