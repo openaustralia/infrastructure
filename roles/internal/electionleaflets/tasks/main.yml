@@ -256,9 +256,15 @@
   file: dest="/etc/apache2/sites-enabled/000-default.conf" state=absent
   notify: reload apache
 
-# TODO Only enable on production server or with separate config values
-# - name: Cron for mail import
-#   cron: name="mail import" minute="*/5" user=deploy job="cd /srv/www/current/tools && php import_mail.php" state=present
+- name: Staging mail import
+  cron: name="mail import {{ item }}"
+  minute: "*/5"
+  user: deploy
+  job: "cd /srv/www/{{ item }}/current/tools && php import_mail.php"
+  state: present
+  with_items:
+    - staging
+  when: "'ec2' in group_names"
 
 - name: Cron for email alerts
   cron: name="email alerts" minute="*/5" user=deploy job="cd /srv/www/current/tools && php alertomatic.php" state=present
