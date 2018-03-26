@@ -212,6 +212,8 @@
     s3_bucket: "{{ ( item == 'production') | ternary('electionleafletsaustralia', 'electionleafletstest2') }}"
     analytics: "{{ ( item == 'production') | ternary('UA-3107958-8','UA-3107958-9')}}"
     admin_password: "{{ ( item == 'production' ) | ternary(admin_password_production, admin_password_staging ) }}"
+    upload_mail_user: "{{ ( item == 'production' ) | ternary(upload_mail_user, upload_mail_user_staging)}}"
+    upload_mail_password: "{{ ( item == 'production' ) | ternary(upload_mail_password, upload_mail_password_staging)}}"
   with_items:
     - production
     - staging
