@@ -44,3 +44,5 @@ resource "aws_iam_instance_profile" "logging" {
   name  = "logging"
   role = "${aws_iam_role.logging.name}"
 }
+
+# TODO: Setup retention settings on logs

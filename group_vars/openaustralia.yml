@@ -35,3 +35,10 @@ cuttlefish_password: !vault |
           30663761383838383466303634633861633434306638313562623465336536633239636466626135
           6565323435386430340a376161636165346133626232613162343235376631653965666431343039
           33303432333838663961623138306365306565393665303233633737326633666465
+logs:
+   - file: /var/log/syslog
+     format: "%b %d %H:%M:%S"
+     group_name: /var/log/syslog
+   - file: /var/log/apache2/error.log
+     format: "%a %b %d %H:%M:%S.%f %Y"
+     group_name: /var/log/apache2/error.log
