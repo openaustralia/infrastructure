@@ -257,10 +257,11 @@
   notify: reload apache
 
 - name: Staging mail import
-  cron: name="mail import {{ item }}"
-  minute: "*/5"
-  user: deploy
-  job: "cd /srv/www/{{ item }}/current/tools && php import_mail.php"
+  cron:
+    name: "mail import {{ item }}"
+    minute: "*/5"
+    user: deploy
+    job: "cd /srv/www/{{ item }}/current/tools && php import_mail.php"
   state: present
   with_items:
     - staging
