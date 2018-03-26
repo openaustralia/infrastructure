@@ -1,2 +1,5 @@
 ---
-# defaults file for awslogs
+logs:
+   - file: /var/log/syslog
+     format: "%b %d %H:%M:%S"
+     group_name: /var/log/syslog

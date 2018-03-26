@@ -9,3 +9,4 @@ dependencies:
   - role: ANXS.ntp
   - role: jnv.unattended-upgrades
     unattended_automatic_reboot: true
+  - role: awslogs

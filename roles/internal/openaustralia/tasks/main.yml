@@ -1,22 +1,4 @@
 ---
-# A little experiment in installing the aws logger agent
-- name: Download awslogs agent
-  get_url:
-    url: https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py
-    dest: /tmp/awslogs-agent-setup.py
-  when: "'ec2' in group_names"
-
-- name: Configure awslogs agent
-  template:
-    src: awslogs.conf
-    dest: /tmp/awslogs.conf
-  when: "'ec2' in group_names"
-
-- name: Install awslogs agent
-  shell: "python /tmp/awslogs-agent-setup.py --region {{ ec2_region }} -n -c /tmp/awslogs.conf"
-  creates: /etc/init.d/awslogs
-  when: "'ec2' in group_names"
-
 # We want this directory to exist in development too so that
 # things are as consistent as possible
 # Basically everything in /data is stuff we want backed up that
