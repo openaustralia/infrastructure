@@ -6,26 +6,12 @@ resource "cloudflare_record" "opengovernment_root" {
   value  = "${aws_eip.opengovernment.public_ip}"
 }
 
-resource "cloudflare_record" "opengovernment_ec2" {
-  domain = "opengovernment.org.au"
-  name   = "ec2.opengovernment.org.au"
-  type   = "A"
-  value  = "${aws_eip.opengovernment.public_ip}"
-}
-
 # CNAME records
 resource "cloudflare_record" "opengovernment_www" {
   domain = "opengovernment.org.au"
   name   = "www.opengovernment.org.au"
   type   = "CNAME"
   value  = "opengovernment.org.au"
-}
-
-resource "cloudflare_record" "opengovernment_www_ec2" {
-  domain = "opengovernment.org.au"
-  name   = "www.ec2.opengovernment.org.au"
-  type   = "CNAME"
-  value  = "ec2.opengovernment.org.au"
 }
 
 # MX records
