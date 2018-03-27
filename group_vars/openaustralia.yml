@@ -48,3 +48,11 @@ logs:
    - file: /srv/www/production/log/error.log
      group_name: /srv/www/production/log/error.log
      format: "%a %b %d %H:%M:%S.%f %Y"
+
+   - file: /var/log/letsencrypt/letsencrypt.log
+     group_name: /var/log/letsencrypt/letsencrypt.log
+     format: "%Y-%m-%d %H:%M:%S"
+  
+   - file: /var/log/unattended-upgrades/unattended-upgrades.log
+     group_name: /var/log/unattended-upgrades/unattended-upgrades.log
+     format: "%Y-%m-%d %H:%M:%S"

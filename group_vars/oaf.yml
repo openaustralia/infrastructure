@@ -36,3 +36,24 @@ backup_gpg_pw: !vault |
           39343833643364613532636139366361336234653535383830613332616639346131376434326466
           6265376239333462310a636430656236653031393138396636363730386263643164633738613439
           30663165306633383064643638313238303561616530626263643766396433303966
+logs:
+  - file: /var/log/syslog
+    group_name: /var/log/syslog
+    format: "%b %d %H:%M:%S"
+
+  - file: /var/log/apache2/error.log
+    group_name: /var/log/apache2/error.log
+    format: "%a %b %d %H:%M:%S.%f %Y"
+
+  - file: /var/log/duply/wordpress-uploads.log
+    group_name: /var/log/duply/wordpress-uploads.log
+    # No idea what the format should be otherwise
+    format: "%b %d %H:%M:%S"
+
+  - file: /var/log/letsencrypt/letsencrypt.log
+    group_name: /var/log/letsencrypt/letsencrypt.log
+    format: "%Y-%m-%d %H:%M:%S"
+
+  - file: /var/log/unattended-upgrades/unattended-upgrades.log
+    group_name: /var/log/unattended-upgrades/unattended-upgrades.log
+    format: "%Y-%m-%d %H:%M:%S"
