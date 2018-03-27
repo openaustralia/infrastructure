@@ -133,7 +133,6 @@ dependencies:
     rbenv_users:
       - deploy
   - role: Stouts.backup
-    backup_max_age: 6M
     backup_profiles:
       - name: righttoknow_data
         schedule: 0 2 * * *

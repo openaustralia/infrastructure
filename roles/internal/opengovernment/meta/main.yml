@@ -57,7 +57,6 @@ dependencies:
   # We're not backing up from a /data directory because we shouldn't need another disk
   # to hold the data. So, instead just backing it up from it's natural place.
   - role: Stouts.backup
-    backup_max_age: 6M
     backup_profiles:
       - name: wordpress-uploads
         schedule: 0 2 * * *
