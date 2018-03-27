@@ -233,3 +233,23 @@ corelogic_sftp_password: !vault |
           39666131643532616662373661613830343562383534333732653565336266333933356231616663
           3833636463393262610a653865383666663262383934383935666366396365653937373637343863
           3466
+logs:
+  - file: /var/log/syslog
+    group_name: /var/log/syslog
+    format: "%b %d %H:%M:%S"
+
+  - file: /var/log/nginx/error.log
+    group_name: /var/log/nginx/error.log
+    format: "%Y-%m-%d %H:%M:%S.%f"
+
+  - file: /var/log/letsencrypt/letsencrypt.log
+    group_name: /var/log/letsencrypt/letsencrypt.log
+    format: "%Y-%m-%d %H:%M:%S"
+
+  - file: /var/log/unattended-upgrades/unattended-upgrades.log
+    group_name: /var/log/unattended-upgrades/unattended-upgrades.log
+    format: "%Y-%m-%d %H:%M:%S"
+
+  - file: /srv/www/production/shared/log/production.log
+    group_name: /srv/www/production/shared/log/production.log
+    format: "%Y-%m-%dT%H:%M:%S.%f"

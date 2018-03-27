@@ -13,3 +13,24 @@ admin_password: !vault |
           64333535376138623665633065323737653666313234356330386361326435336634393933343237
           3761316463346561330a613037313634323038646531326261386133653162636364353362343432
           63323362346531353962623634303963333336353961633737303536633166643663
+logs:
+  - file: /var/log/syslog
+    group_name: /var/log/syslog
+    format: "%b %d %H:%M:%S"
+
+  - file: /var/log/apache2/error.log
+    group_name: /var/log/apache2/error.log
+    format: "%a %b %d %H:%M:%S.%f %Y"
+
+  - file: /var/log/duply/wordpress-uploads.log
+    group_name: /var/log/duply/wordpress-uploads.log
+    # No idea what the format should be otherwise
+    format: "%b %d %H:%M:%S"
+
+  - file: /var/log/letsencrypt/letsencrypt.log
+    group_name: /var/log/letsencrypt/letsencrypt.log
+    format: "%Y-%m-%d %H:%M:%S"
+
+  - file: /var/log/unattended-upgrades/unattended-upgrades.log
+    group_name: /var/log/unattended-upgrades/unattended-upgrades.log
+    format: "%Y-%m-%d %H:%M:%S"
