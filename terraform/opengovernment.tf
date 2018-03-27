@@ -8,6 +8,7 @@ resource "aws_instance" "opengovernment" {
   }
   security_groups = ["${aws_security_group.webserver.name}"]
   disable_api_termination = true
+  iam_instance_profile = "${aws_iam_instance_profile.logging.name}"
 }
 
 resource "aws_eip" "opengovernment" {

@@ -15,6 +15,7 @@ resource "aws_instance" "righttoknow" {
   ]
   availability_zone = "${aws_ebs_volume.righttoknow_data.availability_zone}"
   disable_api_termination = true
+  iam_instance_profile = "${aws_iam_instance_profile.logging.name}"
 }
 
 resource "aws_eip" "righttoknow" {

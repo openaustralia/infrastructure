@@ -17,6 +17,7 @@ resource "aws_instance" "electionleaflets" {
   security_groups = ["${aws_security_group.webserver.name}"]
   availability_zone = "${aws_ebs_volume.electionleaflets_data.availability_zone}"
   disable_api_termination = true
+  iam_instance_profile = "${aws_iam_instance_profile.logging.name}"
 }
 
 resource "aws_eip" "electionleaflets" {
