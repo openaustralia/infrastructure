@@ -37,12 +37,14 @@ cuttlefish_password: !vault |
           33303432333838663961623138306365306565393665303233633737326633666465
 logs:
    - file: /var/log/syslog
-     format: "%b %d %H:%M:%S"
      group_name: /var/log/syslog
+     format: "%b %d %H:%M:%S"
+
    - file: /var/log/duply/openaustralia_data.log
+     group_name: /var/log/duply/openaustralia_data.log
      # No idea what the format should be otherwise
      format: "%b %d %H:%M:%S"
-     group_name: /var/log/duply/openaustralia_data.log
+
    - file: /srv/www/production/log/error.log
-     format: "%a %b %d %H:%M:%S.%f %Y"
      group_name: /srv/www/production/log/error.log
+     format: "%a %b %d %H:%M:%S.%f %Y"
