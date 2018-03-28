@@ -99,12 +99,20 @@ resource "aws_s3_bucket" "production" {
   provider = "aws.ap-southeast-1"
   bucket = "electionleafletsaustralia"
   region = "ap-southeast-1"
-  acl = "public-read"
+  # We don't want to use the pre-canned "public-read" because this allows listing
+  # of all the objects in the bucket. There might be hidden leaflets. So, we
+  # don't want to allow this.
+  # TODO: Figure out how to set the proper permissions using the acl for the bucket
+  # acl = "public-read"
 }
 
 resource "aws_s3_bucket" "staging" {
   provider = "aws.ap-southeast-1"
   bucket = "electionleafletstest2"
   region = "ap-southeast-1"
-  acl = "public-read"
+  # We don't want to use the pre-canned "public-read" because this allows listing
+  # of all the objects in the bucket. There might be hidden leaflets. So, we
+  # don't want to allow this.
+  # TODO: Figure out how to set the proper permissions using the acl for the bucket
+  # acl = "public-read"
 }
