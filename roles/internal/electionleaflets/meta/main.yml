@@ -124,14 +124,8 @@ dependencies:
   - role: base-server
   - role: Stouts.backup
     backup_profiles:
-      - name: automysqlbackup
-        schedule: 0 4 * * *
-        source: /var/lib/automysqlbackup
-        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
-        target: "s3://s3.amazonaws.com/oaf-backups/electionleaflets/{{ inventory_hostname }}/automysqlbackup"
       - name: electionleaflets_images
         schedule: 0 2 * * *
         source: /srv/www/shared/data/images
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/electionleaflets/{{ inventory_hostname }}/electionleaflets_images"
-  - role: MaximeThoonsen.automysqlbackup
