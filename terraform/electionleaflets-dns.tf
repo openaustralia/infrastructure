@@ -3,7 +3,7 @@ resource "cloudflare_record" "el_root" {
   domain = "electionleaflets.org.au"
   name   = "electionleaflets.org.au"
   type   = "A"
-  value  = "${aws_eip.kedumba.public_ip}"
+  value  = "${aws_eip.electionleaflets.public_ip}"
 }
 
 resource "cloudflare_record" "el_ec2" {
