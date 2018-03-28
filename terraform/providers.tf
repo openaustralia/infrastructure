@@ -5,13 +5,6 @@ provider "aws" {
   region     = "${var.ec2_region}"
 }
 
-provider "dme" {
-  version    = "~> 0.1"
-  akey       = "${var.dnsmadeeasy_akey}"
-  skey       = "${var.dnsmadeeasy_skey}"
-  usesandbox = false
-}
-
 provider "cloudflare" {
   version = "~> 0.1"
   email   = "${var.cloudflare_email}"
