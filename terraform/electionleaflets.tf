@@ -95,4 +95,16 @@ resource "aws_iam_user_policy_attachment" "electionleaflets" {
     policy_arn = "${aws_iam_policy.electionleaflets.arn}"
 }
 
-# TODO: Create production and staging s3 buckets
+resource "aws_s3_bucket" "production" {
+  provider = "aws.ap-southeast-1"
+  bucket = "electionleafletsaustralia"
+  region = "ap-southeast-1"
+  acl = "public-read"
+}
+
+resource "aws_s3_bucket" "staging" {
+  provider = "aws.ap-southeast-1"
+  bucket = "electionleafletstest2"
+  region = "ap-southeast-1"
+  acl = "public-read"
+}
