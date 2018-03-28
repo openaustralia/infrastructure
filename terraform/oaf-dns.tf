@@ -14,13 +14,6 @@ resource "cloudflare_record" "oaf_cuttlefish" {
   value  = "${var.cuttlefish_ipv4}"
 }
 
-resource "cloudflare_record" "oaf_kedumba" {
-  domain = "oaf.org.au"
-  name   = "kedumba.oaf.org.au"
-  type   = "A"
-  value  = "${aws_eip.kedumba.public_ip}"
-}
-
 # AAAA records
 resource "cloudflare_record" "oaf_aaaa_cuttlefish" {
   domain = "oaf.org.au"
@@ -165,13 +158,6 @@ resource "cloudflare_record" "oaf_alt_root" {
   value  = "${aws_eip.oaf.public_ip}"
 }
 
-resource "cloudflare_record" "oaf_alt_kedumba" {
-  domain = "openaustraliafoundation.org.au"
-  name   = "kedumba.openaustraliafoundation.org.au"
-  type   = "A"
-  value  = "${aws_eip.kedumba.public_ip}"
-}
-
 # CNAME records
 resource "cloudflare_record" "oaf_alt_www" {
   domain = "openaustraliafoundation.org.au"
@@ -242,14 +228,6 @@ resource "cloudflare_record" "oaf_alt_mx7" {
   type     = "MX"
   priority = 30
   value    = "aspmx5.googlemail.com"
-}
-
-resource "cloudflare_record" "oaf_alt_kedumba_mx" {
-  domain   = "openaustraliafoundation.org.au"
-  name     = "kedumba.openaustraliafoundation.org.au"
-  type     = "MX"
-  priority = 10
-  value    = "kedumba.openaustraliafoundation.org.au"
 }
 
 # TXT records
