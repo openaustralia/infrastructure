@@ -50,6 +50,13 @@ resource "cloudflare_record" "el_test" {
   value  = "electionleaflets.org.au"
 }
 
+resource "cloudflare_record" "el_www_test" {
+  domain = "electionleaflets.org.au"
+  name   = "www.test.electionleaflets.org.au"
+  type   = "CNAME"
+  value  = "electionleaflets.org.au"
+}
+
 resource "cloudflare_record" "el_federal2010" {
   domain = "electionleaflets.org.au"
   name   = "federal2010.electionleaflets.org.au"
