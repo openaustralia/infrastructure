@@ -268,7 +268,8 @@
   state: present
   with_items:
     - staging
+    #- production ##Uncomment this line if we ever want to activate tihs
   when: "'ec2' in group_names"
 
 - name: Cron for email alerts
-  cron: name="email alerts" minute="*/5" user=deploy job="cd /srv/www/current/tools && php alertomatic.php" state=present
+  cron: name="email alerts" minute="*/5" user=deploy job="cd /srv/www/production/current/tools && php alertomatic.php" state=absent
