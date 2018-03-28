@@ -6,36 +6,7 @@ resource "cloudflare_record" "el_root" {
   value  = "${aws_eip.electionleaflets.public_ip}"
 }
 
-resource "cloudflare_record" "el_ec2" {
-  domain = "electionleaflets.org.au"
-  name   = "ec2.electionleaflets.org.au"
-  type   = "A"
-  value  = "${aws_eip.electionleaflets.public_ip}"
-}
-
 # CNAME records
-
-resource "cloudflare_record" "el_www_ec2" {
-  domain = "electionleaflets.org.au"
-  name   = "www.ec2.electionleaflets.org.au"
-  type   = "CNAME"
-  value  = "ec2.electionleaflets.org.au"
-}
-
-resource "cloudflare_record" "el_test_ec2" {
-  domain = "electionleaflets.org.au"
-  name   = "test.ec2.electionleaflets.org.au"
-  type   = "CNAME"
-  value  = "ec2.electionleaflets.org.au"
-}
-
-resource "cloudflare_record" "el_www_test_ec2" {
-  domain = "electionleaflets.org.au"
-  name   = "www.test.ec2.electionleaflets.org.au"
-  type   = "CNAME"
-  value  = "ec2.electionleaflets.org.au"
-}
-
 resource "cloudflare_record" "el_www" {
   domain = "electionleaflets.org.au"
   name   = "www.electionleaflets.org.au"
