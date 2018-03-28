@@ -53,3 +53,42 @@ resource "aws_volume_attachment" "electionleaflets_data" {
 # This can be automated using Cloudwatch. See:
 # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/TakeScheduledSnapshot.html
 # https://www.terraform.io/docs/providers/aws/r/cloudwatch_event_rule.html
+
+resource "aws_iam_user" "electionleaflets" {
+  name = "electionleaflets"
+}
+
+resource "aws_iam_policy" "electionleaflets" {
+  name = "S3BucketAccessTo_electionleafletsaustralia"
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets",
+                "s3:HeadBucket",
+                "s3:ListObjects"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::electionleafletsaustralia",
+                "arn:aws:s3:::electionleafletsaustralia/*"
+            ]
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_user_policy_attachment" "electionleaflets" {
+    user       = "${aws_iam_user.electionleaflets.name}"
+    policy_arn = "${aws_iam_policy.electionleaflets.arn}"
+}
