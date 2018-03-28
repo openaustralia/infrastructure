@@ -103,7 +103,7 @@ resource "aws_s3_bucket" "production" {
   # of all the objects in the bucket. There might be hidden leaflets. So, we
   # don't want to allow this.
   # TODO: Figure out how to set the proper permissions using the acl for the bucket
-  # acl = "public-read"
+  acl = ""
 }
 
 resource "aws_s3_bucket" "staging" {
@@ -114,5 +114,5 @@ resource "aws_s3_bucket" "staging" {
   # of all the objects in the bucket. There might be hidden leaflets. So, we
   # don't want to allow this.
   # TODO: Figure out how to set the proper permissions using the acl for the bucket
-  # acl = "public-read"
+  acl = ""
 }
