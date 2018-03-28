@@ -5,7 +5,7 @@ openaustralia_domain: openaustralia.org.au
 righttoknow_domain: righttoknow.org.au
 oaf_domain: oaf.org.au
 opengovernment_domain: opengovernment.org.au
-electionleaflets_domain: ec2.electionleaflets.org.au
+electionleaflets_domain: electionleaflets.org.au
 ansible_user: ubuntu
 ansible_ssh_private_key_file: 'test.pem'
 ec2_region: 'ap-southeast-2'
