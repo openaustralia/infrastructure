@@ -80,7 +80,9 @@ resource "aws_iam_policy" "electionleaflets" {
             "Action": "s3:*",
             "Resource": [
                 "arn:aws:s3:::electionleafletsaustralia",
-                "arn:aws:s3:::electionleafletsaustralia/*"
+                "arn:aws:s3:::electionleafletstest2",
+                "arn:aws:s3:::electionleafletsaustralia/*",
+                "arn:aws:s3:::electionleafletstest2/*"
             ]
         }
     ]
@@ -92,3 +94,5 @@ resource "aws_iam_user_policy_attachment" "electionleaflets" {
     user       = "${aws_iam_user.electionleaflets.name}"
     policy_arn = "${aws_iam_policy.electionleaflets.arn}"
 }
+
+# TODO: Create production and staging s3 buckets
