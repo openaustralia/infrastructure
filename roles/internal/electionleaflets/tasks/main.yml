@@ -149,6 +149,7 @@
     - apache2
     - libapache2-mod-php5.6
     - python-mysqldb
+    - php5.6-xml
 
 - name: Create electionleaflets databases
   mysql_db:
