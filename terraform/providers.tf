@@ -5,6 +5,11 @@ provider "aws" {
   region     = "${var.ec2_region}"
 }
 
+provider "aws" {
+  alias  = "us-east-1"
+  region = "us-east-1"
+}
+
 provider "cloudflare" {
   version = "~> 0.1"
   email   = "${var.cloudflare_email}"
