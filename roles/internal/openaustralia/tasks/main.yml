@@ -31,7 +31,7 @@
     state: directory
   with_nested:
     - ['production', 'staging']
-    - ['images/mps', 'images/mpsL', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old']
+    - ['images/mps', 'images/mpsL', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search/searchdb']
 
 - name: Ensure that directories in /srv/www exist
   file:
@@ -41,7 +41,7 @@
     state: directory
   with_nested:
     - ['production', 'staging']
-    - ['log', 'releases', 'shared/config', 'shared/searchdb', 'shared/rss/mp', 'shared/sitemaps']
+    - ['log', 'releases', 'shared/config', 'shared/rss/mp', 'shared/sitemaps']
 
 - name: Link directories in /srv/www to /data
   file:
@@ -50,7 +50,7 @@
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
     - ['production', 'staging']
-    - ['images', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old']
+    - ['images', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search']
 
 - name: Link file alerts-lastsent in /srv/www to /data
   file:
