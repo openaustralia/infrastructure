@@ -60,3 +60,7 @@ mv righttoknow.org.au.dev.key righttoknow.org.au.dev.pem test.righttoknow.org.au
 mv oaf.org.au.test.key oaf.org.au.test.pem ../roles/internal/oaf/files
 mv opengovernment.org.au.test.key opengovernment.org.au.test.pem ../roles/internal/opengovernment/files
 mv electionleaflets.org.au.test.key electionleaflets.org.au.test.pem test.electionleaflets.org.au.test.key test.electionleaflets.org.au.test.pem ../roles/internal/electionleaflets/files
+# Line below is a temporary measure to copy across a certificate generated here
+# to be used in the morph repo for provisioning. This is only temporary until the
+# morph provisioning is move to this repo
+#mv dev.morph.io.key dev.morph.io.pem ../../morph/provisioning/roles/morph-app/files/ssl
