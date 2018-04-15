@@ -127,7 +127,7 @@ resource "cloudflare_record" "pa_google_site_verification" {
   domain = "planningalerts.org.au"
   name   = "planningalerts.org.au"
   type   = "TXT"
-  value  = "google-site-verification=JYy5YaJQFzwI4HtLDThcvFldc8fzX7QWJmwwmmp0nMo"
+  value  = "google-site-verification=wZp42fwpmr6aGdCVqp7BJBn_kenD51hYLig7cMOFIBs"
 }
 
 resource "cloudflare_record" "pa_domainkey" {
