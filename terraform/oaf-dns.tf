@@ -178,7 +178,7 @@ resource "cloudflare_record" "oaf_alt_mx1" {
   domain   = "openaustraliafoundation.org.au"
   name     = "openaustraliafoundation.org.au"
   type     = "MX"
-  priority = 10
+  priority = 1
   value    = "aspmx.l.google.com"
 }
 
@@ -186,7 +186,7 @@ resource "cloudflare_record" "oaf_alt_mx2" {
   domain   = "openaustraliafoundation.org.au"
   name     = "openaustraliafoundation.org.au"
   type     = "MX"
-  priority = 20
+  priority = 5
   value    = "alt1.aspmx.l.google.com"
 }
 
@@ -194,7 +194,7 @@ resource "cloudflare_record" "oaf_alt_mx3" {
   domain   = "openaustraliafoundation.org.au"
   name     = "openaustraliafoundation.org.au"
   type     = "MX"
-  priority = 20
+  priority = 5
   value    = "alt2.aspmx.l.google.com"
 }
 
@@ -202,7 +202,7 @@ resource "cloudflare_record" "oaf_alt_mx4" {
   domain   = "openaustraliafoundation.org.au"
   name     = "openaustraliafoundation.org.au"
   type     = "MX"
-  priority = 30
+  priority = 10
   value    = "aspmx2.googlemail.com"
 }
 
@@ -210,24 +210,8 @@ resource "cloudflare_record" "oaf_alt_mx5" {
   domain   = "openaustraliafoundation.org.au"
   name     = "openaustraliafoundation.org.au"
   type     = "MX"
-  priority = 30
+  priority = 10
   value    = "aspmx3.googlemail.com"
-}
-
-resource "cloudflare_record" "oaf_alt_mx6" {
-  domain   = "openaustraliafoundation.org.au"
-  name     = "openaustraliafoundation.org.au"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx4.googlemail.com"
-}
-
-resource "cloudflare_record" "oaf_alt_mx7" {
-  domain   = "openaustraliafoundation.org.au"
-  name     = "openaustraliafoundation.org.au"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx5.googlemail.com"
 }
 
 # TXT records
