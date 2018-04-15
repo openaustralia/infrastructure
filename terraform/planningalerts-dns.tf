@@ -62,7 +62,7 @@ resource "cloudflare_record" "pa_mx1" {
   domain   = "planningalerts.org.au"
   name     = "planningalerts.org.au"
   type     = "MX"
-  priority = 10
+  priority = 1
   value    = "aspmx.l.google.com"
 }
 
@@ -70,7 +70,7 @@ resource "cloudflare_record" "pa_mx2" {
   domain   = "planningalerts.org.au"
   name     = "planningalerts.org.au"
   type     = "MX"
-  priority = 20
+  priority = 5
   value    = "alt1.aspmx.l.google.com"
 }
 
@@ -78,7 +78,7 @@ resource "cloudflare_record" "pa_mx3" {
   domain   = "planningalerts.org.au"
   name     = "planningalerts.org.au"
   type     = "MX"
-  priority = 20
+  priority = 5
   value    = "alt2.aspmx.l.google.com"
 }
 
@@ -86,7 +86,7 @@ resource "cloudflare_record" "pa_mx4" {
   domain   = "planningalerts.org.au"
   name     = "planningalerts.org.au"
   type     = "MX"
-  priority = 30
+  priority = 10
   value    = "aspmx2.googlemail.com"
 }
 
@@ -94,24 +94,8 @@ resource "cloudflare_record" "pa_mx5" {
   domain   = "planningalerts.org.au"
   name     = "planningalerts.org.au"
   type     = "MX"
-  priority = 30
+  priority = 10
   value    = "aspmx3.googlemail.com"
-}
-
-resource "cloudflare_record" "pa_mx6" {
-  domain   = "planningalerts.org.au"
-  name     = "planningalerts.org.au"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx4.googlemail.com"
-}
-
-resource "cloudflare_record" "pa_mx7" {
-  domain   = "planningalerts.org.au"
-  name     = "planningalerts.org.au"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx5.googlemail.com"
 }
 
 # TXT records
