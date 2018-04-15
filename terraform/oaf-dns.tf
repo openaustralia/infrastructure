@@ -237,3 +237,10 @@ resource "cloudflare_record" "oaf_alt_spf" {
   type   = "TXT"
   value  = "v=spf1 a include:_spf.google.com ~all"
 }
+
+resource "cloudflare_record" "oaf_alt_google_site_verification" {
+  domain = "openaustraliafoundation.org.au"
+  name   = "openaustraliafoundation.org.au"
+  type   = "TXT"
+  value  = "google-site-verification=sNfu9GJBQDlBYvdsXm8b61JjxxPfDy2JH9ok2UKHu48"
+}
