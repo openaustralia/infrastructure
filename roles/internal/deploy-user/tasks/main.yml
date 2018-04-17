@@ -17,14 +17,16 @@
   become: false
   with_items: "{{ github_users }}"
 
-- name: Create authorized_keys for deploy from the file that just downloaded
+- name: Create authorized_keys for deploy and ubuntu from the file that just downloaded
   authorized_key:
-    user: deploy
-    key: "{{ lookup('file', '/tmp/{{ item }}.github_authorized_keys') }}"
-    comment: "{{ item }}"
-  with_items: "{{ github_users }}"
+    user: "{{ item[0] }}"
+    key: "{{ lookup('file', '/tmp/{{ item[1] }}.github_authorized_keys') }}"
+    comment: "{{ item[1] }}"
+  with_nested:
+    - ['deploy', 'ubuntu']
+    - "{{ github_users }}"
 
-- name: Create authorized_keys for root from the file that just downloaded
+- Name: Create authorized_keys for root from the file that just downloaded
   authorized_key:
     user: root
     key: "{{ lookup('file', '/tmp/{{ item }}.github_authorized_keys') }}"
