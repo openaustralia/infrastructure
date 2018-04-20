@@ -12,3 +12,4 @@ dependencies:
   - role: infrastructure-agent-ansible
     nrinfragent_config:
       license_key: "{{ newrelic_license_key }}"
+      display_name: "{{ name }}"

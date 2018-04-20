@@ -1,3 +1,6 @@
+# TODO: Unify this with the domain. It's currently only used to name
+# things on New Relic.
+name: opengovernment.org.au
 opengovernment_production_mysql_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           61303430656638616337626363386435343063373337323335313433356335373131393666316339

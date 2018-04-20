@@ -1,3 +1,6 @@
+# TODO: Unify this with the domain. It's currently only used to name
+# things on New Relic.
+name: oaf.org.au
 cron_enabled: true
 admin_user: admin
 admin_password: !vault |
