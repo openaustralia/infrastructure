@@ -37,3 +37,8 @@
 
 - src: geerlingguy.certbot
   version: 3.0.0
+
+# Installing through ansible galaxy doesn't work`
+# See https://github.com/newrelic/infrastructure-agent-ansible/issues/39
+- src: https://github.com/newrelic/infrastructure-agent-ansible.git
+  version: 0.3.0

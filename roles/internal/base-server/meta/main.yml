@@ -9,3 +9,6 @@ dependencies:
   - role: jnv.unattended-upgrades
     unattended_automatic_reboot: true
   - role: awslogs
+  - role: infrastructure-agent-ansible
+    nrinfragent_config:
+      license_key: "{{ newrelic_license_key }}"
