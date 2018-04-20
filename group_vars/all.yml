@@ -19,3 +19,4 @@ backup_target_pass: !vault |
 backup_max_age: 6M
 # Part of the default value "--quiet" appears not to be valid
 certbot_auto_renew_options: "--no-self-upgrade"
+github_users: ['mlandauer', 'henare', 'jamezpolley']
