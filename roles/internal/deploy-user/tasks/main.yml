@@ -16,6 +16,7 @@
   delegate_to: localhost
   become: false
   with_items: "{{ github_users }}"
+  check_mode: yes
 
 - name: Create authorized_keys for deploy and ubuntu from the file that just downloaded
   authorized_key:
@@ -25,6 +26,7 @@
   with_nested:
     - ['deploy', 'ubuntu']
     - "{{ github_users }}"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - Name: Create authorized_keys for root from the file that just downloaded
   authorized_key:
