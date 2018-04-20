@@ -1,0 +1,14 @@
+# Run this like so:
+# ansible-playbook -i ec2-hosts -e update_ubuntu_keys.yml
+
+# To only run this for planningalerts:
+# ansible-playbook -i ec2-hosts update_ubuntu_keys.yml -l planningalerts
+
+# To only run this for openaustralia:
+# ansible-playbook -i ec2-hosts update_ubuntu_keys.yml -l openaustralia
+
+- hosts: ec2
+  vars:
+    ansible_user: root
+  roles:
+    - deploy-user
