@@ -46,7 +46,7 @@
       - email: contact@oaf.org.au
         domains:
           - "{{ oaf_domain }}"
-          - www."{{ oaf_domain }}"
+          - "www.{{ oaf_domain }}"
           - openaustraliafoundation.org.au
           - www.openaustraliafoundation.org.au
   when: "'ec2' in group_names"
