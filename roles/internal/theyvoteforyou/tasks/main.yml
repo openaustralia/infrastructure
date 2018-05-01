@@ -151,7 +151,7 @@
       - email: contact@oaf.org.au
         domains:
           - "{{ theyvoteforyou_domain }}"
-          - www."{{ theyvoteforyou_domain }}"
+          - "www.{{ theyvoteforyou_domain }}"
           - theyvoteforyou.org
           - www.theyvoteforyou.org
           - theyvoteforyou.com.au
