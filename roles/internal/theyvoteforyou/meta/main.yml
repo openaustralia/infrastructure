@@ -31,4 +31,4 @@ dependencies:
           - copytruncate
   - role: azavea.elasticsearch
     elasticsearch_bind_host: 127.0.0.1
-    java_version: "8u151*"
+    java_version: "8u162*"
