@@ -31,7 +31,7 @@
     state: directory
   with_nested:
     - ['production', 'staging']
-    - ['files', 'cache']
+    - ['files', 'cache', 'bundle']
 
 - name: Ensure that deploy owns application directories
   file:
@@ -50,7 +50,7 @@
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
     - ['production', 'staging']
-    - ['files', 'cache']
+    - ['files', 'cache', 'bundle']
 
 - name: Set the ruby version for the alaveteli deploy
   copy:
@@ -59,7 +59,7 @@
   with_items:
     - production
     - staging
-
+    
 - name: Another Aleveteli config to force production environment
   template:
     src: rails_env.rb
