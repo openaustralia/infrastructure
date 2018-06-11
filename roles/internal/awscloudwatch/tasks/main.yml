@@ -18,6 +18,11 @@
 #     checksum: sha256:e2f566a0156eff1aaad5e18ab12c0b4126a9771ba8df107d960d218426472b30
 #   when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
 
+- name: Ensure unzip is installed
+  package:
+    name: unzip
+    state: present
+  when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
 
 - name: Unzip CloudWatch agent zipfile
   unarchive:
@@ -33,3 +38,18 @@
     chdir: "{{ awscwa.path }}"
     creates: /opt/aws/amazon-cloudwatch-agent//bin/amazon-cloudwatch-agent
   when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
+
+- name: Configure CloudWatch
+  copy:
+    src: config.json
+    dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+  when: "'ec2' in group_names"
+  notify:
+    - restart CloudWatch Agent
+
+- name: Configure CloudWatch service
+  service:
+    name: amazon-cloudwatch-agent
+    enabled: yes
+    state: started
+  when: "'ec2' in group_names"
