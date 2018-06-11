@@ -1,0 +1,35 @@
+---
+
+- name: Check if CloudWatch is already installed
+  stat:
+    path: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
+  register: cloudwatch_installed
+
+- name: Create CloudWatch temporary directory
+  tempfile:
+    state: directory
+  when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
+  register: awscwa
+
+# - name: Download CloudWatch agent
+#   get_url:
+#     url: https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/AmazonCloudWatchAgent.zip
+#     dest: "{{ awscwa.path }}"
+#     checksum: sha256:e2f566a0156eff1aaad5e18ab12c0b4126a9771ba8df107d960d218426472b30
+#   when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
+
+
+- name: Unzip CloudWatch agent zipfile
+  unarchive:
+    remote_src: yes
+    src: https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/AmazonCloudWatchAgent.zip
+    dest: "{{ awscwa.path }}"
+  when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
+
+
+- name: Install CloudWatch agent
+  shell: "./install.sh"
+  args:
+    chdir: "{{ awscwa.path }}"
+    creates: /opt/aws/amazon-cloudwatch-agent//bin/amazon-cloudwatch-agent
+  when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
