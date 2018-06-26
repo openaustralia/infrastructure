@@ -10,7 +10,7 @@ dependencies:
     unattended_automatic_reboot: true
   - role: awslogs
   - role: awscloudwatch
-  - role: infrastructure-agent-ansible
+  - role: newrelic.newrelic-infra
     nrinfragent_config:
       license_key: "{{ newrelic_license_key }}"
       display_name: "{{ name }}"
