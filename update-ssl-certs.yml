@@ -1,0 +1,75 @@
+# Run this like so:
+# ansible-playbook -i ec2-hosts site.yml
+
+# To only run this for planningalerts:
+# ansible-playbook -i ec2-hosts site.yml -l planningalerts
+
+# To only run this for openaustralia:
+# ansible-playbook -i ec2-hosts site.yml -l openaustralia
+
+# To show the value of an encrypted variable:
+# ansible planningalerts -i ec2-hosts -m debug -a 'var=planningalerts_production_mysql_password'
+
+# Use terraform (see terraform directory) to actually provision ec2 infrastructure
+
+# Ubuntu 16.04 LTS doesn't come with python pre-installed. We need that for
+# Ansible to work (for the gather facts). So install python first
+- hosts: ec2
+  become: true
+  tasks:
+    - name: Check if Apache is running
+      command: systemctl status apache2
+      ignore_errors: yes
+      changed_when: false
+      register: service_apache_status
+
+    - name: Check if Nginx is running
+      command: systemctl status nginx
+      ignore_errors: yes
+      changed_when: false
+      register: service_nginx_status
+
+    - name: Check if Varnish is running
+      command: systemctl status varnish
+      ignore_errors: yes
+      changed_when: false
+      register: service_varnish_status
+
+    - name: Pause apache2
+      service:
+        name: apache2
+        state: stopped
+      when: service_apache_status is success
+
+    - name: Pause nginx
+      service:
+        name: nginx
+        state: stopped
+      when: service_nginx_status is success
+
+    - name: Pause varnish
+      service:
+        name: varnish
+        state: stopped
+      when: service_varnish_status is success
+
+    - name: Attempt cert renewal
+      shell: letsencrypt renew --no-self-upgrade
+
+    - name: Restart varnish
+      service:
+        name: varnish
+        state: started
+      when: service_varnish_status is success
+
+    - name: Restart apache2
+      service:
+        name: apache2
+        state: started
+      when: service_apache_status is success
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: started
+      when: service_nginx_status is success
