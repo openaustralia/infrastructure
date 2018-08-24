@@ -73,5 +73,7 @@ server {
 
     # We expect the downstream servers to redirect to the right hostname, so don't do any rewrites here.
     proxy_redirect off;
+
+    client_max_body_size 100m;
   }
 }
