@@ -1,5 +1,5 @@
 [theyvoteforyou]
-theyvoteforyou.org.au.dev
+theyvoteforyou.org.au.test
 
 [electionleaflets]
 electionleaflets.org.au.test
@@ -10,7 +10,8 @@ openaustralia.org.au.test
 [development]
 openaustralia.org.au.test
 electionleaflets.org.au.test
-theyvoteforyou.org.au.dev
+theyvoteforyou.org.au.test
+righttoknow.org.au.test
 
 [righttoknow]
 righttoknow.org.au.test

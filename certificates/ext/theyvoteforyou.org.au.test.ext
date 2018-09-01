@@ -4,5 +4,5 @@ keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = openaustralia.org.au.dev
-DNS.2 = www.openaustralia.org.au.dev
+DNS.1 = theyvoteforyou.org.au.test
+DNS.2 = www.theyvoteforyou.org.au.test

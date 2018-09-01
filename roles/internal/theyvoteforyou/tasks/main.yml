@@ -104,8 +104,8 @@
     state: directory
     path: "/etc/letsencrypt/live/{{ item }}"
   with_items:
-    - theyvoteforyou.org.au.dev
-    - test.theyvoteforyou.org.au.dev
+    - theyvoteforyou.org.au.test
+    - test.theyvoteforyou.org.au.test
   when: "'development' in group_names"
 
 # We need to setup the SSL certificates before we try to configure nginx
@@ -117,8 +117,8 @@
     dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
     mode: 0644
   with_items:
-    - theyvoteforyou.org.au.dev
-    - test.theyvoteforyou.org.au.dev
+    - theyvoteforyou.org.au.test
+    - test.theyvoteforyou.org.au.test
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: nginx reload
@@ -129,8 +129,8 @@
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
     mode: 0640
   with_items:
-    - theyvoteforyou.org.au.dev
-    - test.theyvoteforyou.org.au.dev
+    - theyvoteforyou.org.au.test
+    - test.theyvoteforyou.org.au.test
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: nginx reload

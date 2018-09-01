@@ -1,9 +1,9 @@
 righttoknow_domain: righttoknow.org.au.test
 mysql_host: 192.168.10.17
 postgresql_host: 192.168.10.18
-openaustralia_domain: openaustralia.org.au.dev
-planningalerts_domain: planningalerts.org.au.dev
-theyvoteforyou_domain: theyvoteforyou.org.au.dev
+openaustralia_domain: openaustralia.org.au.test
+planningalerts_domain: planningalerts.org.au.test
+theyvoteforyou_domain: theyvoteforyou.org.au.test
 oaf_domain: oaf.org.au.test
 opengovernment_domain: opengovernment.org.au.test
 newrelic_license_key: null

@@ -65,9 +65,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     ansible.groups = {
       "righttoknow"      => ["righttoknow.org.au.test"],
-      "planningalerts"   => ["planningalerts.org.au.dev"],
+      "planningalerts"   => ["planningalerts.org.au.test"],
       "electionleaflets" => ["electionleaflets.org.au.test"],
-      "theyvoteforyou"   => ["theyvoteforyou.org.au.dev"],
+      "theyvoteforyou"   => ["theyvoteforyou.org.au.test"],
       "oaf"              => ["oaf.org.au.test"],
       "openaustralia"    => ["openaustralia.org.au.test"],
       "mysql"            => ["mysql.test"],
@@ -75,9 +75,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "opengovernment"   => ["opengovernment.org.au.test"],
       "development"      => [
         "righttoknow.org.au.test",
-        "planningalerts.org.au.dev",
+        "planningalerts.org.au.test",
         "electionleaflets.org.au.test",
-        "theyvoteforyou.org.au.dev",
+        "theyvoteforyou.org.au.test",
         "oaf.org.au.test",
         "openaustralia.org.au.test",
         "mysql.dev",
@@ -95,9 +95,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   hosts = {
     "righttoknow.org.au.test"      => "192.168.10.10",
-    "planningalerts.org.au.dev"   => "192.168.10.11",
+    "planningalerts.org.au.test"   => "192.168.10.11",
     "electionleaflets.org.au.test" => "192.168.10.12",
-    "theyvoteforyou.org.au.dev"   => "192.168.10.14",
+    "theyvoteforyou.org.au.test"   => "192.168.10.14",
     "oaf.org.au.test"              => "192.168.10.15",
     "openaustralia.org.au.test"    => "192.168.10.16",
     "mysql.test"                   => "192.168.10.17",

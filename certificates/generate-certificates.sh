@@ -3,9 +3,9 @@
 # Generates certificates for local development. A single certificate, that
 # is unique to you, is added to your browser
 
-domains=( "theyvoteforyou.org.au.dev" "test.theyvoteforyou.org.au.dev"
-          "planningalerts.org.au.dev" "test.planningalerts.org.au.dev"
-          "openaustralia.org.au.dev"  "test.openaustralia.org.au.dev"
+domains=( "theyvoteforyou.org.au.test" "test.theyvoteforyou.org.au.test"
+          "planningalerts.org.au.test" "test.planningalerts.org.au.test"
+          "openaustralia.org.au.test"  "test.openaustralia.org.au.test"
           "righttoknow.org.au.test"    "test.righttoknow.org.au.test"
           "oaf.org.au.test"
           "opengovernment.org.au.test"
@@ -35,6 +35,7 @@ fi
 
 for domain in "${domains[@]}"
 do
+  set -x
   echo "Generating private key for $domain..."
   openssl genrsa -out $domain.key 2048
 
@@ -50,12 +51,13 @@ do
 
   # Remove intermediate files
   rm $domain.csr myCA.srl
+  set +x
 done
 
 # Move certificate into the right place
-mv theyvoteforyou.org.au.dev.key theyvoteforyou.org.au.dev.pem test.theyvoteforyou.org.au.dev.key test.theyvoteforyou.org.au.dev.pem ../roles/internal/theyvoteforyou/files
-mv planningalerts.org.au.dev.key planningalerts.org.au.dev.pem test.planningalerts.org.au.dev.key test.planningalerts.org.au.dev.pem ../roles/internal/planningalerts/files
-mv openaustralia.org.au.dev.key openaustralia.org.au.dev.pem test.openaustralia.org.au.dev.key test.openaustralia.org.au.dev.pem ../roles/internal/openaustralia/files
+mv theyvoteforyou.org.au.test.key theyvoteforyou.org.au.test.pem test.theyvoteforyou.org.au.test.key test.theyvoteforyou.org.au.test.pem ../roles/internal/theyvoteforyou/files
+mv planningalerts.org.au.test.key planningalerts.org.au.test.pem test.planningalerts.org.au.test.key test.planningalerts.org.au.test.pem ../roles/internal/planningalerts/files
+mv openaustralia.org.au.test.key openaustralia.org.au.test.pem test.x#openaustralia.org.au.test.key test.openaustralia.org.au.test.pem ../roles/internal/openaustralia/files
 mv righttoknow.org.au.test.key righttoknow.org.au.test.pem test.righttoknow.org.au.test.key test.righttoknow.org.au.test.pem ../roles/internal/righttoknow/files
 mv oaf.org.au.test.key oaf.org.au.test.pem ../roles/internal/oaf/files
 mv opengovernment.org.au.test.key opengovernment.org.au.test.pem ../roles/internal/opengovernment/files

@@ -1,8 +1,0 @@
-authorityKeyIdentifier=keyid,issuer
-basicConstraints=CA:FALSE
-keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-subjectAltName = @alt_names
-
-[alt_names]
-DNS.1 = theyvoteforyou.org.au.dev
-DNS.2 = www.theyvoteforyou.org.au.dev
