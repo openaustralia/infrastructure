@@ -64,7 +64,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #ansible.verbose = "vv"
 
     ansible.groups = {
-      "righttoknow"      => ["righttoknow.org.au.dev"],
+      "righttoknow"      => ["righttoknow.org.au.test"],
       "planningalerts"   => ["planningalerts.org.au.dev"],
       "electionleaflets" => ["electionleaflets.org.au.test"],
       "theyvoteforyou"   => ["theyvoteforyou.org.au.dev"],
@@ -74,7 +74,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "postgresql"       => ["postgresql.dev"],
       "opengovernment"   => ["opengovernment.org.au.test"],
       "development"      => [
-        "righttoknow.org.au.dev",
+        "righttoknow.org.au.test",
         "planningalerts.org.au.dev",
         "electionleaflets.org.au.test",
         "theyvoteforyou.org.au.dev",
@@ -94,7 +94,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   hosts = {
-    "righttoknow.org.au.dev"      => "192.168.10.10",
+    "righttoknow.org.au.test"      => "192.168.10.10",
     "planningalerts.org.au.dev"   => "192.168.10.11",
     "electionleaflets.org.au.test" => "192.168.10.12",
     "theyvoteforyou.org.au.dev"   => "192.168.10.14",
@@ -107,7 +107,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Use this so that you don't need to give the machine name for all vagrant
   # commands. Set this to whatever you're most working on at the moment.
-  primary_host = "openaustralia.org.au.dev"
+  primary_host = "openaustralia.org.au.test"
 
   hosts.each do |hostname, ip|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
