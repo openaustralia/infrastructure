@@ -188,7 +188,7 @@ staging:
 development:
   branch: production
   repository: git://github.com/openaustralia/alaveteli.git
-  server: righttoknow.org.au.dev
+  server: righttoknow.org.au.test
   user: deploy
   deploy_to: /srv/www/production
   rails_env: production
