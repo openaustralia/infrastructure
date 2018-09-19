@@ -6,7 +6,7 @@
 domains=( "theyvoteforyou.org.au.dev" "test.theyvoteforyou.org.au.dev"
           "planningalerts.org.au.dev" "test.planningalerts.org.au.dev"
           "openaustralia.org.au.dev"  "test.openaustralia.org.au.dev"
-          "righttoknow.org.au.dev"    "test.righttoknow.org.au.dev"
+          "righttoknow.org.au.test"    "test.righttoknow.org.au.test"
           "oaf.org.au.test"
           "opengovernment.org.au.test"
           "electionleaflets.org.au.test" "test.electionleaflets.org.au.test"
@@ -56,7 +56,7 @@ done
 mv theyvoteforyou.org.au.dev.key theyvoteforyou.org.au.dev.pem test.theyvoteforyou.org.au.dev.key test.theyvoteforyou.org.au.dev.pem ../roles/internal/theyvoteforyou/files
 mv planningalerts.org.au.dev.key planningalerts.org.au.dev.pem test.planningalerts.org.au.dev.key test.planningalerts.org.au.dev.pem ../roles/internal/planningalerts/files
 mv openaustralia.org.au.dev.key openaustralia.org.au.dev.pem test.openaustralia.org.au.dev.key test.openaustralia.org.au.dev.pem ../roles/internal/openaustralia/files
-mv righttoknow.org.au.dev.key righttoknow.org.au.dev.pem test.righttoknow.org.au.dev.key test.righttoknow.org.au.dev.pem ../roles/internal/righttoknow/files
+mv righttoknow.org.au.test.key righttoknow.org.au.test.pem test.righttoknow.org.au.test.key test.righttoknow.org.au.test.pem ../roles/internal/righttoknow/files
 mv oaf.org.au.test.key oaf.org.au.test.pem ../roles/internal/oaf/files
 mv opengovernment.org.au.test.key opengovernment.org.au.test.pem ../roles/internal/opengovernment/files
 mv electionleaflets.org.au.test.key electionleaflets.org.au.test.pem test.electionleaflets.org.au.test.key test.electionleaflets.org.au.test.pem ../roles/internal/electionleaflets/files

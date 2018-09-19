@@ -4,5 +4,5 @@ keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = test.righttoknow.org.au.dev
-DNS.2 = www.test.righttoknow.org.au.dev
+DNS.1 = test.righttoknow.org.au.test
+DNS.2 = www.test.righttoknow.org.au.test
