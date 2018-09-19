@@ -1,4 +1,4 @@
-righttoknow_domain: righttoknow.org.au.dev
+righttoknow_domain: righttoknow.org.au.test
 mysql_host: 192.168.10.17
 postgresql_host: 192.168.10.18
 openaustralia_domain: openaustralia.org.au.dev
