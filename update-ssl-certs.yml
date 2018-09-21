@@ -1,19 +1,12 @@
 # Run this like so:
-# ansible-playbook -i ec2-hosts site.yml
+# ansible-playbook -i ec2-hosts update-ssl-certs.yml
 
 # To only run this for planningalerts:
-# ansible-playbook -i ec2-hosts site.yml -l planningalerts
+# ansible-playbook -i ec2-hosts update-ssl-certs.yml -l planningalerts
 
 # To only run this for openaustralia:
-# ansible-playbook -i ec2-hosts site.yml -l openaustralia
+# ansible-playbook -i ec2-hosts update-ssl-certs.yml -l openaustralia
 
-# To show the value of an encrypted variable:
-# ansible planningalerts -i ec2-hosts -m debug -a 'var=planningalerts_production_mysql_password'
-
-# Use terraform (see terraform directory) to actually provision ec2 infrastructure
-
-# Ubuntu 16.04 LTS doesn't come with python pre-installed. We need that for
-# Ansible to work (for the gather facts). So install python first
 - hosts: ec2
   become: true
   tasks:
@@ -55,6 +48,7 @@
 
     - name: Attempt cert renewal
       shell: letsencrypt renew --no-self-upgrade
+      ignore_errors: yes
 
     - name: Restart varnish
       service:
