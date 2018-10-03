@@ -1,14 +1,14 @@
 # Run this like so:
-# ansible-playbook -i ec2-hosts site.yml
+# ansible-playbook --vault-id .vault_pass.txt -i ec2-hosts site.yml
 
 # To only run this for planningalerts:
-# ansible-playbook -i ec2-hosts site.yml -l planningalerts
+# ansible-playbook --vault-id .vault_pass.txt -i ec2-hosts site.yml -l planningalerts
 
 # To only run this for openaustralia:
-# ansible-playbook -i ec2-hosts site.yml -l openaustralia
+# ansible-playbook --vault-id .vault_pass.txt -i ec2-hosts site.yml -l openaustralia
 
 # To show the value of an encrypted variable:
-# ansible planningalerts -i ec2-hosts -m debug -a 'var=planningalerts_production_mysql_password'
+# ansible planningalerts --vault-id .vault_pass.txt -i ec2-hosts -m debug -a 'var=planningalerts_production_mysql_password'
 
 # Use terraform (see terraform directory) to actually provision ec2 infrastructure
 
