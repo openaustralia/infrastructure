@@ -136,14 +136,14 @@ resource "cloudflare_record" "oaf_morph_front_mx" {
   value = "mx.sendgrid.net"
 }
 
-resource "cloudflare_record" "oaf_morph_front_mx" {
+resource "cloudflare_record" "oaf_morph_front_spf" {
   domain = "morph.io"
   name   = "front-mail.morph.io"
   type   = "TXT"
   value  = "v=spf1 a include:sendgrid.net ~all"
 }
 
-resource "cloudflare_record" "oaf_morph_front_mx" {
+resource "cloudflare_record" "oaf_morph_front_dkim" {
   domain = "morph.io"
   name   = "front-mail.morph.io"
   type   = "TXT"
