@@ -258,3 +258,26 @@ resource "cloudflare_record" "oaf_alt_google_site_verification" {
   type   = "TXT"
   value  = "google-site-verification=sNfu9GJBQDlBYvdsXm8b61JjxxPfDy2JH9ok2UKHu48"
 }
+
+#Front DNS records
+resource "cloudflare_record" "oaf_front_mx" {
+  domain = "oaf.org.au"
+  name = "front-mail.oaf.org.au"
+  type = "MX"
+  priority = 100
+  value = "mx.sendgrid.net"
+}
+
+resource "cloudflare_record" "oaf_front_spf" {
+  domain = "oaf.org.au"
+  name   = "front-mail.oaf.org.au"
+  type   = "TXT"
+  value  = "v=spf1 a include:sendgrid.net ~all"
+}
+
+resource "cloudflare_record" "oaf_front_domainkey" {
+  domain = "oaf.org.au"
+  name   = "m1._domainkey.oaf.org.au"
+  type   = "TXT"
+  value  = "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC4PZZJiwMfMB/CuIZ9yAtNEGzfKzQ7WC7hfGg8UyavtYlDDBgSP6P1AiTBTMzTQbLChvf+Ef5CK46w+RwmgWpL38sxRwjahk45aQxoMOk2FJm7iHnP6zAGUnqAiL8iCdTjn5sp/txNf22bXrx3YS54ePBrfZQxOvkOvE24XZKXXwIDAQAB"
+}
