@@ -57,7 +57,7 @@ done
 # Move certificate into the right place
 mv theyvoteforyou.org.au.test.key theyvoteforyou.org.au.test.pem test.theyvoteforyou.org.au.test.key test.theyvoteforyou.org.au.test.pem ../roles/internal/theyvoteforyou/files
 mv planningalerts.org.au.test.key planningalerts.org.au.test.pem test.planningalerts.org.au.test.key test.planningalerts.org.au.test.pem ../roles/internal/planningalerts/files
-mv openaustralia.org.au.test.key openaustralia.org.au.test.pem test.x#openaustralia.org.au.test.key test.openaustralia.org.au.test.pem ../roles/internal/openaustralia/files
+mv openaustralia.org.au.test.key openaustralia.org.au.test.pem test.openaustralia.org.au.test.key test.openaustralia.org.au.test.pem ../roles/internal/openaustralia/files
 mv righttoknow.org.au.test.key righttoknow.org.au.test.pem test.righttoknow.org.au.test.key test.righttoknow.org.au.test.pem ../roles/internal/righttoknow/files
 mv oaf.org.au.test.key oaf.org.au.test.pem ../roles/internal/oaf/files
 mv opengovernment.org.au.test.key opengovernment.org.au.test.pem ../roles/internal/opengovernment/files
