@@ -107,3 +107,27 @@ resource "cloudflare_record" "el_spf" {
   type   = "TXT"
   value  = "v=spf1 a include:_spf.google.com ~all"
 }
+
+
+#Front DNS records
+resource "cloudflare_record" "oaf_electionleaflets_front_mx" {
+  domain = "electionleaflets.org.au"
+  name = "front-mail.electionleaflets.org.au"
+  type = "MX"
+  priority = 100
+  value = "mx.sendgrid.net"
+}
+
+resource "cloudflare_record" "oaf_electionleaflets_front_spf" {
+  domain = "electionleaflets.org.au"
+  name   = "front-mail.electionleaflets.org.au"
+  type   = "TXT"
+  value  = "v=spf1 a include:sendgrid.net ~all"
+}
+
+resource "cloudflare_record" "oaf_electionleaflets_front_domainkey" {
+  domain = "electionleaflets.org.au"
+  name   = "m1._domainkey.electionleaflets.org.au"
+  type   = "TXT"
+  value  = "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC4PZZJiwMfMB/CuIZ9yAtNEGzfKzQ7WC7hfGg8UyavtYlDDBgSP6P1AiTBTMzTQbLChvf+Ef5CK46w+RwmgWpL38sxRwjahk45aQxoMOk2FJm7iHnP6zAGUnqAiL8iCdTjn5sp/txNf22bXrx3YS54ePBrfZQxOvkOvE24XZKXXwIDAQAB"
+}
