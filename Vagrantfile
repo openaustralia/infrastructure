@@ -101,7 +101,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "oaf.org.au.test"              => "192.168.10.15",
     "openaustralia.org.au.test"    => "192.168.10.16",
     "mysql.test"                   => "192.168.10.17",
-    "postgresql.dev"              => "192.168.10.18",
+    "postgresql.test"              => "192.168.10.18",
     "opengovernment.org.au.test"  => "192.168.10.19"
   }
 
