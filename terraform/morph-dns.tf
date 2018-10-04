@@ -145,7 +145,7 @@ resource "cloudflare_record" "oaf_morph_front_spf" {
 
 resource "cloudflare_record" "oaf_morph_front_dkim" {
   domain = "morph.io"
-  name   = "front-mail.morph.io"
+  name   = "m1._domainkey.morph.io"
   type   = "TXT"
   value  = "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC4PZZJiwMfMB/CuIZ9yAtNEGzfKzQ7WC7hfGg8UyavtYlDDBgSP6P1AiTBTMzTQbLChvf+Ef5CK46w+RwmgWpL38sxRwjahk45aQxoMOk2FJm7iHnP6zAGUnqAiL8iCdTjn5sp/txNf22bXrx3YS54ePBrfZQxOvkOvE24XZKXXwIDAQAB"
 }
