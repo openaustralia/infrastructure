@@ -2,7 +2,7 @@
 dependencies:
   - role: base-server
   - role: abtris.nginx-passenger
-  - role: rvm_io.ruby
+  - role: rvm.ruby
     # TODO: How do we get it to use what's in the .ruby-version file?
     rvm1_rubies:
       - ruby-2.3.1
