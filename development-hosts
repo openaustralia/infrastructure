@@ -12,6 +12,8 @@ openaustralia.org.au.test
 electionleaflets.org.au.test
 theyvoteforyou.org.au.test
 righttoknow.org.au.test
+postgresql.test
+mysql.test
 
 [righttoknow]
 righttoknow.org.au.test

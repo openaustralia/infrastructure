@@ -145,6 +145,7 @@
     - poppler-utils
     - wv
     - catdoc
+    - gnuplot
 
 # For some unknown reason on Ubuntu 16.04 Magick-config isn't in the path
 # after installing imagemagick above

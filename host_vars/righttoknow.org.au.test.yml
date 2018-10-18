@@ -1,0 +1,8 @@
+name: righttoknow.org.au.test
+db_password_production: db_password_production
+db_password_staging: db_password_staging
+alavateli_incoming_email_secret: alavateli_incoming_email_secret
+alavateli_admin_password: alavateli_admin_password
+alaveteli_cookie_store_session_secret: cookie_secret
+alaveteli_recaptcha_private_key: alavateli_recaptcha_private
+backup_enabled: no

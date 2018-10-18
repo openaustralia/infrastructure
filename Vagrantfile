@@ -71,7 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "oaf"              => ["oaf.org.au.test"],
       "openaustralia"    => ["openaustralia.org.au.test"],
       "mysql"            => ["mysql.test"],
-      "postgresql"       => ["postgresql.dev"],
+      "postgresql"       => ["postgresql.test"],
       "opengovernment"   => ["opengovernment.org.au.test"],
       "development"      => [
         "righttoknow.org.au.test",
