@@ -18,7 +18,7 @@
 # have this problem
 - name: Install postgresql 9.4 server
   apt:
-    pkg: postgresql-9.4
+    name: "postgresql-9.4"
   update_cache: true
 
 - name: Update postgresql config to bind to public ip
