@@ -142,3 +142,21 @@ dependencies:
         source: /data
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/openaustralia/{{ inventory_hostname }}/data"
+  - role: nickhammond.logrotate
+    logrotate_scripts:
+      - name: production
+        path: "/srv/www/production/log/*_log"
+        options:
+          - daily
+          - rotate 30
+          - compress
+          - missingok
+          - copytruncate
+      - name: staging
+        path: "/srv/www/staging/shared/log/*_log"
+        options:
+          - daily
+          - rotate 30
+          - compress
+          - missingok
+          - copytruncate
