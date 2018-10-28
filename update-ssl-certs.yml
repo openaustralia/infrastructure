@@ -28,6 +28,12 @@
       changed_when: false
       register: service_varnish_status
 
+    - name: Pause varnish
+      service:
+        name: varnish
+        state: stopped
+      when: service_varnish_status is success
+
     - name: Pause apache2
       service:
         name: apache2
@@ -39,12 +45,6 @@
         name: nginx
         state: stopped
       when: service_nginx_status is success
-
-    - name: Pause varnish
-      service:
-        name: varnish
-        state: stopped
-      when: service_varnish_status is success
 
     - name: Attempt cert renewal
       shell: letsencrypt renew --no-self-upgrade
