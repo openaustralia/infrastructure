@@ -1,6 +1,7 @@
 # TODO: Unify this with the domain. It's currently only used to name
 # things on New Relic.
 name: righttoknow.org.au
+github_users: ['mlandauer', 'henare', 'jamezpolley', 'benrfairless']
 cron_enabled: true
 backup_gpg_pw: !vault |
           $ANSIBLE_VAULT;1.1;AES256
