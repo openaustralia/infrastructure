@@ -39,4 +39,4 @@
   version: 3.0.0
 
 - src: newrelic.newrelic-infra
-  version: 0.3.0
+  version: 0.5.0
