@@ -197,3 +197,18 @@
   with_items:
     - production
     - staging
+
+- name: Add alaveteli crontab Deploy Holidays
+  cron:
+    user: deploy
+    name: "holidays"
+    minute: "0"
+    hour: "0"
+    day: "1"
+    month: "12"
+    job: "/bin/bash -l -c '/bin/echo \"A year has passed, please update the bank holidays for the Freedom of Information site, thank you.\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
