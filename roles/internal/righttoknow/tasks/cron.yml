@@ -9,7 +9,7 @@
     - staging
   when: "'ec2' in group_names"
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Alert Tracking
   cron:
     user: deploy
     name: "foi-alert-tracks"
@@ -21,7 +21,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Purge Varnish
   cron:
     user: deploy
     name: "foi-purge-varnish"
@@ -48,7 +48,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Alert for Comments
   cron:
     user: deploy
     name: "alert-comment-on-request"
@@ -60,7 +60,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Upload the Mail Server Logs
   cron:
     user: deploy
     name: "load-mail-server-logs"
@@ -72,7 +72,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Update Xapian
   cron:
     user: deploy
     name: "update-xapian-index"
@@ -84,7 +84,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Delete Old Things
   cron:
     user: deploy
     name: "delete-old-things"
@@ -97,7 +97,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Overdue Request Alerts
   cron:
     user: deploy
     name: "alert-overdue-requests"
@@ -110,7 +110,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Remind for New Responses
   cron:
     user: deploy
     name: "alert-new-response-reminders"
@@ -123,7 +123,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Remind for not clarified responses
   cron:
     user: deploy
     name: "alert-not-clarified-request"
@@ -136,7 +136,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Update Recent Requests
   cron:
     user: deploy
     name: "check-recent-requests-sent"
@@ -149,7 +149,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Stop Responses on old requests
   cron:
     user: deploy
     name: "stop-new-responses-on-old-requests"
@@ -175,7 +175,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab entry - Update User Graph
   cron:
     user: deploy
     name: "user-use-graph"
