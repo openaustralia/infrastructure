@@ -159,7 +159,20 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Update Public Body Stats
+  cron:
+    user: deploy
+    name: "update-public-body-stats"
+    minute: "55"
+    hour: "4"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./update-public-body-stats.lock ./script/update-public-body-stats || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
+- name: Add alaveteli crontab entry - Request Creation Graph
   cron:
     user: deploy
     name: "request-creation-graph"
