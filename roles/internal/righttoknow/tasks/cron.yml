@@ -33,15 +33,12 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab entry - Send Batch Requests
   cron:
     user: deploy
-    name: "holidays"
-    minute: "0"
-    hour: "0"
-    day: "1"
-    month: "12"
-    job: "/bin/bash -l -c '/bin/echo \"A year has passed, please update the bank holidays for the Freedom of Information site, thank you.\"'"
+    name: "send-batch-requests"
+    minute: "0,10,20,30,40,50"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-batch-requests ./script/send-batch-requests || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
