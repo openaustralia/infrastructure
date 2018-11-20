@@ -9,7 +9,7 @@
     - staging
   when: "'ec2' in group_names"
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Alert Tracking
   cron:
     user: deploy
     name: "foi-alert-tracks"
@@ -21,7 +21,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Purge Varnish
   cron:
     user: deploy
     name: "foi-purge-varnish"
@@ -33,22 +33,19 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab entry - Send Batch Requests
   cron:
     user: deploy
-    name: "holidays"
-    minute: "0"
-    hour: "0"
-    day: "1"
-    month: "12"
-    job: "/bin/bash -l -c '/bin/echo \"A year has passed, please update the bank holidays for the Freedom of Information site, thank you.\"'"
+    name: "send-batch-requests"
+    minute: "0,10,20,30,40,50"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-batch-requests ./script/send-batch-requests || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Alert for Comments
   cron:
     user: deploy
     name: "alert-comment-on-request"
@@ -60,7 +57,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Upload the Mail Server Logs
   cron:
     user: deploy
     name: "load-mail-server-logs"
@@ -72,7 +69,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Update Xapian
   cron:
     user: deploy
     name: "update-xapian-index"
@@ -84,7 +81,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Delete Old Things
   cron:
     user: deploy
     name: "delete-old-things"
@@ -97,7 +94,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Overdue Request Alerts
   cron:
     user: deploy
     name: "alert-overdue-requests"
@@ -110,7 +107,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Remind for New Responses
   cron:
     user: deploy
     name: "alert-new-response-reminders"
@@ -123,7 +120,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Remind for not clarified responses
   cron:
     user: deploy
     name: "alert-not-clarified-request"
@@ -136,7 +133,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Update Recent Requests
   cron:
     user: deploy
     name: "check-recent-requests-sent"
@@ -149,7 +146,7 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Stop Responses on old requests
   cron:
     user: deploy
     name: "stop-new-responses-on-old-requests"
@@ -162,7 +159,20 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab - Update Public Body Stats
+  cron:
+    user: deploy
+    name: "update-public-body-stats"
+    minute: "55"
+    hour: "4"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./update-public-body-stats.lock ./script/update-public-body-stats || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
+- name: Add alaveteli crontab entry - Request Creation Graph
   cron:
     user: deploy
     name: "request-creation-graph"
@@ -175,13 +185,28 @@
     - production
     - staging
 
-- name: Add alaveteli crontab entry
+- name: Add alaveteli crontab entry - Update User Graph
   cron:
     user: deploy
     name: "user-use-graph"
     minute: "48"
     hour: "2"
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production ./script/user-use-graph'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
+- name: Add alaveteli crontab Deploy Holidays
+  cron:
+    user: deploy
+    name: "holidays"
+    minute: "0"
+    hour: "0"
+    day: "1"
+    month: "12"
+    job: "/bin/bash -l -c '/bin/echo \"A year has passed, please update the bank holidays for the Freedom of Information site, thank you.\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
