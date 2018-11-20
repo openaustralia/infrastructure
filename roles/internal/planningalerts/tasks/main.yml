@@ -133,6 +133,26 @@
     - production
     - staging
 
+- name: Ensure the sitemaps directories exist
+  file:
+    state: directory
+    path: "/srv/www/{{ item }}/shared/sitemaps"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
+
+- name: Ensure the system directories exist
+  file:
+    state: directory
+    path: "/srv/www/{{ item }}/shared/system"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
+
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
   file:
