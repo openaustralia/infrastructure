@@ -2,7 +2,7 @@ resource "aws_instance" "openaustralia" {
   ami =  "${data.aws_ami.ubuntu.id}"
   # Running sitemap generation (a ruby process, suprise, surprise) pegged the
   # memory usage on a t2.small. So, upping to a t2.medium.
-  instance_type = "t2.medium"
+  instance_type = "t2.small"
   key_name = "test"
   tags {
     Name = "openaustralia"
