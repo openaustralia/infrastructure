@@ -128,12 +128,30 @@ $ vagrant plugin install vagrant-hostsupdater
 ```
 
 ### Add the Ansible Vault password
-Create a file in your home directory `.infrastructure_ansible_vault_pass.txt` with the secret
-password used to encrypt the secret info in this repo
 
+Ansible Vault secrets are distributed via
+[Keybase](https://keybase.io). Before you can push to production
+servers, you'll need to be added to the appropriate teams.
+
+You'll need to have Keybase installed on the machine where you run
+ansible. You'll need to enable "Finder integration" or the equivalent
+on your platform, under Settings -> Files.
+
+Once this is done, the symlinks to .*-vault-pass inside the repo
+should point to the password files.
+
+### Install external roles
 Install required external roles with
 ```
 ansible-galaxy install -r roles/requirements.yml -p roles/external
+```
+
+If `requirements.yaml` has been updated with a new version of a
+plugin, you'll need to update your installation. This can be done
+with:
+
+```
+ansible-galaxy install -r roles/requirements.yaml -p roles/external -f
 ```
 
 ## Generating SSL certificates for development
