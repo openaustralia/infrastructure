@@ -80,7 +80,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "theyvoteforyou.org.au.test",
         "oaf.org.au.test",
         "openaustralia.org.au.test",
-        "mysql.dev",
+        "mysql.test",
         "postgresql.test",
         "opengovernment.org.au.test"
       ]
