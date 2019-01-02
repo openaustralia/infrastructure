@@ -1,3 +1,4 @@
+
 .vagrant
 .vault_pass.txt
 roles/external
@@ -9,9 +10,9 @@ terraform/secrets.auto.tfvars
 terraform/terraform.tfstate.*
 site.retry
 ubuntu-xenial-16.04-cloudimg-console.log
+*.retry
 
 # These certificates are generated for each user and shouldn't be checked in
-certificates/myCA.key
-certificates/myCA.pem
-certificates/dev.morph.io.key
-certificates/dev.morph.io.pem
+certificates/*.key
+certificates/*.pem
+
