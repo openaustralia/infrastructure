@@ -1,11 +1,11 @@
 # Run this like so:
-# ansible-playbook -i ec2-hosts update-ssl-certs.yml
+# ansible-playbook update-ssl-certs.yml
 
 # To only run this for planningalerts:
-# ansible-playbook -i ec2-hosts update-ssl-certs.yml -l planningalerts
+# ansible-playbook update-ssl-certs.yml -l planningalerts
 
 # To only run this for openaustralia:
-# ansible-playbook -i ec2-hosts update-ssl-certs.yml -l openaustralia
+# ansible-playbook update-ssl-certs.yml -l openaustralia
 
 - hosts: ec2
   become: true
