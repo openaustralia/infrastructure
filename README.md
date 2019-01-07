@@ -146,12 +146,12 @@ Install required external roles with
 ansible-galaxy install -r roles/requirements.yml -p roles/external
 ```
 
-If `requirements.yaml` has been updated with a new version of a
+If `requirements.yml` has been updated with a new version of a
 plugin, you'll need to update your installation. This can be done
 with:
 
 ```
-ansible-galaxy install -r roles/requirements.yaml -p roles/external -f
+ansible-galaxy install -r roles/requirements.yml -p roles/external -f
 ```
 
 ## Generating SSL certificates for development
