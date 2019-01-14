@@ -70,9 +70,17 @@ resource "cloudflare_record" "opengovernment_google_site_verification" {
   value  = "google-site-verification=fuS0OoXUv8rGwkULIl8SJw3_lLJHDfKnEWPw27gVHCE"
 }
 
+# TODO: Remove this once the one below is up and running
 resource "cloudflare_record" "opengovernment_domainkey" {
   domain = "opengovernment.org.au"
   name   = "cuttlefish._domainkey.opengovernment.org.au"
+  type   = "TXT"
+  value  = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxE7nVpdr3lqufGDHC6r6bdP0JphHwkapFlORsC3LzRf0IgnuGOylxormE11nJtKRFawFyhDtNaguyIahKljjGtwAII3qWaVuxQASPOpVce6FTfR51Cpfah7OE3qN9CjoHZWhun3pj7G1zGdwcaTWHnK4qyudT7fM1c00jwHhSE9L9f6c7MXCiA/YGcgK+UAHy/zRTpMN1pSjrIJf9Z+mDU2RaC5tMGbfUw1307qzE8OaChhskrPdUo7nZvswK0G63dJCatPWtjuKG1zGVQcS61MwK/wyqikWBzCYPvDV9lx7/Occ1jYGh12HzrStgsTfD1Lr+tvNkAB1mg1uTfnmlwIDAQAB"
+}
+
+resource "cloudflare_record" "opengovernment_domainkey2" {
+  domain = "opengovernment.org.au"
+  name   = "opengovernment_org_au_26.cuttlefish._domainkey.opengovernment.org.au"
   type   = "TXT"
   value  = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxE7nVpdr3lqufGDHC6r6bdP0JphHwkapFlORsC3LzRf0IgnuGOylxormE11nJtKRFawFyhDtNaguyIahKljjGtwAII3qWaVuxQASPOpVce6FTfR51Cpfah7OE3qN9CjoHZWhun3pj7G1zGdwcaTWHnK4qyudT7fM1c00jwHhSE9L9f6c7MXCiA/YGcgK+UAHy/zRTpMN1pSjrIJf9Z+mDU2RaC5tMGbfUw1307qzE8OaChhskrPdUo7nZvswK0G63dJCatPWtjuKG1zGVQcS61MwK/wyqikWBzCYPvDV9lx7/Occ1jYGh12HzrStgsTfD1Lr+tvNkAB1mg1uTfnmlwIDAQAB"
 }
