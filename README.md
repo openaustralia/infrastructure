@@ -164,11 +164,11 @@ See certificates/README.md for more information.
 In development you set up and provision a server using Vagrant. You probably only want to run
 one main server and the mysql server so you can bring it up with:
 
-    vagrant up planningalerts.org.au.dev mysql.dev
+    vagrant up planningalerts.org.au.test mysql.test
 
 If it's already up you can re-run Ansible provisioning with:
 
-    vagrant provision planningalerts.org.au.dev
+    vagrant provision planningalerts.org.au.test
 
 ### Provisioning production servers
 
