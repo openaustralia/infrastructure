@@ -2,4 +2,6 @@
 # handlers file for roles/internal/mysql
 
 - name: mysql restart
-  service: name=mysql state=restarted
+  service:
+    name: mysql
+    state: restarted

@@ -129,7 +129,9 @@
 
 # TODO: Check this list against the list https://github.com/openaustralia/alaveteli/blob/update-rbenv-deploy/config/packages.generic
 - name: Install packages required by Alaveteli
-  apt: name={{ item }} state=present
+  apt:
+    name: "{{ item }}"
+    state: present
   with_items:
     - libicu-dev
     - libmagic-dev

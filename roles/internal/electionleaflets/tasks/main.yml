@@ -36,7 +36,11 @@
 
 # The rest of the deploy directories get created by running "cap deploy:setup"
 - name: Ensure that directories exist
-  file: path={{ item }} owner=deploy group=deploy state=directory
+  file:
+    path: "{{ item }}"
+    owner: deploy
+    group: deploy
+    state: directory
   with_items:
     - "/srv/www"
     - "/srv/www/log"
@@ -138,7 +142,9 @@
     repo: 'ppa:ondrej/php'
 
 - name: Install packages required by Electionleaflets
-  apt: name={{ item }} state=present
+  apt:
+    name: "{{ item }}"
+    state: present
   with_items:
     - php5.6
     - php5.6-imap
@@ -225,7 +231,9 @@
   notify: reload apache
 
 - name: Enable apache rewrite module
-  apache2_module: state=present name={{ item }}
+  apache2_module:
+    state: present
+    name: "{{ item }}"
   notify: reload apache
   with_items:
     - rewrite
@@ -249,14 +257,19 @@
   notify: reload apache
 
 - name: Enable virtual hosts
-  file: src="../sites-available/electionleaflets.org.au.conf" dest="/etc/apache2/sites-enabled/electionleaflets.org.au.conf" state=link
+  file:
+    src: "../sites-available/electionleaflets.org.au.conf"
+    dest: "/etc/apache2/sites-enabled/electionleaflets.org.au.conf"
+    state: link
   notify: reload apache
   with_items:
     - production
     - staging
 
 - name: Disable default virtual host
-  file: dest="/etc/apache2/sites-enabled/000-default.conf" state=absent
+  file:
+    dest: "/etc/apache2/sites-enabled/000-default.conf"
+    state: absent
   notify: reload apache
 
 - name: Add apt key for new relic
@@ -296,11 +309,16 @@
     minute: "*/5"
     user: deploy
     job: "cd /srv/www/{{ item }}/current/tools && php import_mail.php"
-  state: present
+    state: present
   with_items:
     - staging
     #- production ##Uncomment this line if we ever want to activate tihs
   when: "'ec2' in group_names"
 
 - name: Cron for email alerts
-  cron: name="email alerts" minute="*/5" user=deploy job="cd /srv/www/production/current/tools && php alertomatic.php" state=absent
+  cron:
+    name: "email alerts"
+    minute: "*/5"
+    user: deploy
+    job: "cd /srv/www/production/current/tools && php alertomatic.php"
+    state: absent

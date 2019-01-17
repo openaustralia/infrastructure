@@ -7,7 +7,9 @@
 # Setup timezone stuff
 
 - name: Install tzdata package
-  apt: pkg=tzdata state=present
+  apt:
+    pkg: tzdata
+    state: present
 
 # We have to do it like this for Ubuntu 16.04
 # See https://bugs.launchpad.net/ubuntu/+source/tzdata/+bug/1554806

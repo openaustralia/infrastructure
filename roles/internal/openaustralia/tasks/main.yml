@@ -249,7 +249,11 @@
 # TODO: It would be cleaner if gems were installed as part of the capistrano install
 # Then, we could use the Gemfile rather than duplicating this information here
 - name: Install required gems
-  gem: name={{ item.name }} version={{ item.version }} user_install=no state=present
+  gem:
+    name: "{{ item.name }}"
+    version: "{{ item.version }}"
+    user_install: no
+    state: present
   with_items:
     - {name: nokogiri,      version: 1.4.4}
     - {name: mini_portile,  version: 0.6.2}
@@ -271,7 +275,9 @@
     - {name: mysql,         version: 2.9.1}
 
 - name: Enable apache modules
-  apache2_module: state=present name={{ item }}
+  apache2_module:
+    state: present
+    name: "{{ item }}"
   notify: reload apache
   with_items:
     - expires
