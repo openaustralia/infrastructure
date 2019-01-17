@@ -13,5 +13,6 @@
 
 - name: Install awslogs agent
   shell: "python /tmp/awslogs-agent-setup.py --region {{ ec2_region }} -n -c /tmp/awslogs.conf"
-  creates: /etc/init.d/awslogs
+  args:
+    creates: /etc/init.d/awslogs
   when: "'ec2' in group_names"
