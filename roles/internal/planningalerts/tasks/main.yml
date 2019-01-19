@@ -276,3 +276,7 @@
     user: deploy
     value: web-administrators@openaustralia.org,q8z3f5c7d7g4e7m2@oaf.slack.com
   when: "'ec2' in group_names"
+
+- name: Install redis for sidekiq
+  apt:
+    pkg: redis-server
