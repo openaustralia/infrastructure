@@ -3,4 +3,6 @@ production:
   host: {{ mysql_host }}
   database: pa-production
   username: pa-production
+  # Set pool to the same as the sidekiq concurrency
+  pool: 10
   password: "{{ planningalerts_production_mysql_password }}"
