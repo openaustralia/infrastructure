@@ -63,19 +63,6 @@ resource "aws_db_instance" "postgresql" {
   vpc_security_group_ids     = ["${aws_security_group.postgresql.id}"]
 }
 
-# Allow triggers on mysql
-resource "aws_db_parameter_group" "triggers" {
-  name   = "allow-triggers"
-  description = "Allows triggers on mysql"
-  family = "mysql5.6"
-
-  parameter {
-    name  = "log_bin_trust_function_creators"
-    value = 1
-    apply_method = "pending-reboot"
-  }
-}
-
 resource "aws_db_parameter_group" "mysql_default" {
   name   = "mysql-default"
   description = "Our default for mysql 5.6"
