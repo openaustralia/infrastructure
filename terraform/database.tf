@@ -31,7 +31,7 @@ resource "aws_db_instance" "main" {
   apply_immediately          = false
   skip_final_snapshot        = false
   vpc_security_group_ids     = ["${aws_security_group.main_database.id}"]
-  parameter_group_name       = "${aws_db_parameter_group.triggers.name}"
+  parameter_group_name       = "${aws_db_parameter_group.mysql_default.name}"
 }
 
 # TODO: Do we want to explicitly set the available zone?
@@ -64,7 +64,7 @@ resource "aws_db_instance" "postgresql" {
 }
 
 # Allow triggers on mysql
-resource "aws_db_parameter_group" "triggers" {
+resource "aws_db_parameter_group" "mysql_default" {
   name   = "allow-triggers"
   description = "Allows triggers on mysql"
   family = "mysql5.6"
