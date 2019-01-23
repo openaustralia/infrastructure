@@ -74,4 +74,11 @@ resource "aws_db_parameter_group" "mysql_default" {
     value = 1
     apply_method = "pending-reboot"
   }
+
+  # To use utf8mb4 with mysql 5.6 we need to enable innodb_large_prefix. See
+  # https://edgeguides.rubyonrails.org/configuring.html#configuring-a-mysql-or-mariadb-database
+  parameter {
+    name = "innodb_large_prefix"
+    value = 1
+  }
 }
