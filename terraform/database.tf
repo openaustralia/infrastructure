@@ -81,4 +81,20 @@ resource "aws_db_parameter_group" "mysql_default" {
     name = "innodb_large_prefix"
     value = 1
   }
+
+  # Setting the innodb_large_prefix (above) only works when using the newer
+  # row formats DYNAMIC or COMPRESSED. These row formats are only supported
+  # in the newer Barracuda file format
+  parameter {
+    name = "innodb_file_format"
+    value = "Barracuda"
+  }
+
+  # See https://dev.mysql.com/doc/refman/5.7/en/charset-unicode-conversion.html
+  # This is actually already set by default on RDS but setting it here to be
+  # explicit
+  parameter {
+    name = "innodb_file_per_table"
+    value = 1
+  }
 }
