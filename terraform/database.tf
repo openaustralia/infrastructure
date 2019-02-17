@@ -4,7 +4,7 @@ resource "aws_db_instance" "main" {
   # Using general purpose SSD
   storage_type               = "gp2"
   engine                     = "mysql"
-  engine_version             = "5.6.37"
+  engine_version             = "5.6.40"
   # 1. We went from db.t2.small to db.t2.medium before we discovered that the
   #    database migration service hadn't migrated the databases indexes. Oops!!
   #    We might be able to go back down to small in the short term but would
@@ -42,7 +42,7 @@ resource "aws_db_instance" "postgresql" {
   # Using general purpose SSD
   storage_type               = "gp2"
   engine                     = "postgres"
-  engine_version             = "9.4.15"
+  engine_version             = "9.4.20"
   # Let's start in production with db.t2.medium. We should watch the cpu credits
   # Dropping down to db.t2.small because we're under-using
   instance_class             = "db.t2.small"
