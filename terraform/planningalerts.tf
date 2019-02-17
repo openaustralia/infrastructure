@@ -10,7 +10,10 @@ resource "aws_instance" "planningalerts" {
   # After a couple of days of seeing the memory behaviour around 12pm
   # with the new instance size we realised we could in fact move back down
   # to the smaller t2.medium.
-  instance_type = "t2.medium"
+  # After moving to sidekiq we seem to be needing some more memory.
+  # So increased the instance type to t2.large.
+  # TODO: It would be good to check if we can go smaller again
+  instance_type = "t2.large"
   key_name = "test"
   tags {
     Name = "planningalerts"
