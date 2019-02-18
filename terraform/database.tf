@@ -91,10 +91,10 @@ resource "aws_db_parameter_group" "mysql_default" {
   }
 
   # See https://dev.mysql.com/doc/refman/5.7/en/charset-unicode-conversion.html
-  # This is actually already set by default on RDS but setting it here to be
-  # explicit
-  parameter {
-    name = "innodb_file_per_table"
-    value = 1
-  }
+  # This is actually already set by default on RDS. So just confuses things
+  # to set it explicitly
+  # parameter {
+  #   name = "innodb_file_per_table"
+  #   value = 1
+  # }
 }
