@@ -6,6 +6,10 @@ resource "aws_elasticsearch_domain" "main" {
   # TODO: Need to think through what a sensible instance type is here
   cluster_config {
     instance_type = "t2.small.elasticsearch"
+    # These settings are only for testing/development. For production we'll
+    # want to change these settings
+    instance_count = 1
+    dedicated_master_enabled = false
   }
 
   ebs_options {
