@@ -16,6 +16,11 @@
 # ansible planningalerts -m debug -a 'var=planningalerts_production_mysql_password'
 # Note that some values are different in development
 # ansible development -m debug -a 'var=rds_admin_password'
+#
+# To encrypt a variable to the default vault id:
+#   ansible-vault encrypt_string --vault-id=.vault_pass.txt -n name secret
+# To encrypt a variable to the EC2 vault id:
+#   TODO(james): add something here
 
 # Use terraform (see terraform directory) to actually provision ec2 infrastructure
 
