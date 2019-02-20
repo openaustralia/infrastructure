@@ -118,7 +118,7 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 
 ### Install Vagrant, Ansible and Capistrano
 For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/).
-For configuration management you will need [Ansible](http://docs.ansible.com/).
+For configuration management you will need [Ansible](http://docs.ansible.com/) version 2.5 or above..
 For deploying code you'll need [capistrano](http://capistranorb.com/)
 
 ### Install vagrant-hostsupdater

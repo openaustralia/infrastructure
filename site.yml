@@ -20,7 +20,8 @@
 # To encrypt a variable to the default vault id:
 #   ansible-vault encrypt_string --vault-id=.vault_pass.txt -n name secret
 # To encrypt a variable to the EC2 vault id:
-#   TODO(james): add something here
+#   ansible-vault --encrypt-vault-id ec2 encrypt_string --name name secret
+# See ansible.cfg for notes about which vault id to use.
 
 # Use terraform (see terraform directory) to actually provision ec2 infrastructure
 
