@@ -18,6 +18,7 @@
 # ansible development -m debug -a 'var=rds_admin_password'
 #
 # To encrypt a variable to the default vault id (requires ansible >=2.5.0):
+#   ansible-vault --encrypt-vault-id default encrypt_string --name name secret
 #   ansible-vault encrypt_string --vault-id=.vault_pass.txt -n name secret
 # To encrypt a variable to the EC2 vault id:
 #   ansible-vault --encrypt-vault-id ec2 encrypt_string --name name secret
