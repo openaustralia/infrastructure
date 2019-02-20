@@ -19,7 +19,7 @@
 - name: Install postgresql 9.4 server
   apt:
     name: "postgresql-9.4"
-  update_cache: true
+    update_cache: true
 
 - name: Update postgresql config to bind to public ip
   copy:
