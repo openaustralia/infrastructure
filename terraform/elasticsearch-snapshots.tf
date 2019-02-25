@@ -1,5 +1,6 @@
 # Add an access key for the IAM user oaf-elasticsearch-snapshots by hand (in
-# the AWS console) and add it to the Ansible config
+# the AWS console) and add it to the Ansible config in group_vars/all.yml as
+# elasticsearch_snapshot_access_key and elasticsearch_snapshot_secret_key
 
 resource "aws_iam_user" "oaf-elasticsearch-snapshots" {
   name = "oaf-elasticsearch-snapshots"
