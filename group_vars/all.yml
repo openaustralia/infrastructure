@@ -18,6 +18,8 @@ backup_target_pass: !vault |
 # Keep all backups around for six months by default
 backup_max_age: 6M
 
+elasticsearch_snapshot_s3_bucket: oaf-elasticsearch-snapshots
+elasticsearch_snapshot_s3_region: ap-southeast-2
 elasticsearch_snapshot_access_key: AKIAJQY2VFRMUJENPBZA
 elasticsearch_snapshot_secret_key: !vault |
           $ANSIBLE_VAULT;1.2;AES256;all
