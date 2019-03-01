@@ -1,3 +1,0 @@
-production:
-  searchd_file_path: /srv/www/production/shared/db/sphinx
-  morphology: stem_en
