@@ -2,7 +2,7 @@
   version: da82e7312488747b1e06a4af242aa52ffacad60b
 
 - src: ANXS.ntp
-  version: v1.0.2
+  version: v2.0.0
 
 - src: azavea.elasticsearch
   version: 0.1.0
