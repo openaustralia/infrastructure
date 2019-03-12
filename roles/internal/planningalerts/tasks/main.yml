@@ -62,17 +62,6 @@
     - staging
   notify: nginx reload
 
-- name: Copy application throttling configuration
-  copy:
-    src: throttling.yml
-    dest: /srv/www/{{ item }}/shared/
-    owner: deploy
-    group: deploy
-  with_items:
-    - production
-    - staging
-  notify: nginx reload
-
 - name: Copy application new relic configuration (only for production)
   template:
     src: newrelic.yml
