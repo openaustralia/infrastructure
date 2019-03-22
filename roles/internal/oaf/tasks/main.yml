@@ -241,10 +241,6 @@
     job: "/usr/bin/php /var/www/html/wp-content/plugins/civicrm/civicrm/bin/cli.php -u {{ civicrm_wordpress_username }} -p {{ civicrm_wordpress_password }} -e Job -a execute"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
-- name: Install postfix so users can reset passwords and cron jobs can mail out
-  apt:
-    pkg: postfix
-
 - name: Add apt key for new relic
   apt_key:
     url: https://download.newrelic.com/548C16BF.gpg
