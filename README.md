@@ -116,10 +116,10 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 
 ## Requirements
 
-### Install Vagrant, Ansible and Capistrano
+### Install Vagrant and Capistrano
 For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/).
-For configuration management you will need [Ansible](http://docs.ansible.com/) version 2.5 or above..
 For deploying code you'll need [capistrano](http://capistranorb.com/)
+You'll need Python 2.6 or 2.7 and virtualenv installed by your OS package manager.
 
 ### Install vagrant-hostsupdater
 Also
@@ -139,20 +139,6 @@ on your platform, under Settings -> Files.
 
 Once this is done, the symlinks to .*-vault-pass inside the repo
 should point to the password files.
-
-### Install external roles
-Install required external roles with
-```
-ansible-galaxy install -r roles/requirements.yml -p roles/external
-```
-
-If `requirements.yml` has been updated with a new version of a
-plugin, you'll need to update your installation. This can be done
-with:
-
-```
-ansible-galaxy install -r roles/requirements.yml -p roles/external -f
-```
 
 ## Generating SSL certificates for development
 See certificates/README.md for more information.
@@ -174,10 +160,13 @@ If it's already up you can re-run Ansible provisioning with:
 
 Provision all running servers with:
 
-    ansible-playbook -i ec2-hosts site.yml
+    make
+
+This will create a Python virtualenv in `venv`; install ansible inside it; and install required roles from ansible-galaxy inside `roles/external`
 
 If you just want to provision a single server:
 
+    . venv/bin/activate
     ansible-playbook -i ec2-hosts site.yml -l planningalerts
 
 ## Deploying
