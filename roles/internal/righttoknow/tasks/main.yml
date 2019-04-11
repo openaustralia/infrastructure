@@ -334,6 +334,12 @@
     - regexp
   notify: restart postfix
 
+- name: Set mailname for outbound mail
+  template:
+    src: mailname
+    dest: /etc/mailname
+  notify: restart postfix
+
 - name: Configure postfix logs to go to their own directory
   copy:
     src: 50-default.conf

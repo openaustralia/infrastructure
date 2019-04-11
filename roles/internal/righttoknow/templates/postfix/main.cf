@@ -44,3 +44,5 @@ virtual_alias_maps = regexp:/etc/postfix/regexp
 transport_maps = regexp:/etc/postfix/transport
 # Increase the size limit above the Google Apps limit of 25 MB
 message_size_limit = 30720000
+#Use TLS if the receiving server supports it
+smtp_tls_security_level = may
