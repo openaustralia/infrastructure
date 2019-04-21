@@ -121,10 +121,17 @@ For starting local VMs for testing you will need [Vagrant](https://www.vagrantup
 For deploying code you'll need [capistrano](http://capistranorb.com/)
 You'll need Python 2.6 or 2.7 and virtualenv installed by your OS package manager.
 
-### Install vagrant-hostsupdater
-Also
+### Environment setup
+
+There's a very handy `Makefile` included which will:
+- install Vagrant plugins
+- Create a python virtual environment
+- Install `ansible-galaxy` roles
+
+Simply run
+
 ```
-$ vagrant plugin install vagrant-hostsupdater
+$ make
 ```
 
 ### Add the Ansible Vault password
@@ -160,14 +167,13 @@ If it's already up you can re-run Ansible provisioning with:
 
 Provision all running servers with:
 
-    make
+    make production
 
 This will create a Python virtualenv in `venv`; install ansible inside it; and install required roles from ansible-galaxy inside `roles/external`
 
 If you just want to provision a single server:
 
-    . venv/bin/activate
-    ansible-playbook -i ec2-hosts site.yml -l planningalerts
+    ./venv/bin/ansible-playbook -i ec2-hosts site.yml -l planningalerts
 
 ## Deploying
 
@@ -298,9 +304,3 @@ Data directories of servers are backed up to S3 using Duply.
 Using the `data_directory` profile as an example, to run a backup manually you'd log in as root and run `duply data_directory backup`.
 
 To restore the latest backup to `/mnt/restore` you'd run `duply data_directory restore /mnt/restore`.
-
-## Don't use Google Chrome
-
-Don't use Google Chrome for development with the openaustralia site because they helpfully (read
-not helpfully and rudely) made **every single site in the .dev domain redirect to https**. So,
-for the time being (until we make openaustralia redirect to use https) use Firefox instead.
