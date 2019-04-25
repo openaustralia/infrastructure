@@ -1,4 +1,4 @@
-.phony: ansible venv roles production ALL
+.phony: venv roles production ALL letsencrypt
 
 ALL: venv roles .vagrant
 
@@ -10,8 +10,8 @@ venv: venv/bin/activate
 
 venv/bin/activate: requirements.txt
 	test -d venv || virtualenv venv
-	. venv/bin/pip install --upgrade pip virtualenv
-	. venv/bin/pip install -Ur requirements.txt
+	./venv/bin/pip install --upgrade pip virtualenv
+	./venv/bin/pip install -Ur requirements.txt
 	touch venv/bin/activate
 
 roles/external: venv roles/requirements.yml
@@ -21,6 +21,9 @@ roles: roles/external
 
 production: venv roles
 	./venv/bin/ansible-playbook site.yml
+
+letsencrypt: venv roles
+	./venv/bin/ansible-playbook update-ssl-certs.yml
 
 retry: venv roles setup.retry
 	./venv/bin/ansible-playbook site.yml -l @setup.retry

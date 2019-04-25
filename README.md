@@ -175,6 +175,12 @@ If you just want to provision a single server:
 
     ./venv/bin/ansible-playbook -i ec2-hosts site.yml -l planningalerts
 
+### Updating LetsEncrypt certificates on production servers
+
+    make letsencrypt
+
+simples.
+
 ## Deploying
 
 ### Deploying Right To Know to your local development server
