@@ -1,4 +1,37 @@
 # Automated setup and configuration for most of OpenAustralia Foundation's servers
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [Automated setup and configuration for most of OpenAustralia Foundation's servers](#automated-setup-and-configuration-for-most-of-openaustralia-foundations-servers)
+    - [A little history](#a-little-history)
+    - [Approach](#approach)
+    - [The tools](#the-tools)
+    - [Current state of this work (as of 26 May 2018)](#current-state-of-this-work-as-of-26-may-2018)
+    - [Requirements](#requirements)
+        - [Install Vagrant and Capistrano](#install-vagrant-and-capistrano)
+        - [Environment setup](#environment-setup)
+        - [Add the Ansible Vault password](#add-the-ansible-vault-password)
+    - [Generating SSL certificates for development](#generating-ssl-certificates-for-development)
+    - [Provisioning](#provisioning)
+        - [Provisioning local development servers using Vagrant](#provisioning-local-development-servers-using-vagrant)
+        - [Provisioning production servers](#provisioning-production-servers)
+        - [Updating LetsEncrypt certificates on production servers](#updating-letsencrypt-certificates-on-production-servers)
+    - [Deploying](#deploying)
+        - [Deploying Right To Know to your local development server](#deploying-right-to-know-to-your-local-development-server)
+        - [Deploying PlanningAlerts](#deploying-planningalerts)
+            - [Deploying PlanningAlerts to your local development server](#deploying-planningalerts-to-your-local-development-server)
+            - [Deploying PlanningAlerts to production](#deploying-planningalerts-to-production)
+        - [Deploying Electionleaflets to your local development server](#deploying-electionleaflets-to-your-local-development-server)
+            - [TODOS](#todos)
+        - [Deploying They Vote For You](#deploying-they-vote-for-you)
+            - [Deploying They Vote For You to your local development server](#deploying-they-vote-for-you-to-your-local-development-server)
+            - [Deploying They Vote For You to production](#deploying-they-vote-for-you-to-production)
+        - [Deploying OpenAustralia](#deploying-openaustralia)
+            - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
+            - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
+    - [Backups](#backups)
+
+<!-- markdown-toc end -->
 
 ## A little history
 
