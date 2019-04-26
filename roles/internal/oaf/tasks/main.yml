@@ -140,7 +140,8 @@
     - hifi
     - mailchimp-for-wp
     - nivo-slider-light
-    - quotes-collection
+    # This plugin currently breaks our site; possibly fixed after a wordpress upgrade?
+    # - quotes-collection
     - recent-posts-embed
     - scalable-vector-graphics-svg
     - subscribe-to-comments
