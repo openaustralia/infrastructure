@@ -26,6 +26,7 @@
         - [Deploying They Vote For You](#deploying-they-vote-for-you)
             - [Deploying They Vote For You to your local development server](#deploying-they-vote-for-you-to-your-local-development-server)
             - [Deploying They Vote For You to production](#deploying-they-vote-for-you-to-production)
+            - [Restart Elasticsearch on production](#restart-elasticsearch-on-production)
         - [Deploying OpenAustralia](#deploying-openaustralia)
             - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
             - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
@@ -212,7 +213,7 @@ If you just want to provision a single server:
 
     make letsencrypt
 
-simples.
+After this, you may need to [restart Elasticsearch on TheyVoteForYou](#restart-elasticsearch-on-production)
 
 ## Deploying
 
@@ -313,6 +314,12 @@ bundle exec cap development deploy
 
 ```
 bundle exec cap production deploy
+```
+
+#### Restart Elasticsearch on production
+
+```
+systemctl restart elasticsearch.service
 ```
 
 ### Deploying OpenAustralia
