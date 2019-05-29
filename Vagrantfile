@@ -60,7 +60,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "site.yml"
     ansible.compatibility_mode = "2.0"
-    ansible.playbook_command = "./venv/bin/ansible-playbook"
+    ansible.playbook_command = ".venv/bin/ansible-playbook"
 
     # Uncomment the following line if you want some verbose output from ansible
     #ansible.verbose = "vv"
