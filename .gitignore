@@ -16,4 +16,4 @@ ubuntu-xenial-16.04-cloudimg-console.log
 certificates/*.key
 certificates/*.pem
 
-venv/
+.venv/
