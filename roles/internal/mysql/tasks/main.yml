@@ -1,16 +1,13 @@
 ---
 # tasks file for roles/internal/mysql
 
-# we're installing mysql 5.6 because that's what we're using on AWS
-# Install mysql 5.6 on xenial requires a few more jumps than usual because
-# the default is 5.7
-- name: Add repo for installing mysql 5.6
-  apt_repository:
-    repo: 'ppa:ondrej/mysql-5.6'
+# We're using mysql 5.6 on AWS, but that's no longer available to install
+# So here we're using the system 5.7 packages, which may cause compatibility
+# issues.
 
-- name: Install mysql 5.6 server
+- name: Install mysql 5.7 server
   apt:
-    pkg: mysql-server-5.6
+    pkg: mysql-server-5.7
     update_cache: yes
 
 - name: Install dependency for following command
