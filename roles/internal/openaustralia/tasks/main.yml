@@ -96,6 +96,15 @@
     priv: 'oa-staging.*:ALL'
     host: "%"
 
+- name: Create .my.cnf in development
+  template:
+    src: mysql
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: "0600"
+  when: "'development' in group_names"
+
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
   file:

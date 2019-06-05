@@ -1,0 +1,5 @@
+[client]
+port = 3306
+host = {{ mysql_host }}
+database = oa-{{ stage }}
+password = {{ db_password }}
