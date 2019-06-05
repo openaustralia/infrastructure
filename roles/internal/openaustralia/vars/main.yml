@@ -1,1 +1,2 @@
 ---
+rvm1_install_path: /usr/local/rvm          # Set to system location

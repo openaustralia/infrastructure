@@ -246,6 +246,30 @@
     - cli
   notify: reload apache
 
+# rvm.ruby installes the latest bundler, which doesn't work with our old version of ruby
+# 1.17.3 is the latest version that supports ruby 1.8.7
+
+- name: Install bundler if not installed
+  shell: >
+    ls {{ rvm1_install_path }}/wrappers/{{ item.stdout }}
+    | if ! grep "^bundler " ; then {{ rvm1_install_path }}/wrappers/{{ item.stdout }}/gem install bundler --version "1.17.3"; fi
+  args:
+    creates: '{{ rvm1_install_path }}/wrappers/{{ item.stdout }}/bundler'
+  with_items: '{{ ruby_patch.results }}'
+  when: rvm1_bundler_install
+  register: bundler_install
+  changed_when: '"Successfully installed bundler" in bundler_install.stdout'
+
+- name: Symlink bundler binaries on the system path
+  file:
+    state: 'link'
+    src: '{{ rvm1_install_path }}/wrappers/default/{{ item }}'
+    dest: '{{ rvm1_symlink_to }}/{{ item }}'
+    owner: '{{ root_user }}'
+    group: '{{ root_group }}'
+  when: not '--user-install' in rvm1_install_flags and rvm1_bundler_install
+  with_items: '{{ rvm1_symlink_bundler_binaries }}'
+
 # TODO: It would be cleaner if gems were installed as part of the capistrano install
 # Then, we could use the Gemfile rather than duplicating this information here
 - name: Install required gems
