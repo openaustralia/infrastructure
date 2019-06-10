@@ -96,6 +96,8 @@
     priv: 'oa-staging.*:ALL'
     host: "%"
 
+#This file will always point at the production db
+# Which seems like that's what we want, in development
 - name: Create .my.cnf in development
   template:
     src: mysql
@@ -104,6 +106,13 @@
     group: root
     mode: "0600"
   when: "'development' in group_names"
+  vars:
+    db_password: "{{ (item == 'production') | ternary(openaustralia_production_mysql_password, openaustralia_staging_mysql_password) }}"
+    stage: "{{ item }}"
+  with_items:
+    - production
+    
+  
 
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
