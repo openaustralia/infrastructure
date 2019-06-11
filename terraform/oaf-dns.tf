@@ -37,6 +37,14 @@ resource "cloudflare_record" "oaf_www" {
   value  = "oaf.org.au"
 }
 
+# For campaign monitor
+resource "cloudflare_record" "oaf_email" {
+  domain = "oaf.org.au"
+  name   = "email.oaf.org.au"
+  type   = "CNAME"
+  value  = "cname.createsend.com"
+}
+
 # MX records
 resource "cloudflare_record" "oaf_mx1" {
   domain   = "oaf.org.au"
