@@ -140,10 +140,7 @@ dependencies:
       - name: openaustralia_data
         schedule: 0 2 * * *
         source: /data
-        #Keep 6 months of backups, taking a full backup once per month
         action: backup_verify_purge --force
-        backup_max_age: 6M
-        backup_full_max_age: 1M
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/openaustralia/{{ inventory_hostname }}/data"
   - role: nickhammond.logrotate
