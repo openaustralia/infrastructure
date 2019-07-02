@@ -45,6 +45,45 @@ resource "aws_security_group" "webserver" {
   }
 }
 
+resource "aws_security_group" "proxy" {
+  name        = "proxy"
+  description = "standard security group for web proxies running on port 8888"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    from_port   = 8888
+    to_port     = 8888
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  # Allow pings from hosts on the internet
+  ingress {
+    protocol = "icmp"
+    from_port = 8
+    to_port = -1
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  # Allow everything going out
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
 data "aws_security_group" "default" {
   name = "default"
 }
