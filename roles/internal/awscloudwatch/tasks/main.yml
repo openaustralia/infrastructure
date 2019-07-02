@@ -33,9 +33,9 @@
 #   notify:
 #     - restart CloudWatch Agent
 
-- name: Configure CloudWatch service
-  service:
-    name: amazon-cloudwatch-agent
-    enabled: no
-    state: stopped
-  when: "'ec2' in group_names"
+# - name: Configure CloudWatch service
+#   service:
+#     name: amazon-cloudwatch-agent
+#     enabled: no
+#     state: stopped
+#   when: "'ec2' in group_names"
