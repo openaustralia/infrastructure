@@ -134,6 +134,7 @@ resource "aws_security_group" "postgresql" {
   }
 }
 
+# TODO: Remove this
 resource "aws_security_group" "jamison" {
   name = "jamison"
   description = "launch-wizard-3 created 2018-02-19T05:58:53.596+11:00"
@@ -194,6 +195,7 @@ resource "aws_security_group" "incoming_email" {
   }
 }
 
+# TODO: Remove this
 resource "aws_security_group" "kedumba" {
   name = "octopus"
   description = "for main instance"
