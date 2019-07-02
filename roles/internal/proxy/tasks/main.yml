@@ -7,3 +7,4 @@
   template:
     src: tinyproxy.conf
     dest: /etc/tinyproxy/
+  notify: restart tinyproxy
