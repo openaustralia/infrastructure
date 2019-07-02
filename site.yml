@@ -112,3 +112,8 @@
   become: true
   roles:
     - opengovernment
+
+- hosts: proxy
+  become: true
+  roles:
+    - proxy

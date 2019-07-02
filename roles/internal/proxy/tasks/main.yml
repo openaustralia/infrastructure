@@ -1,2 +1,9 @@
 ---
-# tasks file for proxy
+- name: Install tinyproxy
+  apt:
+    pkg: tinyproxy
+
+- name: Tinyproxy configuration
+  template:
+    src: tinyproxy.conf
+    dest: /etc/tinyproxy/
