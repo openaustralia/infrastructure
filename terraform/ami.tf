@@ -18,7 +18,7 @@ data "aws_ami" "ubuntu" {
 data "aws_ami" "ubuntu_disco" {
   filter {
     name = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-disco-19.04-arm64-server-20190628"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-disco-19.04-amd64-server-20190628"]
   }
 
   # Canonical
