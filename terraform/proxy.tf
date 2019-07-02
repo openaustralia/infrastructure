@@ -7,7 +7,7 @@ resource "aws_instance" "au_proxy" {
   tags {
     Name = "au.proxy"
   }
-  security_groups = ["${aws_security_group.webserver.name}"]
+  security_groups = ["${aws_security_group.proxy.name}"]
   # disable_api_termination = true
   iam_instance_profile = "${aws_iam_instance_profile.logging.name}"
 }
