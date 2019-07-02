@@ -14,13 +14,3 @@ data "aws_ami" "ubuntu" {
   # Canonical
   owners = ["099720109477"]
 }
-
-data "aws_ami" "ubuntu_bionic" {
-  filter {
-    name = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20190627.1"]
-  }
-
-  # Canonical
-  owners = ["099720109477"]
-}
