@@ -102,7 +102,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "openaustralia.org.au.test"    => "192.168.10.16",
     "mysql.test"                   => "192.168.10.17",
     "postgresql.test"              => "192.168.10.18",
-    "opengovernment.org.au.test"  => "192.168.10.19"
+    "opengovernment.org.au.test"   => "192.168.10.19",
+    "au.proxy.oaf.org.au.test"     => "192.168.10.20"
   }
 
   # Use this so that you don't need to give the machine name for all vagrant
@@ -122,14 +123,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "api.#{hostname}"
       ]
     end
-  end
-
-  # We're using a later version of Ubuntu for the proxy
-  # just so we can get the version of tinyproxy without compiling stuff.
-  # I really don't like compiling things
-  config.vm.define "au.proxy.oaf.org.au.test" do |host|
-    host.vm.box = "ubuntu/bionic64"
-    host.vm.network :private_network, ip: "192.168.10.100"
-    host.vm.hostname = "au.proxy.oaf.org.au.test"
   end
 end

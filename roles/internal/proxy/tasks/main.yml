@@ -1,10 +1,57 @@
 ---
-- name: Install tinyproxy
+- name: Install compiler
   apt:
-    pkg: tinyproxy
+    pkg: build-essential
+
+- name: Download tinyproxy source code
+  get_url:
+    url: https://github.com/tinyproxy/tinyproxy/releases/download/1.10.0/tinyproxy-1.10.0.tar.gz
+    dest: /tmp/tinyproxy-1.10.0.tar.gz
+  register: tinyproxy_source
+
+- name: Unpacking tinyproxy
+  unarchive:
+    copy: no
+    dest: /tmp/
+    src: "{{ tinyproxy_source.dest }}"
+  when: tinyproxy_source is changed
+  register: tinyproxy_source_unpack
+
+- name: Configuring tinyproxy source
+  command: "./configure"
+  args:
+    chdir: /tmp/tinyproxy-1.10.0
+  when: tinyproxy_source_unpack is changed
+  register: tinyproxy_configure
+
+- name: Compiling tinyproxy
+  shell: make && make install
+  args:
+    chdir: /tmp/tinyproxy-1.10.0
+  when: tinyproxy_configure is changed
+
+- name: Tinyproxy startup script
+  template:
+    src: init.sh
+    dest: /etc/init.d/tinyproxy
+    mode: 0755
+
+- name: Create user tinyproxy
+  user:
+    name: tinyproxy
+
+- name: Create group tinyproxy
+  group:
+    name: tinyproxy
 
 - name: Tinyproxy configuration
   template:
     src: tinyproxy.conf
-    dest: /etc/tinyproxy/
+    dest: /usr/local/etc/tinyproxy/
   notify: restart tinyproxy
+
+- name: Enable tinyproxy service
+  service:
+    name: tinyproxy
+    enabled: yes
+    state: started
