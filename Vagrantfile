@@ -9,10 +9,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
 
-  # Every Vagrant virtual environment requires a box to build off of.
-  #config.vm.box = "ubuntu/trusty64"
-  config.vm.box = "ubuntu/xenial64"
-
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -75,6 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "mysql"            => ["mysql.test"],
       "postgresql"       => ["postgresql.test"],
       "opengovernment"   => ["opengovernment.org.au.test"],
+      "proxy"            => ["au.proxy.oaf.org.au.test"],
       "development"      => [
         "righttoknow.org.au.test",
         "planningalerts.org.au.test",
@@ -84,7 +81,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "openaustralia.org.au.test",
         "mysql.test",
         "postgresql.test",
-        "opengovernment.org.au.test"
+        "opengovernment.org.au.test",
+        "au.proxy.oaf.org.au.test"
       ]
     }
   end
@@ -113,6 +111,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   hosts.each do |hostname, ip|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
+      host.vm.box = "ubuntu/xenial64"
       host.vm.network :private_network, ip: ip
       host.vm.hostname = hostname
       # For each host set up some common aliases
@@ -123,5 +122,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "api.#{hostname}"
       ]
     end
+  end
+
+  # We're using a later version of Ubuntu for the proxy
+  # just so we can get the version of tinyproxy without compiling stuff.
+  # I really don't like compiling things
+  config.vm.define "au.proxy.oaf.org.au.test" do |host|
+    host.vm.box = "ubuntu/disco64"
+    host.vm.network :private_network, ip: "192.168.10.100"
+    host.vm.hostname = "au.proxy.oaf.org.au.test"
   end
 end
