@@ -38,10 +38,10 @@
     src: nrsysmond.cfg
     dest: /etc/newrelic
 
-- name: Start newrelic server monitor
+- name: Stop newrelic server monitor
   service:
     name: newrelic-sysmond
-    state: started
+    state: stopped
   # Only actually start the monitor in production
   # TODO: Check that this also gets stopped in development
   when: "'ec2' in group_names"
