@@ -29,7 +29,7 @@ resource "aws_ebs_volume" "righttoknow_data" {
     availability_zone = "ap-southeast-2c"
     # 7.8 GB is current used on kedumba for shared/files. So, let's use 20 GB here.
     # Increased size because we're storing shared/cache on there too now.
-    size = 50
+    size = 60
     type = "gp2"
     tags {
         Name = "righttoknow_data"
