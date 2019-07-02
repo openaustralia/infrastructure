@@ -15,10 +15,10 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"]
 }
 
-data "aws_ami" "ubuntu_disco" {
+data "aws_ami" "ubuntu_bionic" {
   filter {
     name = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-disco-19.04-amd64-server-20190628"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20190627.1"]
   }
 
   # Canonical

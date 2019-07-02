@@ -128,7 +128,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # just so we can get the version of tinyproxy without compiling stuff.
   # I really don't like compiling things
   config.vm.define "au.proxy.oaf.org.au.test" do |host|
-    host.vm.box = "ubuntu/disco64"
+    host.vm.box = "ubuntu/bionic64"
     host.vm.network :private_network, ip: "192.168.10.100"
     host.vm.hostname = "au.proxy.oaf.org.au.test"
   end
