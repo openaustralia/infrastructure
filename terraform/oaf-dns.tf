@@ -14,6 +14,13 @@ resource "cloudflare_record" "oaf_cuttlefish" {
   value  = "${var.cuttlefish_ipv4}"
 }
 
+resource "cloudflare_record" "au_proxy" {
+  domain = "oaf.org.au"
+  name   = "au.proxy.oaf.org.au"
+  type   = "A"
+  value  = "${aws_eip.au_proxy.public_ip}"
+}
+
 # AAAA records
 resource "cloudflare_record" "oaf_aaaa_cuttlefish" {
   domain = "oaf.org.au"
