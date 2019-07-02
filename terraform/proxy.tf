@@ -1,6 +1,5 @@
 resource "aws_instance" "au_proxy" {
-  # TODO: Change this
-  ami =  "${data.aws_ami.ubuntu.id}"
+  ami =  "${data.aws_ami.ubuntu_disco.id}"
   # Keeping this as small as we possibly can
   instance_type = "t2.nano"
   key_name = "deployer_key"

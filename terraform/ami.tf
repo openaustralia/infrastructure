@@ -14,3 +14,13 @@ data "aws_ami" "ubuntu" {
   # Canonical
   owners = ["099720109477"]
 }
+
+data "aws_ami" "ubuntu_disco" {
+  filter {
+    name = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-disco-19.04-arm64-server-20190628"]
+  }
+
+  # Canonical
+  owners = ["099720109477"]
+}
