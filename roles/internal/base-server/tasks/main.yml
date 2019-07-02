@@ -18,33 +18,5 @@
     state: link
   notify: Update timezone
 
-- name: Add apt repository for new relic
-  apt_repository:
-    repo: deb http://apt.newrelic.com/debian/ newrelic non-free
-    filename: newrelic.list
-
-- name: Add apt key for new relic
-  apt_key:
-    url: https://download.newrelic.com/548C16BF.gpg
-    id: 548C16BF
-
-- name: Install newrelic server monitor
-  apt:
-    pkg: newrelic-sysmond
-    update_cache: yes
-
-- name: Configure newrelic server monitor
-  template:
-    src: nrsysmond.cfg
-    dest: /etc/newrelic
-
-- name: Stop newrelic server monitor
-  service:
-    name: newrelic-sysmond
-    state: stopped
-  # Only actually start the monitor in production
-  # TODO: Check that this also gets stopped in development
-  when: "'ec2' in group_names"
-
 # TODO: Add byobu and enable it by default
 # TODO: Install htop because it's awesome
