@@ -207,7 +207,7 @@ This will create a Python virtualenv in `venv`; install ansible inside it; and i
 
 If you just want to provision a single server:
 
-    ./venv/bin/ansible-playbook -i ec2-hosts site.yml -l planningalerts
+    .venv/bin/ansible-playbook -i ec2-hosts site.yml -l planningalerts
 
 ### Updating LetsEncrypt certificates on production servers
 
