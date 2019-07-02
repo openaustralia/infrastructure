@@ -6,6 +6,7 @@ righttoknow.org.au
 openaustraliafoundation.org.au
 opengovernment.org.au
 electionleaflets.org.au
+au.proxy.oaf.org.au
 
 [theyvoteforyou]
 theyvoteforyou.org.au
@@ -27,6 +28,9 @@ opengovernment.org.au
 
 [electionleaflets]
 electionleaflets.org.au
+
+[proxy]
+au.proxy.oaf.org.au
 
 [development]
 openaustralia.org.au.test
