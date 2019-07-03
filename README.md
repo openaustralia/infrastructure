@@ -281,6 +281,26 @@ bundle exec cap -S stage=development deploy
 bundle exec cap -S stage=production deploy
 ```
 
+### Running tests locally
+
+- requires a database. Use `mysql.test` from the `infrastructure` repo.
+- Create a user called `pw_test` with password `pw_test` and grant it access to a db called `pw_test`. Then, drop this in `config/database.yml`:
+````
+test:
+  adapter: mysql2
+  database: pw_test
+  username: pw_test
+  password: pw_test
+  host: mysql.test
+  pool: 5
+  timeout: 5000
+````
+- Intialize the DB before running tests:
+````
+RAILS_ENV=test bundle exec rakedb:create db:migrate
+````
+- Now you can `bundle exec rake` to run tests.
+
 ### Deploying Electionleaflets to your local development server
 
 After provisioning, deploy from Electionleaflets repository
