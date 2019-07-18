@@ -242,27 +242,17 @@
     job: "/usr/bin/php /var/www/html/wp-content/plugins/civicrm/civicrm/bin/cli.php -u {{ civicrm_wordpress_username }} -p {{ civicrm_wordpress_password }} -e Job -a execute"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
-- name: Add apt key for new relic
-  apt_key:
-    url: https://download.newrelic.com/548C16BF.gpg
-    id: 548C16BF
-
-- name: Add apt repository for new relic
-  apt_repository:
-    repo: deb http://apt.newrelic.com/debian/ newrelic non-free
-    filename: newrelic.list
-
 # Despite the name apparently this version of newrelic monitor also supports php 7.
 # See: https://discuss.newrelic.com/t/where-to-download-php7-agent/35807
-- name: Install newrelic php monitor
+- name: Uninstall newrelic php monitor
   apt:
     pkg: newrelic-php5
-    update_cache: yes
+    state: absent
 
-- name: Configure newrelic php monitor
-  template:
-    src: newrelic.ini
-    dest: /etc/php/5.6/mods-available/
+- name: Remove configuration for newrelic php monitor
+  file:
+    state: absent
+    path: /etc/php/5.6/mods-available/newrelic.ini
   notify: reload apache
 
 # Do these last two things last so that the message gets displayed at the end which
@@ -293,3 +283,7 @@
 # TODO: civicrm mailer server needs to be added to spf for all main domains
 # TODO: Add newrelic application monitoring
 # TODO: Mail sent to www-data needs to go to root (or switch over to deploy user)
+
+- name: Autoremove unneeded packages
+  apt:
+    autoremove: yes

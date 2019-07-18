@@ -63,11 +63,9 @@
   notify: nginx reload
 
 - name: Copy application new relic configuration (only for production)
-  template:
-    src: newrelic.yml
-    dest: /srv/www/production/shared
-    owner: deploy
-    group: deploy
+  file:
+    state: absent
+    path: /srv/www/production/shared/newrelic.yml
   notify: nginx reload
 
 - name: Copy application environment variables
@@ -241,3 +239,7 @@
 - name: Install redis for sidekiq
   apt:
     pkg: redis-server
+
+- name: Autoremove unneeded packages
+  apt:
+    autoremove: yes

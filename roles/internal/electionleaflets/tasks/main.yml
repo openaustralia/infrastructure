@@ -259,32 +259,21 @@
   file: dest="/etc/apache2/sites-enabled/000-default.conf" state=absent
   notify: reload apache
 
-- name: Add apt key for new relic
-  apt_key:
-    url: https://download.newrelic.com/548C16BF.gpg
-    id: 548C16BF
-
-- name: Add apt repository for new relic
-  apt_repository:
-    repo: deb http://apt.newrelic.com/debian/ newrelic non-free
-    filename: newrelic.list
-
-- name: Install newrelic php monitor
+- name: Uninstall newrelic php monitor
   apt:
-    pkg: newrelic-php5
-    update_cache: yes
+    pkg: newrelic-php5 
+    state: absent
 
-- name: Configure newrelic php monitor
-  template:
-    src: newrelic.ini
-    dest: /etc/php/5.6/mods-available/
+- name: Remove configuration for newrelic php monitor
+  file:
+    state: absent
+    path: /etc/php/5.6/mods-available/newrelic.ini
   notify: reload apache
 
-- name: Enable newrelic for php
+- name: Disable newrelic for php
   file:
-    state: link
-    src: /etc/php/5.6/mods-available/newrelic.ini
-    dest: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
+    state: absent
+    path: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
   with_items:
     - apache2
     - cli
@@ -304,3 +293,7 @@
 
 - name: Cron for email alerts
   cron: name="email alerts" minute="*/5" user=deploy job="cd /srv/www/production/current/tools && php alertomatic.php" state=absent
+
+- name: Autoremove unneeded packages
+  apt:
+    autoremove: yes
