@@ -82,11 +82,9 @@
   notify: nginx reload
 
 - name: Copy application newrelic configuration
-  template:
-    src: newrelic.yml
-    dest: "/srv/www/{{ item }}/shared/config/"
-    owner: deploy
-    group: deploy
+  file:
+    state: absent
+    path: "/srv/www/{{ item }}/shared/config/newrelic.yml"
   with_items:
     - production
     - staging

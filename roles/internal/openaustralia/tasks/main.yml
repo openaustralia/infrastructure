@@ -473,32 +473,21 @@
 
 # TODO: I have faint memory of rsync service for data.openaustralia.org.au
 
-- name: Add apt key for new relic
-  apt_key:
-    url: https://download.newrelic.com/548C16BF.gpg
-    id: 548C16BF
-
-- name: Add apt repository for new relic
-  apt_repository:
-    repo: deb http://apt.newrelic.com/debian/ newrelic non-free
-    filename: newrelic.list
-
-- name: Install newrelic php monitor
+- name: Uninstall newrelic php monitor
   apt:
     pkg: newrelic-php5
-    update_cache: yes
+    state: absent
 
 - name: Configure newrelic php monitor
-  template:
-    src: newrelic.ini
-    dest: /etc/php/5.6/mods-available/
+  file:
+    state: absent 
+    path: /etc/php/5.6/mods-available/newrelic.ini
   notify: reload apache
 
 - name: Enable newrelic for php
   file:
-    state: link
-    src: /etc/php/5.6/mods-available/newrelic.ini
-    dest: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
+    state: absent
+    path: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
   with_items:
     - apache2
     - cli
@@ -511,3 +500,7 @@
   lineinfile:
     path: /etc/mime.types
     line: 'application/x-httpd-php phtml pht php'
+
+- name: Autoremove unneeded packages
+  apt:
+    autoremove: yes
