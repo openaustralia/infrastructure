@@ -68,10 +68,10 @@
     - production
     - staging
 
-- name: Remove newrelic configuration
-  file:
-    state: absent 
-    path: /srv/www/{{ item }}/shared/newrelic.yml
+- name: Add newrelic configuration to disable agent
+  template:
+    src: newrelic.yml
+    dest: /srv/www/{{ item }}/shared/
   vars:
     newrelic_app_name: "Right To Know{{ (item == 'production') | ternary('', ' Staging') }}"
   with_items:

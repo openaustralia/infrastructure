@@ -62,10 +62,12 @@
     - staging
   notify: nginx reload
 
-- name: Copy application new relic configuration (only for production)
-  file:
-    state: absent
-    path: /srv/www/production/shared/newrelic.yml
+- name: Copy application new relic configuration (disables Newrelic agent)
+  template:
+    src: newrelic.yml
+    dest: /srv/www/production/shared/
+    owner: deploy
+    group: deploy
   notify: nginx reload
 
 - name: Copy application environment variables
