@@ -3,6 +3,8 @@ server {
   server_name {{ planningalerts_domain }};
   server_name www.{{ planningalerts_domain }};
   rewrite ^/(.*) https://www.{{ planningalerts_domain }}/$1 permanent;
+  rewrite ^/donate(.*) https://www.oaf.org.au/donate/planningalerts/ permanent;
+  rewrite ^/donations(.*) https://www.oaf.org.au/donate/planningalerts/ permanent;
 }
 
 server {
