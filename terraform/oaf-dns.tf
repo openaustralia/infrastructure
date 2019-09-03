@@ -7,6 +7,21 @@ resource "cloudflare_record" "oaf_root" {
   value  = "${aws_eip.oaf.public_ip}"
 }
 
+resource "cloudflare_record" "support_oaf" {
+  domain = "oaf.org.au"
+  name   = "support.oaf.org.au"
+  type   = "A"
+  value  = "${aws_eip.support_oaf.public_ip}"
+}
+
+resource "cloudflare_record" "support_mx1" {
+  domain   = "oaf.org.au"
+  name     = "support.oaf.org.au"
+  type     = "MX"
+  priority = 10
+  value    = "support.oaf.org.au"
+}
+
 resource "cloudflare_record" "oaf_cuttlefish" {
   domain = "oaf.org.au"
   name   = "cuttlefish.oaf.org.au"

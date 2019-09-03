@@ -117,3 +117,8 @@
   become: true
   roles:
     - proxy
+
+- hosts: support
+  become: true
+  roles:
+    - support

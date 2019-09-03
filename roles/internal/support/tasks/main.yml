@@ -1,0 +1,9 @@
+---
+
+- name: Install discourse
+  include_role:
+    name: discourse
+
+- name: Autoremove unneeded packages
+  apt:
+    autoremove: yes
