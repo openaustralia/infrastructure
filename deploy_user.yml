@@ -1,0 +1,6 @@
+- hosts: all
+  become: true
+  tasks:
+    - name: Configure deploy user
+      include_role:
+        name: deploy-user

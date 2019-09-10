@@ -25,6 +25,10 @@ production: venv roles
 letsencrypt: venv roles
 	.venv/bin/ansible-playbook update-ssl-certs.yml
 
+#Just updates the SSH keys for the deploy user on all hosts.
+ssh: venv roles
+	.venv/bin/ansible-playbook deploy_user.yml
+
 retry: venv roles setup.retry
 	.venv/bin/ansible-playbook site.yml -l @setup.retry
 
