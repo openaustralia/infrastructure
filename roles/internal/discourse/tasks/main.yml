@@ -2,6 +2,11 @@
 - name: Ensure latest git is installed
   apt: pkg=git state=latest
 
+- name: Ensure nginx is absent
+  apt:
+    name: nginx
+    state: absent
+
 - name: Ensure that /var/discourse exists
   file: path=/var/discourse owner=deploy group=deploy state=directory
 
@@ -21,15 +26,3 @@
 - name: Rebuild mail-receiver app
   command: ./launcher rebuild mail-receiver chdir=/var/discourse 
   notify: start discourse
-
-- name: Generate the nginx config for the app
-  template: src=discourse.nginx dest=/etc/nginx/sites-available/{{ discourse_server_name }} owner=root group=root mode=644
-  notify: restart nginx
-
-- name: Make the nginx site active
-  #command: ln -s /etc/nginx/sites-available/{{ discourse_server_name }} /etc/nginx/sites-enabled/{{ discourse_server_name }} creates=/etc/nginx/sites-enabled/{{ discourse_server_name }}
-  file:
-    src: /etc/nginx/sites-available/{{ discourse_server_name }}
-    dest: /etc/nginx/sites-enabled/{{ discourse_server_name }}
-    state: link
-  notify: restart nginx
