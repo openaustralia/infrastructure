@@ -1,6 +1,5 @@
 ---
 dependencies:
-  - role: base-server
   - role: abtris.nginx-passenger
   - role: rvm.ruby
     # TODO: How do we get it to use what's in the .ruby-version file?

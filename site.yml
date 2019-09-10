@@ -67,6 +67,11 @@
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
 
+- hosts: all
+  become: true
+  roles: 
+    - base-server
+
 - hosts: mysql
   become: true
   roles:
