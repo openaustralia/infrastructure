@@ -17,14 +17,17 @@ resource "aws_eip" "oaf" {
   }
 }
 
-resource "aws_instance" "support_oaf" {
+resource "aws_instance" "community_oaf" {
   ami =  "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.medium"
   key_name = "deployer_key"
   tags {
-    Name = "support_oaf"
+    Name = "community_oaf"
   }
-  security_groups = ["${aws_security_group.webserver.name}"]
+  security_groups = [
+    "${aws_security_group.webserver.name}",
+    "${aws_security_group.incoming_email.name}"
+  ]
   disable_api_termination = true
   iam_instance_profile = "${aws_iam_instance_profile.logging.name}"
   root_block_device {
@@ -32,9 +35,9 @@ resource "aws_instance" "support_oaf" {
   }
 }
 
-resource "aws_eip" "support_oaf" {
-  instance = "${aws_instance.support_oaf.id}"
+resource "aws_eip" "community_oaf" {
+  instance = "${aws_instance.community_oaf.id}"
   tags {
-    Name = "support_oaf"
+    Name = "community_oaf"
   }
 }

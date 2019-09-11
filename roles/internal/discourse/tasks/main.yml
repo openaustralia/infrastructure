@@ -14,8 +14,9 @@
   command: git clone https://github.com/discourse/discourse_docker.git /var/discourse creates=/var/discourse/README.md
 
 - name: Copy over app configuration
-  template: src=support.oaf.org.au.yml dest=/var/discourse/containers/support.oaf.org.au.yml owner=deploy group=deploy
+  template: src=app.yml dest=/var/discourse/containers/{{ discourse_server_name }}.yml owner=deploy group=deploy
+  notify: rebuild discourse
 
-- name: Bootstrap discourse app
-  command: ./launcher rebuild support.oaf.org.au chdir=/var/discourse creates=/var/discourse/shared/standalone/log/rails/production.log
-  notify: start discourse
+- name: Copy over mail-receiver configuration
+  template: src=mail-receiver.yml dest=/var/discourse/containers/mail-receiver.yml owner=deploy group=deploy
+  notify: rebuild mail-receiver

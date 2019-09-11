@@ -35,3 +35,4 @@ elasticsearch_snapshot_secret_key: !vault |
 # Part of the default value "--quiet" appears not to be valid
 certbot_auto_renew_options: "--no-self-upgrade"
 github_users: ['mlandauer', 'henare', 'jamezpolley']
+letsencrypt_account_email: contact@oaf.org.au

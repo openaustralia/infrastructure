@@ -3,4 +3,13 @@
   service: name=nginx state=restarted
 
 - name: start discourse
-  command: ./launcher start app chdir=/var/discourse
+  command: ./launcher start {{ discourse_server_name }} chdir=/var/discourse
+
+- name: start mail-receiver
+  command: ./launcher start mail-receiver chdir=/var/discourse
+
+- name: rebuild discourse
+  command: ./launcher rebuild {{ discourse_server_name }} chdir=/var/discourse
+
+- name: rebuild mail-receiver
+  command: ./launcher rebuild mail-receiver chdir=/var/discourse

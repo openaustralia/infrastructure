@@ -54,7 +54,7 @@ env:
 
   ## TODO: List of comma delimited emails that will be made admin and developer
   ## on initial signup example 'user1@example.com,user2@example.com'
-  DISCOURSE_DEVELOPER_EMAILS: 'matthew@oaf.org.au,james@oaf.org.au'
+  DISCOURSE_DEVELOPER_EMAILS: '{{ discourse_developer_emails }}'
 
   ## TODO: The SMTP mail server used to validate new accounts and send notifications
   # SMTP ADDRESS, username, and password are required
@@ -66,7 +66,7 @@ env:
   DISCOURSE_SMTP_ENABLE_START_TLS: true
 
   ## If you added the Lets Encrypt template, uncomment below to get a free SSL certificate
-  LETSENCRYPT_ACCOUNT_EMAIL: contact@oaf.org.au
+  LETSENCRYPT_ACCOUNT_EMAIL: {{ letsencrypt_account_email }}
 
   ## The http or https CDN address for this Discourse instance (configured to pull)
   ## see https://meta.discourse.org/t/14857 for details
@@ -75,10 +75,10 @@ env:
 ## The Docker container is stateless; all data is stored in /shared
 volumes:
   - volume:
-      host: /var/discourse/shared/standalone
+      host: /var/discourse/shared/{{ discourse_server_name }}
       guest: /shared
   - volume:
-      host: /var/discourse/shared/standalone/log/var-log
+      host: /var/discourse/shared/{{ discourse_server_name }}/log/var-log
       guest: /var/log
 
 ## Plugins go here
@@ -101,6 +101,7 @@ hooks:
           - git clone https://github.com/angusmcleod/discourse-knowledge-base.git
           - git clone https://github.com/discourse/discourse-saved-searches.git
           - git clone https://github.com/discourse/discourse-github.git
+          - git clone https://github.com/angusmcleod/discourse-tickets.git
 
 
 ## Any custom commands to run after building

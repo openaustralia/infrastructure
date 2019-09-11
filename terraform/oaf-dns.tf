@@ -7,20 +7,28 @@ resource "cloudflare_record" "oaf_root" {
   value  = "${aws_eip.oaf.public_ip}"
 }
 
-resource "cloudflare_record" "support_oaf" {
+resource "cloudflare_record" "community_oaf" {
   domain = "oaf.org.au"
-  name   = "support.oaf.org.au"
+  name   = "community.oaf.org.au"
   type   = "A"
-  value  = "${aws_eip.support_oaf.public_ip}"
+  value  = "${aws_eip.community_oaf.public_ip}"
 }
 
-resource "cloudflare_record" "support_mx1" {
+resource "cloudflare_record" "community_mx1" {
   domain   = "oaf.org.au"
-  name     = "support.oaf.org.au"
+  name     = "community.oaf.org.au"
   type     = "MX"
   priority = 10
-  value    = "support.oaf.org.au"
+  value    = "community.oaf.org.au"
 }
+
+resource "cloudflare_record" "community_cuttlefish_domainkey" {
+  domain = "oaf.org.au"
+  name   = "support_39.cuttlefish._domainkey.community.oaf.org.au"
+  type   = "TXT"
+  value  = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtlJhU6DLKvLyxx3vGDliKoumJLAgmPj+kh3srpwjfyBARzSFvPTiXKkAQsFRGGkZ6e6tmjhrpKnwcLZ55VzaRRP7hNbIcf+wNfmtrpeQ6F7i/+KNWjTUOwqIBioQzHwcMV98UfmCTkraVfKZKs+fB+9P09oBPj6J/AvOFtLgzhaWpheD5CNSe2r+WWz8qBvplwCallelFwxOSg//88LnhFderFHRWT70DMulw+FmqSrCO0RT53WNrcam3T6rEtDuQljm1Rc1HRVuSwwNxIXzsqjPjwWQWIJdyjW4r1vnePP/fo5yFcphbhSSx/kjWT54033ytYZqBgZPRUCcGA5jlwIDAQAB"
+}
+
 
 resource "cloudflare_record" "oaf_cuttlefish" {
   domain = "oaf.org.au"

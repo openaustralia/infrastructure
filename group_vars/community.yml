@@ -1,4 +1,4 @@
-name: &name support.oaf.org.au
+name: &name community.oaf.org.au
 discourse_server_name: *name
 cuttlefish_server: &cuttlefish_server cuttlefish.oaf.org.au
 cuttlefish_username: &cuttlefish_username support_39
@@ -21,3 +21,4 @@ discourse_api_key: !vault |
           32326362613031373666393161343438333764393236303534623431326264313761326632663830
           33636563613363623531323461393137643632666330663133303835306436333732643831623166
           63323833353039303664
+discourse_developer_emails: matthew@oaf.org.au,james@oaf.org.au
