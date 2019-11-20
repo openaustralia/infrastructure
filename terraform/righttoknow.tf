@@ -4,7 +4,8 @@ resource "aws_instance" "righttoknow" {
   # Changed from t2.medium to t2.large because it was running out of memory
   # when running script/rebuild-xapian-index
   # going back to t2.medium to see if we can get away with that
-  instance_type = "t2.medium"
+  # Going back to t2.large because we seem to be regularly OOMing after cleaning up the on-disk cache
+  instance_type = "t2.large"
   key_name = "test"
   tags {
     Name = "righttoknow"
