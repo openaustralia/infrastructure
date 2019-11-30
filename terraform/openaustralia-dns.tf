@@ -1,7 +1,15 @@
+variable "openaustralia_org_zone_id" {
+  default = "6f375d3f3dcd53599e538454c02161b2"
+}
+
+variable "openaustralia_org_au_zone_id" {
+  default = "f8ae8cc5a255e25cc39bbb91177dfc47"
+}
+
 ## openaustralia.org
 # A records
 resource "cloudflare_record" "oa_root" {
-  domain = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name   = "openaustralia.org"
   type   = "A"
   value  = "${aws_eip.openaustralia.public_ip}"
@@ -9,14 +17,14 @@ resource "cloudflare_record" "oa_root" {
 
 # CNAME records
 resource "cloudflare_record" "oa_www" {
-  domain = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name   = "www.openaustralia.org"
   type   = "CNAME"
   value  = "openaustralia.org"
 }
 
 resource "cloudflare_record" "oa_test" {
-  domain = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name   = "test.openaustralia.org"
   type   = "CNAME"
   value  = "openaustralia.org"
@@ -24,28 +32,28 @@ resource "cloudflare_record" "oa_test" {
 
 # TODO: This should point at oaf.org.au
 resource "cloudflare_record" "oa_blog" {
-  domain = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name   = "blog.openaustralia.org"
   type   = "CNAME"
   value  = "openaustralia.org"
 }
 
 resource "cloudflare_record" "oa_data" {
-  domain = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name   = "data.openaustralia.org"
   type   = "CNAME"
   value  = "openaustralia.org"
 }
 
 resource "cloudflare_record" "oa_software" {
-  domain = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name   = "software.openaustralia.org"
   type   = "CNAME"
   value  = "openaustralia.org"
 }
 
 resource "cloudflare_record" "oa_hackfest" {
-  domain = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name   = "hackfest.openaustralia.org"
   type   = "CNAME"
   value  = "ghs.google.com"
@@ -53,7 +61,7 @@ resource "cloudflare_record" "oa_hackfest" {
 
 # MX records
 resource "cloudflare_record" "oa_mx1" {
-  domain   = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name     = "openaustralia.org"
   type     = "MX"
   priority = 10
@@ -61,7 +69,7 @@ resource "cloudflare_record" "oa_mx1" {
 }
 
 resource "cloudflare_record" "oa_mx2" {
-  domain   = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name     = "openaustralia.org"
   type     = "MX"
   priority = 20
@@ -69,7 +77,7 @@ resource "cloudflare_record" "oa_mx2" {
 }
 
 resource "cloudflare_record" "oa_mx3" {
-  domain   = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name     = "openaustralia.org"
   type     = "MX"
   priority = 20
@@ -77,7 +85,7 @@ resource "cloudflare_record" "oa_mx3" {
 }
 
 resource "cloudflare_record" "oa_mx4" {
-  domain   = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name     = "openaustralia.org"
   type     = "MX"
   priority = 30
@@ -85,7 +93,7 @@ resource "cloudflare_record" "oa_mx4" {
 }
 
 resource "cloudflare_record" "oa_mx5" {
-  domain   = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name     = "openaustralia.org"
   type     = "MX"
   priority = 30
@@ -93,7 +101,7 @@ resource "cloudflare_record" "oa_mx5" {
 }
 
 resource "cloudflare_record" "oa_mx6" {
-  domain   = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name     = "openaustralia.org"
   type     = "MX"
   priority = 30
@@ -101,7 +109,7 @@ resource "cloudflare_record" "oa_mx6" {
 }
 
 resource "cloudflare_record" "oa_mx7" {
-  domain   = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name     = "openaustralia.org"
   type     = "MX"
   priority = 30
@@ -110,7 +118,7 @@ resource "cloudflare_record" "oa_mx7" {
 
 # TXT records
 resource "cloudflare_record" "oa_spf" {
-  domain = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name   = "openaustralia.org"
   type   = "TXT"
   value  = "v=spf1 a include:_spf.google.com ~all"
@@ -118,14 +126,14 @@ resource "cloudflare_record" "oa_spf" {
 
 # TODO: Remove this once the one below is up and running
 resource "cloudflare_record" "oa_cuttlefish_domainkey" {
-  domain = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name   = "cuttlefish._domainkey.openaustralia.org"
   type   = "TXT"
   value  = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnTduUSfwRbdTef45qgzmJ75zTtwiFgtadq/KFfY18/1plQiSSvzpOTNZQjuPW+5X9AeHQhPGtrxLd26ho/V/8FTj2YiAkpi0uwjPBMiERNhOYT9AJzImNpTmFaa9Sq2JXnhYJQHZhlEVu2iE3ZQEZ+3gIbgvS23vFSYwv3n3HwcbAo3epYCekVglKBZvbGvChXZvmN90wz5ovTv74VPOiq96xPWkzcbA5CEiEGfJT8VqNdciQlbEy3Mpijyj/2qPvwZzDCG2xVS47FUr7xYXPRd/JUx7qDw+xlaFUQuT9S6/6zYWwJW7qJ4REIPvC/paORPfnsyqk8c6MIOH9nMXzQIDAQAB"
 }
 
 resource "cloudflare_record" "oa_cuttlefish_domainkey2" {
-  domain = "openaustralia.org"
+  zone_id = "${var.openaustralia_org_zone_id}"
   name   = "php_14.cuttlefish._domainkey.openaustralia.org"
   type   = "TXT"
   value  = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnTduUSfwRbdTef45qgzmJ75zTtwiFgtadq/KFfY18/1plQiSSvzpOTNZQjuPW+5X9AeHQhPGtrxLd26ho/V/8FTj2YiAkpi0uwjPBMiERNhOYT9AJzImNpTmFaa9Sq2JXnhYJQHZhlEVu2iE3ZQEZ+3gIbgvS23vFSYwv3n3HwcbAo3epYCekVglKBZvbGvChXZvmN90wz5ovTv74VPOiq96xPWkzcbA5CEiEGfJT8VqNdciQlbEy3Mpijyj/2qPvwZzDCG2xVS47FUr7xYXPRd/JUx7qDw+xlaFUQuT9S6/6zYWwJW7qJ4REIPvC/paORPfnsyqk8c6MIOH9nMXzQIDAQAB"
@@ -135,7 +143,7 @@ resource "cloudflare_record" "oa_cuttlefish_domainkey2" {
 
 # A records
 resource "cloudflare_record" "oa_alt_root" {
-  domain = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name   = "openaustralia.org.au"
   type   = "A"
   value  = "${aws_eip.openaustralia.public_ip}"
@@ -144,35 +152,35 @@ resource "cloudflare_record" "oa_alt_root" {
 # CNAME records
 
 resource "cloudflare_record" "oa_alt_www" {
-  domain = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name   = "www.openaustralia.org.au"
   type   = "CNAME"
   value  = "openaustralia.org.au"
 }
 
 resource "cloudflare_record" "oa_alt_test" {
-  domain = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name   = "test.openaustralia.org.au"
   type   = "CNAME"
   value  = "openaustralia.org.au"
 }
 
 resource "cloudflare_record" "oa_alt_www_test" {
-  domain = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name   = "www.test.openaustralia.org.au"
   type   = "CNAME"
   value  = "openaustralia.org.au"
 }
 
 resource "cloudflare_record" "oa_alt_data" {
-  domain = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name   = "data.openaustralia.org.au"
   type   = "CNAME"
   value  = "openaustralia.org.au"
 }
 
 resource "cloudflare_record" "oa_alt_software" {
-  domain = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name   = "software.openaustralia.org.au"
   type   = "CNAME"
   value  = "openaustralia.org.au"
@@ -180,7 +188,7 @@ resource "cloudflare_record" "oa_alt_software" {
 
 # MX records
 resource "cloudflare_record" "oa_alt_mx1" {
-  domain   = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name     = "openaustralia.org.au"
   type     = "MX"
   priority = 10
@@ -188,7 +196,7 @@ resource "cloudflare_record" "oa_alt_mx1" {
 }
 
 resource "cloudflare_record" "oa_alt_mx2" {
-  domain   = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name     = "openaustralia.org.au"
   type     = "MX"
   priority = 20
@@ -196,7 +204,7 @@ resource "cloudflare_record" "oa_alt_mx2" {
 }
 
 resource "cloudflare_record" "oa_alt_mx3" {
-  domain   = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name     = "openaustralia.org.au"
   type     = "MX"
   priority = 20
@@ -204,7 +212,7 @@ resource "cloudflare_record" "oa_alt_mx3" {
 }
 
 resource "cloudflare_record" "oa_alt_mx4" {
-  domain   = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name     = "openaustralia.org.au"
   type     = "MX"
   priority = 30
@@ -212,7 +220,7 @@ resource "cloudflare_record" "oa_alt_mx4" {
 }
 
 resource "cloudflare_record" "oa_alt_mx5" {
-  domain   = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name     = "openaustralia.org.au"
   type     = "MX"
   priority = 30
@@ -220,7 +228,7 @@ resource "cloudflare_record" "oa_alt_mx5" {
 }
 
 resource "cloudflare_record" "oa_alt_mx6" {
-  domain   = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name     = "openaustralia.org.au"
   type     = "MX"
   priority = 30
@@ -228,7 +236,7 @@ resource "cloudflare_record" "oa_alt_mx6" {
 }
 
 resource "cloudflare_record" "oa_alt_mx7" {
-  domain   = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name     = "openaustralia.org.au"
   type     = "MX"
   priority = 30
@@ -237,7 +245,7 @@ resource "cloudflare_record" "oa_alt_mx7" {
 
 # TXT records
 resource "cloudflare_record" "oa_alt_spf" {
-  domain = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name   = "openaustralia.org.au"
   type   = "TXT"
   value  = "v=spf1 a include:_spf.google.com ~all"
@@ -245,7 +253,7 @@ resource "cloudflare_record" "oa_alt_spf" {
 
 #Front DNS records
 resource "cloudflare_record" "oaf_oa_alt_front_mx" {
-  domain = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name = "front-mail.openaustralia.org.au"
   type = "MX"
   priority = 100
@@ -253,14 +261,14 @@ resource "cloudflare_record" "oaf_oa_alt_front_mx" {
 }
 
 resource "cloudflare_record" "oaf_oa_alt_front_spf" {
-  domain = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name   = "front-mail.openaustralia.org.au"
   type   = "TXT"
   value  = "v=spf1 a include:sendgrid.net ~all"
 }
 
 resource "cloudflare_record" "oaf_oa_alt_front_domainkey" {
-  domain = "openaustralia.org.au"
+  zone_id = "${var.openaustralia_org_au_zone_id}"
   name   = "m1._domainkey.openaustralia.org.au"
   type   = "TXT"
   value  = "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC4PZZJiwMfMB/CuIZ9yAtNEGzfKzQ7WC7hfGg8UyavtYlDDBgSP6P1AiTBTMzTQbLChvf+Ef5CK46w+RwmgWpL38sxRwjahk45aQxoMOk2FJm7iHnP6zAGUnqAiL8iCdTjn5sp/txNf22bXrx3YS54ePBrfZQxOvkOvE24XZKXXwIDAQAB"
