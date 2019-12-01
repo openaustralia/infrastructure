@@ -1,5 +1,6 @@
 resource "aws_instance" "planningalerts" {
-  ami = "${data.aws_ami.ubuntu.id}"
+  ami = data.aws_ami.ubuntu.id
+
   # A quick look at newrelic is showing PlanningAlerts on kedumba
   # using about 1.5GB. A medium instance gives us 4GB
   # We t2.medium we were running out of memory when the scraping and emailing
@@ -15,17 +16,17 @@ resource "aws_instance" "planningalerts" {
   # TODO: It would be good to check if we can go smaller again
   instance_type = "t2.large"
   key_name      = "test"
-  tags {
+  tags = {
     Name = "planningalerts"
   }
-  security_groups         = ["${aws_security_group.webserver.name}"]
+  security_groups         = [aws_security_group.webserver.name]
   disable_api_termination = true
-  iam_instance_profile    = "${aws_iam_instance_profile.logging.name}"
+  iam_instance_profile    = aws_iam_instance_profile.logging.name
 }
 
 resource "aws_eip" "planningalerts" {
-  instance = "${aws_instance.planningalerts.id}"
-  tags {
+  instance = aws_instance.planningalerts.id
+  tags = {
     Name = "planningalerts"
   }
 }

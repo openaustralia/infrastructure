@@ -1,21 +1,22 @@
 resource "aws_instance" "openaustralia" {
-  ami = "${data.aws_ami.ubuntu.id}"
+  ami = data.aws_ami.ubuntu.id
+
   # Running sitemap generation (a ruby process, suprise, surprise) pegged the
   # memory usage on a t2.small. So, upping to a t2.medium.
   instance_type = "t2.small"
   key_name      = "test"
-  tags {
+  tags = {
     Name = "openaustralia"
   }
-  security_groups         = ["${aws_security_group.webserver.name}"]
-  availability_zone       = "${aws_ebs_volume.openaustralia_data.availability_zone}"
+  security_groups         = [aws_security_group.webserver.name]
+  availability_zone       = aws_ebs_volume.openaustralia_data.availability_zone
   disable_api_termination = true
-  iam_instance_profile    = "${aws_iam_instance_profile.logging.name}"
+  iam_instance_profile    = aws_iam_instance_profile.logging.name
 }
 
 resource "aws_eip" "openaustralia" {
-  instance = "${aws_instance.openaustralia.id}"
-  tags {
+  instance = aws_instance.openaustralia.id
+  tags = {
     Name = "openaustralia"
   }
 }
@@ -32,15 +33,15 @@ resource "aws_ebs_volume" "openaustralia_data" {
   # After loading real data in we upped it to 20GB
   size = 20
   type = "gp2"
-  tags {
+  tags = {
     Name = "openaustralia_data"
   }
 }
 
 resource "aws_volume_attachment" "openaustralia_data" {
   device_name = "/dev/sdh"
-  volume_id   = "${aws_ebs_volume.openaustralia_data.id}"
-  instance_id = "${aws_instance.openaustralia.id}"
+  volume_id   = aws_ebs_volume.openaustralia_data.id
+  instance_id = aws_instance.openaustralia.id
 }
 
 # TODO: backup EBS volume by taking daily snapshots

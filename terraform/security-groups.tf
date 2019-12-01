@@ -161,7 +161,7 @@ resource "aws_security_group" "jamison" {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
-    security_groups = ["${data.aws_security_group.default.id}"]
+    security_groups = [data.aws_security_group.default.id]
   }
 
   # Allow pings from hosts on the internet
@@ -240,7 +240,7 @@ resource "aws_security_group" "kedumba" {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
-    security_groups = ["${data.aws_security_group.default.id}"]
+    security_groups = [data.aws_security_group.default.id]
   }
 
   # Allow pings from hosts on the internet

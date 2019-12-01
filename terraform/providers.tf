@@ -1,8 +1,8 @@
 provider "aws" {
   version    = "~> 2.40.0"
-  access_key = "${var.aws_access_key}"
-  secret_key = "${var.aws_secret_key}"
-  region     = "${var.ec2_region}"
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
+  region     = var.ec2_region
 }
 
 provider "aws" {
@@ -17,9 +17,9 @@ provider "aws" {
 
 provider "cloudflare" {
   version = "~> 2.1.0"
-  email   = "${var.cloudflare_email}"
+  email   = var.cloudflare_email
   // TODO: Rename var.cloudflare_token to var.cloudflare_api_key
-  api_key = "${var.cloudflare_token}"
+  api_key = var.cloudflare_token
 }
 
 provider "external" {

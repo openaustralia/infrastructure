@@ -20,7 +20,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "logging" {
-  role   = "${aws_iam_role.logging.name}"
+  role   = aws_iam_role.logging.name
   name   = "logging"
   policy = <<EOF
 {
@@ -44,7 +44,7 @@ EOF
 
 resource "aws_iam_instance_profile" "logging" {
   name = "logging"
-  role = "${aws_iam_role.logging.name}"
+  role = aws_iam_role.logging.name
 }
 
 # TODO: Setup retention settings on logs

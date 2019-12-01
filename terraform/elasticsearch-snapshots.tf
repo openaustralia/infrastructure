@@ -29,8 +29,8 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "oaf-elasticsearch-snapshots" {
-  user       = "${aws_iam_user.oaf-elasticsearch-snapshots.name}"
-  policy_arn = "${aws_iam_policy.oaf-elasticsearch-snapshots.arn}"
+  user       = aws_iam_user.oaf-elasticsearch-snapshots.name
+  policy_arn = aws_iam_policy.oaf-elasticsearch-snapshots.arn
 }
 
 resource "aws_s3_bucket" "oaf-elasticsearch-snapshots" {

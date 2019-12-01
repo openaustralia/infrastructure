@@ -4,25 +4,25 @@ data "external" "id_rsa" {
 
 resource "aws_key_pair" "deployer" {
   key_name   = "deployer_key"
-  public_key = "${data.external.id_rsa.result["id_rsa"]}"
+  public_key = data.external.id_rsa.result["id_rsa"]
 }
 
 resource "aws_instance" "electionleaflets" {
-  ami           = "${data.aws_ami.ubuntu.id}"
+  ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.small"
   key_name      = "deployer_key"
-  tags {
+  tags = {
     Name = "electionleaflets"
   }
-  security_groups         = ["${aws_security_group.webserver.name}"]
-  availability_zone       = "${aws_ebs_volume.electionleaflets_data.availability_zone}"
+  security_groups         = [aws_security_group.webserver.name]
+  availability_zone       = aws_ebs_volume.electionleaflets_data.availability_zone
   disable_api_termination = true
-  iam_instance_profile    = "${aws_iam_instance_profile.logging.name}"
+  iam_instance_profile    = aws_iam_instance_profile.logging.name
 }
 
 resource "aws_eip" "electionleaflets" {
-  instance = "${aws_instance.electionleaflets.id}"
-  tags {
+  instance = aws_instance.electionleaflets.id
+  tags = {
     Name = "electionleaflets"
   }
 }
@@ -39,15 +39,15 @@ resource "aws_ebs_volume" "electionleaflets_data" {
   # After loading real data in we upped it to 20GB
   size = 20
   type = "gp2"
-  tags {
+  tags = {
     Name = "electionleaflets_data"
   }
 }
 
 resource "aws_volume_attachment" "electionleaflets_data" {
   device_name = "/dev/sdh"
-  volume_id   = "${aws_ebs_volume.electionleaflets_data.id}"
-  instance_id = "${aws_instance.electionleaflets.id}"
+  volume_id   = aws_ebs_volume.electionleaflets_data.id
+  instance_id = aws_instance.electionleaflets.id
 }
 
 # TODO: backup EBS volume by taking daily snapshots
@@ -93,12 +93,12 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "electionleaflets" {
-  user       = "${aws_iam_user.electionleaflets.name}"
-  policy_arn = "${aws_iam_policy.electionleaflets.arn}"
+  user       = aws_iam_user.electionleaflets.name
+  policy_arn = aws_iam_policy.electionleaflets.arn
 }
 
 resource "aws_s3_bucket" "production" {
-  provider = "aws.ap-southeast-1"
+  provider = aws.ap-southeast-1
   bucket   = "electionleafletsaustralia"
   region   = "ap-southeast-1"
 
@@ -110,7 +110,7 @@ resource "aws_s3_bucket" "production" {
 }
 
 resource "aws_s3_bucket" "staging" {
-  provider = "aws.ap-southeast-1"
+  provider = aws.ap-southeast-1
   bucket   = "electionleafletstest2"
   region   = "ap-southeast-1"
 
