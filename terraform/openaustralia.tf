@@ -1,16 +1,16 @@
 resource "aws_instance" "openaustralia" {
-  ami =  "${data.aws_ami.ubuntu.id}"
+  ami = "${data.aws_ami.ubuntu.id}"
   # Running sitemap generation (a ruby process, suprise, surprise) pegged the
   # memory usage on a t2.small. So, upping to a t2.medium.
   instance_type = "t2.small"
-  key_name = "test"
+  key_name      = "test"
   tags {
     Name = "openaustralia"
   }
-  security_groups = ["${aws_security_group.webserver.name}"]
-  availability_zone = "${aws_ebs_volume.openaustralia_data.availability_zone}"
+  security_groups         = ["${aws_security_group.webserver.name}"]
+  availability_zone       = "${aws_ebs_volume.openaustralia_data.availability_zone}"
   disable_api_termination = true
-  iam_instance_profile = "${aws_iam_instance_profile.logging.name}"
+  iam_instance_profile    = "${aws_iam_instance_profile.logging.name}"
 }
 
 resource "aws_eip" "openaustralia" {
@@ -25,15 +25,16 @@ resource "aws_eip" "openaustralia" {
 # register of members interests scans, etc..
 
 resource "aws_ebs_volume" "openaustralia_data" {
-    availability_zone = "ap-southeast-2c"
-    # 10 Gb is an educated guess based on seeing how much space is taken up
-    # on kedumba.
-    # After loading real data in we upped it to 20GB
-    size = 20
-    type = "gp2"
-    tags {
-        Name = "openaustralia_data"
-    }
+  availability_zone = "ap-southeast-2c"
+
+  # 10 Gb is an educated guess based on seeing how much space is taken up
+  # on kedumba.
+  # After loading real data in we upped it to 20GB
+  size = 20
+  type = "gp2"
+  tags {
+    Name = "openaustralia_data"
+  }
 }
 
 resource "aws_volume_attachment" "openaustralia_data" {

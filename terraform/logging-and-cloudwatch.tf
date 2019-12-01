@@ -1,7 +1,7 @@
 resource "aws_iam_role" "logging" {
   # TODO: Don't know yet if this is a sensible name or not
-  name = "logging"
-  description = "Allows EC2 instances to send logs"
+  name               = "logging"
+  description        = "Allows EC2 instances to send logs"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -16,11 +16,12 @@ resource "aws_iam_role" "logging" {
   ]
 }
 EOF
+
 }
 
 resource "aws_iam_role_policy" "logging" {
-  name = "logging"
-  role = "${aws_iam_role.logging.name}"
+  role   = "${aws_iam_role.logging.name}"
+  name   = "logging"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -38,10 +39,11 @@ resource "aws_iam_role_policy" "logging" {
     ]
 }
 EOF
+
 }
 
 resource "aws_iam_instance_profile" "logging" {
-  name  = "logging"
+  name = "logging"
   role = "${aws_iam_role.logging.name}"
 }
 

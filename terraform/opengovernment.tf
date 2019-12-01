@@ -1,14 +1,14 @@
 resource "aws_instance" "opengovernment" {
-  ami =  "${data.aws_ami.ubuntu.id}"
+  ami = "${data.aws_ami.ubuntu.id}"
   # Changed from t2.small to t2.micro based on usage in production
   instance_type = "t2.micro"
-  key_name = "deployer_key"
+  key_name      = "deployer_key"
   tags {
     Name = "opengovernment"
   }
-  security_groups = ["${aws_security_group.webserver.name}"]
+  security_groups         = ["${aws_security_group.webserver.name}"]
   disable_api_termination = true
-  iam_instance_profile = "${aws_iam_instance_profile.logging.name}"
+  iam_instance_profile    = "${aws_iam_instance_profile.logging.name}"
 }
 
 resource "aws_eip" "opengovernment" {

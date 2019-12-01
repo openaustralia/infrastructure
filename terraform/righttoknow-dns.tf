@@ -5,36 +5,36 @@ variable "righttoknow_org_au_zone_id" {
 # A records
 resource "cloudflare_record" "rtk_root" {
   zone_id = "${var.righttoknow_org_au_zone_id}"
-  name   = "righttoknow.org.au"
-  type   = "A"
-  value  = "${aws_eip.righttoknow.public_ip}"
+  name    = "righttoknow.org.au"
+  type    = "A"
+  value   = "${aws_eip.righttoknow.public_ip}"
 }
 
 # CNAME records
 resource "cloudflare_record" "rtk_www" {
   zone_id = "${var.righttoknow_org_au_zone_id}"
-  name   = "www.righttoknow.org.au"
-  type   = "CNAME"
-  value  = "righttoknow.org.au"
+  name    = "www.righttoknow.org.au"
+  type    = "CNAME"
+  value   = "righttoknow.org.au"
 }
 
 resource "cloudflare_record" "rtk_test" {
   zone_id = "${var.righttoknow_org_au_zone_id}"
-  name   = "test.righttoknow.org.au"
-  type   = "CNAME"
-  value  = "righttoknow.org.au"
+  name    = "test.righttoknow.org.au"
+  type    = "CNAME"
+  value   = "righttoknow.org.au"
 }
 
 resource "cloudflare_record" "rtk_www_test" {
   zone_id = "${var.righttoknow_org_au_zone_id}"
-  name   = "www.test.righttoknow.org.au"
-  type   = "CNAME"
-  value  = "righttoknow.org.au"
+  name    = "www.test.righttoknow.org.au"
+  type    = "CNAME"
+  value   = "righttoknow.org.au"
 }
 
 # MX records
 resource "cloudflare_record" "rtk_mx1" {
-  zone_id = "${var.righttoknow_org_au_zone_id}"
+  zone_id  = "${var.righttoknow_org_au_zone_id}"
   name     = "righttoknow.org.au"
   type     = "MX"
   priority = 10
@@ -42,7 +42,7 @@ resource "cloudflare_record" "rtk_mx1" {
 }
 
 resource "cloudflare_record" "rtk_mx2" {
-  zone_id = "${var.righttoknow_org_au_zone_id}"
+  zone_id  = "${var.righttoknow_org_au_zone_id}"
   name     = "righttoknow.org.au"
   type     = "MX"
   priority = 20
@@ -50,7 +50,7 @@ resource "cloudflare_record" "rtk_mx2" {
 }
 
 resource "cloudflare_record" "rtk_mx3" {
-  zone_id = "${var.righttoknow_org_au_zone_id}"
+  zone_id  = "${var.righttoknow_org_au_zone_id}"
   name     = "righttoknow.org.au"
   type     = "MX"
   priority = 20
@@ -58,7 +58,7 @@ resource "cloudflare_record" "rtk_mx3" {
 }
 
 resource "cloudflare_record" "rtk_mx4" {
-  zone_id = "${var.righttoknow_org_au_zone_id}"
+  zone_id  = "${var.righttoknow_org_au_zone_id}"
   name     = "righttoknow.org.au"
   type     = "MX"
   priority = 30
@@ -66,7 +66,7 @@ resource "cloudflare_record" "rtk_mx4" {
 }
 
 resource "cloudflare_record" "rtk_mx5" {
-  zone_id = "${var.righttoknow_org_au_zone_id}"
+  zone_id  = "${var.righttoknow_org_au_zone_id}"
   name     = "righttoknow.org.au"
   type     = "MX"
   priority = 30
@@ -75,7 +75,7 @@ resource "cloudflare_record" "rtk_mx5" {
 
 # TODO Check how this record is being used
 resource "cloudflare_record" "rtk_server" {
-  zone_id = "${var.righttoknow_org_au_zone_id}"
+  zone_id  = "${var.righttoknow_org_au_zone_id}"
   name     = "server.righttoknow.org.au"
   type     = "MX"
   priority = 10
@@ -85,37 +85,37 @@ resource "cloudflare_record" "rtk_server" {
 # TXT records
 resource "cloudflare_record" "rtk_spf" {
   zone_id = "${var.righttoknow_org_au_zone_id}"
-  name   = "righttoknow.org.au"
-  type   = "TXT"
-  value  = "v=spf1 a include:_spf.google.com ~all"
+  name    = "righttoknow.org.au"
+  type    = "TXT"
+  value   = "v=spf1 a include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "rtk_google_site_verification" {
   zone_id = "${var.righttoknow_org_au_zone_id}"
-  name   = "righttoknow.org.au"
-  type   = "TXT"
-  value  = "google-site-verification=CPi5guMn0IiJjjYusPOb3ziStX_vKDqyk-cs0cLZvHc"
+  name    = "righttoknow.org.au"
+  type    = "TXT"
+  value   = "google-site-verification=CPi5guMn0IiJjjYusPOb3ziStX_vKDqyk-cs0cLZvHc"
 }
 
 #Front DNS records
 resource "cloudflare_record" "oaf_rtk_front_mx" {
-  zone_id = "${var.righttoknow_org_au_zone_id}"
-  name = "front-mail.righttoknow.org.au"
-  type = "MX"
+  zone_id  = "${var.righttoknow_org_au_zone_id}"
+  name     = "front-mail.righttoknow.org.au"
+  type     = "MX"
   priority = 100
-  value = "mx.sendgrid.net"
+  value    = "mx.sendgrid.net"
 }
 
 resource "cloudflare_record" "oaf_rtk_front_spf" {
   zone_id = "${var.righttoknow_org_au_zone_id}"
-  name   = "front-mail.righttoknow.org.au"
-  type   = "TXT"
-  value  = "v=spf1 a include:sendgrid.net ~all"
+  name    = "front-mail.righttoknow.org.au"
+  type    = "TXT"
+  value   = "v=spf1 a include:sendgrid.net ~all"
 }
 
 resource "cloudflare_record" "oaf_rtk_front_domainkey" {
   zone_id = "${var.righttoknow_org_au_zone_id}"
-  name   = "m1._domainkey.righttoknow.org.au"
-  type   = "TXT"
-  value  = "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC4PZZJiwMfMB/CuIZ9yAtNEGzfKzQ7WC7hfGg8UyavtYlDDBgSP6P1AiTBTMzTQbLChvf+Ef5CK46w+RwmgWpL38sxRwjahk45aQxoMOk2FJm7iHnP6zAGUnqAiL8iCdTjn5sp/txNf22bXrx3YS54ePBrfZQxOvkOvE24XZKXXwIDAQAB"
+  name    = "m1._domainkey.righttoknow.org.au"
+  type    = "TXT"
+  value   = "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC4PZZJiwMfMB/CuIZ9yAtNEGzfKzQ7WC7hfGg8UyavtYlDDBgSP6P1AiTBTMzTQbLChvf+Ef5CK46w+RwmgWpL38sxRwjahk45aQxoMOk2FJm7iHnP6zAGUnqAiL8iCdTjn5sp/txNf22bXrx3YS54ePBrfZQxOvkOvE24XZKXXwIDAQAB"
 }

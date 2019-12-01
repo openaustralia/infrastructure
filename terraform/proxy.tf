@@ -1,8 +1,8 @@
 resource "aws_instance" "au_proxy" {
-  ami =  "${data.aws_ami.ubuntu.id}"
+  ami = "${data.aws_ami.ubuntu.id}"
   # Keeping this as small as we possibly can
   instance_type = "t2.nano"
-  key_name = "deployer_key"
+  key_name      = "deployer_key"
   tags {
     Name = "au.proxy"
   }
