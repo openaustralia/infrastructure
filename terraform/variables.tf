@@ -16,6 +16,9 @@ variable "ec2_region" {
 variable "rds_admin_password" {
 }
 
+variable "theyvoteforyou_db_password" {
+}
+
 variable "dnsmadeeasy_akey" {
 }
 
@@ -43,4 +46,3 @@ variable "cuttlefish_ipv6" {
 variable "morph_ipv4" {
   default = "173.255.208.251"
 }
-
