@@ -30,3 +30,12 @@ resource "cloudflare_record" "yinyo_root4" {
   type    = "A"
   value   = "185.199.111.153"
 }
+
+# TXT records
+
+resource "cloudflare_record" "google_verification" {
+  zone_id = var.yinyo_io_zone_id
+  name    = "yinyo.io"
+  type    = "TXT"
+  value   = "google-site-verification=oWOPVdzD5v7gzg8zcV-cPlkBr_tE5jAuu6jT5t2aksY"
+}
