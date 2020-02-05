@@ -1,0 +1,18 @@
+---
+# tasks file for oaf.certbot
+
+- name: Install Certbot PPA
+  apt_repository:
+      repo: ppa:certbot/certbot
+
+- name: Install certbot and plugins
+  apt:
+    pkg: "{{ item }}"
+  with_items:
+    - certbot
+    - python-certbot-{{ certbot_webserver }}
+
+
+- name: Install certificates with certbot
+  command: certbot run --non-interactive --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  loop: "{{ certbot_certs| flatten(levels=1) }}"

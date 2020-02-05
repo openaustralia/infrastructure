@@ -1,0 +1,3 @@
+---
+# defaults file for oaf.certbot
+certbot_webserver: apache
