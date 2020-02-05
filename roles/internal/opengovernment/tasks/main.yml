@@ -1,6 +1,4 @@
 ---
-- import_tasks: certificates.yml
-
 - name: Install dependency for ansible mysql_db module
   apt:
     pkg: python-mysqldb
@@ -146,6 +144,8 @@
     src: 000-default.conf
     dest: /etc/apache2/sites-available
   notify: reload apache
+
+- import_tasks: certificates.yml
 
 # Normally this file is put in place by Wordpress itself when you change the
 # setting on the permalinks. But doing it here so things should work out of
