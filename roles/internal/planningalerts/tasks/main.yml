@@ -157,12 +157,9 @@
 
 - name: Install certificate using certbot
   include_role:
-    name: geerlingguy.certbot
+    name: oaf.certbot
   vars:
-    certbot_auto_renew_user: root
-    certbot_auto_renew_minute: 10
-    certbot_auto_renew_hour: 7
-    certbot_create_if_missing: yes
+    certbot_webserver: nginx
     certbot_certs:
       - email: contact@oaf.org.au
         domains:
