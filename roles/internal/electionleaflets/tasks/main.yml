@@ -110,17 +110,51 @@
   apt: pkg=apache2
   when: "'ec2' in group_names"
 
+- name: Copy across the main apache config
+  template: src=apache2.conf dest=/etc/apache2/
+  notify: reload apache
+
+- name: Enable apache rewrite module
+  apache2_module: state=present name={{ item }}
+  notify: reload apache
+  with_items:
+    - rewrite
+    - ssl
+
+- name: Copy the master vhost configs
+  template:
+    src: electionleaflets.org.au.conf
+    dest: /etc/apache2/sites-available/electionleaflets.org.au.conf
+
+- name: Copy across the apache configs
+  template:
+    src: electionleaflets-vhost-common.conf
+    dest: "/etc/apache2/sites-available/{{ stage }}-electionleaflets-vhost-common.conf"
+  vars:
+    stage: "{{ item }}"
+    domain: "{{ (stage == 'staging') | ternary('test.', '') }}{{ electionleaflets_domain }}"
+  with_items:
+    - production
+    - staging
+  notify: reload apache
+
+- name: Enable virtual hosts
+  file: src="../sites-available/electionleaflets.org.au.conf" dest="/etc/apache2/sites-enabled/electionleaflets.org.au.conf" state=link
+  notify: reload apache
+  with_items:
+    - production
+    - staging
+
+- name: Disable default virtual host
+  file: dest="/etc/apache2/sites-enabled/000-default.conf" state=absent
+  notify: reload apache
+
 # TODO: When (if) we use a newer version of certbot add "--post-hook" to restart apache after renew
 - name: Install certificate using certbot
   include_role:
-    name: geerlingguy.certbot
+    name: oaf.certbot
   vars:
-    certbot_auto_renew_user: root
-    certbot_auto_renew_minute: 10
-    certbot_auto_renew_hour: 7
-    certbot_create_if_missing: yes
-    certbot_create_standalone_stop_services:
-      - apache2
+    certbot_webserver: apache
     certbot_certs:
       - email: contact@oaf.org.au
         domains:
@@ -218,45 +252,6 @@
   with_items:
     - production
     - staging
-  notify: reload apache
-
-- name: Copy across the main apache config
-  template: src=apache2.conf dest=/etc/apache2/
-  notify: reload apache
-
-- name: Enable apache rewrite module
-  apache2_module: state=present name={{ item }}
-  notify: reload apache
-  with_items:
-    - rewrite
-    - ssl
-
-- name: Copy the master vhost configs
-  template:
-    src: electionleaflets.org.au.conf
-    dest: /etc/apache2/sites-available/electionleaflets.org.au.conf
-
-- name: Copy across the apache configs
-  template:
-    src: electionleaflets-vhost-common.conf
-    dest: "/etc/apache2/sites-available/{{ stage }}-electionleaflets-vhost-common.conf"
-  vars:
-    stage: "{{ item }}"
-    domain: "{{ (stage == 'staging') | ternary('test.', '') }}{{ electionleaflets_domain }}"
-  with_items:
-    - production
-    - staging
-  notify: reload apache
-
-- name: Enable virtual hosts
-  file: src="../sites-available/electionleaflets.org.au.conf" dest="/etc/apache2/sites-enabled/electionleaflets.org.au.conf" state=link
-  notify: reload apache
-  with_items:
-    - production
-    - staging
-
-- name: Disable default virtual host
-  file: dest="/etc/apache2/sites-enabled/000-default.conf" state=absent
   notify: reload apache
 
 - name: Uninstall newrelic php monitor
