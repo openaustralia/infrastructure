@@ -155,30 +155,6 @@
   apt: pkg=apache2
   when: "'ec2' in group_names"
 
-# TODO: When (if) we use a newer version of certbot add "--post-hook" to restart apache after renew
-- name: Install certificate using certbot
-  include_role:
-    name: geerlingguy.certbot
-  vars:
-    certbot_auto_renew_user: root
-    certbot_auto_renew_minute: 10
-    certbot_auto_renew_hour: 7
-    certbot_create_if_missing: yes
-    certbot_create_standalone_stop_services:
-      - apache2
-    certbot_certs:
-      - email: contact@oaf.org.au
-        domains:
-          - "{{ openaustralia_domain }}"
-          - www."{{ openaustralia_domain }}"
-          - openaustralia.org
-          - www.openaustralia.org
-      - email: contact@oaf.org.au
-        domains:
-          - "test.{{ openaustralia_domain }}"
-          - "www.test.{{ openaustralia_domain }}"
-  when: "'ec2' in group_names"
-
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
   apt_repository:
@@ -360,6 +336,24 @@
     - software
     - blog
   notify: reload apache
+
+- name: Install certificate using certbot
+  include_role:
+    name: oaf.certbot
+  vars:
+    certbot_webserver: apache
+    certbot_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - "{{ openaustralia_domain }}"
+          - www."{{ openaustralia_domain }}"
+          - openaustralia.org
+          - www.openaustralia.org
+      - email: contact@oaf.org.au
+        domains:
+          - "test.{{ openaustralia_domain }}"
+          - "www.test.{{ openaustralia_domain }}"
+  when: "'ec2' in group_names"
 
 - name: Copy across the application config
   template:
