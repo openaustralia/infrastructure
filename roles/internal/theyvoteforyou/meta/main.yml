@@ -30,4 +30,5 @@ dependencies:
           - copytruncate
   - role: azavea.elasticsearch
     elasticsearch_bind_host: 127.0.0.1
+    elasticsearch_version: 1.7.3+dfsg-3 #don't downgrade what's already installed
     java_version: "8u*"
