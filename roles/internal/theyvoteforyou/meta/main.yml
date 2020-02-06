@@ -28,7 +28,6 @@ dependencies:
           - compress
           - missingok
           - copytruncate
-  - role: azavea.elasticsearch
+  - role: geerlingguy.elasticsearch
     elasticsearch_bind_host: 127.0.0.1
-    elasticsearch_version: 1.7.3+dfsg-3 #don't downgrade what's already installed
-    java_version: "8u*"
+    elasticsearch_version: 2.4.6
