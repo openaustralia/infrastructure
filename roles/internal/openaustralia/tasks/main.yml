@@ -341,7 +341,6 @@
   include_role:
     name: oaf.certbot
   vars:
-    certbot_webserver: apache
     certbot_certs:
       - email: contact@oaf.org.au
         domains:

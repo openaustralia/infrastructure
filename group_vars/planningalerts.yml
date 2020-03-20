@@ -1,6 +1,7 @@
 # TODO: Unify this with the domain. It's currently only used to name
 # things on New Relic.
 name: planningalerts.org.au
+certbot_webserver: nginx
 planningalerts_production_mysql_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           31623763313262306264356463636632336434613130656566353030396138326431613231616232

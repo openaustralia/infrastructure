@@ -19,7 +19,7 @@ backup_target_pass: !vault |
 backup_max_age: 6M
 backup_max_full_backups: 6
 backup_full_max_age: 1M
-
+certbot_webserver: apache
 elasticsearch_snapshot_s3_bucket: oaf-elasticsearch-snapshots
 elasticsearch_snapshot_s3_region: ap-southeast-2
 elasticsearch_snapshot_access_key: AKIAJQY2VFRMUJENPBZA
