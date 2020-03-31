@@ -29,8 +29,8 @@ letsencrypt: venv roles
 ssh: venv roles
 	.venv/bin/ansible-playbook deploy_user.yml
 
-retry: venv roles setup.retry
-	.venv/bin/ansible-playbook site.yml -l @setup.retry
+retry: venv roles site.retry
+	.venv/bin/ansible-playbook site.yml -l @site.retry
 
 clean:
-	rm -rf .venv roles/external setup.retry .vagrant
+	rm -rf .venv roles/external site.retry .vagrant
