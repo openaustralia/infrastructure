@@ -13,6 +13,12 @@
     - python-certbot-{{ certbot_webserver }}
 
 
-- name: Install certificates with certbot
+- name: Install certificates with certbot 
   command: certbot run --non-interactive --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs| flatten(levels=1) }}"
+  when: certbot_webroot is undefined
+
+- name: Install certificates with certbot via webroot
+  command: certbot certonly --non-interactive --keep --expand --webroot -w {{ certbot_webroot }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  loop: "{{ certbot_certs| flatten(levels=1) }}"
+  when: certbot_webroot is defined

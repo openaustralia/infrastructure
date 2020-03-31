@@ -4,6 +4,7 @@ name: righttoknow.org.au
 github_users: ['mlandauer', 'henare', 'jamezpolley', 'benrfairless']
 cron_enabled: true
 certbot_webserver: nginx
+certbot_webroot: /usr/share/nginx/html
 backup_gpg_pw: !vault |
           $ANSIBLE_VAULT;1.2;AES256;rtk
           32323937363233343737353934643134346166363339306232613066396233303862313863323364
