@@ -181,6 +181,8 @@ on your platform, under Settings -> Files.
 Once this is done, the symlinks to .*-vault-pass inside the repo
 should point to the password files.
 
+(Note on OS X and keybase 5.3.0 the symlinks point to the wrong place. The keybase filesystem now starts at /Volumes/Keybase rather than /keybase)
+
 ## Generating SSL certificates for development
 See certificates/README.md for more information.
 
