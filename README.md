@@ -211,11 +211,33 @@ If you just want to provision a single server:
 
     .venv/bin/ansible-playbook -i ec2-hosts site.yml -l planningalerts
 
-### Updating LetsEncrypt certificates on production servers
+### forcibly renewing LetsEncrypt certificates on production servers
+
+When first provisioning a server, Ansible will check to see if
+`certbot_webroot` is set (this is used on RightToKnow). If not, it
+looks for `certbot_webserver`. If that's not set either, Ansible
+assumes that the web server is Apache.
+
+Ansible then installs and configures Certbot, and uses it to create
+certificates for all domains listed in `certbot_certs`.
+
+Code for this is in the [oaf.certbot role](https://github.com/openaustralia/infrastructure/blob/9d251b5e86623efaadcd1ee39dc429cfb6f95607/roles/internal/oaf.certbot/tasks/main.yml#L16).
+
+Sample config at [RTK](https://github.com/openaustralia/infrastructure/blob/9d251b5e86623efaadcd1ee39dc429cfb6f95607/roles/internal/righttoknow/tasks/certificates.yml#L47).
+
+After this, Certbot runs from cron (or systemd) and renews
+certificates automatically with no downtime.
+
+In the unlikely event that you need to forcibly renew certificates:
 
     make letsencrypt
 
-After this, you may need to [restart Elasticsearch on TheyVoteForYou](#restart-elasticsearch-on-production)
+will use Ansible to forcibly renew every already-registered
+certificate, using the same `cerbot_webserver` and `certbot_webroot`
+config.
+
+If you want to forcibly renew just one service, instructions are in
+the top of `update-ssl-certs.yaml`.
 
 ## Deploying
 
