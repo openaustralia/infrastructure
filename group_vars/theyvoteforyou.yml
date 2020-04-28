@@ -4,6 +4,7 @@ name: theyvoteforyou.org.au
 # Not using any non-alphanumeric characters in the password so that we can use
 # ansible-vault encrypt_string without having to use stdin input (which appears to
 # introduce an extra carriage return at the end)
+certbot_webserver: nginx
 theyvoteforyou_production_mysql_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           34656533336664366134363064326334616662353834333530386238323062643366653166666237
