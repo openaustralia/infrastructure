@@ -15,21 +15,13 @@
     - [Provisioning](#provisioning)
         - [Provisioning local development servers using Vagrant](#provisioning-local-development-servers-using-vagrant)
         - [Provisioning production servers](#provisioning-production-servers)
-        - [Updating LetsEncrypt certificates on production servers](#updating-letsencrypt-certificates-on-production-servers)
+        - [Forcibly renewing LetsEncrypt certificates on production servers](#forcibly-renewing-letsencrypt-certificates-on-production-servers)
     - [Deploying](#deploying)
         - [Deploying Right To Know to your local development server](#deploying-right-to-know-to-your-local-development-server)
         - [Deploying PlanningAlerts](#deploying-planningalerts)
             - [Deploying PlanningAlerts to your local development server](#deploying-planningalerts-to-your-local-development-server)
             - [Deploying PlanningAlerts to production](#deploying-planningalerts-to-production)
-        - [Deploying Electionleaflets to your local development server](#deploying-electionleaflets-to-your-local-development-server)
-            - [TODOS](#todos)
-        - [Deploying They Vote For You](#deploying-they-vote-for-you)
-            - [Deploying They Vote For You to your local development server](#deploying-they-vote-for-you-to-your-local-development-server)
-            - [Deploying They Vote For You to production](#deploying-they-vote-for-you-to-production)
-            - [Restart Elasticsearch on production](#restart-elasticsearch-on-production)
-        - [Deploying OpenAustralia](#deploying-openaustralia)
-            - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
-            - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
+        - [Running tests locally](#running-tests-locally)
     - [Backups](#backups)
 
 <!-- markdown-toc end -->
@@ -211,7 +203,7 @@ If you just want to provision a single server:
 
     .venv/bin/ansible-playbook -i ec2-hosts site.yml -l planningalerts
 
-### forcibly renewing LetsEncrypt certificates on production servers
+### Forcibly renewing LetsEncrypt certificates on production servers
 
 When first provisioning a server, Ansible will check to see if
 `certbot_webroot` is set (this is used on RightToKnow). If not, it
