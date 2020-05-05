@@ -11,9 +11,9 @@
   become: true
   tasks:
     - name: Force certificates to be renewed with nginx/apache
-      command: certbot renew --non-interactive --force-renew --{{certbot_webserver}}
+      command: certbot renew --non-interactive --agree-tos -m contact@oaf.org.au --server https://acme-v02.api.letsencrypt.org/directory --force-renew --{{certbot_webserver}}
       when: certbot_webroot is undefined
 
     - name: Force certificates to be renewed with webroot
-      command: certbot renew --non-interactive --force-renew --webroot -w {{ certbot_webroot }}
+      command: certbot renew --non-interactive --agree-tos -m contact@oaf.org.au --server https://acme-v02.api.letsencrypt.org/directory --force-renew --webroot -w {{ certbot_webroot }}
       when: certbot_webroot is defined
