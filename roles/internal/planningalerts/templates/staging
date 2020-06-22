@@ -11,8 +11,7 @@ server {
 
   root /srv/www/staging/current/public;
   passenger_enabled on;
-  # Use Ruby 2.3.1
-  passenger_ruby /usr/local/rvm/gems/ruby-2.3.1/wrappers/ruby
+  passenger_ruby /usr/local/rvm/gems/ruby-2.3.1/wrappers/ruby;
 }
 
 server {
@@ -38,8 +37,7 @@ server {
 
   root /srv/www/staging/current/public;
   passenger_enabled on;
-  # Use Ruby 2.3.1
-  passenger_ruby /usr/local/rvm/gems/ruby-2.3.1/wrappers/ruby
+  passenger_ruby /usr/local/rvm/gems/ruby-2.3.1/wrappers/ruby;
 
   auth_basic "Staging Site";
   auth_basic_user_file htpasswd;
