@@ -179,6 +179,15 @@ resource "cloudflare_record" "oaf_google_site_verification" {
   value   = "google-site-verification=RLhe_zgIDJMxpFFYFewv0KaRlWQvH-JDBxxpEV-8noY"
 }
 
+# See https://creators.brave.com
+# Only doing this because someone donated via this platform
+resource "cloudflare_record" "oaf_brave_site_verification" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "oaf.org.au"
+  type    = "TXT"
+  value   = "brave-ledger-verification=bb8a2b7b6cd742fcc5eea65ee65beca3dca8e12cedf72607424c7edb0198a65c"
+}
+
 resource "cloudflare_record" "oaf_cuttlefish_spf" {
   zone_id = var.oaf_org_au_zone_id
   name    = "cuttlefish.oaf.org.au"
