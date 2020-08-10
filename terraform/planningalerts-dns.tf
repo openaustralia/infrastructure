@@ -138,7 +138,7 @@ resource "cloudflare_record" "pa_dmarc" {
   zone_id = var.planningalerts_org_au_zone_id
   name = "_dmarc.planningalerts.org.au"
   type = "TXT"
-  value = "v=DMARC1; p=none; sp=none; rua=mailto:contact@oaf.org.au;"
+  value = "v=DMARC1; p=none; sp=none; rua=mailto:contact@planningalerts.org.au;"
 }
 
 #Front DNS records
