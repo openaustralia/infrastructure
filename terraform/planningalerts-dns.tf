@@ -136,7 +136,7 @@ resource "cloudflare_record" "pa_domainkey2" {
 # For the time being just interested in reporting
 resource "cloudflare_record" "pa_dmarc" {
   zone_id = var.planningalerts_org_au_zone_id
-  name = "planningalerts.org.au"
+  name = "_dmarc.planningalerts.org.au"
   type = "TXT"
   value = "v=DMARC1; p=none; sp=none; rua=mailto:contact@oaf.org.au;"
 }
