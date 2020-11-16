@@ -14,7 +14,7 @@ resource "aws_instance" "planningalerts" {
   # After moving to sidekiq we seem to be needing some more memory.
   # So increased the instance type to t2.large.
   # TODO: It would be good to check if we can go smaller again
-  instance_type = "t2.large"
+  instance_type = "t2.xlarge"
   key_name      = "test"
   tags = {
     Name = "planningalerts"
