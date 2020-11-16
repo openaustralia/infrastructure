@@ -48,7 +48,7 @@ resource "aws_db_instance" "postgresql" {
   # Using general purpose SSD
   storage_type   = "gp2"
   engine         = "postgres"
-  engine_version = "9.4.20"
+  engine_version = "11.8"
 
   # Let's start in production with db.t2.medium. We should watch the cpu credits
   # Dropping down to db.t2.small because we're under-using
