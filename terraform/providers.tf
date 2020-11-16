@@ -17,9 +17,7 @@ provider "aws" {
 
 provider "cloudflare" {
   version = "~> 2.1.0"
-  email   = var.cloudflare_email
-  // TODO: Rename var.cloudflare_token to var.cloudflare_api_key
-  api_key = var.cloudflare_token
+  api_token = var.cloudflare_api_token
 }
 
 provider "external" {

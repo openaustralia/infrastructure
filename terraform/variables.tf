@@ -25,11 +25,8 @@ variable "dnsmadeeasy_akey" {
 variable "dnsmadeeasy_skey" {
 }
 
-variable "cloudflare_email" {
-  default = "matthew@oaf.org.au"
-}
-
-variable "cloudflare_token" {
+# Note that this is different than one that was previously called cloudflare_token
+variable "cloudflare_api_token" {
 }
 
 # TODO: Get this automatically by managing Linode infrastructure with terraform
