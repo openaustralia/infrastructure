@@ -46,6 +46,5 @@ resource "aws_iam_user_policy_attachment" "oaf-backups" {
 resource "aws_s3_bucket" "oaf-backups" {
   provider = aws.us-east-1
   bucket   = "oaf-backups"
-  region   = "us-east-1"
   acl      = "private"
 }
