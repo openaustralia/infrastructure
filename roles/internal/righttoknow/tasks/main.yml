@@ -52,14 +52,16 @@
     - ['production', 'staging']
     - ['files', 'cache', 'bundle']
 
-- name: Set the ruby version for the alaveteli deploy
+- name: Set the ruby version for the alaveteli deploy (production)
   copy:
-    content: "{{ ruby_version }}"
-    dest: /srv/www/{{ item }}/shared/rbenv-version
-  with_items:
-    - production
-    - staging
-    
+    content: "{{ ruby_version_production }}"
+    dest: /srv/www/production/shared/rbenv-version
+
+- name: Set the ruby version for the alaveteli deploy (staging)
+  copy:
+    content: "{{ ruby_version_staging }}"
+    dest: /srv/www/staging/shared/rbenv-version
+
 - name: Another Aleveteli config to force production environment
   template:
     src: rails_env.rb
@@ -89,10 +91,20 @@
     - staging
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
-- name: Install bundler gem
+- name: Install bundler gem (production)
   command: bash -lc "gem install bundler"
+  chdir: /srv/www/production
   args:
-    creates: "/home/deploy/.rbenv/versions/{{ ruby_version }}/lib/ruby/gems/*/gems/bundler-*"
+    creates: "/home/deploy/.rbenv/versions/{{ ruby_version_production }}/lib/ruby/gems/*/gems/bundler-*"
+  become: true
+  become_user: deploy
+
+# Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
+- name: Install bundler gem (staging)
+  command: bash -lc "gem install bundler"
+  chdir: /srv/www/staging
+  args:
+    creates: "/home/deploy/.rbenv/versions/{{ ruby_version_staging }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
   become_user: deploy
 

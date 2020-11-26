@@ -126,9 +126,10 @@ dependencies:
     rbenv:
       env: user
       version: v0.4.0
-      default_ruby: "{{ ruby_version }}"
+      default_ruby: "{{ ruby_version_production }}"
       rubies:
-        - version: "{{ ruby_version }}"
+        - version: "{{ ruby_version_staging }}"
+        - version: "{{ ruby_version_production }}"
     rbenv_users:
       - deploy
   - role: Stouts.backup
