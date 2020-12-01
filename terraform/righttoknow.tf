@@ -15,7 +15,7 @@ resource "aws_instance" "righttoknow" {
     aws_security_group.webserver.name,
     aws_security_group.incoming_email.name,
   ]
-  availability_zone       = aws_ebs_volume.righttoknow_data2.availability_zone
+  availability_zone       = aws_ebs_volume.righttoknow_data.availability_zone
   disable_api_termination = true
   iam_instance_profile    = aws_iam_instance_profile.logging.name
 }
@@ -27,7 +27,7 @@ resource "aws_eip" "righttoknow" {
   }
 }
 
-resource "aws_ebs_volume" "righttoknow_data2" {
+resource "aws_ebs_volume" "righttoknow_data" {
   availability_zone = "ap-southeast-2c"
 
   size = 120
@@ -37,8 +37,8 @@ resource "aws_ebs_volume" "righttoknow_data2" {
   }
 }
 
-resource "aws_volume_attachment" "righttoknow_data2" {
+resource "aws_volume_attachment" "righttoknow_data" {
   device_name = "/dev/sdi"
-  volume_id   = aws_ebs_volume.righttoknow_data2.id
+  volume_id   = aws_ebs_volume.righttoknow_data.id
   instance_id = aws_instance.righttoknow.id
 }
