@@ -8,22 +8,17 @@
     state: directory
     path: /data
 
-- name: Create data2 mountpoint
-  file:
-    state: directory
-    path: /data2
-
 # On EC2 we're using a seperate EBS volume to hold application data
 - name: Create filesystem on attached block storage
   filesystem:
     fstype: ext4
-    dev: /dev/xvdh
+    dev: /dev/xvdi
   when: "'ec2' in group_names"
 
 - name: Mount /data filesystem
   mount:
     path: /data
-    src: /dev/xvdh
+    src: /dev/xvdi
     fstype: ext4
     state: mounted
   when: "'ec2' in group_names"
@@ -37,20 +32,6 @@
   with_nested:
     - ['production', 'staging']
     - ['files', 'cache', 'bundle']
-
-- name: Create filesystem on attached block storage
-  filesystem:
-    fstype: ext4
-    dev: /dev/xvdi
-  when: "'ec2' in group_names"
-
-- name: Mount /data2 filesystem
-  mount:
-    path: /data2
-    src: /dev/xvdi
-    fstype: ext4
-    state: mounted
-  when: "'ec2' in group_names"
 
 - name: Ensure that deploy owns application directories
   file:
