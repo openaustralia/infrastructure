@@ -247,8 +247,8 @@ production:
   rails_env: production
   daemon_name: alaveteli-production
 staging:
-  branch: staging
-  repository: git://github.com/openaustralia/alaveteli.git
+  branch: 0.38.3.0
+  repository: git://github.com/mysociety/alaveteli.git
   server: righttoknow.org.au
   user: deploy
   deploy_to: /srv/www/staging
