@@ -57,7 +57,7 @@ resource "aws_ebs_volume" "righttoknow_data2" {
 }
 
 resource "aws_volume_attachment" "righttoknow_data2" {
-  device_name = "/dev/sdh"
+  device_name = "/dev/sdi"
   volume_id   = aws_ebs_volume.righttoknow_data2.id
   instance_id = aws_instance.righttoknow.id
 }
