@@ -44,3 +44,20 @@ resource "aws_volume_attachment" "righttoknow_data" {
   volume_id   = aws_ebs_volume.righttoknow_data.id
   instance_id = aws_instance.righttoknow.id
 }
+
+
+resource "aws_ebs_volume" "righttoknow_data2" {
+  availability_zone = "ap-southeast-2c"
+
+  size = 120
+  type = "gp2"
+  tags = {
+    Name = "righttoknow_data"
+  }
+}
+
+resource "aws_volume_attachment" "righttoknow_data2" {
+  device_name = "/dev/sdh"
+  volume_id   = aws_ebs_volume.righttoknow_data2.id
+  instance_id = aws_instance.righttoknow.id
+}
