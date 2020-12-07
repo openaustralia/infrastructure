@@ -27,7 +27,8 @@ resource "aws_iam_policy" "oaf-backups-orpington" {
             "Effect": "Allow",
             "Action": [
                 "s3:PutObject",
-                "s3:GetObject"
+                "s3:GetObject",
+                "s3:DeleteObject"
             ],
             "Resource": "arn:aws:s3:::oaf-backups-orpington/*"
         }
