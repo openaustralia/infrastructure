@@ -111,8 +111,8 @@
     stage: "{{ item }}"
   with_items:
     - production
-    
-  
+
+
 
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
@@ -427,7 +427,7 @@
 
 - name: Configure newrelic php monitor
   file:
-    state: absent 
+    state: absent
     path: /etc/php/5.6/mods-available/newrelic.ini
   notify: reload apache
 
