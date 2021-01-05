@@ -185,6 +185,8 @@
     - libsearch-xapian-perl
     - libxml-rss-perl
     - libmysqlclient-dev
+    # Need the mysql command line when setting up a database initially
+    - mysql-client-core-5.7
 
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
@@ -239,54 +241,6 @@
     - apache2
     - cli
   notify: reload apache
-
-# rvm.ruby installes the latest bundler, which doesn't work with our old version of ruby
-# 1.17.3 is the latest version that supports ruby 1.8.7
-
-- name: Install bundler if not installed
-  shell: >
-    ls {{ rvm1_install_path }}/wrappers/{{ item.stdout }}
-    | if ! grep "^bundler " ; then {{ rvm1_install_path }}/wrappers/{{ item.stdout }}/gem install bundler --version "1.17.3"; fi
-  args:
-    creates: '{{ rvm1_install_path }}/wrappers/{{ item.stdout }}/bundler'
-  with_items: '{{ ruby_patch.results }}'
-  when: rvm1_bundler_install
-  register: bundler_install
-  changed_when: '"Successfully installed bundler" in bundler_install.stdout'
-
-- name: Symlink bundler binaries on the system path
-  file:
-    state: 'link'
-    src: '{{ rvm1_install_path }}/wrappers/default/{{ item }}'
-    dest: '{{ rvm1_symlink_to }}/{{ item }}'
-    owner: '{{ root_user }}'
-    group: '{{ root_group }}'
-  when: not '--user-install' in rvm1_install_flags and rvm1_bundler_install
-  with_items: '{{ rvm1_symlink_bundler_binaries }}'
-
-# TODO: It would be cleaner if gems were installed as part of the capistrano install
-# Then, we could use the Gemfile rather than duplicating this information here
-- name: Install required gems
-  gem: name={{ item.name }} version={{ item.version }} user_install=no state=present
-  with_items:
-    - {name: nokogiri,      version: 1.4.4}
-    - {name: mini_portile,  version: 0.6.2}
-    # It errors when installing mechanize for the first time but does actually end up
-    # installing it. So, wondering if we should just ignore errors for mechanize?
-    # TODO: Deal with error for mechanize
-    - {name: mechanize,     version: 0.9.2}
-    - {name: activesupport, version: 3.0.4}
-    - {name: builder,       version: 2.1.2}
-    - {name: rmagick,       version: 2.15.4}
-    - {name: htmlentities,  version: 4.2.1}
-    - {name: log4r,         version: 1.1.8}
-    - {name: json,          version: 1.8.0}
-    - {name: hpricot,       version: 0.6.164}
-    - {name: rspec,         version: 2.5.0}
-    - {name: rcov,          version: 0.9.9}
-    - {name: i18n,          version: 0.5.0}
-    - {name: activerecord,  version: 2.3.11}
-    - {name: mysql,         version: 2.9.1}
 
 - name: Enable apache modules
   apache2_module: state=present name={{ item }}
