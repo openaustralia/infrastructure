@@ -451,3 +451,10 @@
 - name: Autoremove unneeded packages
   apt:
     autoremove: yes
+
+# We allow the capistrano deploys to restart apache
+- name: Allow deploy user to restart apache
+  copy:
+    src: deploy_can_restart_apache
+    dest: /etc/sudoers.d/
+    validate: visudo -cf %s

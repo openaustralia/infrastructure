@@ -1,0 +1,1 @@
+deploy  ALL = NOPASSWD: /usr/sbin/apache2ctl restart
