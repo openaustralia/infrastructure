@@ -185,6 +185,8 @@
     - libsearch-xapian-perl
     - libxml-rss-perl
     - libmysqlclient-dev
+    # Need the mysql command line when setting up a database initially
+    - mysql-client-core-5.7
 
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
