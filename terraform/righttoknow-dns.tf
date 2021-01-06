@@ -94,7 +94,7 @@ resource "cloudflare_record" "rtk_google_site_verification" {
   zone_id = var.righttoknow_org_au_zone_id
   name    = "righttoknow.org.au"
   type    = "TXT"
-  value   = "google-site-verification=CPi5guMn0IiJjjYusPOb3ziStX_vKDqyk-cs0cLZvHc"
+  value   = "google-site-verification=ci77kXOm4-lxR3Tc1D1FlTzz0J_GWQES2wU5kFMIR-w"
 }
 
 #Front DNS records
