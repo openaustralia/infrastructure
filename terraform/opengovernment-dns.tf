@@ -71,7 +71,7 @@ resource "cloudflare_record" "opengovernment_google_site_verification" {
   zone_id = var.opengovernment_org_au_zone_id
   name    = "opengovernment.org.au"
   type    = "TXT"
-  value   = "google-site-verification=fuS0OoXUv8rGwkULIl8SJw3_lLJHDfKnEWPw27gVHCE"
+  value   = "google-site-verification=ajKozOG3pB6RVV0hiXG-wXGbzfHdteQseLQqGwngm4w"
 }
 
 # TODO: Remove this once the one below is up and running
