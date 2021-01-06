@@ -112,6 +112,13 @@ resource "cloudflare_record" "el_spf" {
   value   = "v=spf1 a include:_spf.google.com ~all"
 }
 
+resource "cloudflare_record" "el_google_site_verification" {
+  zone_id = var.electionleaflets_org_au_zone_id
+  name    = "electionleaflets.org.au"
+  type    = "TXT"
+  value   = "google-site-verification=3Nb8GKm812AwhbSI4GsOntVXeDFJT9nyk68RjQoRuYQ"
+}
+
 #Front DNS records
 resource "cloudflare_record" "oaf_electionleaflets_front_mx" {
   zone_id  = var.electionleaflets_org_au_zone_id
