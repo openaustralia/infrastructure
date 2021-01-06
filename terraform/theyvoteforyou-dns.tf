@@ -123,6 +123,13 @@ resource "cloudflare_record" "cuttlefish2" {
   value   = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0toFOrXAOcbnS8LNeKQsetYEO4Qh1RLGCx9+prCDeXBgs0obFCPWyanqxiPL6WEZCv+Vj4TCBPfoVCR1G0hszOZIA1QCEx0tG4v3dE2QsS3tSVCl9ax1h0oi4fC5aJ7XdxI+e2JVcWwmSSCLoKbkJYpj+6VBr86jUZl6f3JeUH/RuIeS6jIHRFmM6Mz/BfzloxM2wbDK320DUs3yWkL3/RcwkT6ebI9oS+ZWIxKXAgEcreTG0JltgPR/ABPFNzms4mAtLwPojF/FAYzGCj6diGbB61LNcMwe0MrutvLucclhnSefG5E3GVNqLrQA1oXzwFLFsq1H0x8rFccm+GNAuQIDAQAB"
 }
 
+resource "cloudflare_record" "google_site_verification" {
+  zone_id = var.theyvoteforyou_org_au_zone_id
+  name    = "theyvoteforyou.org.au"
+  type    = "TXT"
+  value   = "google-site-verification=DHISCv3WoPmTzUWzYfzpeBd5NivPxC5a2s4uBdWZoY8"
+}
+
 ## theyvoteforyou.org
 
 resource "cloudflare_record" "alt1_root" {
