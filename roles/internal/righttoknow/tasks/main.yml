@@ -93,7 +93,6 @@
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 - name: Install bundler gem (production)
   command: bash -lc "rbenv shell {{ ruby_version_production }}; gem install bundler --version '<2'"
-  chdir: /srv/www/production/current
   args:
     creates: "/home/deploy/.rbenv/versions/{{ ruby_version_production }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
@@ -101,8 +100,7 @@
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 - name: Install bundler gem (staging)
-  command: bash -lc "gem install bundler"
-  chdir: /srv/www/staging/current
+  command: bash -lc "rbenv shell {{ ruby_version_staging}}; gem install bundler"
   args:
     creates: "/home/deploy/.rbenv/versions/{{ ruby_version_staging }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
