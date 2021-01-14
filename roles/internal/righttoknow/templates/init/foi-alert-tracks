@@ -1,39 +1,52 @@
 #!/bin/bash
 #
 ### BEGIN INIT INFO
-# Provides: foi-alert-tracks
+# Provides: foi-alert-tracks-{{ stage }}
 # Required-Start: $local_fs $syslog
 # Required-Stop: $local_fs $syslog
 # Default-Start: 2 3 4 5
 # Default-Stop: 0 1 6
-# Short-Description: foi-alert-tracks is a daemon running the Alaveteli email alerts
-# Description: foi-alert-tracks send Alaveteli email alerts as required
+# Short-Description: foi-alert-tracks-{{ stage }} is a daemon running the Alaveteli email alerts
+# Description: foi-alert-tracks-{{ stage }} sends Alaveteli email alerts as required
 ### END INIT INFO
 #
-# foi-alert-tracks Start the Alaveteli email alert daemon
+# foi-alert-tracks-{{ stage }} Start the Alaveteli email alert daemon
 
 NAME=foi-alert-tracks-{{ stage }}
-DAEMON=/home/deploy/.rbenv/shims/ruby
-DAEMON_ARGS="/srv/www/{{ stage }}/current/script/runner --daemon TrackMailer.alert_tracks_loop"
-PIDFILE=/srv/www/{{ stage }}/shared/pids/foi-alert-tracks.pid
-LOGFILE=/srv/www/{{ stage }}/shared/log/foi-alert-tracks.log
+DAEMON=/srv/www/{{ stage }}/current/script/runner
+DAEMON_ARGS="--daemon TrackMailer.alert_tracks_loop"
+PIDDIR=/srv/www/{{ stage }}/current/tmp/pids
+PIDFILE=$PIDDIR/foi-alert-tracks.pid
+LOGDIR=/srv/www/{{ stage }}/current/log
+LOGFILE=$LOGDIR/foi-alert-tracks.log
 DUSER=deploy
+SITE_HOME=/srv/www/{{ stage }}/current
+# Set RAILS_ENV - not needed if using config/rails_env.rb
 RAILS_ENV=production
+export RAILS_ENV
+
+# Uncomment the following line if running under rbenv - we want this daemon to run
+# in the context of the ruby version defined for the site
+PATH=/home/deploy/.rbenv/shims:/usr/local/bin:/usr/bin:/bin
 
 trap "" 1
 
-export PIDFILE LOGFILE RAILS_ENV
+export PIDFILE LOGFILE
 
 quietly_start_daemon() {
-    /sbin/start-stop-daemon --quiet --start --pidfile "$PIDFILE" --chuid "$DUSER" --startas "$DAEMON" -- $DAEMON_ARGS
+    mkdir -p {$LOGDIR,$PIDDIR}
+    chown $DUSER:$DUSER {$LOGDIR,$PIDDIR}
+    /sbin/start-stop-daemon --quiet --start --pidfile "$PIDFILE" --chuid "$DUSER" --chdir "$SITE_HOME" --startas "$DAEMON" -- $DAEMON_ARGS
 }
 
 start_daemon() {
-    /sbin/start-stop-daemon --start --pidfile "$PIDFILE" --chuid "$DUSER" --startas "$DAEMON" -- $DAEMON_ARGS
+    mkdir -p {$LOGDIR,$PIDDIR}
+    chown $DUSER:$DUSER {$LOGDIR,$PIDDIR}
+    /sbin/start-stop-daemon --start --pidfile "$PIDFILE" --chuid "$DUSER" --chdir "$SITE_HOME" --startas "$DAEMON" -- $DAEMON_ARGS
 }
 
 stop_daemon() {
-    /sbin/start-stop-daemon --stop --oknodo --pidfile "$PIDFILE"
+    /sbin/start-stop-daemon --stop --oknodo --retry 5 --pidfile "$PIDFILE"
 }
 
 restart() { stop; start; }
