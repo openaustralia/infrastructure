@@ -125,7 +125,7 @@ dependencies:
   - role: zzet.rbenv
     rbenv:
       env: user
-      version: v0.4.0
+      version: v1.1.2
       default_ruby: "{{ ruby_version_production }}"
       rubies:
         - version: "{{ ruby_version_staging }}"
