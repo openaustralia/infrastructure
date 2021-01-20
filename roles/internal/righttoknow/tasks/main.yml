@@ -99,8 +99,10 @@
   become_user: deploy
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
+# We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
+# we use a later version of bundler it will complain and not deploy
 - name: Install bundler gem (staging)
-  command: bash -lc "rbenv shell {{ ruby_version_staging}}; gem install bundler --version '<2'"
+  command: bash -lc "rbenv shell {{ ruby_version_staging}}; gem install bundler --version 1.14.6"
   args:
     creates: "/home/deploy/.rbenv/versions/{{ ruby_version_staging }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
