@@ -82,6 +82,27 @@ TIME_ZONE: Australia/Sydney
 #
 # ---
 BLOG_FEED: 'https://www.openaustraliafoundation.org.au/category/projects/righttoknow-org-au/feed/'
+
+# BLOG_TIMEOUT -  Integer seconds before reading the blog feed fails (default: 60)
+#
+# Examples:
+#
+#   BLOG_TIMEOUT: 90
+#
+# ---
+BLOG_TIMEOUT: 60
+
+# Makes your Facebook page/group name available to the application.
+#
+# FACEBOOK_USERNAME - String Facebook username (default: nil)
+#
+# Examples:
+#
+#   FACEBOOK_USERNAME: 'whatdotheyknowcom'
+#
+# ---
+FACEBOOK_USERNAME: ''
+
 # If you want a twitter feed displayed on the "blog" page, provide the
 # widget ID and username.
 #
@@ -93,6 +114,7 @@ BLOG_FEED: 'https://www.openaustraliafoundation.org.au/category/projects/rightto
 #
 # ---
 TWITTER_USERNAME: 'righttoknowau'
+
 # Set the widget_id to get the Twitter sidebar on the blog page.
 # To get one https://twitter.com/settings/widgets
 #
@@ -116,6 +138,7 @@ TWITTER_WIDGET_ID: '263502299333267456'
 #
 # ---
 AVAILABLE_LOCALES: en
+
 # Nominate one of the AVAILABLE_LOCALES locales as the default
 #
 # DEFAULT_LOCALE – String locale (default: nil)
@@ -126,6 +149,7 @@ AVAILABLE_LOCALES: en
 #
 # ---
 DEFAULT_LOCALE: en
+
 # Should Alaveteli try to use the default language of the user's browser?
 #
 # USE_DEFAULT_BROWSER_LANGUAGE - Boolean (default: true)
@@ -136,6 +160,24 @@ DEFAULT_LOCALE: en
 #
 # ---
 USE_DEFAULT_BROWSER_LANGUAGE: true
+
+# Normally, Alaveteli will put the locale into its URLs, like this
+# www.example.com/en/body/list/all. If you don't want this behaviour whenever
+# the locale is the default one, set INCLUDE_DEFAULT_LOCALE_IN_URLS to false.
+#
+# INCLUDE_DEFAULT_LOCALE_IN_URLS: Boolean (default: true)
+#
+# Examples:
+#
+#   INCLUDE_DEFAULT_LOCALE_IN_URLS: false
+#
+# ---
+INCLUDE_DEFAULT_LOCALE_IN_URLS: true
+
+# Are authorities required to respond by law?
+#
+# AUTHORITY_MUST_RESPOND: Boolean (default: true)
+AUTHORITY_MUST_RESPOND: true
 
 # The REPLY...AFTER_DAYS settings define how many days must have passed before
 # an answer to a request is officially late.
@@ -151,8 +193,10 @@ USE_DEFAULT_BROWSER_LANGUAGE: true
 # ---
 REPLY_LATE_AFTER_DAYS: 30
 REPLY_VERY_LATE_AFTER_DAYS: 60
+
 # We give some types of authority like schools a bit longer than everyone else
 SPECIAL_REPLY_VERY_LATE_AFTER_DAYS: 60
+
 # The WORKING_OR_CALENDAR_DAYS setting can be either "working" (the default) or
 # "calendar", and determines which days are counted when calculating whether a
 # request is officially late.
@@ -169,6 +213,21 @@ WORKING_OR_CALENDAR_DAYS: calendar
 
 # example public bodies for the home page, semicolon delimited - short_names
 #FRONTPAGE_PUBLICBODY_EXAMPLES: 'abc;advisory_committee_on_medical_devices;treasury;veterans_review_board;minister_for_foreign_affairs'
+# Number of months after which to start closing requests to new responses. When
+# a request has not been updated after
+# RESTRICT_NEW_RESPONSES_ON_OLD_REQUESTS_AFTER_MONTHS, allow_new_responses_from is
+# set to 'authority_only'. After RESTRICT_NEW_RESPONSES_ON_OLD_REQUESTS_AFTER_MONTHS
+# * 2, allow_new_responses_from is set to 'nobody'.
+#
+# WORKING_OR_CALENDAR_DAYS - Integer (default: 6)
+#
+# Examples:
+#
+#   RESTRICT_NEW_RESPONSES_ON_OLD_REQUESTS_AFTER_MONTHS: 3
+#
+# ---
+RESTRICT_NEW_RESPONSES_ON_OLD_REQUESTS_AFTER_MONTHS: 6
+
 
 # URLs of themes to download and use (when running the rails-post-deploy
 # script). The earlier in the list means the templates have a higher priority.
@@ -245,6 +304,33 @@ INCOMING_EMAIL_PREFIX: '{{ incoming_email_prefix }}'
 # ---
 INCOMING_EMAIL_SECRET: '{{ alavateli_incoming_email_secret }}'
 
+# Filter incoming mail that looks like spam. Spam can be redirected to the
+# holding pen or discarded.
+#
+# If you filter incoming emails through a spam detector like SpamAssassin, you
+# can configure Alaveteli to filter messages with a high spam score. This
+# feature requires the messages to contain a header with a numeric spam score,
+# and INCOMING_EMAIL_SPAM_ACTION, INCOMING_EMAIL_SPAM_HEADER and
+# INCOMING_EMAIL_SPAM_THRESHOLD to be configured before the filtering will take
+# effect.
+#
+# INCOMING_EMAIL_SPAM_ACTION - String or false
+#                              Options are 'holding_pen' or 'discard'
+#                              (default: false)
+# INCOMING_EMAIL_SPAM_HEADER - String (default: 'X-Spam-Score')
+# INCOMING_EMAIL_SPAM_THRESHOLD - Integer or false (default: false)
+#
+# Examples:
+#
+#   INCOMING_EMAIL_SPAM_ACTION: 'holding_pen'
+#   INCOMING_EMAIL_SPAM_HEADER: 'X-mySociety-Spam-Score'
+#   INCOMING_EMAIL_SPAM_THRESHOLD: 20
+#
+# ---
+INCOMING_EMAIL_SPAM_ACTION: false
+INCOMING_EMAIL_SPAM_HEADER: 'X-Spam-Score'
+INCOMING_EMAIL_SPAM_THRESHOLD: false
+
 # Used as envelope from at the incoming email domain for cases where you don't
 # care about failure.
 #
@@ -258,7 +344,6 @@ INCOMING_EMAIL_SECRET: '{{ alavateli_incoming_email_secret }}'
 # ---
 BLACKHOLE_PREFIX: 'do-not-reply-to-this-address'
 
-
 # Emergency admin user login username. YOU SHOULD CHANGE THIS.
 #
 # ADMIN_USERNAME - String (default: nil)
@@ -269,6 +354,7 @@ BLACKHOLE_PREFIX: 'do-not-reply-to-this-address'
 #
 # ---
 ADMIN_USERNAME: 'root'
+
 # Emergency admin user login password. YOU SHOULD CHANGE THIS.
 #
 # ADMIN_USERNAME - String (default: nil)
@@ -279,6 +365,13 @@ ADMIN_USERNAME: 'root'
 #
 # ---
 ADMIN_PASSWORD: '{{ alavateli_admin_password }}'
+
+# Disable the emergency admin user?
+#
+# DISABLE_EMERGENCY_USER - Boolean (default: false)
+#
+# ---
+DISABLE_EMERGENCY_USER: false
 
 # Set this to true, and the admin interface will be available to anonymous
 # users. Obviously, you should not set this to be true in production
@@ -295,6 +388,7 @@ SKIP_ADMIN_AUTH: false
 #
 # ---
 CONTACT_EMAIL: 'contact@righttoknow.org.au'
+
 # Email "from" name
 #
 # CONTACT_NAME - String contact name (default: Alaveteli)
@@ -308,6 +402,7 @@ CONTACT_NAME: '{{ site_name }}'
 #
 # ---
 TRACK_SENDER_EMAIL: 'contact@righttoknow.org.au'
+
 # Email "from" name for track messages
 #
 # TRACK_SENDER_NAME - String contact name (default: Alaveteli)
@@ -388,6 +483,7 @@ STAGING_SITE: {{ staging_site }}
 #
 # ---
 RECAPTCHA_PUBLIC_KEY: '{{ alaveteli_recaptcha_public_key }}'
+
 # Recaptcha, for detecting humans. Get keys here:
 # http://recaptcha.net/whyrecaptcha.html
 #
@@ -428,6 +524,16 @@ DEBUG_RECORD_MEMORY: false
 # ---
 USE_GHOSTSCRIPT_COMPRESSION: false
 
+# Alaveteli uses a GeoIP database to determine the country from the IP address
+# of an HTTP request to the site (this lets us suggest an Alaveteli in the user's
+# country if one exists). You shouldn't need to change this if you have the
+# geoip-database package installed as specified in the config/packages files.
+#
+# GEOIP_DATABASE - String (default: /usr/share/GeoIP/GeoIP.dat)
+#
+# ---
+GEOIP_DATABASE: /usr/share/GeoIP/GeoIP.dat
+
 # In the absence of a GeoIP database (see above), Alateveli can use Gaze,
 # mySociety's gazeteer, to determine the country from the IP address of an HTTP
 # request to the site. You shouldn't normally need to change this.
@@ -452,6 +558,18 @@ GAZE_URL: http://gaze.mysociety.org
 #
 # ---
 FORWARD_NONBOUNCE_RESPONSES_TO: web-administrators@openaustralia.org
+
+# The email address to which non-bounce responses to emails sent out to
+# Alaveteli Professional users by Alaveteli should be forwarded
+#
+# FORWARD_PRO_NONBOUNCE_RESPONSES_TO - String (default: pro-user-support@localhost)
+#
+# Examples:
+#
+#   FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro-user-support@example.com
+#
+# ---
+FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro-user-support@localhost
 
 # Path to a program that converts an HTML page in a file to PDF. Also used to
 # download a zip file of all the correspondence for a request. It should take
@@ -484,6 +602,7 @@ HTML_TO_PDF_COMMAND: /usr/bin/wkhtmltopdf-static
 #
 # ---
 EXCEPTION_NOTIFICATIONS_FROM: Alaveteli {{ stage }} <web-administrators@openaustralia.org>
+
 # Email address(es) used for receiving exception notifications.
 #
 # EXCEPTION_NOTIFICATIONS_TO - Array of Strings (default: nil)
@@ -548,6 +667,20 @@ GA_CODE: '{{ ga_code }}'
 #
 # ---
 OVERRIDE_ALL_PUBLIC_BODY_REQUEST_EMAILS: {{ override_all_public_body_request_emails }}
+
+# Search path for external commandline utilities (such as pdftohtml, pdftk,
+# unrtf)
+#
+# UTILITY_SEARCH_PATH - Array of Strings
+#                       (default: ["/usr/bin", "/usr/local/bin"])
+#
+# Examples:
+#
+#  UTILITY_SEARCH_PATH: ["/usr/bin"]
+#  UTILITY_SEARCH_PATH: ["/usr/local/bin", "/opt/bin"]
+#
+# ---
+UTILITY_SEARCH_PATH: ["/usr/bin", "/usr/local/bin"]
 
 # Path to your exim or postfix log files that will get sucked up by
 # script/load-mail-server-logs
@@ -620,6 +753,14 @@ PUBLIC_BODY_LIST_FALLBACK_TO_DEFAULT_LOCALE: false
 #
 # ---
 USE_MAILCATCHER_IN_DEVELOPMENT: true
+
+# Bullet is a tool to help to kill N+1 queries and unused eager loading
+# https://github.com/flyerhzm/bullet
+#
+# USE_BULLET_IN_DEVELOPMENT - Boolean (default: false)
+#
+# ---
+USE_BULLET_IN_DEVELOPMENT: false
 
 # Use memcached to cache HTML fragments for better performance. This will
 # only have an effect in environments where
