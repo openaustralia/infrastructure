@@ -604,8 +604,6 @@ FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro-user-support@localhost
 # ---
 HTML_TO_PDF_COMMAND: /usr/bin/wkhtmltopdf-static
 
-# TODO: Send this to slack as well
-
 # Email address used for sending exception notifications.
 #
 # EXCEPTION_NOTIFICATIONS_FROM - String (default: nil)
@@ -628,6 +626,7 @@ EXCEPTION_NOTIFICATIONS_FROM: Alaveteli {{ stage }} <web-administrators@openaust
 #     - seb@example.com
 #
 # ---
+# TODO: Send this to slack as well
 EXCEPTION_NOTIFICATIONS_TO: 
   - web-administrators@openaustralia.org
 
