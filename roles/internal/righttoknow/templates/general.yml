@@ -382,7 +382,7 @@ ADMIN_PASSWORD: '{{ alavateli_admin_password }}'
 # DISABLE_EMERGENCY_USER - Boolean (default: false)
 #
 # ---
-DISABLE_EMERGENCY_USER: false
+DISABLE_EMERGENCY_USER: true
 
 # Set this to true, and the admin interface will be available to anonymous
 # users. Obviously, you should not set this to be true in production
