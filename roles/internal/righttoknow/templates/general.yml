@@ -137,7 +137,7 @@ TWITTER_WIDGET_ID: '263502299333267456'
 #   AVAILABLE_LOCALES: 'en es'
 #
 # ---
-AVAILABLE_LOCALES: en
+AVAILABLE_LOCALES: 'en'
 
 # Nominate one of the AVAILABLE_LOCALES locales as the default
 #
@@ -148,7 +148,7 @@ AVAILABLE_LOCALES: en
 #   DEFAULT_LOCALE: 'en'
 #
 # ---
-DEFAULT_LOCALE: en
+DEFAULT_LOCALE: 'en'
 
 # Should Alaveteli try to use the default language of the user's browser?
 #
@@ -242,7 +242,7 @@ RESTRICT_NEW_RESPONSES_ON_OLD_REQUESTS_AFTER_MONTHS: 6
 #
 # ---
 THEME_URLS:
- - 'git://github.com/openaustralia/righttoknow.git'
+  - 'git://github.com/openaustralia/righttoknow.git'
 
 # When rails-post-deploy installs the themes, it will try to use the branch
 # specified by THEME_BRANCH first. If the branch doesn't exist it will fall
@@ -614,7 +614,8 @@ EXCEPTION_NOTIFICATIONS_FROM: Alaveteli {{ stage }} <web-administrators@openaust
 #     - seb@example.com
 #
 # ---
-EXCEPTION_NOTIFICATIONS_TO: web-administrators@openaustralia.org
+EXCEPTION_NOTIFICATIONS_TO: 
+  - web-administrators@openaustralia.org
 
 # This rate limiting can be turned off per-user via the admin interface
 #
@@ -815,14 +816,15 @@ SHARED_FILES_PATH: ''
 #
 # ---
 SHARED_FILES:
- - config/database.yml
- - config/general.yml
- - config/rails_env.rb
- - config/newrelic.yml
- - config/httpd.conf
- - public/foi-live-creation.png
- - public/foi-user-use.png
- - config/aliases
+  - config/database.yml
+  - config/general.yml
+  - config/rails_env.rb
+  - config/newrelic.yml
+  - config/httpd.conf
+  - public/foi-live-creation.png
+  - public/foi-user-use.png
+  - config/aliases
+
 # If you have SHARED_FILES_PATH set, then these options list the directories
 # that are shared; i.e. those that the deploy scripts should create symlinks to
 # from the repository.
@@ -837,11 +839,11 @@ SHARED_FILES:
 #
 # ---
 SHARED_DIRECTORIES:
- - files/
- - cache/
- - lib/acts_as_xapian/xapiandbs/
- - vendor/bundle
- - public/assets
+  - files/
+  - cache/
+  - lib/acts_as_xapian/xapiandbs/
+  - vendor/bundle
+  - public/assets
 
 # Allow some users to make batch requests to multiple authorities. Once
 # this is set to true, you can enable batch requests for an individual
