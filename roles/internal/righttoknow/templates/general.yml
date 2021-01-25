@@ -497,18 +497,18 @@ STAGING_SITE: {{ staging_site }}
 # Recaptcha, for detecting humans. Get keys here:
 # http://recaptcha.net/whyrecaptcha.html
 #
-# RECAPTCHA_PUBLIC_KEY - String (default: 'x')
+# RECAPTCHA_SITE_KEY - String (default: 'x')
 #
 # ---
-RECAPTCHA_PUBLIC_KEY: '{{ alaveteli_recaptcha_public_key }}'
+RECAPTCHA_SITE_KEY: '{{ alaveteli_recaptcha_public_key }}'
 
 # Recaptcha, for detecting humans. Get keys here:
 # http://recaptcha.net/whyrecaptcha.html
 #
-# RECAPTCHA_PRIVATE_KEY - String (default: 'x')
+# RECAPTCHA_SECRET_KEY - String (default: 'x')
 #
 # ---
-RECAPTCHA_PRIVATE_KEY: '{{ alaveteli_recaptcha_private_key }}'
+RECAPTCHA_SECRET_KEY: '{{ alaveteli_recaptcha_private_key }}'
 
 # Number of days after which to send a 'new response reminder'
 #
