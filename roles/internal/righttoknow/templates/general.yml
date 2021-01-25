@@ -901,7 +901,7 @@ ENABLE_WIDGETS: false
 # ENABLE_TWO_FACTOR_AUTH – Boolean (default: false)
 #
 # ---
-ENABLE_TWO_FACTOR_AUTH: false
+ENABLE_TWO_FACTOR_AUTH: true
 
 # Enable referral of requests to external reviewers. This is likely to be an
 # Information Commissioner or similar.
