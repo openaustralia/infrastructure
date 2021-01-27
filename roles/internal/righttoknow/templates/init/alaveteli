@@ -30,7 +30,6 @@ restart_daemon() {
   touch "/srv/www/{{ stage }}/current/tmp/restart.txt"
 
   /etc/init.d/foi-alert-tracks-{{ stage }} restart
-  /etc/init.d/foi-purge-varnish-{{ stage }} restart
 }
 
 case "$1" in
