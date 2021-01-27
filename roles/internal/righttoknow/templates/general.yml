@@ -255,7 +255,7 @@ RESTRICT_NEW_RESPONSES_ON_OLD_REQUESTS_AFTER_MONTHS: 6
 #   FRONTPAGE_PUBLICBODY_EXAMPLES: 'tgq;foo;bar'
 #
 # ---
-FRONTPAGE_PUBLICBODY_EXAMPLES: 'dibp;services_australia;ato;dpmc;afp;health'
+FRONTPAGE_PUBLICBODY_EXAMPLES: 'dibp;services_australia;ato;dpmc;afp;health;agd;defence;dva;asic;dfat;department_of_industry_science_energy_resources;nbn_co_limited;apra;finance;oaic;nsw_police_force'
 
 # URLs of themes to download and use (when running the rails-post-deploy
 # script). The earlier in the list means the templates have a higher priority.
