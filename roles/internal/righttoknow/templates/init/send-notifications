@@ -6,19 +6,19 @@
 # Required-Stop: $local_fs $syslog
 # Default-Start: 2 3 4 5
 # Default-Stop: 0 1 6
-# Short-Description: end-notifications-{{ stage }} is a daemon running the Alaveteli email alerts
-# Description: end-notifications-{{ stage }} sends Alaveteli email alerts as required
+# Short-Description: send-notifications-{{ stage }} is a daemon running the Alaveteli notifications
+# Description: send-notifications-{{ stage }} sends Alaveteli notifications as required
 ### END INIT INFO
 #
-# end-notifications-{{ stage }} Start the Alaveteli email alert daemon
+# send-notifications-{{ stage }} Start the Alaveteli notification daemon
 
-NAME=end-notifications-{{ stage }}
+NAME=send-notifications-{{ stage }}
 DAEMON=/srv/www/{{ stage }}/current/script/runner
-DAEMON_ARGS="--daemon TrackMailer.alert_tracks_loop"
+DAEMON_ARGS="--daemon NotificationMailer.send_notifications_loop"
 PIDDIR=/srv/www/{{ stage }}/current/tmp/pids
-PIDFILE=$PIDDIR/foi-alert-tracks.pid
+PIDFILE=$PIDDIR/send-notifications.pid
 LOGDIR=/srv/www/{{ stage }}/current/log
-LOGFILE=$LOGDIR/foi-alert-tracks.log
+LOGFILE=$LOGDIR/send-notifications.log
 DUSER=deploy
 SITE_HOME=/srv/www/{{ stage }}/current
 # Set RAILS_ENV - not needed if using config/rails_env.rb
@@ -56,7 +56,7 @@ case "$1" in
       quietly_start_daemon
       if [ $? -ne 1 ]
       then
-          echo "Alaveteli alert daemon was not running; now restarted"
+          echo "Alaveteli notification daemon was not running; now restarted"
           exit 1
       else
           exit 0
@@ -64,17 +64,17 @@ case "$1" in
       ;;
 
   start)
-      echo -n "Starting Alaveteli alert daemon: $NAME"
+      echo -n "Starting Alaveteli notification daemon: $NAME"
       start_daemon
       ;;
 
   stop)
-        echo -n "Stopping Alaveteli alert daemon: $NAME"
+        echo -n "Stopping Alaveteli notification daemon: $NAME"
         stop_daemon
         ;;
 
   restart)
-      echo -n "Restarting Alaveteli alert daemon: $NAME"
+      echo -n "Restarting Alaveteli notification daemon: $NAME"
       stop_daemon
       start_daemon
       ;;
