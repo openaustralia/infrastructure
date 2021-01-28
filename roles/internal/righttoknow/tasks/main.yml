@@ -290,7 +290,6 @@
     src: "nginx/{{ item }}"
     dest: /etc/nginx
   with_items:
-    - nginx.conf
     - htpasswd
   notify: nginx reload
 
