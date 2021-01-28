@@ -138,64 +138,90 @@
   become: true
   become_user: deploy
 
-- name: Add postgresql apt repository
+# - name: Add postgresql apt repository
+#   apt_repository:
+#     repo: deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
+#     filename: pgdg
+#
+# - name: Import postgresql repository signing key
+#   apt_key:
+#     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+#     id: ACCC4CF8
+#
+# # We're using a slightly older postgres client so that pg_dump still
+# # works with "-i" which would cause a rails migration to fail otherwise.
+# # This will be fixed by upgrading to the latest alavetelli.
+# - name: Install postgresql-client-9.4
+#   apt:
+#     pkg: "{{ item }}"
+#     update_cache: true
+#   with_items:
+#     - postgresql-client-9.4
+#     - libpq-dev
+
+# To install pdftk-java on Bionic (18.04) we need to do a workaround
+# See https://github.com/mysociety/alaveteli/pull/5232/files#diff-254fd36aecf20b2c0e6ae10facadc345bdcc12096772ec7abe227b12d1e77f4fR79
+# We need to allow it to install pdftk-java from Cosmic (18.10)
+
+- name: Add cosmic repo for pdftk-java
   apt_repository:
-    repo: deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
-    filename: pgdg
+    repo: deb http://old-releases.ubuntu.com/ubuntu/ cosmic universe
 
-- name: Import postgresql repository signing key
-  apt_key:
-    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-    id: ACCC4CF8
+# Using /etc/apt/preferences we're deprioritising the cosmic packages
+- name: Deprioritise cosmic packages
+  copy:
+    src: apt_preferences
+    dest: /etc/apt/preferences
 
-# We're using a slightly older postgres client so that pg_dump still
-# works with "-i" which would cause a rails migration to fail otherwise.
-# This will be fixed by upgrading to the latest alavetelli.
-- name: Install postgresql-client-9.4
-  apt:
-    pkg: "{{ item }}"
-    update_cache: true
-  with_items:
-    - postgresql-client-9.4
-    - libpq-dev
-
-- name: Add mySociety Debian Package Repository key
-  apt_key:
-    url: https://debian.mysociety.org/debian.mysociety.org.gpg.key
-
-# It looks like squeeze (very old) is the latest version of Debian
-# that wkhtmltopdf-static is compiled for. Hmmm...
-- name: Add mySociety Debian Package Repository
-  apt_repository:
-    repo: "deb http://debian.mysociety.org squeeze main"
-
-# TODO: Check this list against the list https://github.com/openaustralia/alaveteli/blob/update-rbenv-deploy/config/packages.generic
+# This list of packages came from https://github.com/mysociety/alaveteli/blob/0.34.0.1/config/packages.ubuntu-bionic
 - name: Install packages required by Alaveteli
-  apt: name={{ item }} state=present
+  apt:
+    name: "{{ item }}"
+    state: present
   with_items:
+    - build-essential
+    - bundler
+    - catdoc
+    - elinks
+    - geoip-database
+    - gettext
+    - ghostscript
+    - gnuplot-nox
+    - imagemagick
     - libicu-dev
     - libmagic-dev
     - libmagickwand-dev
-    - xapian-tools
-    - uuid-dev
-    - wkhtmltopdf-static
-    - pdftk
+    - libpq-dev
+    - libsqlite3-dev
+    - libxml2-dev
+    - libxslt-dev
+    - links
     - lockfile-progs
-    - python-yaml
+    - memcached
     - mutt
-    - elinks
+    - pdftk-java
     - poppler-utils
+    - postgresql
+    - postgresql-client
+    - python-yaml
+    - rake
+    - ruby
+    - ruby-dev
+    - sqlite3
+    - tnef
+    - ttf-bitstream-vera
+    - unrtf
+    - unzip
+    - uuid-dev
+    # See separate installation below
+    # - wkhtmltopdf-static
     - wv
-    - catdoc
-    - gnuplot
+    - xapian-tools
 
-# For some unknown reason on Ubuntu 16.04 Magick-config isn't in the path
-# after installing imagemagick above
-- name: Put Magick-config in the path
-  file:
-    state: link
-    src: /usr/lib/x86_64-linux-gnu/ImageMagick-6.8.9/bin-Q16/Magick-config
-    dest: /usr/local/bin/Magick-config
+# Get wkhtmltopdf from project website
+- name: Install wkhtmltopdf
+  apt:
+    deb: https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
 
 # The changes of there being differences between the production and staging version
 # of this script are extremely small. So, just using the production version.
