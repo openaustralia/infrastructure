@@ -11,26 +11,22 @@
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     id: ACCC4CF8
 
-# Installing a slightly older version of postgresql just to ensure that
-# pg_dump on the client side doesn't barf on an "-i" option. A very strange
-# reason to stick to an older version of postgres I know but as mentioned
-# elsewhere when we upgrade to the current latest alaveteli we won't
-# have this problem
-- name: Install postgresql 9.4 server
+# We're currently running 11.8 in production
+- name: Install postgresql 11 server
   apt:
-    name: "postgresql-9.4"
+    name: "postgresql-11"
     update_cache: true
 
 - name: Update postgresql config to bind to public ip
   copy:
     src: postgresql.conf
-    dest: /etc/postgresql/9.4/main
+    dest: /etc/postgresql/11/main
   notify: postgresql restart
 
 - name: Allow all connections from the outside world
   copy:
     src: pg_hba.conf
-    dest: /etc/postgresql/9.4/main
+    dest: /etc/postgresql/11/main
   notify: postgresql restart
 
 - name: Install dependency for postgresql_user
