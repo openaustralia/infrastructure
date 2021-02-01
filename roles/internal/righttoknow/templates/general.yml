@@ -495,7 +495,8 @@ READ_ONLY: ''
 STAGING_SITE: {{ staging_site }}
 
 # Recaptcha, for detecting humans. Get keys here:
-# http://recaptcha.net/whyrecaptcha.html
+# https://www.google.com/recaptcha
+# Currently Alaveteli requires a reCAPTCHA v2 Checkbox key.
 #
 # RECAPTCHA_SITE_KEY - String (default: 'x')
 #
@@ -503,7 +504,8 @@ STAGING_SITE: {{ staging_site }}
 RECAPTCHA_SITE_KEY: '{{ alaveteli_recaptcha_public_key }}'
 
 # Recaptcha, for detecting humans. Get keys here:
-# http://recaptcha.net/whyrecaptcha.html
+# https://www.google.com/recaptcha
+# Currently Alaveteli requires a reCAPTCHA v2 Checkbox key.
 #
 # RECAPTCHA_SECRET_KEY - String (default: 'x')
 #
@@ -931,26 +933,13 @@ EXTERNAL_REVIEWERS: ''
 # ---
 ENABLE_ANNOTATIONS: true
 
-# Enable anti-spam measures.
-# If ENABLE_ANTI_SPAM is set to true, Alaveteli will enforce a set of extra
-# restrictions to combat spam requests, annotations and profile content. This
-# will include the ability to restrict IP addresses from some countries from
-# performing some actions (see RESTRICTED_COUNTRIES), showing a reCAPTCHA
-# on new request submission, and preventing the submission of requests,
-# annotations and profile text matching a set of spam content patterns.
-#
-# ENABLE_ANTI_SPAM – Boolean (default: false)
-#
-# ---
-ENABLE_ANTI_SPAM: false
-
 # Prevent user signups if several signup attempts from the same IP address are
 # made in quick succession.
 #
 # BLOCK_RATE_LIMITED_IPS - Boolean (default: false)
 #
 # ---
-BLOCK_RATE_LIMITED_IPS: false
+BLOCK_RATE_LIMITED_IPS: true
 
 # Prevent users making requests if their IP originates in one of the
 # RESTRICTED_COUNTRIES.
@@ -965,35 +954,35 @@ BLOCK_RESTRICTED_COUNTRY_IPS: false
 # BLOCK_SPAM_ABOUT_ME_TEXT - Boolean (default: false)
 #
 # ---
-BLOCK_SPAM_ABOUT_ME_TEXT: false
+BLOCK_SPAM_ABOUT_ME_TEXT: true
 
 # Prevent users submitting comments that appear to be spam.
 #
 # BLOCK_SPAM_COMMENTS - Boolean (default: false)
 #
 # ---
-BLOCK_SPAM_COMMENTS: false
+BLOCK_SPAM_COMMENTS: true
 
 # Prevent user signups from spam email domains or names which appear to be spam.
 #
 # BLOCK_SPAM_SIGNUPS - Boolean (default: false)
 #
 # ---
-BLOCK_SPAM_SIGNUPS: false
+BLOCK_SPAM_SIGNUPS: true
 
 # Prevent user signins from spam email domains or names which appear to be spam.
 #
 # BLOCK_SPAM_SIGNINS - Boolean (default: false)
 #
 # ---
-BLOCK_SPAM_SIGNINS: false
+BLOCK_SPAM_SIGNINS: true
 
 # Prevent users submitting requests that appear to be spam.
 #
 # BLOCK_SPAM_REQUESTS - Boolean (default: false)
 #
 # ---
-BLOCK_SPAM_REQUESTS: false
+BLOCK_SPAM_REQUESTS: true
 
 # Restrict IP addresses from some countries from performing some actions.
 # If set, requests from IP addresses in the countries specified will be
@@ -1015,7 +1004,29 @@ RESTRICTED_COUNTRIES: ''
 # NEW_REQUEST_RECAPTCHA – Boolean (default: false)
 #
 # ---
-NEW_REQUEST_RECAPTCHA: false
+NEW_REQUEST_RECAPTCHA: true
+
+# Show a reCAPTCHA on the contact form to discourage spammers
+#
+# Add the following code to `help/_contact_form.html.erb` in your theme (just
+# above the submit button works best) and a reCAPTCHA will be shown if
+# CONTACT_FORM_RECAPTCHA is set to true.
+#
+#     <% if @recaptcha_required %>
+#       <%= recaptcha_tags %><br />
+#     <% end %>
+#
+# CONTACT_FORM_RECAPTCHA – Boolean (default: false)
+#
+# ---
+CONTACT_FORM_RECAPTCHA: true
+
+# Show a reCAPTCHA on the user to user contact form to discourage spammers
+#
+# USER_CONTACT_FORM_RECAPTCHA – Boolean (default: false)
+#
+# ---
+USER_CONTACT_FORM_RECAPTCHA: true
 
 # Enable AlaveteliProfessional
 # If ENABLE_ALAVETELI_PRO is set to true, Alaveteli will include extra
