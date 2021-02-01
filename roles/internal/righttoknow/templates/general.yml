@@ -1039,7 +1039,7 @@ CONTACT_FORM_RECAPTCHA: true
 # USER_CONTACT_FORM_RECAPTCHA – Boolean (default: false)
 #
 # ---
-USER_CONTACT_FORM_RECAPTCHA: false
+USER_CONTACT_FORM_RECAPTCHA: true
 
 # Enable AlaveteliProfessional
 # If ENABLE_ALAVETELI_PRO is set to true, Alaveteli will include extra
