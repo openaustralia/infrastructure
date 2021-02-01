@@ -1017,7 +1017,7 @@ RESTRICTED_COUNTRIES: ''
 # NEW_REQUEST_RECAPTCHA – Boolean (default: false)
 #
 # ---
-NEW_REQUEST_RECAPTCHA: false
+NEW_REQUEST_RECAPTCHA: true
 
 # Show a reCAPTCHA on the contact form to discourage spammers
 #
