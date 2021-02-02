@@ -221,7 +221,10 @@
 # Get wkhtmltopdf from project website
 - name: Install wkhtmltopdf
   apt:
-    deb: https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
+    # We're installing a slightly out-of-date version of wkhtmltopdf here (0.12.5) because the latest version
+    # right now (0.12.6) disables local file access by default. There's a command-line option to enable local
+    # file access but I'm not sure it will work with the current way ALavateli calls an external command
+    deb: https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
 
 # The changes of there being differences between the production and staging version
 # of this script are extremely small. So, just using the production version.

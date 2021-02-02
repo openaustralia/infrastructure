@@ -608,7 +608,7 @@ FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro-user-support@localhost
 #   HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf-amd64
 #
 # ---
-HTML_TO_PDF_COMMAND: /usr/bin/wkhtmltopdf-static
+HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf
 
 # Email address used for sending exception notifications.
 #
