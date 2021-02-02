@@ -475,7 +475,7 @@ SECRET_KEY_BASE: '{{ alaveteli_secret_key_base }}'
 #   server.'
 #
 # ---
-READ_ONLY: ''
+READ_ONLY: 'We are currently upgrading the server. It will probably take a few hours this morning. Thanks for your patience! - Matthew'
 
 # Is this a staging or development site? If not, it's a live production site.
 # This setting controls whether or not the rails-post-deploy script will create
