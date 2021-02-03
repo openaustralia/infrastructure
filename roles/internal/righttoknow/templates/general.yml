@@ -562,7 +562,7 @@ GEOIP_DATABASE: vendor/data/GeoLite2-Country.mmdb
 # MAXMIND_LICENSE_KEY - String (default: '')
 #
 # ---
-MAXMIND_LICENSE_KEY: ''
+MAXMIND_LICENSE_KEY: '{{ alaveteli_maxmind_license_key }}'
 
 # In the absence of a GeoIP database (see above), Alaveteli can use Gaze,
 # mySociety's gazeteer, to determine the country from the IP address of an HTTP
