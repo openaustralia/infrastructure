@@ -183,7 +183,6 @@
     - bundler
     - catdoc
     - elinks
-    - geoip-database
     - gettext
     - ghostscript
     - gnuplot-nox
