@@ -227,15 +227,15 @@
 
 # Once a year :)
 # 0 0 1 11 * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-public-holiday-reminder
-- name: Add alaveteli crontab entry - holidays
+- name: Add alaveteli crontab entry - send-public-holiday-reminder
   cron:
     user: deploy
-    name: "holidays"
+    name: "send-public-holiday-reminder"
     minute: "0"
     hour: "0"
     day: "1"
-    month: "12"
-    job: "/bin/bash -l -c '/bin/echo \"A year has passed, please update the bank holidays for the Freedom of Information site, thank you.\"'"
+    month: "11"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production ./script/send-public-holiday-reminder'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
