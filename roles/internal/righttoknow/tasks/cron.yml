@@ -67,8 +67,34 @@
 
 # Once a day, early morning
 # 31 1 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/change-xapian-database.lock "!!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/compact-xapian-database production !!(*= $site *)!!" || echo "stalled?"
+- name: Add alaveteli crontab - compact-xapian-database
+  cron:
+    user: deploy
+    name: "compact-xapian-database"
+    minute: "31"
+    hour: "1"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./compact-xapian-database.lock \"./script/compact-xapian-database production alaveteli-{{ item }}\" || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
 # Once a day, early morning
 # 0 0 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/delete-expired-embargoes.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/delete-expired-embargoes || echo "stalled?"
+- name: Add alaveteli crontab - delete-expired-embargoes
+  cron:
+    user: deploy
+    name: "delete-expired-embargoes"
+    minute: "0"
+    hour: "0"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./delete-expired-embargoes.lock ./script/delete-expired-embargoes || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
 
 # Once a day, early morning
 # 23 4 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/delete-old-things.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/delete-old-things || echo "stalled?"
@@ -87,6 +113,18 @@
 
 # Once a day, early morning
 # 0 5 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-overdue-info-request-events.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-overdue-info-request-events || echo "stalled?"
+- name: Add alaveteli crontab - update-overdue-info-request-events
+  cron:
+    user: deploy
+    name: "update-overdue-info-request-events"
+    minute: "0"
+    hour: "5"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./update-overdue-info-request-events.lock ./script/update-overdue-info-request-events || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
 
 # Once a day, early morning
 # 0 6 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-overdue-requests.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-overdue-requests || echo "stalled?"
@@ -135,10 +173,48 @@
 
 # Once a day, early morning
 # 0 9 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-embargoes-expiring.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-embargoes-expiring || echo "stalled?"
+- name: Add alaveteli crontab - alert-embargoes-expiring
+  cron:
+    user: deploy
+    name: "alert-embargoes-expiring"
+    minute: "0"
+    hour: "9"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-embargoes-expiring.lock ./script/alert-embargoes-expiring || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
 # Once a day, early morning
 # 0 10 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-expiring-embargo-info-request-events.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-expiring-embargo-info-request-events || echo "stalled?"
+- name: Add alaveteli crontab - update-expiring-embargo-info-request-events
+  cron:
+    user: deploy
+    name: "update-expiring-embargo-info-request-events"
+    minute: "0"
+    hour: "10"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./update-expiring-embargo-info-request-events.lock ./script/update-expiring-embargo-info-request-events || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
 # Once a day, early morning
 # 0 12 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-embargoes-expired.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-embargoes-expired || echo "stalled?"
+- name: Add alaveteli crontab - alert-embargoes-expired
+  cron:
+    user: deploy
+    name: "alert-embargoes-expired"
+    minute: "0"
+    hour: "12"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-embargoes-expired.lock ./script/alert-embargoes-expired || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
 
 # Once a day, early morning
 # 2 4 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/check-recent-requests-sent.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/check-recent-requests-sent || echo "stalled?"
@@ -187,6 +263,18 @@
 
 # Once a day, early morning
 # 0 6 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-webhook-digest.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-webhook-digest || echo "stalled?"
+- name: Add alaveteli crontab - send-webhook-digest
+  cron:
+    user: deploy
+    name: "send-webhook-digest"
+    minute: "0"
+    hour: "6"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-webhook-digest.lock ./script/send-webhook-digest || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
 
 # Once a day on all servers
 # 43 2 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/request-creation-graph
@@ -220,10 +308,51 @@
 
 # Once a week (very early Monday morning)
 # 54 2 * * 1 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/cleanup-holding-pen
+- name: Add alaveteli crontab entry - cleanup-holding-pen
+  cron:
+    user: deploy
+    name: "cleanup-holding-pen"
+    minute: "54"
+    hour: "2"
+    weekday: "1"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production ./script/cleanup-holding-pen'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
 # Once a week (early Monday morning)
 # 37 8 * * 1 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-pro-metrics-report.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-pro-metrics-report || echo "stalled?"
+- name: Add alaveteli crontab - send-pro-metrics-report
+  cron:
+    user: deploy
+    name: "send-pro-metrics-report"
+    minute: "37"
+    hour: "8"
+    weekday: "1"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-pro-metrics-report.lock ./script/send-pro-metrics-report || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
 # Once a week (on a Wednesday evening)
 # 42 23 * * 3 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/download-geoip-data
+- name: Add alaveteli crontab entry - download-geoip-data
+  cron:
+    user: deploy
+    name: "download-geoip-data"
+    minute: "42"
+    hour: "23"
+    weekday: "3"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production ./script/download-geoip-data'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
 
 # Once a year :)
 # 0 0 1 11 * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-public-holiday-reminder
