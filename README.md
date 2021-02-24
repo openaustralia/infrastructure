@@ -273,6 +273,7 @@ Then
 bundle exec cap -S stage=development deploy:setup
 bundle exec cap -S stage=development deploy:cold
 bundle exec cap -S stage=development deploy:migrate
+# The step below doesn't work anymore
 bundle exec cap -S stage=development xapian:rebuild_index
 ```
 
