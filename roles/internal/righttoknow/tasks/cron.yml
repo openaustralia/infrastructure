@@ -1,52 +1,3 @@
-# Every 5 minutes
-# */5 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/change-xapian-database.lock "!!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-xapian-index verbose=true" >> !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/log/update-xapian-index.log || echo "stalled?"
-# Every 10 minutes
-# 0,10,20,30,40,50 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-batch-requests.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-batch-requests || echo "stalled?"
-# Once an hour
-# 09 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-comment-on-request.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-comment-on-request || echo "stalled?"
-# Once an hour
-# 31 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/load-mail-server-logs.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/load-mail-server-logs || echo "stalled?"
-# Once a day, early morning
-# 31 1 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/change-xapian-database.lock "!!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/compact-xapian-database production !!(*= $site *)!!" || echo "stalled?"
-# Once a day, early morning
-# 0 0 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/delete-expired-embargoes.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/delete-expired-embargoes || echo "stalled?"
-# Once a day, early morning
-# 23 4 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/delete-old-things.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/delete-old-things || echo "stalled?"
-# Once a day, early morning
-# 0 5 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-overdue-info-request-events.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-overdue-info-request-events || echo "stalled?"
-# Once a day, early morning
-# 0 6 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-overdue-requests.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-overdue-requests || echo "stalled?"
-# Once a day, early morning
-# 0 7 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-new-response-reminders.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-new-response-reminders || echo "stalled?"
-# Once a day, early morning
-# 0 8 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-not-clarified-request.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-not-clarified-request || echo "stalled?"
-# Once a day, early morning
-# 0 9 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-embargoes-expiring.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-embargoes-expiring || echo "stalled?"
-# Once a day, early morning
-# 0 10 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-expiring-embargo-info-request-events.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-expiring-embargo-info-request-events || echo "stalled?"
-# Once a day, early morning
-# 0 12 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-embargoes-expired.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-embargoes-expired || echo "stalled?"
-# Once a day, early morning
-# 2 4 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/check-recent-requests-sent.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/check-recent-requests-sent || echo "stalled?"
-# Once a day, early morning
-# 45 3 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/stop-new-responses-on-old-requests.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/stop-new-responses-on-old-requests || echo "stalled?"
-# Once a day, early morning
-# 55 4 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-public-body-stats.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-public-body-stats || echo "stalled?"
-# Once a day, early morning
-# 0 6 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-webhook-digest.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-webhook-digest || echo "stalled?"
-# Once a day on all servers
-# 43 2 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/request-creation-graph
-# Once a day on all servers
-# 48 2 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/user-use-graph
-# Once a week (very early Monday morning)
-# 54 2 * * 1 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/cleanup-holding-pen
-# Once a week (early Monday morning)
-# 37 8 * * 1 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-pro-metrics-report.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-pro-metrics-report || echo "stalled?"
-# Once a week (on a Wednesday evening)
-# 42 23 * * 3 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/download-geoip-data
-# Once a year :)
-# 0 0 1 11 * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-public-holiday-reminder
-
 # For local development (under vagrant we don't want the cron jobs generating email)
 - cronvar:
     name: MAILTO
@@ -58,42 +9,8 @@
     - staging
   when: "'ec2' in group_names"
 
-- name: Add alaveteli crontab entry - send-batch-requests
-  cron:
-    user: deploy
-    name: "send-batch-requests"
-    minute: "0,10,20,30,40,50"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-batch-requests.lock ./script/send-batch-requests || echo \"stalled?\"'"
-    cron_file: "{{ item }}"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
-
-- name: Add alaveteli crontab - alert-comment-on-request
-  cron:
-    user: deploy
-    name: "alert-comment-on-request"
-    minute: "9"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-comment-on-request.lock ./script/alert-comment-on-request || echo \"stalled?\"'"
-    cron_file: "{{ item }}"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
-
-- name: Add alaveteli crontab - load-mail-server-logs
-  cron:
-    user: deploy
-    name: "load-mail-server-logs"
-    minute: "31"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./load-mail-server-logs.lock ./script/load-mail-server-logs || echo \"stalled?\"'"
-    cron_file: "{{ item }}"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
-
+# Every 5 minutes
+# */5 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/change-xapian-database.lock "!!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-xapian-index verbose=true" >> !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/log/update-xapian-index.log || echo "stalled?"
 - name: Add alaveteli crontab - update-xapian-index
   cron:
     user: deploy
@@ -106,6 +23,55 @@
     - production
     - staging
 
+# Every 10 minutes
+# 0,10,20,30,40,50 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-batch-requests.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-batch-requests || echo "stalled?"
+- name: Add alaveteli crontab entry - send-batch-requests
+  cron:
+    user: deploy
+    name: "send-batch-requests"
+    minute: "0,10,20,30,40,50"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-batch-requests.lock ./script/send-batch-requests || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
+# Once an hour
+# 09 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-comment-on-request.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-comment-on-request || echo "stalled?"
+- name: Add alaveteli crontab - alert-comment-on-request
+  cron:
+    user: deploy
+    name: "alert-comment-on-request"
+    minute: "9"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-comment-on-request.lock ./script/alert-comment-on-request || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
+# Once an hour
+# 31 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/load-mail-server-logs.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/load-mail-server-logs || echo "stalled?"
+- name: Add alaveteli crontab - load-mail-server-logs
+  cron:
+    user: deploy
+    name: "load-mail-server-logs"
+    minute: "31"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./load-mail-server-logs.lock ./script/load-mail-server-logs || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items:
+    - production
+    - staging
+
+# Once a day, early morning
+# 31 1 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/change-xapian-database.lock "!!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/compact-xapian-database production !!(*= $site *)!!" || echo "stalled?"
+# Once a day, early morning
+# 0 0 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/delete-expired-embargoes.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/delete-expired-embargoes || echo "stalled?"
+
+# Once a day, early morning
+# 23 4 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/delete-old-things.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/delete-old-things || echo "stalled?"
 - name: Add alaveteli crontab - delete-old-things
   cron:
     user: deploy
@@ -119,6 +85,11 @@
     - production
     - staging
 
+# Once a day, early morning
+# 0 5 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-overdue-info-request-events.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-overdue-info-request-events || echo "stalled?"
+
+# Once a day, early morning
+# 0 6 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-overdue-requests.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-overdue-requests || echo "stalled?"
 - name: Add alaveteli crontab - alert-overdue-requests
   cron:
     user: deploy
@@ -132,6 +103,8 @@
     - production
     - staging
 
+# Once a day, early morning
+# 0 7 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-new-response-reminders.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-new-response-reminders || echo "stalled?"
 - name: Add alaveteli crontab - alert-new-response-reminders
   cron:
     user: deploy
@@ -145,6 +118,8 @@
     - production
     - staging
 
+# Once a day, early morning
+# 0 8 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-not-clarified-request.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-not-clarified-request || echo "stalled?"
 - name: Add alaveteli crontab - alert-not-clarified-request
   cron:
     user: deploy
@@ -158,6 +133,15 @@
     - production
     - staging
 
+# Once a day, early morning
+# 0 9 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-embargoes-expiring.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-embargoes-expiring || echo "stalled?"
+# Once a day, early morning
+# 0 10 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-expiring-embargo-info-request-events.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-expiring-embargo-info-request-events || echo "stalled?"
+# Once a day, early morning
+# 0 12 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-embargoes-expired.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-embargoes-expired || echo "stalled?"
+
+# Once a day, early morning
+# 2 4 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/check-recent-requests-sent.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/check-recent-requests-sent || echo "stalled?"
 - name: Add alaveteli crontab - check-recent-requests-sent
   cron:
     user: deploy
@@ -171,6 +155,8 @@
     - production
     - staging
 
+# Once a day, early morning
+# 45 3 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/stop-new-responses-on-old-requests.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/stop-new-responses-on-old-requests || echo "stalled?"
 - name: Add alaveteli crontab - stop-new-responses-on-old-requests
   cron:
     user: deploy
@@ -184,6 +170,8 @@
     - production
     - staging
 
+# Once a day, early morning
+# 55 4 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-public-body-stats.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-public-body-stats || echo "stalled?"
 - name: Add alaveteli crontab - update-public-body-stats
   cron:
     user: deploy
@@ -197,6 +185,11 @@
     - production
     - staging
 
+# Once a day, early morning
+# 0 6 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-webhook-digest.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-webhook-digest || echo "stalled?"
+
+# Once a day on all servers
+# 43 2 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/request-creation-graph
 - name: Add alaveteli crontab entry - request-creation-graph
   cron:
     user: deploy
@@ -210,6 +203,8 @@
     - production
     - staging
 
+# Once a day on all servers
+# 48 2 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/user-use-graph
 - name: Add alaveteli crontab entry - user-use-graph
   cron:
     user: deploy
@@ -223,6 +218,15 @@
     - production
     - staging
 
+# Once a week (very early Monday morning)
+# 54 2 * * 1 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/cleanup-holding-pen
+# Once a week (early Monday morning)
+# 37 8 * * 1 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-pro-metrics-report.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-pro-metrics-report || echo "stalled?"
+# Once a week (on a Wednesday evening)
+# 42 23 * * 3 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/download-geoip-data
+
+# Once a year :)
+# 0 0 1 11 * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-public-holiday-reminder
 - name: Add alaveteli crontab entry - holidays
   cron:
     user: deploy
