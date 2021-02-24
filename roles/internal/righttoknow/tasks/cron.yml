@@ -9,30 +9,6 @@
     - staging
   when: "'ec2' in group_names"
 
-- name: Add alaveteli crontab - foi-alert-tracks
-  cron:
-    user: deploy
-    name: "foi-alert-tracks"
-    minute: "0,10,20,30,40,50"
-    job: "/bin/bash -l -c '/etc/init.d/foi-alert-tracks-{{ item }} check'"
-    cron_file: "{{ item }}"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
-
-- name: Add alaveteli crontab - foi-purge-varnish
-  cron:
-    user: deploy
-    name: "foi-purge-varnish"
-    minute: "0,10,20,30,40,50"
-    job: "/bin/bash -l -c '/etc/init.d/foi-purge-varnish-{{ item }} check'"
-    cron_file: "{{ item }}"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
-
 - name: Add alaveteli crontab entry - send-batch-requests
   cron:
     user: deploy
