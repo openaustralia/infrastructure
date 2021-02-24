@@ -38,7 +38,7 @@
     user: deploy
     name: "send-batch-requests"
     minute: "0,10,20,30,40,50"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-batch-requests ./script/send-batch-requests || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-batch-requests.lock ./script/send-batch-requests || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
@@ -50,7 +50,7 @@
     user: deploy
     name: "alert-comment-on-request"
     minute: "9"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-comment-on-request ./script/alert-comment-on-request || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-comment-on-request.lock ./script/alert-comment-on-request || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
@@ -62,7 +62,7 @@
     user: deploy
     name: "load-mail-server-logs"
     minute: "31"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./load-mail-server-logs ./script/load-mail-server-logs || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./load-mail-server-logs.lock ./script/load-mail-server-logs || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
@@ -87,7 +87,7 @@
     name: "delete-old-things"
     minute: "23"
     hour: "4"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./delete-old-things ./script/delete-old-things || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./delete-old-things.lock ./script/delete-old-things || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
@@ -100,7 +100,7 @@
     name: "alert-overdue-requests"
     minute: "0"
     hour: "6"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-overdue-requests ./script/alert-overdue-requests || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-overdue-requests.lock ./script/alert-overdue-requests || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
@@ -113,7 +113,7 @@
     name: "alert-new-response-reminders"
     minute: "0"
     hour: "7"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-new-response-reminders ./script/alert-new-response-reminders || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-new-response-reminders.lock ./script/alert-new-response-reminders || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
@@ -126,7 +126,7 @@
     name: "alert-not-clarified-request"
     minute: "0"
     hour: "8"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-not-clarified-request ./script/alert-not-clarified-request || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-not-clarified-request.lock ./script/alert-not-clarified-request || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
@@ -139,7 +139,7 @@
     name: "check-recent-requests-sent"
     minute: "2"
     hour: "4"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./check-recent-requests-sent ./script/check-recent-requests-sent || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./check-recent-requests-sent.lock ./script/check-recent-requests-sent || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
@@ -152,7 +152,7 @@
     name: "stop-new-responses-on-old-requests"
     minute: "45"
     hour: "3"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./stop-new-responses-on-old-requests ./script/stop-new-responses-on-old-requests || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./stop-new-responses-on-old-requests.lock ./script/stop-new-responses-on-old-requests || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items:
