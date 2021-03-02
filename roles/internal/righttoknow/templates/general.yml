@@ -642,9 +642,9 @@ EXCEPTION_NOTIFICATIONS_FROM: Alaveteli {{ stage }} <web-administrators@openaust
 #     - seb@example.com
 #
 # ---
-# TODO: Send this to slack as well
 EXCEPTION_NOTIFICATIONS_TO:
   - web-administrators@openaustralia.org
+  - k6g2t1e7e6u1p0f2@oaf.slack.com
 
 # This rate limiting can be turned off per-user via the admin interface
 #
