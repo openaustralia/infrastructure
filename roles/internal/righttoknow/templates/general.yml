@@ -587,7 +587,7 @@ GAZE_URL: http://gaze.mysociety.org
 #   FORWARD_NONBOUNCE_RESPONSES_TO: user-support@example.com
 #
 # ---
-FORWARD_NONBOUNCE_RESPONSES_TO: web-administrators@openaustralia.org
+FORWARD_NONBOUNCE_RESPONSES_TO: contact@righttoknow.org.au
 
 # The email address to which non-bounce responses to emails sent out to
 # Alaveteli Professional users by Alaveteli should be forwarded
