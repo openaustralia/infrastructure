@@ -599,7 +599,7 @@ FORWARD_NONBOUNCE_RESPONSES_TO: contact@righttoknow.org.au
 #   FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro-user-support@example.com
 #
 # ---
-FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro-user-support@localhost
+FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro@righttoknow.org.au
 
 # Path to a program that converts an HTML page in a file to PDF. Also used to
 # download a zip file of all the correspondence for a request. It should take
@@ -1067,7 +1067,7 @@ ENABLE_ALAVETELI_PRO: false
 # PRO_CONTACT_EMAIL - String email address (default: pro-contact@localhost)
 #
 # ---
-PRO_CONTACT_EMAIL: 'pro-contact@localhost'
+PRO_CONTACT_EMAIL: 'pro@righttoknow.org.au'
 
 # Contact name for Alaveteli Professional.
 # The corresponding name to address emails to when sending email to
@@ -1079,7 +1079,7 @@ PRO_CONTACT_EMAIL: 'pro-contact@localhost'
 # PRO_CONTACT_NAME - String contact name (default: Alaveteli Professional)
 #
 # ---
-PRO_CONTACT_NAME: 'Alaveteli Professional'
+PRO_CONTACT_NAME: 'Right To Know Professional'
 
 # Site name for Alaveteli Professional.
 # The name to use when referring to the Alaveteli Professional parts of an
