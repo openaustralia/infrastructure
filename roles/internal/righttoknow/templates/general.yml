@@ -1093,7 +1093,7 @@ PRO_CONTACT_NAME: 'Right To Know Professional'
 # PRO_SITE_NAME - String site name (default: Alaveteli Professional)
 #
 # ---
-PRO_SITE_NAME: 'Alaveteli Professional'
+PRO_SITE_NAME: 'Right To Know Professional'
 
 # The total number of authorities that can be added to a Alaveteli Professional
 # batch request.
