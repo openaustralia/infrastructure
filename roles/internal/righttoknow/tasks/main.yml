@@ -346,6 +346,8 @@
     ga_code: "UA-3107958-10"
     override_all_public_body_request_emails: null
     stage: production
+    stripe_publishable_key: "{{ stripe_publishable_key_live }}"
+    stripe_secret_key: "{{ stripe_secret_key_live }}"
   notify: nginx restart
 
 - name: Copy across the main Alaveteli config (staging)
@@ -362,6 +364,8 @@
     ga_code: ""
     override_all_public_body_request_emails: "contact@righttoknow.org.au"
     stage: staging
+    stripe_publishable_key: "{{ stripe_publishable_key_test }}"
+    stripe_secret_key: "{{ stripe_secret_key_test }}"
   notify: nginx restart
 
 - import_tasks: certificates.yml

@@ -1186,7 +1186,7 @@ POP_MAILER_ENABLE_SSL: true
 # STRIPE_PUBLISHABLE_KEY: sk_test_UD6BDsARFZIYb8273dbdl
 #
 # ---
-STRIPE_PUBLISHABLE_KEY: ''
+STRIPE_PUBLISHABLE_KEY: '{{ stripe_publishable_key }}'
 
 # Stripe.com secret key. Only required for Alaveteli Pro.
 #
@@ -1197,7 +1197,7 @@ STRIPE_PUBLISHABLE_KEY: ''
 # STRIPE_SECRET_KEY: sk_test_UD6BDsARFZIYb8273dbdl
 #
 # ---
-STRIPE_SECRET_KEY: ''
+STRIPE_SECRET_KEY: '{{ stripe_secret_key }}'
 
 # An optional Stripe.com namespace which allows plans & coupons to be separated
 # from other resources within Stripe. If used the Stripe resources will need IDs
