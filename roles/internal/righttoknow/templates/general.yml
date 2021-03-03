@@ -1177,6 +1177,8 @@ POP_MAILER_PASSWORD: ''
 # ---
 POP_MAILER_ENABLE_SSL: true
 
+ENABLE_PRO_PRICING: {{ enable_pro_pricing }}
+
 # Stripe.com publishable key. Only required for Alaveteli Pro.
 #
 # STRIPE_PUBLISHABLE_KEY - String (default: '')

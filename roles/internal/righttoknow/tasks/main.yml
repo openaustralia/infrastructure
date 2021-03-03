@@ -350,6 +350,7 @@
     stripe_secret_key: "{{ stripe_secret_key_live }}"
     stripe_webhook_secret: "{{ stripe_webhook_secret_production }}"
     enable_alaveteli_pro: false
+    enable_pro_pricing: false
   notify: nginx restart
 
 - name: Copy across the main Alaveteli config (staging)
@@ -370,6 +371,7 @@
     stripe_secret_key: "{{ stripe_secret_key_test }}"
     stripe_webhook_secret: "{{ stripe_webhook_secret_staging }}"
     enable_alaveteli_pro: true
+    enable_pro_pricing: true
   notify: nginx restart
 
 - import_tasks: certificates.yml
