@@ -1051,7 +1051,7 @@ USER_CONTACT_FORM_RECAPTCHA: true
 # ENABLE_ALAVETELI_PRO – Boolean (default: false)
 #
 # ---
-ENABLE_ALAVETELI_PRO: false
+ENABLE_ALAVETELI_PRO: {{ enable_alaveteli_pro }}
 
 # Contact email address for Alaveteli Professional.
 # Requests made through Alaveteli Professional may be embargoed, meaning that
