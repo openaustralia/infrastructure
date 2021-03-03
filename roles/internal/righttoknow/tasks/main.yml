@@ -348,6 +348,7 @@
     stage: production
     stripe_publishable_key: "{{ stripe_publishable_key_live }}"
     stripe_secret_key: "{{ stripe_secret_key_live }}"
+    stripe_webhook_secret: "{{ stripe_webhook_secret_production }}"
   notify: nginx restart
 
 - name: Copy across the main Alaveteli config (staging)
@@ -366,6 +367,7 @@
     stage: staging
     stripe_publishable_key: "{{ stripe_publishable_key_test }}"
     stripe_secret_key: "{{ stripe_secret_key_test }}"
+    stripe_webhook_secret: "{{ stripe_webhook_secret_staging }}"
   notify: nginx restart
 
 - import_tasks: certificates.yml

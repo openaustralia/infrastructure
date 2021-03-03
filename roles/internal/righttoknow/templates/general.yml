@@ -1220,7 +1220,7 @@ STRIPE_NAMESPACE: 'righttoknow'
 #
 # STRIPE_WEBHOOK_SECRET: wh_test_UD6BDsARFZIYb8273dbdl
 # ---
-STRIPE_WEBHOOK_SECRET: ''
+STRIPE_WEBHOOK_SECRET: '{{ stripe_webhook_secret }}'
 
 # The rate of Tax / VAT to add to Pro subscriptions. Note that the Price per
 # unit of your Stripe Product Plan must be created without tax. Alaveteli will
