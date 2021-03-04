@@ -1079,7 +1079,7 @@ PRO_CONTACT_EMAIL: 'pro@righttoknow.org.au'
 # PRO_CONTACT_NAME - String contact name (default: Alaveteli Professional)
 #
 # ---
-PRO_CONTACT_NAME: 'Right To Know Professional'
+PRO_CONTACT_NAME: 'Right To Know Pro'
 
 # Site name for Alaveteli Professional.
 # The name to use when referring to the Alaveteli Professional parts of an
@@ -1093,7 +1093,7 @@ PRO_CONTACT_NAME: 'Right To Know Professional'
 # PRO_SITE_NAME - String site name (default: Alaveteli Professional)
 #
 # ---
-PRO_SITE_NAME: 'Right To Know Professional'
+PRO_SITE_NAME: 'Right To Know Pro'
 
 # The total number of authorities that can be added to a Alaveteli Professional
 # batch request.
