@@ -349,8 +349,8 @@
     stripe_publishable_key: "{{ stripe_publishable_key_live }}"
     stripe_secret_key: "{{ stripe_secret_key_live }}"
     stripe_webhook_secret: "{{ stripe_webhook_secret_production }}"
-    enable_alaveteli_pro: false
-    enable_pro_pricing: false
+    enable_alaveteli_pro: true
+    enable_pro_pricing: true
   notify: nginx restart
 
 - name: Copy across the main Alaveteli config (staging)
