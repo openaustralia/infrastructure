@@ -340,7 +340,7 @@
     group: deploy
   vars:
     domain: "{{ righttoknow_domain }}"
-    site_name: "Right To Know"
+    site_name: "Right to Know"
     incoming_email_prefix: "foi+"
     staging_site: "0"
     ga_code: "UA-3107958-10"
@@ -361,7 +361,7 @@
     group: deploy
   vars:
     domain: "test.{{ righttoknow_domain }}"
-    site_name: "Right To Know (STAGING)"
+    site_name: "Right to Know (STAGING)"
     incoming_email_prefix: "foitest+"
     staging_site: "1"
     ga_code: ""
