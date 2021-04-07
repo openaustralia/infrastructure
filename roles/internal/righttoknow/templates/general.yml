@@ -1212,7 +1212,7 @@ STRIPE_SECRET_KEY: '{{ stripe_secret_key }}'
 # STRIPE_NAMESPACE: 'alaveteli'
 #
 # ---
-STRIPE_NAMESPACE: 'righttoknow'
+STRIPE_NAMESPACE: 'RTK'
 
 # Stripe.com webhook secret. Only required for Alaveteli Pro.
 #
