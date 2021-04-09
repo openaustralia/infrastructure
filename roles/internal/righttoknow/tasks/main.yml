@@ -351,6 +351,7 @@
     stripe_webhook_secret: "{{ stripe_webhook_secret_production }}"
     enable_alaveteli_pro: true
     enable_pro_pricing: true
+    pro_referral_coupon: "{{ pro_referral_coupon_production }}"
   notify: nginx restart
 
 - name: Copy across the main Alaveteli config (staging)
@@ -372,6 +373,7 @@
     stripe_webhook_secret: "{{ stripe_webhook_secret_staging }}"
     enable_alaveteli_pro: true
     enable_pro_pricing: true
+    pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
   notify: nginx restart
 
 - import_tasks: certificates.yml
