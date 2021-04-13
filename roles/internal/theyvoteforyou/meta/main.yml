@@ -16,7 +16,7 @@ dependencies:
         path: "/srv/www/production/shared/log/*.log"
         options:
           - daily
-          - rotate 30
+          - rotate 7
           - compress
           - missingok
           - copytruncate
@@ -24,7 +24,7 @@ dependencies:
         path: "/srv/www/staging/shared/log/*.log"
         options:
           - daily
-          - rotate 30
+          - rotate 7
           - compress
           - missingok
           - copytruncate
