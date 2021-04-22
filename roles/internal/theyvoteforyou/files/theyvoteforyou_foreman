@@ -1,4 +1,6 @@
+# TODO: Delete the line below as soon as it isn't necessary
 deploy  ALL = NOPASSWD: /usr/local/rvm/wrappers/default/bundle exec foreman export *
+deploy  ALL = NOPASSWD: /usr/local/rvm/bin/rvm . do /usr/local/rvm/wrappers/default/bundle exec foreman export *
 deploy  ALL = NOPASSWD: /bin/systemctl enable theyvoteforyou-staging.target
 deploy  ALL = NOPASSWD: /bin/systemctl enable theyvoteforyou-production.target
 deploy  ALL = NOPASSWD: /bin/systemctl enable theyvoteforyou-development.target
