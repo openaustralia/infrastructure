@@ -105,7 +105,6 @@
     # Hello Dolly is already installed
     - hifi
     - mailchimp-for-wp
-    # - recent-posts-embed
     - quotes-collection
     - scalable-vector-graphics-svg
     - subscribe-to-comments
