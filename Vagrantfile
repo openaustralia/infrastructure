@@ -112,9 +112,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   hosts.each do |hostname, ip|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
-      # Right To Know is the only one so far that is using a more recent version of Ubuntu
+      # Right To Know and oaf.org.au are the only ones so far that is using a more recent version of Ubuntu
       # Note that xenial support ends in April 2021
-      if hostname == "righttoknow.org.au.test"
+      if hostname == "righttoknow.org.au.test" || hostname == "oaf.org.au.test"
         host.vm.box = "ubuntu/bionic64"
       else
         host.vm.box = "ubuntu/xenial64"
