@@ -91,11 +91,6 @@
 # what's going on but I've spent enough time trying to figure this out and it's
 # somewhat academic as we'll be using a different database very quickly
 
-# These are the plugins that were activated in production on kedumba. We're
-# not bothering to install those that were installed but not activated.
-# Enabling specific plugins rather than all of them at once using "--all"
-# so that we don't accidently enable a plugin which is installed, not in the
-# list, and not currently enabled.
 - name: Install wordpress plugins
   shell: "wp-cli --path='/var/www/html' plugin install --activate {{ item }}"
   args:
