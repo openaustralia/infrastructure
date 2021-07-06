@@ -102,7 +102,6 @@
     - check-email
     - collapsing-archives
     - google-analytics-for-wordpress
-    # Hello Dolly is already installed
     - hifi
     - mailchimp-for-wp
     - quotes-collection
