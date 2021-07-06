@@ -11,25 +11,6 @@
     login_password: "{{ rds_admin_password }}"
     name: oaf-production
 
-# For some inexplicable reason civicrm doesn't want dashes in the database name
-# So, using underscore instead
-- name: Create civicrm database
-  mysql_db:
-    login_host: "{{ mysql_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: civi_production
-
-- name: Create civi user with access to the database
-  mysql_user:
-    login_host: "{{ mysql_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: civi_production
-    password: "{{ civicrm_production_mysql_password }}"
-    priv: 'civi_production.*:ALL'
-    host: "%"
-
 - name: Create oaf user with access to the database
   mysql_user:
     login_host: "{{ mysql_host }}"
@@ -125,7 +106,6 @@
     - better-rss-widget
     - broken-link-checker
     - check-email
-    # CiviCRM needs to be installed differently
     - collapsing-archives
     - google-analytics-for-wordpress
     # Hello Dolly is already installed
@@ -190,21 +170,6 @@
     - http
     - https
 
-# TODO: Maybe worth looking at the wp-cli civicrm integration for installing civicrm?
-
-- name: Install civicrm plugin
-  shell: "wp-cli --path=/var/www/html plugin install --activate https://download.civicrm.org/civicrm-4.6.36-wordpress.zip"
-  args:
-    creates: /var/www/html/wp-content/plugins/civicrm
-  become_user: www-data
-
-- name: Create civicrm extensions directory
-  file:
-    path: /var/www/html/wp-content/plugins/files/civicrm/extensions/
-    owner: www-data
-    group: www-data
-    state: directory
-
 - name: Apache config
   template:
     src: 000-default.conf
@@ -222,20 +187,6 @@
     dest: /var/www/html/.htaccess
   notify: reload apache
 
-# This user is needed for the civicrm cron job command below
-- name: Create civicrm user
-  shell: "wp-cli --path=/var/www/html user update {{ civicrm_wordpress_username }} contact@oaf.org.au --role=administrator --user_pass={{ civicrm_wordpress_password }} --first_name=Civicrm --last_name=User"
-  become_user: www-data
-
-- name: Setup civicrm cron
-  cron:
-    user: www-data
-    name: "master-civicrm-cron-job"
-    # Every 15 minutes
-    minute: "*/15"
-    job: "/usr/bin/php /var/www/html/wp-content/plugins/civicrm/civicrm/bin/cli.php -u {{ civicrm_wordpress_username }} -p {{ civicrm_wordpress_password }} -e Job -a execute"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-
 # Despite the name apparently this version of newrelic monitor also supports php 7.
 # See: https://discuss.newrelic.com/t/where-to-download-php7-agent/35807
 - name: Uninstall newrelic php monitor
@@ -249,32 +200,14 @@
     path: /etc/php/5.6/mods-available/newrelic.ini
   notify: reload apache
 
-# Do these last two things last so that the message gets displayed at the end which
-# makes it useful to the person using this
-- name: Check if civicrm config file exists
-  stat:
-    path: /var/www/html/wp-content/plugins/civicrm/civicrm.settings.php
-  register: stat_result
-
-# Only give these instructions if civicrm hasn't yet been configured
 - name: display post install message
   debug:
     msg:
-      - 'Now go to https://www.{{ oaf_domain }}/wp-admin/options-general.php?page=civicrm-install'
+      - 'Now go to https://www.{{ oaf_domain }}/wp-admin'
       - 'You will need to login with:'
       - '  Username: {{ admin_user }}'
       - '  Password: {{ admin_password }}'
-      - 'Fill in the following details:'
-      - '  MySQL server: {{ mysql_host }}'
-      - '  MySQL username: civi_production'
-      - '  MySQL password: {{ civicrm_production_mysql_password }}'
-      - '  MySQL database: civi_production'
-      - 'Then, press the button that says Check requirements and install civicrm'
-  when: stat_result.stat.exists == False
 
-# TODO: Once in production remove smtp throttling with AWS and setup reverse DNS?
-# TODO: Install civicrm stripe extension automatically?
-# TODO: civicrm mailer server needs to be added to spf for all main domains
 # TODO: Add newrelic application monitoring
 # TODO: Mail sent to www-data needs to go to root (or switch over to deploy user)
 
