@@ -40,25 +40,22 @@
     priv: 'oaf-production.*:ALL'
     host: "%"
 
-# Install php5 on xenial requires a few more jumps than usual
-- name: Add repo for installing php5
+# Install php 7.4 on bionic requires a few more jumps than usual
+- name: Add repo for installing php 7.4
   apt_repository:
     repo: 'ppa:ondrej/php'
 
-# We're using php 5.6 as that's the latest php supported by the
-# version of civicrm currently running in production
-# TODO: Check latest packages required by civicrm
-# TODO: Check those required by wordpress
+# We're using php 7.4 as it's the minimum required for recent Wordpress
 - name: Install required packages
   apt: name={{ item }} state=present
   with_items:
-    - php5.6-mysql
-    - php5.6-curl
-    - php5.6-xml
-    - php5.6-zip
-    - php5.6-mbstring
+    - php7.4-mysql
+    - php7.4-curl
+    - php7.4-xml
+    - php7.4-zip
+    - php7.4-mbstring
     - apache2
-    - libapache2-mod-php5.6
+    - libapache2-mod-php7.4
     - mysql-client
   notify: reload apache
 
