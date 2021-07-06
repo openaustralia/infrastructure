@@ -104,7 +104,7 @@
 
 # TODO: Is there a creates in this situation?
 - name: install wordpress
-  shell: "wp-cli --path='/var/www/html' core install --url=https://www.{{ oaf_domain }} --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au"
+  shell: "wp-cli --path='/var/www/html' core install --url=https://www.{{ oaf_domain }} --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au --skip-email"
   become_user: www-data
 
 # TODO: The admin user is not getting properly setup for some reason.
