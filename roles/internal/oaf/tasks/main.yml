@@ -163,7 +163,7 @@
 
 # This theme is required by the openaustralia foundation theme
 - name: Install thematic theme
-  shell: "wp-cli --path='/var/www/html' theme install thematic --version=1.0.4"
+  shell: "wp-cli --path='/var/www/html' theme install --url https://github.com/ThematicTheme/thematic/archive/refs/tags/1.0.4.zip https://github.com/ThematicTheme/Thematic/archive/refs/tags/1.0.4.zip"
   args:
     creates: /var/www/html/wp-content/themes/thematic/
   become_user: www-data
