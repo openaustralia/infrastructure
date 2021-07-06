@@ -105,9 +105,8 @@
     # Hello Dolly is already installed
     - hifi
     - mailchimp-for-wp
-    # This plugin currently breaks our site; possibly fixed after a wordpress upgrade?
-    # - quotes-collection
     # - recent-posts-embed
+    - quotes-collection
     - scalable-vector-graphics-svg
     - subscribe-to-comments
     - tagaroo
