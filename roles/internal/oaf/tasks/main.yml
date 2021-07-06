@@ -122,6 +122,13 @@
     - wp-hide-pages
     - wp-super-cache
 
+# Remove plugins that are installed by default but not needed
+- name: Remove wordpress plugins
+  shell: "wp-cli --path='/var/www/html' plugin delete {{ item }}"
+  become_user: www-data
+  with_items:
+    - hello
+
 # creates has a different form so we're doing this separately from above
 - name: Install wordpress plugins
   shell: "wp-cli --path='/var/www/html' plugin install --activate https://github.com/afragen/github-updater/archive/master.zip"
