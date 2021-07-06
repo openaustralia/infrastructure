@@ -105,7 +105,6 @@
     # Hello Dolly is already installed
     - hifi
     - mailchimp-for-wp
-    # - nivo-slider-light
     # This plugin currently breaks our site; possibly fixed after a wordpress upgrade?
     # - quotes-collection
     # - recent-posts-embed
