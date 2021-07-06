@@ -104,6 +104,7 @@
     - google-analytics-for-wordpress
     - hifi
     - mailchimp-for-wp
+    - advanced-gutenberg
     - quotes-collection
     - scalable-vector-graphics-svg
     - subscribe-to-comments
@@ -111,12 +112,15 @@
     - twitter-widget-pro
     - typekit-fonts-for-wordpress
     - update-notifier
+    - vaultpress
     - widget-context
     - widget-logic
+    - wordfence
     - wordpress-importer
     - wp-twittersearch
     - wp-hide-pages
     - wp-super-cache
+    # TODO: What is advanced-cached.php ?
 
 # Remove plugins that are installed by default but not needed
 - name: Remove wordpress plugins
