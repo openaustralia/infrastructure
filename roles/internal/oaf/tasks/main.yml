@@ -85,11 +85,10 @@
   shell: "wp-cli --path='/var/www/html' core install --url=https://www.{{ oaf_domain }} --title='OpenAustralia Foundation' --admin_user={{ admin_user }} --admin_password={{ admin_password }} --admin_email=contact@oaf.org.au --skip-email"
   become_user: www-data
 
-# TODO: The admin user is not getting properly setup for some reason.
-# I've had to work around this by either setting the role by hand using wp-cli
-# and then also resetting the password in wordpress. it would be good to know
-# what's going on but I've spent enough time trying to figure this out and it's
-# somewhat academic as we'll be using a different database very quickly
+# Update the password of the admin user because the above task doesn't seem to work as expected
+- name: update wordpress admin password
+  shell: "wp-cli --path='/var/www/html' user update admin --skip-email --user_pass={{ admin_password }}"
+  become_user: www-data
 
 - name: Install wordpress plugins
   shell: "wp-cli --path='/var/www/html' plugin install --activate {{ item }}"
