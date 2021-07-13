@@ -2,7 +2,8 @@ resource "aws_instance" "au_proxy" {
   ami = data.aws_ami.ubuntu.id
 
   # Keeping this as small as we possibly can
-  instance_type = "t2.nano"
+  instance_type = "t3.nano"
+  ebs_optimized = true
   key_name      = "deployer_key"
   tags = {
     Name = "au.proxy"
