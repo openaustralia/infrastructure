@@ -9,7 +9,8 @@ resource "aws_key_pair" "deployer" {
 
 resource "aws_instance" "electionleaflets" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.small"
+  instance_type = "t3.small"
+  ebs_optimized = true
   key_name      = "deployer_key"
   tags = {
     Name = "electionleaflets"
