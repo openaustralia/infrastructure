@@ -67,8 +67,7 @@ resource "aws_db_instance" "postgresql" {
   multi_az                   = true
   auto_minor_version_upgrade = true
 
-  # TODO: For production change apply_immediately to false
-  apply_immediately      = true
+  apply_immediately      = false
   skip_final_snapshot    = false
   vpc_security_group_ids = [aws_security_group.postgresql.id]
 }
