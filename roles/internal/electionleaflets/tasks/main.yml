@@ -18,7 +18,9 @@
 - name: Mount /data filesystem
   mount:
     path: /data
-    src: /dev/xvdh
+    # Mount device by UUID because that's needed to run on AWS Nitro based instances (e.g. t3)
+    # See https://aws.amazon.com/premiumsupport/knowledge-center/boot-error-linux-nitro-instance/
+    src: "UUID={{ ansible_facts['devices']['xvdh']['links']['uuids'][0] }}"
     fstype: ext4
     state: mounted
   when: "'ec2' in group_names"
