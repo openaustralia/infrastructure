@@ -1,6 +1,7 @@
 resource "aws_instance" "oaf" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.medium"
+  instance_type = "t3.small"
+  ebs_optimized = true
   key_name      = "deployer_key"
   tags = {
     Name = "oaf"
