@@ -6,7 +6,8 @@ resource "aws_instance" "righttoknow" {
   # when running script/rebuild-xapian-index
   # going back to t2.medium to see if we can get away with that
   # Going back to t2.large because we seem to be regularly OOMing after cleaning up the on-disk cache
-  instance_type = "t2.large"
+  instance_type = "t3.large"
+  ebs_optimized = true
   key_name      = "test"
   tags = {
     Name = "righttoknow"
