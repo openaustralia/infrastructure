@@ -3,7 +3,8 @@ resource "aws_instance" "openaustralia" {
 
   # Running sitemap generation (a ruby process, suprise, surprise) pegged the
   # memory usage on a t2.small. So, upping to a t2.medium.
-  instance_type = "t2.small"
+  instance_type = "t3.small"
+  ebs_optimized = true
   key_name      = "test"
   tags = {
     Name = "openaustralia"
