@@ -1,8 +1,8 @@
 resource "aws_instance" "opengovernment" {
   ami = data.aws_ami.ubuntu.id
 
-  # Changed from t2.small to t2.micro based on usage in production
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
+  ebs_optimized = true
   key_name      = "deployer_key"
   tags = {
     Name = "opengovernment"
