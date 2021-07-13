@@ -6,7 +6,8 @@ resource "aws_instance" "theyvoteforyou" {
 
   # t2.small was running at 100% cpu on the production load (due to the ruby web
   # processes) and was failing to index elasticsearch (probably because of memory)
-  instance_type = "t2.medium"
+  instance_type = "t3.medium"
+  ebs_optimized = true
   key_name      = "test"
   tags = {
     Name = "theyvoteforyou"
