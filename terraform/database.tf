@@ -15,7 +15,9 @@ resource "aws_db_instance" "main" {
   # 2. With db.t2.medium it turned out we were running out of cpu credits
   #    after a few days. So, upping to db.m4.large as the smallest "standard"
   #    database instance
-  instance_class      = "db.m4.large"
+  # 3. Upgraded to m5 because it's more recent. Pretty much the same price and
+  #    same vcpu and memory.
+  instance_class      = "db.m5.large"
   identifier          = "main-database"
   username            = "admin"
   password            = var.rds_admin_password
@@ -52,7 +54,8 @@ resource "aws_db_instance" "postgresql" {
 
   # Let's start in production with db.t2.medium. We should watch the cpu credits
   # Dropping down to db.t2.small because we're under-using
-  instance_class          = "db.t2.small"
+  # Switching to t3.small because it's more recent, same price, and double the cpu
+  instance_class          = "db.t3.small"
   identifier              = "postgresql"
   username                = "root"
   password                = var.rds_admin_password
