@@ -45,8 +45,7 @@ resource "aws_elasticache_cluster" "planningalerts" {
   engine_version       = "6.0.5"
   port                 = 6379
 
-  # TODO: Change this to false for production use!
-  apply_immediately    = true
+  apply_immediately    = false
 
   security_group_ids = [ aws_security_group.redis-planningalerts.id ]
 
