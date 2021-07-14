@@ -33,7 +33,7 @@ resource "aws_ebs_volume" "openaustralia_data" {
   # on kedumba.
   # After loading real data in we upped it to 20GB
   size = 20
-  type = "gp2"
+  type = "gp3"
   tags = {
     Name = "openaustralia_data"
   }
