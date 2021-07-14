@@ -145,3 +145,29 @@ resource "aws_security_group" "incoming_email" {
     ipv6_cidr_blocks = ["::/0"]
   }
 }
+
+resource "aws_security_group" "planningalerts" {
+  name = "planningalerts"
+  description = "Web servers for PlanningAlerts"
+}
+
+resource "aws_security_group" "redis-planningalerts" {
+  name = "redis-planningalerts"
+  description = "Redis server for PlanningAlerts"
+
+  ingress {
+    from_port = 6379
+    to_port   = 6379
+    protocol  = "tcp"
+    security_groups = [ aws_security_group.planningalerts.id ]
+  }
+
+  # Allow everything going out
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}

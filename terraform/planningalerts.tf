@@ -20,7 +20,10 @@ resource "aws_instance" "planningalerts" {
   tags = {
     Name = "planningalerts"
   }
-  security_groups         = [aws_security_group.webserver.name]
+  security_groups         = [
+    aws_security_group.webserver.name,
+    aws_security_group.planningalerts.name
+  ]
   disable_api_termination = true
   iam_instance_profile    = aws_iam_instance_profile.logging.name
 }
@@ -45,7 +48,8 @@ resource "aws_elasticache_cluster" "planningalerts" {
   # TODO: Change this to false for production use!
   apply_immediately    = true
 
+  security_group_ids = [ aws_security_group.redis-planningalerts.id ]
+
   # TODO: Add maintenance window information
-  # TODO: Add security group
   # TODO: Add automated backups
 }
