@@ -31,3 +31,21 @@ resource "aws_eip" "planningalerts" {
     Name = "planningalerts"
   }
 }
+
+resource "aws_elasticache_cluster" "planningalerts" {
+  cluster_id           = "planningalerts"
+  engine               = "redis"
+  # Smallest t3 available gives 0.5 GiB memory
+  node_type            = "cache.t3.micro"
+  num_cache_nodes      = 1
+  parameter_group_name = "default.redis6.x"
+  engine_version       = "6.0.5"
+  port                 = 6379
+
+  # TODO: Change this to false for production use!
+  apply_immediately    = true
+
+  # TODO: Add maintenance window information
+  # TODO: Add security group
+  # TODO: Add automated backups
+}
