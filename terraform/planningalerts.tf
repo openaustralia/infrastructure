@@ -50,6 +50,11 @@ resource "aws_elasticache_cluster" "planningalerts" {
 
   security_group_ids = [ aws_security_group.redis-planningalerts.id ]
 
-  # TODO: Add maintenance window information
-  # TODO: Add automated backups
+  # We want Monday 4-5am Sydney time which is Sunday 5-6pm GMT.
+  maintenance_window = "Sun:17:00-Sun:18:00"
+
+  snapshot_retention_limit = 7
+
+  # We want 2:30-3:30am Sydney time which is 3:30-4:30pm GMT
+  snapshot_window = "15:30-16:30"
 }
