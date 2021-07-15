@@ -41,7 +41,7 @@ resource "aws_elasticache_cluster" "planningalerts" {
   # Smallest t3 available gives 0.5 GiB memory
   node_type            = "cache.t3.micro"
   num_cache_nodes      = 1
-  parameter_group_name = "default.redis6.x"
+  parameter_group_name = aws_elasticache_parameter_group.sidekiq.name
   engine_version       = "6.0.5"
   port                 = 6379
 
@@ -56,4 +56,16 @@ resource "aws_elasticache_cluster" "planningalerts" {
 
   # We want 2:30-3:30am Sydney time which is 3:30-4:30pm GMT
   snapshot_window = "15:30-16:30"
+}
+
+# Redis setup required for sidekiq.
+# See https://github.com/mperham/sidekiq/wiki/Using-Redis
+resource "aws_elasticache_parameter_group" "sidekiq" {
+  name   = "sidekiq"
+  family = "redis6.x"
+
+  parameter {
+    name  = "maxmemory-policy"
+    value = "noeviction"
+  }
 }
