@@ -12,9 +12,3 @@ resource "aws_lb" "main" {
   subnets = data.aws_subnet_ids.default.ids
 }
 
-resource "aws_default_vpc" "default" {
-}
-
-data "aws_subnet_ids" "default" {
-  vpc_id = aws_default_vpc.default.id
-}
