@@ -69,3 +69,16 @@ resource "aws_elasticache_parameter_group" "sidekiq" {
     value = "noeviction"
   }
 }
+
+resource "aws_lb_target_group" "planningalerts" {
+  name     = "planningalerts"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_default_vpc.default.id
+}
+
+resource "aws_lb_target_group_attachment" "planningalerts" {
+  target_group_arn = aws_lb_target_group.planningalerts.arn
+  target_id        = aws_instance.planningalerts.id
+  port             = 80
+}
