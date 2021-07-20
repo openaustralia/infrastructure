@@ -30,21 +30,21 @@ resource "cloudflare_record" "pa_test" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "test.planningalerts.org.au"
   type    = "CNAME"
-  value   = "planningalerts.org.au"
+  value   = aws_lb.main.dns_name
 }
 
 resource "cloudflare_record" "pa_www_test" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "www.test.planningalerts.org.au"
   type    = "CNAME"
-  value   = "planningalerts.org.au"
+  value   = aws_lb.main.dns_name
 }
 
 resource "cloudflare_record" "pa_api_test" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "api.test.planningalerts.org.au"
   type    = "CNAME"
-  value   = "planningalerts.org.au"
+  value   = aws_lb.main.dns_name
 }
 
 resource "cloudflare_record" "pa_email" {
