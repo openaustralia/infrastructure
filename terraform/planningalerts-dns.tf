@@ -172,3 +172,19 @@ resource "cloudflare_record" "cert-validation" {
   value           = each.value.record
   ttl             = 60
 }
+
+resource "cloudflare_record" "cert-validation-staging" {
+  for_each = {
+    for dvo in aws_acm_certificate.planningalerts-staging.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  zone_id         = var.planningalerts_org_au_zone_id
+  name            = each.value.name
+  type            = each.value.type
+  value           = each.value.record
+  ttl             = 60
+}

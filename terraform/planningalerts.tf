@@ -96,7 +96,25 @@ resource "aws_acm_certificate" "planningalerts-production" {
   }
 }
 
+resource "aws_acm_certificate" "planningalerts-staging" {
+  domain_name       = "test.planningalerts.org.au"
+  subject_alternative_names = [
+    "www.test.planningalerts.org.au",
+    "api.test.planningalerts.org.au"
+  ]
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_acm_certificate_validation" "planningalerts-production" {
   certificate_arn         = aws_acm_certificate.planningalerts-production.arn
   validation_record_fqdns = [for record in cloudflare_record.cert-validation : record.hostname]
+}
+
+resource "aws_acm_certificate_validation" "planningalerts-staging" {
+  certificate_arn         = aws_acm_certificate.planningalerts-staging.arn
+  validation_record_fqdns = [for record in cloudflare_record.cert-validation-staging : record.hostname]
 }
