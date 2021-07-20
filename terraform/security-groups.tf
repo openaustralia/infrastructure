@@ -1,3 +1,33 @@
+resource "aws_security_group" "load-balancer" {
+  name        = "load-balancer"
+  description = "standard security group for load balancer. Only allow incoming http/https"
+
+  ingress {
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  # Allow everything going out
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
 resource "aws_security_group" "webserver" {
   name        = "webserver"
   description = "standard security group for webservers. Allow ssh/http/https"
