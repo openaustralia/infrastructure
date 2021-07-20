@@ -3,27 +3,28 @@ variable "planningalerts_org_au_zone_id" {
 }
 
 # A records
+
+# CNAME records
+
 resource "cloudflare_record" "pa_root" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "planningalerts.org.au"
-  type    = "A"
-  value   = aws_eip.planningalerts.public_ip
+  type    = "CNAME"
+  value   = aws_lb.main.dns_name
 }
-
-# CNAME records
 
 resource "cloudflare_record" "pa_www" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "www.planningalerts.org.au"
   type    = "CNAME"
-  value   = "planningalerts.org.au"
+  value   = aws_lb.main.dns_name
 }
 
 resource "cloudflare_record" "pa_api" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "api.planningalerts.org.au"
   type    = "CNAME"
-  value   = "planningalerts.org.au"
+  value   = aws_lb.main.dns_name
 }
 
 resource "cloudflare_record" "pa_test" {
