@@ -155,3 +155,20 @@ resource "cloudflare_record" "oaf_pa_front_domainkey" {
   type    = "TXT"
   value   = "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC4PZZJiwMfMB/CuIZ9yAtNEGzfKzQ7WC7hfGg8UyavtYlDDBgSP6P1AiTBTMzTQbLChvf+Ef5CK46w+RwmgWpL38sxRwjahk45aQxoMOk2FJm7iHnP6zAGUnqAiL8iCdTjn5sp/txNf22bXrx3YS54ePBrfZQxOvkOvE24XZKXXwIDAQAB"
 }
+
+# Certification validation data
+resource "cloudflare_record" "cert-validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.planningalerts-production.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  zone_id         = var.planningalerts_org_au_zone_id
+  name            = each.value.name
+  type            = each.value.type
+  value           = each.value.record
+  ttl             = 60
+}

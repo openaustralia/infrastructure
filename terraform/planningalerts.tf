@@ -82,3 +82,21 @@ resource "aws_lb_target_group_attachment" "planningalerts" {
   target_id        = aws_instance.planningalerts.id
   port             = 80
 }
+
+resource "aws_acm_certificate" "planningalerts-production" {
+  domain_name       = "planningalerts.org.au"
+  subject_alternative_names = [
+    "www.planningalerts.org.au",
+    "api.planningalerts.org.au"
+  ]
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_acm_certificate_validation" "planningalerts-production" {
+  certificate_arn         = aws_acm_certificate.planningalerts-production.arn
+  validation_record_fqdns = [for record in cloudflare_record.cert-validation : record.hostname]
+}
