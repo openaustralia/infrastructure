@@ -23,3 +23,21 @@ resource "aws_lb_listener" "main-http" {
     target_group_arn = aws_lb_target_group.planningalerts.arn
   }
 }
+
+resource "aws_lb_listener" "main-https" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  # Choosing an SSL security policy for compatibility (and it's the AWS suggested default)
+  # TODO: Do we want a more secure SSL security policy?
+  # See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  # TODO: We don't want to use a default certificate
+  # TODO: Also serve the staging certificates when appropriate
+  certificate_arn   = aws_acm_certificate.planningalerts-production.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.planningalerts.arn
+  }
+}
