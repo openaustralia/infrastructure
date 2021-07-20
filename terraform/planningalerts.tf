@@ -111,7 +111,7 @@ resource "aws_acm_certificate" "planningalerts-staging" {
 
 resource "aws_acm_certificate_validation" "planningalerts-production" {
   certificate_arn         = aws_acm_certificate.planningalerts-production.arn
-  validation_record_fqdns = [for record in cloudflare_record.cert-validation : record.hostname]
+  validation_record_fqdns = [for record in cloudflare_record.cert-validation-production : record.hostname]
 }
 
 resource "aws_acm_certificate_validation" "planningalerts-staging" {
