@@ -169,7 +169,7 @@ resource "cloudflare_record" "cert-validation-production" {
   zone_id         = var.planningalerts_org_au_zone_id
   name            = each.value.name
   type            = each.value.type
-  value           = each.value.record
+  value           = trimsuffix(each.value.record, ".")
   ttl             = 60
 }
 
@@ -185,6 +185,6 @@ resource "cloudflare_record" "cert-validation-staging" {
   zone_id         = var.planningalerts_org_au_zone_id
   name            = each.value.name
   type            = each.value.type
-  value           = each.value.record
+  value           = trimsuffix(each.value.record, ".")
   ttl             = 60
 }
