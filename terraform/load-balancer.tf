@@ -33,11 +33,15 @@ resource "aws_lb_listener" "main-https" {
   # See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html
   ssl_policy        = "ELBSecurityPolicy-2016-08"
   # TODO: We don't want to use a default certificate
-  # TODO: Also serve the staging certificates when appropriate
   certificate_arn   = aws_acm_certificate.planningalerts-production.arn
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.planningalerts.arn
   }
+}
+
+resource "aws_lb_listener_certificate" "planningalerts-staging" {
+  listener_arn    = aws_lb_listener.main-https.arn
+  certificate_arn = aws_acm_certificate.planningalerts-staging.arn
 }
