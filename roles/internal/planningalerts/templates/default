@@ -1,9 +1,21 @@
-# Redirects
+# Serve traffic arriving via the load balancer
 server {
   listen 80 default_server;
   server_name _;
   server_name_in_redirect off;
-  rewrite ^/(.*) https://www.{{ planningalerts_domain }}/$1 permanent;
+
+  rewrite ^/donate(.*) https://www.oaf.org.au/donate/planningalerts/ permanent;
+  rewrite ^/donations(.*) https://www.oaf.org.au/donate/planningalerts/ permanent;
+
+  root /srv/www/production/current/public;
+  passenger_enabled on;
+  passenger_ruby /usr/local/rvm/gems/ruby-2.6.6/wrappers/ruby;
+
+  location ^~ /assets/ {
+    gzip_static on;
+    expires max;
+    add_header Cache-Control public;
+  }
 }
 
 # In reality we can't properly serve a request for any domain that happens to be
