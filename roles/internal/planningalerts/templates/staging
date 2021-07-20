@@ -7,6 +7,17 @@ server {
 server {
   listen 80;
   server_name www.test.{{ planningalerts_domain }};
+
+  auth_basic "Staging Site";
+  auth_basic_user_file htpasswd;
+
+  root /srv/www/staging/current/public;
+  passenger_enabled on;
+  passenger_ruby /usr/local/rvm/gems/ruby-2.6.6/wrappers/ruby;
+}
+
+server {
+  listen 80;
   server_name api.test.{{ planningalerts_domain }};
 
   root /srv/www/staging/current/public;
