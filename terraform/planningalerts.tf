@@ -118,3 +118,80 @@ resource "aws_acm_certificate_validation" "planningalerts-staging" {
   certificate_arn         = aws_acm_certificate.planningalerts-staging.arn
   validation_record_fqdns = [for record in cloudflare_record.cert-validation-staging : record.hostname]
 }
+
+# The production SSL certificate is currently the default cert on the load balancer
+
+resource "aws_lb_listener_certificate" "planningalerts-staging" {
+  listener_arn    = aws_lb_listener.main-https.arn
+  certificate_arn = aws_acm_certificate.planningalerts-staging.arn
+}
+
+resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-staging-canonical" {
+  listener_arn = aws_lb_listener.main-http.arn
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "www.test.planningalerts.org.au"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["test.planningalerts.org.au", "www.test.planningalerts.org.au"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "forward-http-planningalerts-api-staging" {
+  listener_arn = aws_lb_listener.main-http.arn
+
+  action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.planningalerts.arn
+  }
+
+  condition {
+    host_header {
+      values = ["api.test.planningalerts.org.au"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
+  listener_arn = aws_lb_listener.main-https.arn
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.planningalerts.arn
+  }
+
+  condition {
+    host_header {
+      values = ["*.planningalerts.org.au"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-staging-canonical" {
+  listener_arn = aws_lb_listener.main-https.arn
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "www.test.planningalerts.org.au"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["test.planningalerts.org.au"]
+    }
+  }
+}
