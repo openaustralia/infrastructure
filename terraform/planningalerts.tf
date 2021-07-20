@@ -126,6 +126,27 @@ resource "aws_lb_listener_certificate" "planningalerts-staging" {
   certificate_arn = aws_acm_certificate.planningalerts-staging.arn
 }
 
+resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-production-canonical" {
+  listener_arn = aws_lb_listener.main-http.arn
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "www.planningalerts.org.au"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["planningalerts.org.au", "www.planningalerts.org.au"]
+    }
+  }
+}
+
 resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-staging-canonical" {
   listener_arn = aws_lb_listener.main-http.arn
 
@@ -147,7 +168,7 @@ resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-staging-canonic
   }
 }
 
-resource "aws_lb_listener_rule" "forward-http-planningalerts-api-staging" {
+resource "aws_lb_listener_rule" "forward-http-planningalerts-api" {
   listener_arn = aws_lb_listener.main-http.arn
 
   action {
@@ -157,7 +178,7 @@ resource "aws_lb_listener_rule" "forward-http-planningalerts-api-staging" {
 
   condition {
     host_header {
-      values = ["api.test.planningalerts.org.au"]
+      values = ["api.planningalerts.org.au", "api.test.planningalerts.org.au"]
     }
   }
 }
@@ -177,21 +198,21 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
   }
 }
 
-resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-staging-canonical" {
+resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
   listener_arn = aws_lb_listener.main-https.arn
 
   action {
     type = "redirect"
 
     redirect {
-      host        = "www.test.planningalerts.org.au"
+      host        = "www.#{host}"
       status_code = "HTTP_301"
     }
   }
 
   condition {
     host_header {
-      values = ["test.planningalerts.org.au"]
+      values = ["planningalerts.org.au", "test.planningalerts.org.au"]
     }
   }
 }
