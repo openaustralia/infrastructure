@@ -76,8 +76,28 @@ resource "aws_lb_listener" "main-https" {
   certificate_arn   = aws_acm_certificate.planningalerts-production.arn
 
   default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Unexpected host in header"
+      status_code  = "400"
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
+  listener_arn = aws_lb_listener.main-https.arn
+
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.planningalerts.arn
+  }
+
+  condition {
+    host_header {
+      values = ["*.planningalerts.org.au"]
+    }
   }
 }
 
