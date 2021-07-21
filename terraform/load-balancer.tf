@@ -11,6 +11,8 @@ resource "aws_lb" "main" {
   security_groups    = [aws_security_group.load-balancer.id]
 
   subnets = data.aws_subnet_ids.default.ids
+
+  enable_deletion_protection = true
 }
 
 resource "aws_lb_listener" "main-http" {
