@@ -4,6 +4,13 @@ variable "planningalerts_org_au_zone_id" {
 
 # A records
 
+resource "cloudflare_record" "pa_web1" {
+  zone_id = var.planningalerts_org_au_zone_id
+  name    = "web1.planningalerts.org.au"
+  type    = "A"
+  value   = aws_eip.planningalerts.public_ip
+}
+
 # CNAME records
 
 resource "cloudflare_record" "pa_root" {
