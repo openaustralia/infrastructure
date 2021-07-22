@@ -13,16 +13,6 @@ resource "aws_lb" "main" {
   subnets = data.aws_subnet_ids.default.ids
 
   enable_deletion_protection = true
-
-  # Temporarily enabling access logs to see who is still using http for API
-  # access. The bucket was created automatically from the console so isn't
-  # created by Terraform.
-  # TODO: Disable access logs
-  # TODO: Delete planningalerts-access-logs S3 bucket
-  access_logs {
-    bucket  = "planningalerts-access-logs"
-    enabled = true
-  }
 }
 
 resource "aws_lb_listener" "main-http" {
