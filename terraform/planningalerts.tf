@@ -1,3 +1,4 @@
+# TODO: Put different instances in different availability zones
 resource "aws_instance" "planningalerts" {
   count = 1
   ami = data.aws_ami.ubuntu.id
