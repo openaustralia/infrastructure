@@ -12,6 +12,13 @@ resource "cloudflare_record" "pa_web" {
   value   = aws_eip.planningalerts[count.index].public_ip
 }
 
+resource "cloudflare_record" "pa_web2" {
+  zone_id = var.planningalerts_org_au_zone_id
+  name    = "web2.planningalerts.org.au"
+  type    = "A"
+  value   = aws_eip.planningalerts2.public_ip
+}
+
 # CNAME records
 
 resource "cloudflare_record" "pa_root" {

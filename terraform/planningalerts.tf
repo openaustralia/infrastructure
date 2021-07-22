@@ -29,6 +29,31 @@ resource "aws_instance" "planningalerts" {
   iam_instance_profile    = aws_iam_instance_profile.logging.name
 }
 
+# Temporary instance to do some quick tests with
+resource "aws_instance" "planningalerts2" {
+  ami = data.aws_ami.ubuntu.id
+
+  instance_type = "t3.small"
+  ebs_optimized = true
+  key_name      = "test"
+  tags = {
+    Name = "web2.planningalerts"
+  }
+  security_groups         = [
+    aws_security_group.webserver.name,
+    aws_security_group.planningalerts.name
+  ]
+  disable_api_termination = false
+  iam_instance_profile    = aws_iam_instance_profile.logging.name
+}
+
+resource "aws_eip" "planningalerts2" {
+  instance = aws_instance.planningalerts2.id
+  tags = {
+    Name = "web2.planningalerts"
+  }
+}
+
 resource "aws_eip" "planningalerts" {
   count = length(aws_instance.planningalerts)
   instance = aws_instance.planningalerts[count.index].id
