@@ -35,7 +35,7 @@ resource "aws_instance" "planningalerts2" {
 
   instance_type = "t3.small"
   ebs_optimized = true
-  key_name      = "test"
+  key_name      = "test2"
   tags = {
     Name = "web2.planningalerts"
   }
