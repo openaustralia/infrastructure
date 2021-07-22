@@ -168,21 +168,6 @@ resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-staging-canonic
   }
 }
 
-resource "aws_lb_listener_rule" "forward-http-planningalerts-api" {
-  listener_arn = aws_lb_listener.main-http.arn
-
-  action {
-    type = "forward"
-    target_group_arn = aws_lb_target_group.planningalerts.arn
-  }
-
-  condition {
-    host_header {
-      values = ["api.planningalerts.org.au", "api.test.planningalerts.org.au"]
-    }
-  }
-}
-
 resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
   listener_arn = aws_lb_listener.main-https.arn
 
