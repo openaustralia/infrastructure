@@ -1,4 +1,5 @@
 resource "aws_instance" "planningalerts" {
+  count = 2
   ami = data.aws_ami.ubuntu.id
 
   # A quick look at newrelic is showing PlanningAlerts on kedumba
@@ -29,7 +30,8 @@ resource "aws_instance" "planningalerts" {
 }
 
 resource "aws_eip" "planningalerts" {
-  instance = aws_instance.planningalerts.id
+  count = length(aws_instance.planningalerts)
+  instance = aws_instance.planningalerts[count.index].id
   tags = {
     Name = "planningalerts"
   }
@@ -79,7 +81,7 @@ resource "aws_lb_target_group" "planningalerts" {
 
 resource "aws_lb_target_group_attachment" "planningalerts" {
   target_group_arn = aws_lb_target_group.planningalerts.arn
-  target_id        = aws_instance.planningalerts.id
+  target_id        = aws_instance.planningalerts[0].id
   port             = 80
 }
 
