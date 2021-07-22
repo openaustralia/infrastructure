@@ -19,7 +19,7 @@ resource "aws_instance" "planningalerts" {
   ebs_optimized = true
   key_name      = "test"
   tags = {
-    Name = "planningalerts"
+    Name = "web${count.index+1}.planningalerts"
   }
   security_groups         = [
     aws_security_group.webserver.name,
