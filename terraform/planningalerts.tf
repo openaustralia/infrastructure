@@ -1,5 +1,5 @@
 resource "aws_instance" "planningalerts" {
-  count = 2
+  count = 1
   ami = data.aws_ami.ubuntu.id
 
   # A quick look at newrelic is showing PlanningAlerts on kedumba
