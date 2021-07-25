@@ -166,6 +166,15 @@
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
+- name: PlanningAlerts daily backup of elasticsearch
+  cron:
+    name: planningalerts_elasticsearch_snapshot
+    user: deploy
+    hour: 3
+    minute: 20
+    job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:elasticsearch_snapshot RAILS_ENV=production"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+
 # TODO: Do we want scraping and email to happen for staging too?
 
 - name: Install postfix so we can mail out from cron jobs
