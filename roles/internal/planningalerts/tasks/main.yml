@@ -157,13 +157,13 @@
     dest: /etc/sudoers.d/
     validate: visudo -cf %s
 
-- name: Set up (or remove) PlanningAlerts daily scrape and email job
+- name: Set up (or remove) PlanningAlerts daily import and email job
   cron:
     name: planningalerts_scrape_and_email
     user: deploy
     hour: 12
     minute: 0
-    job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"
+    job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:import_and_email RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
 - name: PlanningAlerts daily XML sitemap generation
