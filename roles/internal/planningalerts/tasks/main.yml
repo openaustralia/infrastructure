@@ -166,6 +166,15 @@
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:scrape_and_email RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
+- name: PlanningAlerts daily XML sitemap generation
+  cron:
+    name: planningalerts_sitemap
+    user: deploy
+    hour: 15
+    minute: 0
+    job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:sitemap RAILS_ENV=production"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+
 - name: PlanningAlerts daily backup of elasticsearch
   cron:
     name: planningalerts_elasticsearch_snapshot
