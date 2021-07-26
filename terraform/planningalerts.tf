@@ -16,9 +16,9 @@ resource "aws_instance" "planningalerts" {
   # After moving to sidekiq we seem to be needing some more memory.
   # So increased the instance type to t2.large.
   # TODO: It would be good to check if we can go smaller again
-  instance_type = "t3.large"
+  instance_type = "t3.medium"
   ebs_optimized = true
-  key_name      = "test"
+  key_name      = aws_key_pair.deployer.key_name
   tags = {
     Name = "web${count.index+1}.planningalerts"
   }
@@ -30,7 +30,7 @@ resource "aws_instance" "planningalerts" {
   iam_instance_profile    = aws_iam_instance_profile.logging.name
 
   # TODO: Set availability zone automatically?
-  availability_zone = "ap-southeast-2c"
+  availability_zone = "ap-southeast-2a"
 }
 
 # Temporary instance to do some quick tests with
