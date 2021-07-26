@@ -63,7 +63,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     ansible.groups = {
       "righttoknow"      => ["righttoknow.org.au.test"],
-      "planningalerts"   => ["planningalerts.org.au.test"],
+      "planningalerts"   => ["web1.planningalerts.org.au.test"],
       "electionleaflets" => ["electionleaflets.org.au.test"],
       "theyvoteforyou"   => ["theyvoteforyou.org.au.test"],
       "oaf"              => ["oaf.org.au.test"],
@@ -74,7 +74,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "proxy"            => ["au.proxy.oaf.org.au.test"],
       "development"      => [
         "righttoknow.org.au.test",
-        "planningalerts.org.au.test",
+        "web1.planningalerts.org.au.test",
         "electionleaflets.org.au.test",
         "theyvoteforyou.org.au.test",
         "oaf.org.au.test",
@@ -94,16 +94,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   hosts = {
-    "righttoknow.org.au.test"      => "192.168.10.10",
-    "planningalerts.org.au.test"   => "192.168.10.11",
-    "electionleaflets.org.au.test" => "192.168.10.12",
-    "theyvoteforyou.org.au.test"   => "192.168.10.14",
-    "oaf.org.au.test"              => "192.168.10.15",
-    "openaustralia.org.au.test"    => "192.168.10.16",
-    "mysql.test"                   => "192.168.10.17",
-    "postgresql.test"              => "192.168.10.18",
-    "opengovernment.org.au.test"   => "192.168.10.19",
-    "au.proxy.oaf.org.au.test"     => "192.168.10.20"
+    "righttoknow.org.au.test"         => "192.168.10.10",
+    "web1.planningalerts.org.au.test" => "192.168.10.11",
+    "electionleaflets.org.au.test"    => "192.168.10.12",
+    "theyvoteforyou.org.au.test"      => "192.168.10.14",
+    "oaf.org.au.test"                 => "192.168.10.15",
+    "openaustralia.org.au.test"       => "192.168.10.16",
+    "mysql.test"                      => "192.168.10.17",
+    "postgresql.test"                 => "192.168.10.18",
+    "opengovernment.org.au.test"      => "192.168.10.19",
+    "au.proxy.oaf.org.au.test"        => "192.168.10.20"
   }
 
   # Use this so that you don't need to give the machine name for all vagrant
