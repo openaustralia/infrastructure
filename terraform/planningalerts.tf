@@ -28,6 +28,9 @@ resource "aws_instance" "planningalerts" {
   ]
   disable_api_termination = true
   iam_instance_profile    = aws_iam_instance_profile.logging.name
+
+  # TODO: Set availability zone automatically?
+  availability_zone = "ap-southeast-2c"
 }
 
 # Temporary instance to do some quick tests with
@@ -47,6 +50,8 @@ resource "aws_instance" "planningalerts2" {
   ]
   disable_api_termination = false
   iam_instance_profile    = aws_iam_instance_profile.logging.name
+
+  availability_zone = "ap-southeast-2b"
 }
 
 resource "aws_eip" "planningalerts2" {
