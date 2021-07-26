@@ -4,6 +4,7 @@
 
 - name: Install dependency for ansible mysql_db module
   apt: pkg=python-mysqldb
+  when: primary
 
 - name: Create planningalerts databases
   mysql_db:
@@ -14,6 +15,7 @@
   with_items:
     - production
     - staging
+  when: primary
 
 - name: Create planningalerts user with access to the database (production)
   mysql_user:
@@ -24,6 +26,7 @@
     password: "{{ planningalerts_production_mysql_password }}"
     priv: 'pa-production.*:ALL'
     host: "%"
+  when: primary
 
 - name: Create planningalerts user with access to the database (staging)
   mysql_user:
@@ -34,6 +37,7 @@
     password: "{{ planningalerts_staging_mysql_password }}"
     priv: 'pa-staging.*:ALL'
     host: "%"
+  when: primary
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
@@ -165,6 +169,7 @@
     minute: 0
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:import_and_email RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  when: primary
 
 - name: PlanningAlerts daily XML sitemap generation
   cron:
@@ -183,7 +188,8 @@
     minute: 20
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:elasticsearch_snapshot RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-
+  when: primary
+  
 # TODO: Do we want scraping and email to happen for staging too?
 
 - name: Install postfix so we can mail out from cron jobs
