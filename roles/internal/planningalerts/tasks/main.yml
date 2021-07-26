@@ -140,7 +140,6 @@
     dest: /etc/nginx/sites-available/
   with_items:
     - default
-    - production
     - staging
   notify: nginx reload
 
@@ -151,7 +150,6 @@
     state: link
   with_items:
     - default
-    - production
     - staging
   notify: nginx reload
 
