@@ -63,7 +63,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     ansible.groups = {
       "righttoknow"      => ["righttoknow.org.au.test"],
-      "planningalerts"   => ["web1.planningalerts.org.au.test"],
+      "planningalerts"   => [
+        "web1.planningalerts.org.au.test",
+        "web2.planningalerts.org.au.test"
+      ],
       "electionleaflets" => ["electionleaflets.org.au.test"],
       "theyvoteforyou"   => ["theyvoteforyou.org.au.test"],
       "oaf"              => ["oaf.org.au.test"],
@@ -75,6 +78,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "development"      => [
         "righttoknow.org.au.test",
         "web1.planningalerts.org.au.test",
+        "web2.planningalerts.org.au.test",
         "electionleaflets.org.au.test",
         "theyvoteforyou.org.au.test",
         "oaf.org.au.test",
@@ -89,7 +93,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # "primary" indicates that it's a slightly special instance in a cluster
     # It's the one we run cron jobs on
     ansible.host_vars = {
-      "web1.planningalerts.org.au.test" => { "primary" => true }
+      "web1.planningalerts.org.au.test" => { "primary" => true },
+      "web2.planningalerts.org.au.test" => { "primary" => false }
     }
   end
 
@@ -102,7 +107,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   hosts = {
     "righttoknow.org.au.test"         => "192.168.10.10",
     "web1.planningalerts.org.au.test" => "192.168.10.11",
-    "electionleaflets.org.au.test"    => "192.168.10.12",
+    "web2.planningalerts.org.au.test" => "192.168.10.12",
+    "electionleaflets.org.au.test"    => "192.168.10.13",
     "theyvoteforyou.org.au.test"      => "192.168.10.14",
     "oaf.org.au.test"                 => "192.168.10.15",
     "openaustralia.org.au.test"       => "192.168.10.16",
