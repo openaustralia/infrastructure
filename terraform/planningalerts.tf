@@ -117,6 +117,12 @@ resource "aws_lb_target_group_attachment" "planningalerts" {
   port             = 80
 }
 
+resource "aws_lb_target_group_attachment" "planningalerts2" {
+  target_group_arn = aws_lb_target_group.planningalerts.arn
+  target_id        = aws_instance.planningalerts2.id
+  port             = 80
+}
+
 resource "aws_acm_certificate" "planningalerts-production" {
   domain_name       = "planningalerts.org.au"
   subject_alternative_names = [
