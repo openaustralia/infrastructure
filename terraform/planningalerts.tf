@@ -36,7 +36,7 @@ resource "aws_instance" "planningalerts2" {
 
   instance_type = "t3.small"
   ebs_optimized = true
-  key_name      = "test2"
+  key_name      = aws_key_pair.deployer.key_name
   tags = {
     Name = "web2.planningalerts"
   }
