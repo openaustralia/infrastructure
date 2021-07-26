@@ -12,7 +12,7 @@ au.proxy.oaf.org.au
 theyvoteforyou.org.au
 
 [planningalerts]
-web1.planningalerts.org.au
+web1.planningalerts.org.au primary=true
 
 [openaustralia]
 openaustralia.org.au
