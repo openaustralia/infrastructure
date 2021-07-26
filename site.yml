@@ -90,7 +90,6 @@
 - hosts: planningalerts
   become: true
   roles:
-    - corelogic
     - planningalerts
 
 - hosts: electionleaflets

@@ -1,6 +1,0 @@
-API_ENDPOINT="https://www.planningalerts.org.au/applications.js"
-API_KEY="{{ corelogic_planningalerts_api_key }}"
-
-SFTP_HOST={{ corelogic_sftp_host }}
-SFTP_USERNAME={{ corelogic_sftp_username }}
-SFTP_PASSWORD={{ corelogic_sftp_password }}
