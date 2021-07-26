@@ -1,12 +1,3 @@
-data "external" "id_rsa" {
-  program = ["./prepkey.sh"]
-}
-
-resource "aws_key_pair" "deployer" {
-  key_name   = "deployer_key"
-  public_key = data.external.id_rsa.result["id_rsa"]
-}
-
 resource "aws_instance" "electionleaflets" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t3.nano"
