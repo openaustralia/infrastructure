@@ -34,7 +34,8 @@ resource "aws_instance" "planningalerts" {
 resource "aws_instance" "planningalerts2" {
   ami = data.aws_ami.ubuntu.id
 
-  instance_type = "t3.small"
+  # TODO: I think we might be able to get away with two t3.small servers
+  instance_type = "t3.medium"
   ebs_optimized = true
   key_name      = aws_key_pair.deployer.key_name
   tags = {
