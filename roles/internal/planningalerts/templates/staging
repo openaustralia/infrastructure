@@ -1,6 +1,7 @@
 server {
   listen 80;
   server_name www.test.{{ planningalerts_domain }};
+  server_name api.test.{{ planningalerts_domain }};
 
   auth_basic "Staging Site";
   auth_basic_user_file htpasswd;
@@ -14,13 +15,4 @@ server {
     expires max;
     add_header Cache-Control public;
   }
-}
-
-server {
-  listen 80;
-  server_name api.test.{{ planningalerts_domain }};
-
-  root /srv/www/staging/current/public;
-  passenger_enabled on;
-  passenger_ruby /usr/local/rvm/gems/ruby-2.6.6/wrappers/ruby;
 }

@@ -1,6 +1,7 @@
 server {
   listen 80;
   server_name www.{{ planningalerts_domain }};
+  server_name api.{{ planningalerts_domain }};
 
   rewrite ^/donate(.*) https://www.oaf.org.au/donate/planningalerts/ permanent;
   rewrite ^/donations(.*) https://www.oaf.org.au/donate/planningalerts/ permanent;
@@ -14,13 +15,4 @@ server {
     expires max;
     add_header Cache-Control public;
   }
-}
-
-server {
-  listen 80;
-  server_name api.{{ planningalerts_domain }};
-
-  root /srv/www/production/current/public;
-  passenger_enabled on;
-  passenger_ruby /usr/local/rvm/gems/ruby-2.6.6/wrappers/ruby;
 }
