@@ -159,7 +159,7 @@
 
 - name: Set up (or remove) PlanningAlerts daily import and email job
   cron:
-    name: planningalerts_scrape_and_email
+    name: planningalerts_import_and_email
     user: deploy
     hour: 12
     minute: 0
