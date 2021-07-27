@@ -36,34 +36,6 @@ resource "aws_instance" "planningalerts" {
   availability_zone = var.availability_zones[count.index % 3]
 }
 
-# Temporary instance to do some quick tests with
-resource "aws_instance" "planningalerts2" {
-  ami = data.aws_ami.ubuntu.id
-
-  # TODO: I think we might be able to get away with two t3.small servers
-  instance_type = "t3.medium"
-  ebs_optimized = true
-  key_name      = aws_key_pair.deployer.key_name
-  tags = {
-    Name = "web2.planningalerts"
-  }
-  security_groups         = [
-    aws_security_group.webserver.name,
-    aws_security_group.planningalerts.name
-  ]
-  disable_api_termination = false
-  iam_instance_profile    = aws_iam_instance_profile.logging.name
-
-  availability_zone = "ap-southeast-2b"
-}
-
-resource "aws_eip" "planningalerts2" {
-  instance = aws_instance.planningalerts2.id
-  tags = {
-    Name = "web2.planningalerts"
-  }
-}
-
 resource "aws_eip" "planningalerts" {
   count = length(aws_instance.planningalerts)
   instance = aws_instance.planningalerts[count.index].id
@@ -128,12 +100,6 @@ resource "aws_lb_target_group_attachment" "planningalerts" {
   count = length(aws_instance.planningalerts)
   target_group_arn = aws_lb_target_group.planningalerts.arn
   target_id        = aws_instance.planningalerts[count.index].id
-  port             = 80
-}
-
-resource "aws_lb_target_group_attachment" "planningalerts2" {
-  target_group_arn = aws_lb_target_group.planningalerts.arn
-  target_id        = aws_instance.planningalerts2.id
   port             = 80
 }
 
