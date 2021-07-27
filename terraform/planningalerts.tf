@@ -79,10 +79,27 @@ resource "aws_elasticache_parameter_group" "sidekiq" {
   }
 }
 
-# TODO: Rename
+# TODO: Remove
 resource "aws_lb_target_group" "planningalerts" {
   name     = "planningalerts"
   port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_default_vpc.default.id
+
+  health_check {
+    path = "/health_check"
+    # Increasing from the default of 5 to handle occasional slow downs we're
+    # seeing at the moment
+    # TODO: Can we drop this down again to the default?
+    timeout = 10
+    healthy_threshold = 5
+    unhealthy_threshold = 2
+  }
+}
+
+resource "aws_lb_target_group" "planningalerts-production" {
+  name     = "planningalerts-production"
+  port     = 8000
   protocol = "HTTP"
   vpc_id   = aws_default_vpc.default.id
 
@@ -114,12 +131,18 @@ resource "aws_lb_target_group" "planningalerts-staging" {
   }
 }
 
-# TODO: Rename
+# TODO: Remove
 resource "aws_lb_target_group_attachment" "planningalerts" {
   count = length(aws_instance.planningalerts)
   target_group_arn = aws_lb_target_group.planningalerts.arn
   target_id        = aws_instance.planningalerts[count.index].id
   port             = 80
+}
+
+resource "aws_lb_target_group_attachment" "planningalerts-production" {
+  count = length(aws_instance.planningalerts)
+  target_group_arn = aws_lb_target_group.planningalerts-production.arn
+  target_id        = aws_instance.planningalerts[count.index].id
 }
 
 resource "aws_lb_target_group_attachment" "planningalerts-staging" {
