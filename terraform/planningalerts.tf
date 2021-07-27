@@ -96,11 +96,34 @@ resource "aws_lb_target_group" "planningalerts" {
   }
 }
 
+resource "aws_lb_target_group" "planningalerts-staging" {
+  name     = "planningalerts-staging"
+  port     = 9000
+  protocol = "HTTP"
+  vpc_id   = aws_default_vpc.default.id
+
+  health_check {
+    path = "/health_check"
+    # Increasing from the default of 5 to handle occasional slow downs we're
+    # seeing at the moment
+    # TODO: Can we drop this down again to the default?
+    timeout = 10
+    healthy_threshold = 5
+    unhealthy_threshold = 2
+  }
+}
+
 resource "aws_lb_target_group_attachment" "planningalerts" {
   count = length(aws_instance.planningalerts)
   target_group_arn = aws_lb_target_group.planningalerts.arn
   target_id        = aws_instance.planningalerts[count.index].id
   port             = 80
+}
+
+resource "aws_lb_target_group_attachment" "planningalerts-staging" {
+  count = length(aws_instance.planningalerts)
+  target_group_arn = aws_lb_target_group.planningalerts-staging.arn
+  target_id        = aws_instance.planningalerts[count.index].id
 }
 
 resource "aws_acm_certificate" "planningalerts-production" {
