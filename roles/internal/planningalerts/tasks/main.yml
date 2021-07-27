@@ -136,21 +136,15 @@
 
 - name: Copy nginx site configuration
   template:
-    src: "{{ item }}"
+    src: default
     dest: /etc/nginx/sites-available/
-  with_items:
-    - default
-    - staging
   notify: nginx reload
 
-- name: Enable sites
+- name: Enable site
   file:
-    src: /etc/nginx/sites-available/{{ item }}
-    dest: /etc/nginx/sites-enabled/{{ item }}
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
     state: link
-  with_items:
-    - default
-    - staging
   notify: nginx reload
 
 - name: Allow deploy user to control services
@@ -187,7 +181,7 @@
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:elasticsearch_snapshot RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   when: primary
-  
+
 # TODO: Do we want scraping and email to happen for staging too?
 
 - name: Install postfix so we can mail out from cron jobs
