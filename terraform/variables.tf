@@ -19,12 +19,6 @@ variable "rds_admin_password" {
 variable "theyvoteforyou_db_password" {
 }
 
-variable "dnsmadeeasy_akey" {
-}
-
-variable "dnsmadeeasy_skey" {
-}
-
 # Note that this is different than one that was previously called cloudflare_token
 variable "cloudflare_api_token" {
 }
