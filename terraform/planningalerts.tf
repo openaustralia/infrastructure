@@ -216,7 +216,7 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.planningalerts.arn
+    target_group_arn = aws_lb_target_group.planningalerts-production.arn
   }
 
   condition {
