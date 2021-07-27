@@ -1,6 +1,10 @@
-# TODO: Put different instances in different availability zones
+variable "availability_zones" {
+  type    = list(string)
+  default = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
+}
+
 resource "aws_instance" "planningalerts" {
-  count = 1
+  count = 2
   ami = data.aws_ami.ubuntu.id
 
   # A quick look at newrelic is showing PlanningAlerts on kedumba
@@ -29,8 +33,7 @@ resource "aws_instance" "planningalerts" {
   disable_api_termination = true
   iam_instance_profile    = aws_iam_instance_profile.logging.name
 
-  # TODO: Set availability zone automatically?
-  availability_zone = "ap-southeast-2a"
+  availability_zone = var.availability_zones[count.index % 3]
 }
 
 # Temporary instance to do some quick tests with
