@@ -79,6 +79,7 @@ resource "aws_elasticache_parameter_group" "sidekiq" {
   }
 }
 
+# TODO: Rename
 resource "aws_lb_target_group" "planningalerts" {
   name     = "planningalerts"
   port     = 80
@@ -113,6 +114,7 @@ resource "aws_lb_target_group" "planningalerts-staging" {
   }
 }
 
+# TODO: Rename
 resource "aws_lb_target_group_attachment" "planningalerts" {
   count = length(aws_instance.planningalerts)
   target_group_arn = aws_lb_target_group.planningalerts.arn
@@ -211,6 +213,7 @@ resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-staging-canonic
   }
 }
 
+# TODO: Rename
 resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
   listener_arn = aws_lb_listener.main-https.arn
 
@@ -221,7 +224,28 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
 
   condition {
     host_header {
-      values = ["*.planningalerts.org.au"]
+      values = [
+        "www.planningalerts.org.au",
+        "api.planningalerts.org.au"
+      ]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "main-https-forward-planningalerts-staging" {
+  listener_arn = aws_lb_listener.main-https.arn
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.planningalerts-staging.arn
+  }
+
+  condition {
+    host_header {
+      values = [
+        "www.test.planningalerts.org.au",
+        "api.test.planningalerts.org.au"
+      ]
     }
   }
 }
