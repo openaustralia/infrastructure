@@ -125,8 +125,9 @@ resource "aws_lb_target_group" "planningalerts" {
 }
 
 resource "aws_lb_target_group_attachment" "planningalerts" {
+  count = length(aws_instance.planningalerts)
   target_group_arn = aws_lb_target_group.planningalerts.arn
-  target_id        = aws_instance.planningalerts[0].id
+  target_id        = aws_instance.planningalerts[count.index].id
   port             = 80
 }
 
