@@ -14,7 +14,7 @@ resource "cloudflare_record" "pa_web" {
 
 resource "cloudflare_record" "pa_web2" {
   zone_id = var.planningalerts_org_au_zone_id
-  name    = "web2.planningalerts.org.au"
+  name    = "web3.planningalerts.org.au"
   type    = "A"
   value   = aws_eip.planningalerts2.public_ip
 }
