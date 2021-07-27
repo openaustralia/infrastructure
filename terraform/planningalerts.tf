@@ -27,7 +27,6 @@ resource "aws_instance" "planningalerts" {
     Name = "web${count.index+1}.planningalerts"
   }
   security_groups         = [
-    aws_security_group.webserver.name,
     aws_security_group.planningalerts.name
   ]
   disable_api_termination = true
