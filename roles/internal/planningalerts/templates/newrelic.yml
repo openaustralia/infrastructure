@@ -217,7 +217,6 @@ test:
 production:
   <<: *default_settings
   monitor_mode: true
-  agent_enabled: false
 
 # Many applications have a staging environment which behaves
 # identically to production.  Support for that environment is provided
@@ -226,4 +225,3 @@ staging:
   <<: *default_settings
   monitor_mode: true
   app_name: My Application (Staging)
-  agent_enabled: false

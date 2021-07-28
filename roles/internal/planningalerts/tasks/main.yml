@@ -66,7 +66,7 @@
     - staging
   notify: nginx reload
 
-- name: Copy application new relic configuration (disables Newrelic agent)
+- name: Copy application new relic configuration
   template:
     src: newrelic.yml
     dest: /srv/www/production/shared/
