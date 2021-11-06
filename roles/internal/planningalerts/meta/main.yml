@@ -4,6 +4,7 @@ dependencies:
   - role: rvm.ruby
     # TODO: How do we get it to use what's in the .ruby-version file?
     rvm1_rubies:
+      - ruby-2.7.4
       - ruby-2.6.6
     rvm1_install_flags: '--auto-dotfiles'      # Remove --user-install from defaults
     rvm1_install_path: /usr/local/rvm          # Set to system location
