@@ -8,7 +8,7 @@ server {
 
   root /srv/www/production/current/public;
   passenger_enabled on;
-  passenger_ruby /usr/local/rvm/gems/ruby-2.6.6/wrappers/ruby;
+  passenger_ruby /usr/local/rvm/gems/ruby-2.7.4/wrappers/ruby;
 
   location ^~ /assets/ {
     gzip_static on;
