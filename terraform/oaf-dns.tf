@@ -222,6 +222,13 @@ resource "cloudflare_record" "oaf_domainkey_campaign_monitor" {
   value   = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC7c0O/Ihi0wMb89k9UvkFPqM00DWEcm5kgCkhSTHN5rKcMtlCrijBYqZQgBcig/M6Zl6o6z9nKp4egpJ9Yf8ndZEz/r7AcQIeTjLwxIIlFSbABuBoQPoxTUrIvzRCWUTgCocvi3sNrzxYvYfFPq7LmxjI+RzK3UD84rKBaJtYULwIDAQAB"
 }
 
+resource "cloudflare_record" "oaf_github_challenge" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "_github-challenge-openaustralia.www.oaf.org.au"
+  type    = "TXT"
+  value   = "6c5d1d8cf8"
+}
+
 ## openaustraliafoundation.org.au
 
 # A records
