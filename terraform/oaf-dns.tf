@@ -229,6 +229,13 @@ resource "cloudflare_record" "oaf_github_challenge" {
   value   = "6c5d1d8cf8"
 }
 
+resource "cloudflare_record" "oaf_github_challenge2" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "_github-challenge-openaustralia.oaf.org.au"
+  type    = "TXT"
+  value   = "209f2b7179"
+}
+
 ## openaustraliafoundation.org.au
 
 # A records
