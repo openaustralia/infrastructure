@@ -4,10 +4,6 @@
 - src: ANXS.ntp
   version: v2.0.0
 
-- src: azavea.java
-  # Latest version as of Jan 2018
-  version: 0.6.1
-
 - src: jnv.unattended-upgrades
   version: v1.0.1
 
