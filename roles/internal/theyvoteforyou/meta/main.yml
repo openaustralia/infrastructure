@@ -1,6 +1,5 @@
 ---
 dependencies:
-  - role: abtris.nginx-passenger
   - role: rvm.ruby
     # TODO: How do we get it to use what's in the .ruby-version file?
     # Last listed ruby here is the default one
