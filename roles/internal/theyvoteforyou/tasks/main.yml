@@ -50,7 +50,7 @@
 
 - name: Copy application settings
   copy:
-    src: settings.yml
+    src: settings-{{ item }}.yml
     dest: "/srv/www/{{ item }}/shared/config/"
     owner: deploy
     group: deploy
