@@ -353,12 +353,6 @@ bundle exec cap development deploy
 bundle exec cap production deploy
 ```
 
-#### Restart Elasticsearch on production
-
-```
-systemctl restart elasticsearch.service
-```
-
 ### Deploying OpenAustralia
 
 After provisioning, set up the database and deploy from the OpenAustralia repository:
