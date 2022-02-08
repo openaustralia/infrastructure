@@ -163,10 +163,6 @@
   when: "'development' in group_names"
   notify: nginx reload
 
-- name: Install nginx now (for the benefit of certbot)
-  apt: pkg=nginx
-  when: "'ec2' in group_names"
-
 - name: Install certificate using certbot
   include_role:
     name: oaf.certbot
