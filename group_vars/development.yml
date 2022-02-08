@@ -1,6 +1,6 @@
 righttoknow_domain: righttoknow.org.au.test
-mysql_host: 192.168.10.17
-postgresql_host: 192.168.10.18
+mysql_host: 192.168.56.17
+postgresql_host: 192.168.56.18
 openaustralia_domain: openaustralia.org.au.test
 planningalerts_domain: planningalerts.org.au.test
 theyvoteforyou_domain: theyvoteforyou.org.au.test
