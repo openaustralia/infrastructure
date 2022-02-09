@@ -20,13 +20,6 @@ resource "cloudflare_record" "root" {
   value   = aws_eip.theyvoteforyou2.public_ip
 }
 
-resource "cloudflare_record" "root2" {
-  zone_id = var.theyvoteforyou_org_au_zone_id
-  name    = "new.theyvoteforyou.org.au"
-  type    = "A"
-  value   = aws_eip.theyvoteforyou2.public_ip
-}
-
 # CNAME records
 
 resource "cloudflare_record" "www" {
