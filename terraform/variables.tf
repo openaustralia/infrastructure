@@ -37,3 +37,12 @@ variable "cuttlefish_ipv6" {
 variable "morph_ipv4" {
   default = "173.255.208.251"
 }
+
+# AMI for Ubuntu 16.04, locked to a specific version so that we don't
+# keep re-provisioning the servers when the AMI gets updated
+variable "ubuntu_16_ami" {
+  # Name: ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20180205
+  # Created by: Canonical
+  # Virtualization type: hvm
+  default = "ami-e1c43f83"
+}

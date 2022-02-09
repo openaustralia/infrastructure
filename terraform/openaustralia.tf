@@ -1,5 +1,5 @@
 resource "aws_instance" "openaustralia" {
-  ami = data.aws_ami.ubuntu.id
+  ami = var.ubuntu_16_ami
 
   # Running sitemap generation (a ruby process, suprise, surprise) pegged the
   # memory usage on a t2.small. So, upping to a t2.medium.

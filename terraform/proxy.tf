@@ -1,5 +1,5 @@
 resource "aws_instance" "au_proxy" {
-  ami = data.aws_ami.ubuntu.id
+  ami = var.ubuntu_16_ami
 
   # Keeping this as small as we possibly can
   instance_type = "t3.nano"

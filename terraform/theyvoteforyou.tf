@@ -2,7 +2,7 @@
 # the normal application deployment is still done with capistrano)
 
 resource "aws_instance" "theyvoteforyou" {
-  ami = data.aws_ami.ubuntu.id
+  ami = var.ubuntu_16_ami
 
   # t2.small was running at 100% cpu on the production load (due to the ruby web
   # processes) and was failing to index elasticsearch (probably because of memory)

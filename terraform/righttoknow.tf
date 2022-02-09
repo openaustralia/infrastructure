@@ -1,5 +1,6 @@
 resource "aws_instance" "righttoknow" {
-  ami = data.aws_ami.ubuntu.id
+  # This has been upgraded in place to Ubuntu 18.04
+  ami = var.ubuntu_16_ami
 
   # Changed it from t2.small to t2.medium because provisioning was very slow
   # Changed from t2.medium to t2.large because it was running out of memory

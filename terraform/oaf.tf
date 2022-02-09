@@ -1,5 +1,6 @@
 resource "aws_instance" "oaf" {
-  ami           = data.aws_ami.ubuntu.id
+  # This has been upgraded in place to Ubuntu 18.04
+  ami           = var.ubuntu_16_ami
   instance_type = "t3.small"
   ebs_optimized = true
   key_name      = "deployer_key"

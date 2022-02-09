@@ -1,5 +1,5 @@
 resource "aws_instance" "electionleaflets" {
-  ami           = data.aws_ami.ubuntu.id
+  ami           = var.ubuntu_16_ami
   instance_type = "t3.nano"
   ebs_optimized = true
   key_name      = "deployer_key"

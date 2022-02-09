@@ -1,5 +1,5 @@
 resource "aws_instance" "opengovernment" {
-  ami = data.aws_ami.ubuntu.id
+  ami = var.ubuntu_16_ami
 
   instance_type = "t3.micro"
   ebs_optimized = true

@@ -5,7 +5,7 @@ variable "availability_zones" {
 
 resource "aws_instance" "planningalerts" {
   count = 2
-  ami = data.aws_ami.ubuntu.id
+  ami = var.ubuntu_16_ami
 
   # A quick look at newrelic is showing PlanningAlerts on kedumba
   # using about 1.5GB. A medium instance gives us 4GB
