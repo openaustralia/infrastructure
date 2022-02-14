@@ -32,8 +32,8 @@
   gather_facts: False
 
   tasks:
-  - name: install python 2
-    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+  - name: install python 2 (or python 3 on Ubuntu 20.04)
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal) || apt install -y python-is-python3
     changed_when: False
 
 - hosts: ec2
@@ -69,7 +69,7 @@
 
 - hosts: all
   become: true
-  roles: 
+  roles:
     - base-server
 
 - hosts: mysql
