@@ -150,7 +150,7 @@
     src: "{{ item }}.pem"
     # We're faking it as if these are let's encrypt certs. Makes for less magic config
     dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
-    mode: 0644
+    mode: "0644"
   with_items:
     - theyvoteforyou.org.au.test
     - test.theyvoteforyou.org.au.test
@@ -162,7 +162,7 @@
   copy:
     src: "{{ item }}.key"
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
-    mode: 0640
+    mode: "0640"
   with_items:
     - theyvoteforyou.org.au.test
     - test.theyvoteforyou.org.au.test
@@ -233,9 +233,9 @@
   cron:
     name: theyvoteforyou_application_load_daily
     user: deploy
-    hour: 9
-    minute: 15
-    weekday: 1-5
+    hour: "9"
+    minute: "15"
+    weekday: "1-5"
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake application:load:daily RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
