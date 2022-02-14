@@ -40,7 +40,14 @@
   become: true
   tasks:
     - name: Install pip
-      apt: pkg=python-pip
+      apt:
+        pkg: python-pip
+      when: ansible_distribution_release != 'focal'
+
+    - name: Install pip
+      apt:
+        pkg: python3-pip
+      when: ansible_distribution_release == 'focal'
 
     - name: Install boto which is required for EC2 stuff
       pip: name=boto
