@@ -78,8 +78,10 @@
     - /srv/www
     - /srv/www/production
     - /srv/www/production/shared
+    - /srv/www/production/shared/config
     - /srv/www/staging
     - /srv/www/staging/shared
+    - /srv/www/staging/shared/config
 
 - name: Copy application settings
   copy:
