@@ -126,7 +126,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.box = case hostname
                     # Only a few services so far are using a more recent version of Ubuntu
-                    when "righttoknow.org.au.test", "oaf.org.au.test", "theyvoteforyou.org.au.test"
+                    when "theyvoteforyou.org.au.test"
+                      # focal "standard" support ends in April 2025
+                      "ubuntu/focal64"
+                    when "righttoknow.org.au.test", "oaf.org.au.test"
                       # bionic "standard" support ends in April 2023
                       "ubuntu/bionic64"
                     else
