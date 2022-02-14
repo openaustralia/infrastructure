@@ -30,8 +30,13 @@
 - name: Install memcached
   apt: pkg=memcached
 
+- name: Install pip
+  apt:
+    pkg: python3-pip
+
 - name: Install dependency for following command
-  apt: pkg=python-mysqldb
+  pip:
+    name: PyMySQL
 
 - name: Create theyvoteforyou databases
   mysql_db:
