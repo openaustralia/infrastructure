@@ -55,3 +55,11 @@ variable "ubuntu_18_ami" {
   # Virtualization type: hvm
   default = "ami-0510efc4f138a88e1"
 }
+
+# AMI for Ubuntu 20.04 LTS, locked to a specific version so that we don't
+# keep re-provisioning the servers when the AMI gets updated
+variable "ubuntu_20_ami" {
+  # Created by: Canonical
+  # Virtualization type: hvm
+  default = "ami-0b7dcd6e6fd797935"
+}
