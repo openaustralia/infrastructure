@@ -11,7 +11,7 @@ server {
   root /srv/www/production/current/public;
   passenger_enabled on;
   # Be explicit about the version
-  passenger_ruby /usr/local/rvm/rubies/ruby-2.5.8/bin/ruby;
+  passenger_ruby /usr/local/rvm/rubies/ruby-3.0.0/bin/ruby;
 
   location ^~ /assets/ {
     gzip_static on;
