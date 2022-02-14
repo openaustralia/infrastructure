@@ -127,11 +127,9 @@
     - staging
   notify: nginx reload
 
-- name: Ensure packages to build gem native extensions are installed
+- name: Ensure package to build gem native extensions are installed
   apt:
-    pkg: "{{item}}"
-  with_items:
-    - libmysqlclient-dev
+    pkg: libmysqlclient-dev
 
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
