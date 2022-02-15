@@ -256,22 +256,27 @@ planningalerts_cuttlefish_webhook_key: !vault |
           31663339303736333738366664356538303238373266636131643737613162373563
 
 logs:
-  - file: /var/log/syslog
-    group_name: /var/log/syslog
-    format: "%b %d %H:%M:%S"
+  - file_path: /var/log/syslog
+    log_group_name: /var/log/syslog
+    log_stream_name: "{hostname}"
+    timestamp_format: "%b %d %H:%M:%S"
 
-  - file: /var/log/nginx/error.log
-    group_name: /var/log/nginx/error.log
-    format: "%Y-%m-%d %H:%M:%S.%f"
+  - file_path: /var/log/nginx/error.log
+    log_group_name: /var/log/nginx/error.log
+    log_stream_name: "{hostname}"
+    timestamp_format: "%Y-%m-%d %H:%M:%S.%f"
 
-  - file: /var/log/letsencrypt/letsencrypt.log
-    group_name: /var/log/letsencrypt/letsencrypt.log
-    format: "%Y-%m-%d %H:%M:%S"
+  - file_path: /var/log/letsencrypt/letsencrypt.log
+    log_group_name: /var/log/letsencrypt/letsencrypt.log
+    log_stream_name: "{hostname}"
+    timestamp_format: "%Y-%m-%d %H:%M:%S"
 
-  - file: /var/log/unattended-upgrades/unattended-upgrades.log
-    group_name: /var/log/unattended-upgrades/unattended-upgrades.log
-    format: "%Y-%m-%d %H:%M:%S"
+  - file_path: /var/log/unattended-upgrades/unattended-upgrades.log
+    log_group_name: /var/log/unattended-upgrades/unattended-upgrades.log
+    log_stream_name: "{hostname}"
+    timestamp_format: "%Y-%m-%d %H:%M:%S"
 
-  - file: /srv/www/production/shared/log/production.log
-    group_name: /srv/www/production/shared/log/production.log
-    format: "%Y-%m-%dT%H:%M:%S.%f"
+  - file_path: /srv/www/production/shared/log/production.log
+    log_group_name: /srv/www/production/shared/log/production.log
+    log_stream_name: "{hostname}"
+    timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"

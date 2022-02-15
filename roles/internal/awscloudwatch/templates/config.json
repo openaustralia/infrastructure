@@ -5,7 +5,7 @@
 	"logs": {
 		"logs_collected": {
 			"files": {
-				"collect_list": {{ logs2 | to_nice_json }}
+				"collect_list": {{ logs | to_nice_json }}
 			}
 		}
 	}

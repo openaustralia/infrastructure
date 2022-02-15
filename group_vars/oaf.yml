@@ -47,23 +47,28 @@ cuttlefish_smtp_pw: !vault |
           3434613564666235630a663730363562613937313465613463346633653966396539373136613630
           61633237353834316333623762386330663766396631636534633461666337333136
 logs:
-  - file: /var/log/syslog
-    group_name: /var/log/syslog
-    format: "%b %d %H:%M:%S"
+  - file_path: /var/log/syslog
+    log_group_name: /var/log/syslog
+    log_stream_name: "{hostname}"
+    timestamp_format: "%b %d %H:%M:%S"
 
-  - file: /var/log/apache2/error.log
-    group_name: /var/log/apache2/error.log
-    format: "%a %b %d %H:%M:%S.%f %Y"
+  - file_path: /var/log/apache2/error.log
+    log_group_name: /var/log/apache2/error.log
+    log_stream_name: "{hostname}"
+    timestamp_format: "%a %b %d %H:%M:%S.%f %Y"
 
-  - file: /var/log/duply/wordpress-uploads.log
-    group_name: /var/log/duply/wordpress-uploads.log
+  - file_path: /var/log/duply/wordpress-uploads.log
+    log_group_name: /var/log/duply/wordpress-uploads.log
+    log_stream_name: "{hostname}"
     # No idea what the format should be otherwise
-    format: "%b %d %H:%M:%S"
+    timestamp_format: "%b %d %H:%M:%S"
 
-  - file: /var/log/letsencrypt/letsencrypt.log
-    group_name: /var/log/letsencrypt/letsencrypt.log
-    format: "%Y-%m-%d %H:%M:%S"
+  - file_path: /var/log/letsencrypt/letsencrypt.log
+    log_group_name: /var/log/letsencrypt/letsencrypt.log
+    log_stream_name: "{hostname}"
+    timestamp_format: "%Y-%m-%d %H:%M:%S"
 
-  - file: /var/log/unattended-upgrades/unattended-upgrades.log
-    group_name: /var/log/unattended-upgrades/unattended-upgrades.log
-    format: "%Y-%m-%d %H:%M:%S"
+  - file_path: /var/log/unattended-upgrades/unattended-upgrades.log
+    log_group_name: /var/log/unattended-upgrades/unattended-upgrades.log
+    log_stream_name: "{hostname}"
+    timestamp_format: "%Y-%m-%d %H:%M:%S"
