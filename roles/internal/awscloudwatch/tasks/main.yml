@@ -1,29 +1,31 @@
 ---
 
-# - name: Check if CloudWatch is already installed
-#   stat:
-#     path: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
-#   register: cloudwatch_installed
+- name: Check if CloudWatch is already installed
+  stat:
+    path: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
+  register: cloudwatch_installed
 
-# - name: Create CloudWatch temporary directory
-#   tempfile:
-#     state: directory
-#     suffix: awscwa
-#   register: awscwa
+- name: Create CloudWatch temporary directory
+  tempfile:
+    state: directory
+    suffix: awscwa
+  register: awscwa
 
-# - name: Download CloudWatch agent
-#   get_url:
-#     url: https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb
-#     dest: "{{ awscwa.path }}"
-#     checksum: sha256:ef44addcedd1bfafa204d62bc0c65123b3893fce092bcd88d574cb30227301d9
-#   when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
+- name: Download CloudWatch agent
+  get_url:
+    url: https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+    dest: "{{ awscwa.path }}"
+    # This is the checksum for the particular version that is the latest at the time
+    # This will need to be updated if the agent gets updated
+    checksum: sha256:3eca0063adb3b402841d40571f4bba1b5008ca07a9a7df536fd25bed8e0b0681
+  when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
 
-# - name: Install CloudWatch agent
-#   shell: "dpkg -i -E ./amazon-cloudwatch-agent.deb"
-#   args:
-#     chdir: "{{ awscwa.path }}"
-#     creates: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
-#   when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
+- name: Install CloudWatch agent
+  shell: "dpkg -i -E ./amazon-cloudwatch-agent.deb"
+  args:
+    chdir: "{{ awscwa.path }}"
+    creates: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
+  when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
 
 # - name: Configure CloudWatch
 #   copy:
