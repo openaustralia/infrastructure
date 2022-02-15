@@ -25,7 +25,7 @@
   shell: "dpkg -i -E ./amazon-cloudwatch-agent.deb"
   args:
     chdir: "{{ awscwa.path }}"
-    # creates: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
+    creates: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
   when: "'ec2' in group_names"
   # when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
 
