@@ -75,11 +75,6 @@ logs:
     log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%b %d %H:%M:%S"
 
-  - file_path: /var/log/elasticsearch/elasticsearch.log
-    log_group_name: /var/log/elasticsearch/elasticsearch.log
-    log_stream_name: "{{ inventory_hostname }}"
-    timestamp_format: "%Y-%m-%d %H:%M:%S"
-
   - file_path: /var/log/nginx/error.log
     log_group_name: /var/log/nginx/error.log
     log_stream_name: "{{ inventory_hostname }}"
