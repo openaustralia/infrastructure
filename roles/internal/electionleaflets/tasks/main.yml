@@ -12,7 +12,7 @@
 - name: Create filesystem on attached block storage
   filesystem:
     fstype: ext4
-    dev: /dev/xvdh
+    dev: /dev/nvme1n1
   when: "'ec2' in group_names"
 
 - name: Mount /data filesystem
@@ -20,7 +20,7 @@
     path: /data
     # Mount device by UUID because that's needed to run on AWS Nitro based instances (e.g. t3)
     # See https://aws.amazon.com/premiumsupport/knowledge-center/boot-error-linux-nitro-instance/
-    src: "UUID={{ ansible_facts['devices']['xvdh']['links']['uuids'][0] }}"
+    src: "UUID={{ ansible_facts['devices']['nvme1n1']['links']['uuids'][0] }}"
     fstype: ext4
     state: mounted
   when: "'ec2' in group_names"
@@ -257,7 +257,7 @@
 
 - name: Uninstall newrelic php monitor
   apt:
-    pkg: newrelic-php5 
+    pkg: newrelic-php5
     state: absent
 
 - name: Remove configuration for newrelic php monitor
