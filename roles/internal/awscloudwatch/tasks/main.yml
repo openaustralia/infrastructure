@@ -30,7 +30,7 @@
 - name: Configure CloudWatch
   template:
     src: config.json
-    dest: /opt/aws/amazon-cloudwatch-agent/bin/config.json
+    dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
   when: "'ec2' in group_names"
   notify:
     - restart CloudWatch Agent
