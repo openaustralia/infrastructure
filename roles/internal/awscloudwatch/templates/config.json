@@ -1,0 +1,21 @@
+{
+	"agent": {
+		"run_as_user": "root"
+	},
+	"logs": {
+		"logs_collected": {
+			"files": {
+				"collect_list": [
+					{% for log in logs %}
+					{
+						"file_path": "{{ log.file }}",
+						"log_group_name": "{{ log.group_name }}",
+						"log_stream_name": "{hostname}",
+						"timestamp_format": "{{ log.format }}"
+					},
+					{% endfor %}
+				]
+			}
+		}
+	}
+}
