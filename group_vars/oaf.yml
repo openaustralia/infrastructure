@@ -49,26 +49,26 @@ cuttlefish_smtp_pw: !vault |
 logs:
   - file_path: /var/log/syslog
     log_group_name: /var/log/syslog
-    log_stream_name: "{hostname}"
+    log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%b %d %H:%M:%S"
 
   - file_path: /var/log/apache2/error.log
     log_group_name: /var/log/apache2/error.log
-    log_stream_name: "{hostname}"
+    log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%a %b %d %H:%M:%S.%f %Y"
 
   - file_path: /var/log/duply/wordpress-uploads.log
     log_group_name: /var/log/duply/wordpress-uploads.log
-    log_stream_name: "{hostname}"
+    log_stream_name: "{{ inventory_hostname }}"
     # No idea what the format should be otherwise
     timestamp_format: "%b %d %H:%M:%S"
 
   - file_path: /var/log/letsencrypt/letsencrypt.log
     log_group_name: /var/log/letsencrypt/letsencrypt.log
-    log_stream_name: "{hostname}"
+    log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%Y-%m-%d %H:%M:%S"
 
   - file_path: /var/log/unattended-upgrades/unattended-upgrades.log
     log_group_name: /var/log/unattended-upgrades/unattended-upgrades.log
-    log_stream_name: "{hostname}"
+    log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%Y-%m-%d %H:%M:%S"
