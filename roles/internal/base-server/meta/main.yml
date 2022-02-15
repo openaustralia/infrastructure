@@ -8,7 +8,6 @@ dependencies:
   - role: ANXS.ntp
   - role: jnv.unattended-upgrades
     unattended_automatic_reboot: true
-  - role: awslogs
   - role: awscloudwatch
   - role: newrelic.newrelic-infra
     nrinfragent_config:
