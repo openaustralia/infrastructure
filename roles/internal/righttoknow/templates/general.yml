@@ -98,7 +98,7 @@ TIME_ZONE: Australia/Sydney
 #   BLOG_FEED: https://www.mysociety.org/category/projects/whatdotheyknow/feed/
 #
 # ---
-BLOG_FEED: 'https://www.openaustraliafoundation.org.au/category/projects/righttoknow-org-au/feed/'
+BLOG_FEED: 'https://www.oaf.org.au/category/projects/righttoknow-org-au/feed/'
 
 # BLOG_TIMEOUT -  Integer seconds before reading the blog feed fails (default: 60)
 #
@@ -735,7 +735,7 @@ MTA_LOG_TYPE: "postfix"
 #   DONATION_URL: http://www.mysociety.org/donate
 #
 # ---
-DONATION_URL: 'https://www.openaustraliafoundation.org.au/donate/righttoknow/'
+DONATION_URL: 'https://www.oaf.org.au/donate/righttoknow/'
 
 # If PUBLIC_BODY_STATISTICS_PAGE is set to true, Alaveteli will make a page of
 # statistics on the performance of public bodies (which you can see at
