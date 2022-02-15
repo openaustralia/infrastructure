@@ -3,17 +3,26 @@
 
 - name: Install Certbot PPA
   apt_repository:
-      repo: ppa:certbot/certbot
+    repo: ppa:certbot/certbot
+    # The cache update was failing for some reason here. So, disabled
+    # TODO: Reenable the cache update by deleting the line below
+    update_cache: no
 
-- name: Install certbot and plugins
+- name: Install certbot
   apt:
-    pkg: "{{ item }}"
-  with_items:
-    - certbot
-    - python-certbot-{{ certbot_webserver }}
+    pkg: certbot
 
+- name: Install certbot plugin (python != 3)
+  apt:
+    pkg: "python-certbot-{{ certbot_webserver }}"
+  when: ansible_python['version']['major'] != 3
 
-- name: Install certificates with certbot 
+- name: Install certbot plugin (python == 3)
+  apt:
+    pkg: "python3-certbot-{{ certbot_webserver }}"
+  when: ansible_python['version']['major'] == 3
+
+- name: Install certificates with certbot
   command: certbot run --non-interactive --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs| flatten(levels=1) }}"
   when: certbot_webroot is undefined
