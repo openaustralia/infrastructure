@@ -16,3 +16,10 @@
   args:
     creates: /etc/init.d/awslogs
   when: "'ec2' in group_names"
+
+- name: Disable old log agent
+  service:
+    name: awslogs
+    enabled: no
+    state: stopped
+  when: "'ec2' in group_names"
