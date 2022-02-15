@@ -40,7 +40,7 @@
 - name: Create filesystem on attached block storage
   filesystem:
     fstype: ext4
-    dev: /dev/xvdi
+    dev: /dev/nvme1n1
   when: "'ec2' in group_names"
 
 - name: Mount /data filesystem
@@ -48,7 +48,7 @@
     path: /data
     # Mount device by UUID because that's needed to run on AWS Nitro based instances (e.g. t3)
     # See https://aws.amazon.com/premiumsupport/knowledge-center/boot-error-linux-nitro-instance/
-    src: "UUID={{ ansible_facts['devices']['xvdi']['links']['uuids'][0] }}"
+    src: "UUID={{ ansible_facts['devices']['nvme1n1']['links']['uuids'][0] }}"
     fstype: ext4
     state: mounted
   when: "'ec2' in group_names"
