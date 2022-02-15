@@ -1,6 +1,3 @@
-- src: abtris.nginx-passenger
-  version: da82e7312488747b1e06a4af242aa52ffacad60b
-
 - src: ANXS.ntp
   version: v2.0.0
 
