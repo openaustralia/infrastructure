@@ -17,7 +17,7 @@ resource "cloudflare_record" "root" {
   zone_id = var.theyvoteforyou_org_au_zone_id
   name    = "theyvoteforyou.org.au"
   type    = "A"
-  value   = aws_eip.theyvoteforyou2.public_ip
+  value   = aws_eip.theyvoteforyou.public_ip
 }
 
 # CNAME records
@@ -136,7 +136,7 @@ resource "cloudflare_record" "alt1_root" {
   zone_id = var.theyvoteforyou_org_zone_id
   name    = "theyvoteforyou.org"
   type    = "A"
-  value   = aws_eip.theyvoteforyou2.public_ip
+  value   = aws_eip.theyvoteforyou.public_ip
 }
 
 resource "cloudflare_record" "alt1_www" {
@@ -152,7 +152,7 @@ resource "cloudflare_record" "alt2_root" {
   zone_id = var.theyvoteforyou_com_au_zone_id
   name    = "theyvoteforyou.com.au"
   type    = "A"
-  value   = aws_eip.theyvoteforyou2.public_ip
+  value   = aws_eip.theyvoteforyou.public_ip
 }
 
 resource "cloudflare_record" "alt2_www" {
