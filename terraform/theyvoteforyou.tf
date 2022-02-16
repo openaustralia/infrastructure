@@ -10,7 +10,7 @@ resource "aws_instance" "theyvoteforyou2" {
   ebs_optimized = true
   key_name      = aws_key_pair.deployer.key_name
   tags = {
-    Name = "theyvoteforyou2"
+    Name = "theyvoteforyou"
   }
   security_groups         = [aws_security_group.webserver.name]
   disable_api_termination = true
@@ -20,6 +20,6 @@ resource "aws_instance" "theyvoteforyou2" {
 resource "aws_eip" "theyvoteforyou2" {
   instance = aws_instance.theyvoteforyou2.id
   tags = {
-    Name = "theyvoteforyou2"
+    Name = "theyvoteforyou"
   }
 }
