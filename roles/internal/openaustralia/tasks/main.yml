@@ -33,7 +33,7 @@
     state: directory
   with_nested:
     - ['production', 'staging']
-    - ['images/mps', 'images/mpsL', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search/searchdb']
+    - ['images/mps', 'images/mpsL', 'images/mpsXL', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search/searchdb']
 
 - name: Ensure that directories in /srv/www exist
   file:
