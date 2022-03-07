@@ -236,6 +236,14 @@ resource "cloudflare_record" "oaf_github_challenge2" {
   value   = "209f2b7179"
 }
 
+# Microsoft 365 Domain verification
+resource "cloudflare_record" "oaf_microsoft_domain" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "oaf.org.au"
+  type    = "TXT"
+  value   = "MS=ms62560359"
+}
+
 ## openaustraliafoundation.org.au
 
 # A records
