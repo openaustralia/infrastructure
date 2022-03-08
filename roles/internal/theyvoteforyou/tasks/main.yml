@@ -248,3 +248,39 @@
     user: deploy
     value: web-administrators@openaustralia.org,j1u3z8i7h9w0q8o4@oaf.slack.com
   when: "'ec2' in group_names"
+
+# A version of chromedriver works with only a version of chrome. As far as I know it's not possible to install a
+specific version of chrome easily. So, instead we will take the strategy of installing the latest chrome
+and chromedriver and ensure on every run that the latest ones are installed. That way hopefully everything
+will hopefully stay in sync at the risk of chrome updating when not necessarily expected.
+- name: Get Google key for install Chrome
+  become: yes
+  apt_key:
+    url: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
+    state: present
+
+- name: Apt Google repository
+  apt_repository:
+    repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+    state: present
+    update_cache: yes
+
+- name: Install latest Chrome
+  apt:
+    pkg: google-chrome-stable
+    # We want to make sure we're always running the latest version
+    state: latest
+
+- name: Get latest version number for chromedriver
+  uri:
+    url: "http://chromedriver.storage.googleapis.com/LATEST_RELEASE"
+    return_content: yes
+    headers:
+      Content-Type: "text/plain"
+  register: latest_chromedriver
+
+- name: Download and install chromedriver
+  unarchive:
+    src: "https://chromedriver.storage.googleapis.com/{{ latest_chromedriver.content|trim }}/chromedriver_linux64.zip"
+    dest: /usr/local/bin
+    remote_src: yes
