@@ -250,9 +250,10 @@
   when: "'ec2' in group_names"
 
 # A version of chromedriver works with only a version of chrome. As far as I know it's not possible to install a
-specific version of chrome easily. So, instead we will take the strategy of installing the latest chrome
-and chromedriver and ensure on every run that the latest ones are installed. That way hopefully everything
-will hopefully stay in sync at the risk of chrome updating when not necessarily expected.
+# specific version of chrome easily. So, instead we will take the strategy of installing the latest chrome
+# and chromedriver and ensure on every run that the latest ones are installed. That way hopefully everything
+# will hopefully stay in sync at the risk of chrome updating when not necessarily expected.
+
 - name: Get Google key for install Chrome
   become: yes
   apt_key:
