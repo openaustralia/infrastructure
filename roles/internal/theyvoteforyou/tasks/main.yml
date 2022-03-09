@@ -287,3 +287,27 @@
     src: "https://chromedriver.storage.googleapis.com/{{ latest_chromedriver.content|trim }}/chromedriver_linux64.zip"
     dest: /usr/local/bin
     remote_src: yes
+
+# We want this directory to exist in development too so that
+# things are as consistent as possible
+- name: Create data mountpoint
+  file:
+    state: directory
+    path: /data
+
+# On EC2 we're using a seperate EBS volume to hold application data
+- name: Create filesystem on attached block storage
+  filesystem:
+    fstype: ext4
+    dev: /dev/nvme1n1
+  when: "'ec2' in group_names"
+
+- name: Mount /data filesystem
+  mount:
+    path: /data
+    # Mount device by UUID because that's needed to run on AWS Nitro based instances (e.g. t3)
+    # See https://aws.amazon.com/premiumsupport/knowledge-center/boot-error-linux-nitro-instance/
+    src: "UUID={{ ansible_facts['devices']['nvme1n1']['links']['uuids'][0] }}"
+    fstype: ext4
+    state: mounted
+  when: "'ec2' in group_names"
