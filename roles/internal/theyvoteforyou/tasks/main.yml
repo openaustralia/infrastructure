@@ -79,11 +79,9 @@
     - /srv/www/production
     - /srv/www/production/shared
     - /srv/www/production/shared/config
-    - /srv/www/production/shared/cards
     - /srv/www/staging
     - /srv/www/staging/shared
     - /srv/www/staging/shared/config
-    - /srv/www/staging/shared/cards
 
 - name: Copy application settings
   copy:
@@ -311,3 +309,22 @@
     fstype: ext4
     state: mounted
   when: "'ec2' in group_names"
+
+- name: Create directories in /data
+  file:
+    path: "/data/{{ item[0] }}/{{ item[1] }}"
+    owner: deploy
+    group: deploy
+    state: directory
+  with_nested:
+    - ['production', 'staging']
+    - ['cards']
+
+- name: Link directories in /srv/www to /data
+  file:
+    state: link
+    src: "/data/{{ item[0] }}/{{ item[1] }}"
+    dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
+  with_nested:
+    - ['production', 'staging']
+    - ['cards']
