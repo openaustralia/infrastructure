@@ -15,6 +15,8 @@ resource "aws_instance" "theyvoteforyou" {
   security_groups         = [aws_security_group.webserver.name]
   disable_api_termination = true
   iam_instance_profile    = aws_iam_instance_profile.logging.name
+  # Setting the availability zone because it needs to be the same as the disk
+  availability_zone       = "ap-southeast-2a"
 }
 
 resource "aws_eip" "theyvoteforyou" {
@@ -25,7 +27,7 @@ resource "aws_eip" "theyvoteforyou" {
 }
 
 resource "aws_ebs_volume" "theyvoteforyou_data" {
-  availability_zone = "ap-southeast-2c"
+  availability_zone = aws_instance.theyvoteforyou.availability_zone
 
   size = 10
   type = "gp3"
