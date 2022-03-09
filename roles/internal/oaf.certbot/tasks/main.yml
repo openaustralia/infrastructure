@@ -5,8 +5,8 @@
   apt_repository:
     repo: ppa:certbot/certbot
     update_cache: yes
-    # On Ubuntu 20.04 (focal) we can install certbot as a standard Ubuntu package
-    when: ansible_distribution_release != 'focal'
+  # On Ubuntu 20.04 (focal) we can install certbot as a standard Ubuntu package
+  when: ansible_distribution_release != 'focal'
 
 - name: Install certbot
   apt:
