@@ -79,9 +79,11 @@
     - /srv/www/production
     - /srv/www/production/shared
     - /srv/www/production/shared/config
+    - /srv/www/production/shared/cards
     - /srv/www/staging
     - /srv/www/staging/shared
     - /srv/www/staging/shared/config
+    - /srv/www/staging/shared/cards
 
 - name: Copy application settings
   copy:
