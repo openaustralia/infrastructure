@@ -23,3 +23,19 @@ resource "aws_eip" "theyvoteforyou" {
     Name = "theyvoteforyou"
   }
 }
+
+resource "aws_ebs_volume" "theyvoteforyou_data" {
+  availability_zone = "ap-southeast-2c"
+
+  size = 10
+  type = "gp3"
+  tags = {
+    Name = "theyvoteforyou_data"
+  }
+}
+
+resource "aws_volume_attachment" "theyvoteforyou_data" {
+  device_name = "/dev/sdi"
+  volume_id   = aws_ebs_volume.theyvoteforyou_data.id
+  instance_id = aws_instance.theyvoteforyou.id
+}
