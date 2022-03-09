@@ -79,9 +79,11 @@
     - /srv/www/production
     - /srv/www/production/shared
     - /srv/www/production/shared/config
+    - /srv/www/production/shared/public
     - /srv/www/staging
     - /srv/www/staging/shared
     - /srv/www/staging/shared/config
+    - /srv/www/staging/shared/public
 
 - name: Copy application settings
   copy:
@@ -318,7 +320,7 @@
     state: directory
   with_nested:
     - ['production', 'staging']
-    - ['cards']
+    - ['public', 'public/cards']
 
 - name: Link directories in /srv/www to /data
   file:
@@ -327,4 +329,4 @@
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
     - ['production', 'staging']
-    - ['cards']
+    - ['public/cards']
