@@ -140,7 +140,7 @@
 
 # This theme is required by the openaustralia foundation theme
 - name: Install thematic theme
-  shell: "wp-cli --path='/var/www/html' theme install --url https://github.com/ThematicTheme/thematic/archive/refs/tags/1.0.4.zip https://github.com/ThematicTheme/Thematic/archive/refs/tags/1.0.4.zip"
+  shell: "wp-cli --path='/var/www/html' theme install --url https://github.com/openaustralia/thematic/archive/refs/heads/1.0.4-php7.4-compat.zip https://github.com/openaustralia/Thematic/archive/refs/heads/1.0.4-php7.4-compat.zip"
   args:
     creates: /var/www/html/wp-content/themes/thematic/
   become_user: www-data
