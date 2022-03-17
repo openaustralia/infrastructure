@@ -29,7 +29,7 @@ resource "aws_eip" "theyvoteforyou" {
 resource "aws_ebs_volume" "theyvoteforyou_data" {
   availability_zone = aws_instance.theyvoteforyou.availability_zone
 
-  size = 10
+  size = 30
   type = "gp3"
   tags = {
     Name = "theyvoteforyou_data"
