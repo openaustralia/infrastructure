@@ -229,6 +229,13 @@
     validate: visudo -cf %s
   # notify: sudo reload
 
+- name: Add /usr/local/bin to PATH in cron so that chromedriver can be found
+  cron:
+    user: deploy
+    name: PATH
+    env: yes
+    job: /usr/local/bin:/usr/bin:/bin
+
 - name: Set up daily load cron job
   cron:
     name: theyvoteforyou_application_load_daily
