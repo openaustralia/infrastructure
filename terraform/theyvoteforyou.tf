@@ -4,9 +4,7 @@
 resource "aws_instance" "theyvoteforyou" {
   ami = var.ubuntu_20_ami
 
-  # t2.small was running at 100% cpu on the production load (due to the ruby web
-  # processes) and was failing to index elasticsearch (probably because of memory)
-  instance_type = "t3.medium"
+  instance_type = "t3.large"
   ebs_optimized = true
   key_name      = aws_key_pair.deployer.key_name
   tags = {
