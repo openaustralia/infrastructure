@@ -5,7 +5,7 @@ resource "aws_db_instance" "main" {
   # Using general purpose SSD
   storage_type   = "gp2"
   engine         = "mysql"
-  engine_version = "5.6.51"
+  engine_version = "5.7.38"
 
   # 1. We went from db.t2.small to db.t2.medium before we discovered that the
   #    database migration service hadn't migrated the databases indexes. Oops!!
@@ -38,7 +38,11 @@ resource "aws_db_instance" "main" {
   apply_immediately          = false
   skip_final_snapshot        = false
   vpc_security_group_ids     = [aws_security_group.main_database.id]
-  parameter_group_name       = aws_db_parameter_group.mysql_default.name
+  # The parameter group name below was automatically created during an upgrade to mysql 5.7
+  # The commented out group name was the one we were using with mysql 5.6
+  # TODO: Go through parameter group and see if anything is different than the 5.7 default and if so make a custom one for us
+  # parameter_group_name       = aws_db_parameter_group.mysql_default.name
+  parameter_group_name       = "default.mysql5.7-db-3zfhxnxjf2w5aymy2dl3hbsk3m-upgrade"
 }
 
 # TODO: Do we want to explicitly set the available zone?
@@ -50,7 +54,7 @@ resource "aws_db_instance" "postgresql" {
   # Using general purpose SSD
   storage_type   = "gp2"
   engine         = "postgres"
-  engine_version = "11.13"
+  engine_version = "11.16"
 
   # Let's start in production with db.t2.medium. We should watch the cpu credits
   # Dropping down to db.t2.small because we're under-using
