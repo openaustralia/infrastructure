@@ -23,6 +23,14 @@ resource "aws_db_instance" "main" {
   password            = var.rds_admin_password
   publicly_accessible = false
 
+  # TODO: Do we actually need this extra monitoring always on?
+
+  # Enable performance insights
+  performance_insights_enabled = true
+
+  # Enable enhanced monitoring
+  monitoring_interval = 60
+
   # Put the backup retention period to its maximum until we figure out what's a
   # good overall backup scheme
   # TODO: Set this to its final value
