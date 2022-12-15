@@ -129,7 +129,7 @@
   roles:
     - proxy
 
-- hosts: redash.oaf.org.au
+- hosts: redash
   become: true
   roles:
     - redash
