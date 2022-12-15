@@ -37,8 +37,8 @@ define("BANNER", true);
 
 //urls
 define("DOMAIN", "www.{{ domain }}");
-define("WWW_SERVER", "http://" . DOMAIN );
-define("ADMIN_SERVER", "http://" . DOMAIN );
+define("WWW_SERVER", "https://" . DOMAIN );
+define("ADMIN_SERVER", "https://" . DOMAIN );
 
 //confirmation
 define("CONFIRMATION_BASE_URL", WWW_SERVER . '/confirmed.php?q=');
