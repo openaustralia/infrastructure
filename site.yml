@@ -128,3 +128,8 @@
   become: true
   roles:
     - proxy
+
+- hosts: redash.oaf.org.au
+  become: true
+  roles:
+    - redash
