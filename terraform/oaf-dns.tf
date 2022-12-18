@@ -22,13 +22,6 @@ resource "cloudflare_record" "oaf_cuttlefish" {
   value   = var.cuttlefish_ipv4
 }
 
-resource "cloudflare_record" "oaf_cuttlefish_test" {
-  zone_id = var.oaf_org_au_zone_id
-  name    = "cuttlefish-test.oaf.org.au"
-  type    = "A"
-  value   = "45.79.111.242"
-}
-
 resource "cloudflare_record" "au_proxy" {
   zone_id = var.oaf_org_au_zone_id
   name    = "au.proxy.oaf.org.au"
