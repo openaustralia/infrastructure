@@ -3,3 +3,10 @@ services:
     image: metabase/metabase:v0.45.1
     ports:
       - 3000:3000
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabase
+      MB_DB_PORT: 5432
+      MB_DB_USER: metabase
+      MB_DB_PASS: {{ db_password }}
+      MB_DB_HOST: {{ postgresql_host }}
