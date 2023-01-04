@@ -133,3 +133,8 @@
   become: true
   roles:
     - redash
+
+- hosts: metabase
+  become: true
+  roles:
+    - metabase

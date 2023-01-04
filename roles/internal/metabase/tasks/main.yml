@@ -1,2 +1,22 @@
 ---
-# tasks file for metabase
+- name: Install dependency for postgresql_db
+  apt:
+    pkg: python3-psycopg2
+
+- name: Create database
+  postgresql_db:
+    login_host: "{{ postgresql_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    name: "metabase"
+
+- name: Create posgresql role
+  postgresql_user:
+    login_host: "{{ postgresql_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "metabase"
+    name: "metabase"
+    password: "{{ db_password }}"
+    priv: ALL
+    no_password_changes: true

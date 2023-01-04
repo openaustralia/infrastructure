@@ -75,6 +75,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "postgresql"       => ["postgresql.test"],
       "opengovernment"   => ["opengovernment.org.au.test"],
       "proxy"            => ["au.proxy.oaf.org.au.test"],
+      "metabase"         => ["metabase.oaf.org.au.test"],
       "development"      => [
         "righttoknow.org.au.test",
         "web1.planningalerts.org.au.test",
@@ -86,7 +87,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "mysql.test",
         "postgresql.test",
         "opengovernment.org.au.test",
-        "au.proxy.oaf.org.au.test"
+        "au.proxy.oaf.org.au.test",
+        "metabase.oaf.org.au.test"
       ]
     }
 
@@ -115,16 +117,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "mysql.test"                      => "192.168.56.17",
     "postgresql.test"                 => "192.168.56.18",
     "opengovernment.org.au.test"      => "192.168.56.19",
-    "au.proxy.oaf.org.au.test"        => "192.168.56.20"
+    "au.proxy.oaf.org.au.test"        => "192.168.56.20",
+    "metabase.oaf.org.au.test"        => "192.168.56.21"
   }
 
   # Use this so that you don't need to give the machine name for all vagrant
   # commands. Set this to whatever you're most working on at the moment.
-  primary_host = "openaustralia.org.au.test"
+  primary_host = "metabase.oaf.org.au.test"
 
   hosts.each do |hostname, ip|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.box = case hostname
+                    when "metabase.oaf.org.au.test"
+                      "ubuntu/jammy64"
                     # Only a few services so far are using a more recent version of Ubuntu
                     when "theyvoteforyou.org.au.test"
                       # focal "standard" support ends in April 2025
