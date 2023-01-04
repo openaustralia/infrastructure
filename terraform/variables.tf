@@ -63,3 +63,11 @@ variable "ubuntu_20_ami" {
   # Virtualization type: hvm
   default = "ami-0b7dcd6e6fd797935"
 }
+
+# AMI for Ubuntu 22.04 LTS, locked to a specific version so that we don't
+# keep re-provisioning the servers when the AMI gets updated
+variable "ubuntu_22_ami" {
+  # Created by: Canonical
+  # Virtualization type: hvm
+  default = "ami-0df609f69029c9bdb"
+}

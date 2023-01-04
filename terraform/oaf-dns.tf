@@ -36,6 +36,13 @@ resource "cloudflare_record" "redash" {
   value   = aws_eip.redash.public_ip
 }
 
+resource "cloudflare_record" "metabase" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "metabase.oaf.org.au"
+  type    = "A"
+  value   = aws_eip.metabase.public_ip
+}
+
 # AAAA records
 resource "cloudflare_record" "oaf_aaaa_cuttlefish" {
   zone_id = var.oaf_org_au_zone_id
