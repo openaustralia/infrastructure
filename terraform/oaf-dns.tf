@@ -36,7 +36,7 @@ resource "cloudflare_record" "redash" {
   value   = aws_eip.redash.public_ip
 }
 
-resource "cloudflare_record" "metabase" {
+resource "cloudflare_record" "web_metabase" {
   zone_id = var.oaf_org_au_zone_id
   name    = "web.metabase.oaf.org.au"
   type    = "A"
@@ -72,6 +72,13 @@ resource "cloudflare_record" "oaf_email" {
   name    = "email.oaf.org.au"
   type    = "CNAME"
   value   = "cname.createsend.com"
+}
+
+resource "cloudflare_record" "metabase" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "metabase.oaf.org.au"
+  type    = "CNAME"
+  value   = aws_lb.main.dns_name
 }
 
 # MX records
