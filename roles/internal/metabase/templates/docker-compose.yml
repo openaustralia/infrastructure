@@ -1,8 +1,9 @@
 services:
   metabase:
     image: metabase/metabase:v0.45.1
+    # Using 8000 as the port on the host to be consistent with planningalerts
     ports:
-      - 3000:3000
+      - 8000:3000
     environment:
       MB_DB_TYPE: postgres
       MB_DB_DBNAME: metabase
