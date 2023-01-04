@@ -20,3 +20,10 @@
     password: "{{ db_password }}"
     priv: ALL
     no_password_changes: true
+
+- name: Create /srv/www directory
+  file:
+    state: directory
+    owner: deploy
+    group: deploy
+    path: /srv/www
