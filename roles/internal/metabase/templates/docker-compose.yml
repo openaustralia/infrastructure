@@ -11,3 +11,4 @@ services:
       MB_DB_USER: metabase
       MB_DB_PASS: {{ db_password }}
       MB_DB_HOST: {{ postgresql_host }}
+    restart: always
