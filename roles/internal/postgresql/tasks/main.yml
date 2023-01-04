@@ -11,7 +11,7 @@
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     id: ACCC4CF8
 
-# We're currently running 11.8 in production
+# We're currently running 11.16 in production
 - name: Install postgresql 11 server
   apt:
     name: "postgresql-11"
