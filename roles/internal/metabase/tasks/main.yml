@@ -3,6 +3,29 @@
   apt:
     pkg: python3-psycopg2
 
+- name: Ensure that we have the Docker repository key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+
+- name: Ensure that we have the docker repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable"
+
+- name: Install docker
+  apt:
+    name:
+      - docker-ce 
+      - docker-ce-cli
+      - containerd.io
+
+- name: Install pip
+  apt:
+    pkg: python3-pip
+
+- name: Install docker-compose python library
+  pip:
+    name: docker-compose
+
 - name: Create database
   postgresql_db:
     login_host: "{{ postgresql_host }}"
@@ -27,3 +50,12 @@
     owner: deploy
     group: deploy
     path: /srv/www
+
+- name: Copy across docker-compose.yml
+  template:
+    src: docker-compose.yml
+    dest: /srv/www
+
+- name: Run metabase
+  docker_compose:
+    project_src: /srv/www
