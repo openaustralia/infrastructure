@@ -18,6 +18,10 @@
       - docker-ce-cli
       - containerd.io
 
+- name: Install dependency for ansible mysql_db module
+  apt:
+    pkg: python3-mysqldb
+
 - name: Install pip
   apt:
     pkg: python3-pip
@@ -59,3 +63,13 @@
 - name: Run metabase
   docker_compose:
     project_src: /srv/www
+
+- name: Create mysql user with readonly access to the production planningalerts database
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: pa-production-readonly
+    password: "{{ planningalerts_production_readonly_mysql_password }}"
+    priv: 'pa-production.*:SELECT'
+    host: "%"
