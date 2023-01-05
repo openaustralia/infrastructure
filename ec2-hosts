@@ -8,7 +8,6 @@ oaf.org.au
 opengovernment.org.au
 electionleaflets.org.au
 au.proxy.oaf.org.au
-redash.oaf.org.au
 web.metabase.oaf.org.au
 
 [theyvoteforyou]
@@ -35,9 +34,6 @@ electionleaflets.org.au
 
 [proxy]
 au.proxy.oaf.org.au
-
-[redash]
-redash.oaf.org.au
 
 [metabase]
 web.metabase.oaf.org.au

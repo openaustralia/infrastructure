@@ -29,13 +29,6 @@ resource "cloudflare_record" "au_proxy" {
   value   = aws_eip.au_proxy.public_ip
 }
 
-resource "cloudflare_record" "redash" {
-  zone_id = var.oaf_org_au_zone_id
-  name    = "redash.oaf.org.au"
-  type    = "A"
-  value   = aws_eip.redash.public_ip
-}
-
 resource "cloudflare_record" "web_metabase" {
   zone_id = var.oaf_org_au_zone_id
   name    = "web.metabase.oaf.org.au"

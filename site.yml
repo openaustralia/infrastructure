@@ -129,11 +129,6 @@
   roles:
     - proxy
 
-- hosts: redash
-  become: true
-  roles:
-    - redash
-
 - hosts: metabase
   become: true
   roles:
