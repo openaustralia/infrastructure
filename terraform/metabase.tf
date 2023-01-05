@@ -10,7 +10,7 @@ resource "aws_instance" "metabase" {
   # This security group also lets in port 9000 for staging which we're not using
   security_groups = [aws_security_group.planningalerts.name]
 
-  # disable_api_termination = true
+  disable_api_termination = true
   iam_instance_profile = aws_iam_instance_profile.logging.name
 }
 
