@@ -140,3 +140,15 @@
     - name: Install redis
       apt:
         name: redis
+    - name: Make redis listen on 0.0.0.0
+      lineinfile:
+        path: /etc/redis/redis.conf
+        regexp: "^bind 127.0.0.1"
+        line: "bind 0.0.0.0"
+      notify:
+        - Restart redis
+  handlers:
+    - name: Restart redis
+      service:
+        name: redis
+        state: restarted
