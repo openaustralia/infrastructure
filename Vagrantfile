@@ -118,7 +118,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "postgresql.test"                 => "192.168.56.18",
     "opengovernment.org.au.test"      => "192.168.56.19",
     "au.proxy.oaf.org.au.test"        => "192.168.56.20",
-    "web.metabase.oaf.org.au.test"        => "192.168.56.21"
+    "web.metabase.oaf.org.au.test"    => "192.168.56.21"
   }
 
   # Use this so that you don't need to give the machine name for all vagrant
@@ -128,18 +128,22 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   hosts.each do |hostname, ip|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.box = case hostname
-                    when "web.metabase.oaf.org.au.test"
-                      "ubuntu/jammy64"
                     # Only a few services so far are using a more recent version of Ubuntu
+                    when "web.metabase.oaf.org.au.test"
+                      # jammy "standard" support ends in April 2027
+                      "ubuntu/jammy64"
                     when "theyvoteforyou.org.au.test"
                       # focal "standard" support ends in April 2025
                       "ubuntu/focal64"
                     when "righttoknow.org.au.test", "oaf.org.au.test"
                       # bionic "standard" support ends in April 2023
                       "ubuntu/bionic64"
-                    else
+                    when "web1.planningalerts.org.au.test", "web2.planningalerts.org.au.test", "electionleaflets.org.au.test", "openaustralia.org.au.test",
+                         "opengovernment.org.au.test", "au.proxy.oaf.org.au.test", "mysql.test", "postgresql.test"
                       # xenial "standard" support ended in April 2021!
                       "ubuntu/xenial64"
+                    else
+                      raise "Couldn't figure out version of ubuntu"
                     end
       host.vm.network :private_network, ip: ip
       host.vm.hostname = hostname
