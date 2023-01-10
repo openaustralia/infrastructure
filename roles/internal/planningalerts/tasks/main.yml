@@ -28,10 +28,12 @@
     state: present
 
 - name: Install memcached
-  apt: pkg=memcached
+  apt:
+    pkg: memcached
 
 - name: Install dependency for ansible mysql_db module
-  apt: pkg=python-mysqldb
+  apt:
+    pkg: python-mysqldb
   when: primary | bool
 
 - name: Create planningalerts databases
