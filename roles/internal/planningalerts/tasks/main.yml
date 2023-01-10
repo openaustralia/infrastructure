@@ -32,7 +32,7 @@
 
 - name: Install dependency for ansible mysql_db module
   apt: pkg=python-mysqldb
-  when: primary
+  when: primary | bool
 
 - name: Create planningalerts databases
   mysql_db:
@@ -43,7 +43,7 @@
   with_items:
     - production
     - staging
-  when: primary
+  when: primary | bool
 
 - name: Create planningalerts user with access to the database (production)
   mysql_user:
@@ -54,7 +54,7 @@
     password: "{{ planningalerts_production_mysql_password }}"
     priv: 'pa-production.*:ALL'
     host: "%"
-  when: primary
+  when: primary | bool
 
 - name: Create planningalerts user with access to the database (staging)
   mysql_user:
@@ -65,7 +65,7 @@
     password: "{{ planningalerts_staging_mysql_password }}"
     priv: 'pa-staging.*:ALL'
     host: "%"
-  when: primary
+  when: primary | bool
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
@@ -189,7 +189,7 @@
     minute: 0
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:import_and_email RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  when: primary
+  when: primary | bool
 
 - name: PlanningAlerts daily XML sitemap generation
   cron:
@@ -208,7 +208,7 @@
     minute: 20
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:elasticsearch_snapshot RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  when: primary
+  when: primary | bool
 
 # TODO: Do we want scraping and email to happen for staging too?
 
