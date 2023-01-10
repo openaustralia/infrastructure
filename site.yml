@@ -133,3 +133,10 @@
   become: true
   roles:
     - metabase
+
+- hosts: redis
+  become: true
+  tasks:
+    - name: Install redis
+      apt:
+        name: redis

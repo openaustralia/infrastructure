@@ -71,11 +71,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "theyvoteforyou"   => ["theyvoteforyou.org.au.test"],
       "oaf"              => ["oaf.org.au.test"],
       "openaustralia"    => ["openaustralia.org.au.test"],
-      "mysql"            => ["mysql.test"],
-      "postgresql"       => ["postgresql.test"],
       "opengovernment"   => ["opengovernment.org.au.test"],
       "proxy"            => ["au.proxy.oaf.org.au.test"],
       "metabase"         => ["web.metabase.oaf.org.au.test"],
+      "mysql"            => ["mysql.test"],
+      "postgresql"       => ["postgresql.test"],
+      "redis"            => ["redis.test"],
       "development"      => [
         "righttoknow.org.au.test",
         "web1.planningalerts.org.au.test",
@@ -84,11 +85,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "theyvoteforyou.org.au.test",
         "oaf.org.au.test",
         "openaustralia.org.au.test",
-        "mysql.test",
-        "postgresql.test",
         "opengovernment.org.au.test",
         "au.proxy.oaf.org.au.test",
-        "web.metabase.oaf.org.au.test"
+        "web.metabase.oaf.org.au.test",
+        "mysql.test",
+        "postgresql.test",
+        "redis.test"
       ]
     }
 
@@ -118,7 +120,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "postgresql.test"                 => "192.168.56.18",
     "opengovernment.org.au.test"      => "192.168.56.19",
     "au.proxy.oaf.org.au.test"        => "192.168.56.20",
-    "web.metabase.oaf.org.au.test"    => "192.168.56.21"
+    "web.metabase.oaf.org.au.test"    => "192.168.56.21",
+    "redis.test"                      => "192.168.56.22"
   }
 
   # Use this so that you don't need to give the machine name for all vagrant
@@ -129,7 +132,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.box = case hostname
                     # Only a few services so far are using a more recent version of Ubuntu
-                    when "web.metabase.oaf.org.au.test"
+                    when "web.metabase.oaf.org.au.test", "redis.test"
                       # jammy "standard" support ends in April 2027
                       "ubuntu/jammy64"
                     when "theyvoteforyou.org.au.test"
