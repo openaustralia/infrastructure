@@ -188,8 +188,8 @@
   cron:
     name: planningalerts_import_and_email
     user: deploy
-    hour: 12
-    minute: 0
+    hour: "12"
+    minute: "0"
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:import_and_email RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   when: primary | bool
@@ -198,8 +198,8 @@
   cron:
     name: planningalerts_sitemap
     user: deploy
-    hour: 15
-    minute: 0
+    hour: "15"
+    minute: "0"
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:sitemap RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
@@ -207,8 +207,8 @@
   cron:
     name: planningalerts_elasticsearch_snapshot
     user: deploy
-    hour: 3
-    minute: 20
+    hour: "3"
+    minute: "20"
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:elasticsearch_snapshot RAILS_ENV=production"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   when: primary | bool
