@@ -36,7 +36,7 @@ resource "aws_instance" "planningalerts" {
 }
 
 resource "aws_instance" "new_planningalerts" {
-  count = 1
+  count = 2
   ami = var.ubuntu_22_ami
 
   instance_type = "t3.medium"

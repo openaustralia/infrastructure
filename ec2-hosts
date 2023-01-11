@@ -4,6 +4,7 @@ theyvoteforyou.org.au
 # web1.planningalerts.org.au
 # web2.planningalerts.org.au
 new.web1.planningalerts.org.au
+new.web2.planningalerts.org.au
 openaustralia.org.au
 righttoknow.org.au
 oaf.org.au
@@ -20,6 +21,7 @@ theyvoteforyou.org.au
 # web1.planningalerts.org.au primary=true
 # web2.planningalerts.org.au primary=false
 new.web1.planningalerts.org.au primary=false
+new.web2.planningalerts.org.au primary=false
 
 [openaustralia]
 openaustralia.org.au
