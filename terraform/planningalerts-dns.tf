@@ -12,7 +12,7 @@ variable "planningalerts_org_au_zone_id" {
 #   value   = aws_eip.planningalerts[count.index].public_ip
 # }
 
-resource "cloudflare_record" "new_pa_web" {
+resource "cloudflare_record" "pa_web" {
   count = length(aws_eip.new_planningalerts)
   zone_id = var.planningalerts_org_au_zone_id
   name    = "new.web${count.index+1}.planningalerts.org.au"
