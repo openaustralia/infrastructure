@@ -35,11 +35,38 @@ resource "aws_instance" "planningalerts" {
   availability_zone = var.availability_zones[count.index % 3]
 }
 
+resource "aws_instance" "new_planningalerts" {
+  count = 1
+  ami = var.ubuntu_22_ami
+
+  instance_type = "t3.medium"
+  ebs_optimized = true
+  key_name      = aws_key_pair.deployer.key_name
+  tags = {
+    Name = "new.web${count.index+1}.planningalerts"
+  }
+  security_groups         = [
+    aws_security_group.planningalerts.name
+  ]
+  disable_api_termination = true
+  iam_instance_profile    = aws_iam_instance_profile.logging.name
+
+  availability_zone = var.availability_zones[count.index % 3]
+}
+
 resource "aws_eip" "planningalerts" {
   count = length(aws_instance.planningalerts)
   instance = aws_instance.planningalerts[count.index].id
   tags = {
     Name = "planningalerts"
+  }
+}
+
+resource "aws_eip" "new_planningalerts" {
+  count = length(aws_instance.new_planningalerts)
+  instance = aws_instance.new_planningalerts[count.index].id
+  tags = {
+    Name = "new_planningalerts"
   }
 }
 
