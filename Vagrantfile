@@ -132,10 +132,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.box = case hostname
                     # Only a few services so far are using a more recent version of Ubuntu
-                    when "web.metabase.oaf.org.au.test", "redis.test"
+                    when "web.metabase.oaf.org.au.test", "redis.test", "web1.planningalerts.org.au.test", "web2.planningalerts.org.au.test"
                       # jammy (22.04 LTS) "standard" support ends in April 2027
                       "ubuntu/jammy64"
-                    when "theyvoteforyou.org.au.test", "web1.planningalerts.org.au.test", "web2.planningalerts.org.au.test"
+                    when "theyvoteforyou.org.au.test"
                       # focal (20.04 LTS) "standard" support ends in April 2025
                       "ubuntu/focal64"
                     when "righttoknow.org.au.test", "oaf.org.au.test"
