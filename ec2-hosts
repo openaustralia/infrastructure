@@ -1,7 +1,9 @@
 [ec2]
 theyvoteforyou.org.au
-web1.planningalerts.org.au
-web2.planningalerts.org.au
+# For the time being we don't want to touch the original PA servers
+# web1.planningalerts.org.au
+# web2.planningalerts.org.au
+new.web1.planningalerts.org.au
 openaustralia.org.au
 righttoknow.org.au
 oaf.org.au
@@ -14,8 +16,10 @@ web.metabase.oaf.org.au
 theyvoteforyou.org.au
 
 [planningalerts]
-web1.planningalerts.org.au primary=true
-web2.planningalerts.org.au primary=false
+# For the time being we don't want to touch the original PA servers
+# web1.planningalerts.org.au primary=true
+# web2.planningalerts.org.au primary=false
+new.web1.planningalerts.org.au primary=false
 
 [openaustralia]
 openaustralia.org.au
