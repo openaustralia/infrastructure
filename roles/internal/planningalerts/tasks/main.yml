@@ -33,7 +33,7 @@
 
 - name: Install dependency for ansible mysql_db module
   apt:
-    pkg: python-mysqldb
+    pkg: python3-mysqldb
   when: primary | bool
 
 - name: Create planningalerts databases
