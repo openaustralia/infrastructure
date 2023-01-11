@@ -54,19 +54,11 @@ resource "aws_instance" "planningalerts" {
   availability_zone = var.availability_zones[count.index % 3]
 }
 
-# resource "aws_eip" "planningalerts" {
-#   count = length(aws_instance.planningalerts)
-#   instance = aws_instance.planningalerts[count.index].id
-#   tags = {
-#     Name = "planningalerts"
-#   }
-# }
-
 resource "aws_eip" "new_planningalerts" {
   count = length(aws_instance.planningalerts)
   instance = aws_instance.planningalerts[count.index].id
   tags = {
-    Name = "new_planningalerts"
+    Name = "planningalerts"
   }
 }
 
