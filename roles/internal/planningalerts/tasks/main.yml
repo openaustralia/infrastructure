@@ -149,7 +149,8 @@
     - staging
 
 - name: Install nginx now
-  apt: pkg=nginx
+  apt:
+    pkg: nginx
   when: "'ec2' in group_names"
 
 - name: Copy nginx main configuration
