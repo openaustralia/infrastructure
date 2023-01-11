@@ -133,17 +133,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       host.vm.box = case hostname
                     # Only a few services so far are using a more recent version of Ubuntu
                     when "web.metabase.oaf.org.au.test", "redis.test"
-                      # jammy "standard" support ends in April 2027
+                      # jammy (22.04 LTS) "standard" support ends in April 2027
                       "ubuntu/jammy64"
                     when "theyvoteforyou.org.au.test"
-                      # focal "standard" support ends in April 2025
+                      # focal (20.04 LTS) "standard" support ends in April 2025
                       "ubuntu/focal64"
                     when "righttoknow.org.au.test", "oaf.org.au.test"
-                      # bionic "standard" support ends in April 2023
+                      # bionic (18.04 LTS) "standard" support ends in April 2023
                       "ubuntu/bionic64"
                     when "web1.planningalerts.org.au.test", "web2.planningalerts.org.au.test", "electionleaflets.org.au.test", "openaustralia.org.au.test",
                          "opengovernment.org.au.test", "au.proxy.oaf.org.au.test", "mysql.test", "postgresql.test"
-                      # xenial "standard" support ended in April 2021!
+                      # xenial (16.04 LTS) "standard" support ended in April 2021!
                       "ubuntu/xenial64"
                     else
                       raise "Couldn't figure out version of ubuntu"
