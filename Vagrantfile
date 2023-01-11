@@ -138,10 +138,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                     when "theyvoteforyou.org.au.test"
                       # focal (20.04 LTS) "standard" support ends in April 2025
                       "ubuntu/focal64"
-                    when "righttoknow.org.au.test", "oaf.org.au.test"
+                    when "righttoknow.org.au.test", "oaf.org.au.test", "web1.planningalerts.org.au.test", "web2.planningalerts.org.au.test"
                       # bionic (18.04 LTS) "standard" support ends in April 2023
                       "ubuntu/bionic64"
-                    when "web1.planningalerts.org.au.test", "web2.planningalerts.org.au.test", "electionleaflets.org.au.test", "openaustralia.org.au.test",
+                    when "electionleaflets.org.au.test", "openaustralia.org.au.test",
                          "opengovernment.org.au.test", "au.proxy.oaf.org.au.test", "mysql.test", "postgresql.test"
                       # xenial (16.04 LTS) "standard" support ended in April 2021!
                       "ubuntu/xenial64"
