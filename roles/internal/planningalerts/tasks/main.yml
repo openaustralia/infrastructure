@@ -23,8 +23,8 @@
 - name: Install nginx
   apt:
     pkg:
-      - nginx-extras
-      - passenger
+      - libnginx-mod-http-passenger
+      - nginx
     state: present
 
 - name: Install memcached
@@ -153,11 +153,13 @@
     pkg: nginx
   when: "'ec2' in group_names"
 
-- name: Copy nginx main configuration
-  copy:
-    src: nginx.conf
-    dest: /etc/nginx/
-  notify: nginx restart
+# We're using the default nginx config under 18.04
+
+# - name: Copy nginx main configuration
+#   copy:
+#     src: nginx.conf
+#     dest: /etc/nginx/
+#   notify: nginx restart
 
 - name: Copy test/test password for staging site
   copy:
