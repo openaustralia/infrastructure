@@ -151,6 +151,18 @@ resource "aws_lb_target_group_attachment" "planningalerts-staging" {
   target_id        = aws_instance.planningalerts[count.index].id
 }
 
+resource "aws_lb_target_group_attachment" "new_planningalerts-production" {
+  count = length(aws_instance.new_planningalerts)
+  target_group_arn = aws_lb_target_group.planningalerts-production.arn
+  target_id        = aws_instance.new_planningalerts[count.index].id
+}
+
+resource "aws_lb_target_group_attachment" "new_planningalerts-staging" {
+  count = length(aws_instance.new_planningalerts)
+  target_group_arn = aws_lb_target_group.planningalerts-staging.arn
+  target_id        = aws_instance.new_planningalerts[count.index].id
+}
+
 resource "aws_acm_certificate" "planningalerts-production" {
   domain_name       = "planningalerts.org.au"
   subject_alternative_names = [
