@@ -4,13 +4,13 @@ variable "planningalerts_org_au_zone_id" {
 
 # A records
 
-resource "cloudflare_record" "pa_web" {
-  count = length(aws_eip.planningalerts)
-  zone_id = var.planningalerts_org_au_zone_id
-  name    = "web${count.index+1}.planningalerts.org.au"
-  type    = "A"
-  value   = aws_eip.planningalerts[count.index].public_ip
-}
+# resource "cloudflare_record" "pa_web" {
+#   count = length(aws_eip.planningalerts)
+#   zone_id = var.planningalerts_org_au_zone_id
+#   name    = "web${count.index+1}.planningalerts.org.au"
+#   type    = "A"
+#   value   = aws_eip.planningalerts[count.index].public_ip
+# }
 
 resource "cloudflare_record" "new_pa_web" {
   count = length(aws_eip.new_planningalerts)
