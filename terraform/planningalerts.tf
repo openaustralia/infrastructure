@@ -251,3 +251,53 @@ resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
     }
   }
 }
+
+resource "google_apikeys_key" "google_maps_email_key" {
+    display_name = "PlanningAlerts Web API Key (google_maps_email_key)"
+    name         = "8405437045225725397"
+
+    restrictions {
+        browser_key_restrictions {
+            allowed_referrers = [
+                "https://planningalerts.org.au",
+                "https://www.planningalerts.org.au",
+                "https://test.planningalerts.org.au",
+                "https://www.test.planningalerts.org.au",
+                "http://localhost:3000",
+                "https://cuttlefish.oaf.org.au",
+                "http://localhost:5200",
+            ]
+        }
+    }
+}
+
+resource "google_apikeys_key" "google_maps_key" {
+    display_name = "PlanningAlerts Web Static Street View key (google_maps_key)"
+    name         = "3f2cc059-ec01-4c0a-bc43-a5e9d1daa993"
+
+    restrictions {
+        browser_key_restrictions {
+            allowed_referrers = [
+                "https://planningalerts.org.au",
+                "https://www.planningalerts.org.au",
+                "https://test.planningalerts.org.au",
+                "https://www.test.planningalerts.org.au",
+                "http://localhost:3000",
+                "https://cuttlefish.oaf.org.au",
+            ]
+        }
+    }
+}
+
+resource "google_apikeys_key" "google_maps_server_key" {
+    display_name = "PlanningAlerts Server API key (google_maps_server_key)"
+    name         = "e401e298-4aa7-4ee8-a53e-06b6da107b2a"
+    restrictions {
+        server_key_restrictions {
+            allowed_ips = [
+                "54.79.103.175",
+                "52.62.197.255",
+            ]
+        }
+    }
+}

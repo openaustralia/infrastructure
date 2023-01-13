@@ -17,3 +17,13 @@ provider "aws" {
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
+
+# To use this provider we authenticate with:
+# gcloud auth application-default login
+provider "google" {
+  project = "planningalerts-214303"
+  region = "australia-southeast1"
+  zone = "australia-southeast1-a"
+  user_project_override = true
+  billing_project = "planningalerts-214303"
+}
