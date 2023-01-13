@@ -263,9 +263,8 @@ resource "google_apikeys_key" "google_maps_email_key" {
                 "https://www.planningalerts.org.au",
                 "https://test.planningalerts.org.au",
                 "https://www.test.planningalerts.org.au",
-                "http://localhost:3000",
                 "https://cuttlefish.oaf.org.au",
-                "http://localhost:5200",
+                "http://localhost:3000",
             ]
         }
     }
@@ -282,8 +281,8 @@ resource "google_apikeys_key" "google_maps_key" {
                 "https://www.planningalerts.org.au",
                 "https://test.planningalerts.org.au",
                 "https://www.test.planningalerts.org.au",
-                "http://localhost:3000",
                 "https://cuttlefish.oaf.org.au",
+                "http://localhost:3000",
             ]
         }
     }
