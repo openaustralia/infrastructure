@@ -294,10 +294,7 @@ resource "google_apikeys_key" "google_maps_server_key" {
     name         = "e401e298-4aa7-4ee8-a53e-06b6da107b2a"
     restrictions {
         server_key_restrictions {
-            allowed_ips = [
-                "54.79.103.175",
-                "52.62.197.255",
-            ]
+            allowed_ips = aws_eip.planningalerts[*].public_ip
         }
     }
 }
