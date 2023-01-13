@@ -252,6 +252,8 @@ resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
   }
 }
 
+# TODO: Check usage of all these keys and how they are set up
+# TODO: Probably all these keys could do with rotation. They've been in use for a while now.
 resource "google_apikeys_key" "google_maps_email_key" {
     display_name = "PlanningAlerts Web API Key (google_maps_email_key)"
     name         = "8405437045225725397"
