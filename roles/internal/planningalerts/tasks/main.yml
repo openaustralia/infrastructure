@@ -34,7 +34,6 @@
 - name: Install dependency for ansible mysql_db module
   apt:
     pkg: python3-mysqldb
-  when: primary | bool
 
 - name: Create planningalerts databases
   mysql_db:
@@ -45,7 +44,6 @@
   with_items:
     - production
     - staging
-  when: primary | bool
 
 - name: Create planningalerts user with access to the database (production)
   mysql_user:
@@ -56,7 +54,6 @@
     password: "{{ planningalerts_production_mysql_password }}"
     priv: 'pa-production.*:ALL'
     host: "%"
-  when: primary | bool
 
 - name: Create planningalerts user with access to the database (staging)
   mysql_user:
@@ -67,7 +64,6 @@
     password: "{{ planningalerts_staging_mysql_password }}"
     priv: 'pa-staging.*:ALL'
     host: "%"
-  when: primary | bool
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:

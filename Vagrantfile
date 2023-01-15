@@ -93,13 +93,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "redis.test"
       ]
     }
-
-    # "primary" indicates that it's a slightly special instance in a cluster
-    # It's the one we run cron jobs on
-    ansible.host_vars = {
-      "web1.planningalerts.org.au.test" => { "primary" => true },
-      "web2.planningalerts.org.au.test" => { "primary" => false }
-    }
   end
 
   config.vm.provider "virtualbox" do |v|
