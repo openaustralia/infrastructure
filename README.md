@@ -284,18 +284,18 @@ After provisioning, deploy from the [PlanningAlerts repository](https://github.c
 #### Deploying PlanningAlerts to your local development server
 The first time run:
 ```
-bundle exec cap -S stage=development deploy:setup deploy:cold foreman:start
+bundle exec cap development deploy:setup deploy:cold foreman:start
 ```
 
 Thereafter:
 ```
-bundle exec cap -S stage=development deploy
+bundle exec cap development deploy
 ```
 
 #### Deploying PlanningAlerts to production
 
 ```
-bundle exec cap -S stage=production deploy
+bundle exec cap production deploy
 ```
 
 ### Running tests locally
