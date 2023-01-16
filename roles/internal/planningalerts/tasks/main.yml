@@ -74,8 +74,18 @@
   with_items:
     - /srv/www/production
     - /srv/www/production/shared
+    - /srv/www/production/shared/config
+    - /srv/www/production/shared/log
+    - /srv/www/production/shared/public
+    - /srv/www/production/shared/sitemaps
+    - /srv/www/production/shared/system
     - /srv/www/staging
     - /srv/www/staging/shared
+    - /srv/www/staging/shared/config
+    - /srv/www/staging/shared/log
+    - /srv/www/staging/shared/public
+    - /srv/www/staging/shared/sitemaps
+    - /srv/www/staging/shared/system
 
 - name: Ensure packages to build gem native extensions are installed
   apt:
@@ -92,10 +102,29 @@
     - staging
   notify: nginx reload
 
+- name: Copy application database configuration
+  template:
+    src: "database-{{ item }}.yml"
+    dest: /srv/www/{{ item }}/shared/config/database.yml
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
+  notify: nginx reload
+
 - name: Copy application new relic configuration
   template:
     src: newrelic.yml
     dest: /srv/www/production/shared/
+    owner: deploy
+    group: deploy
+  notify: nginx reload
+
+- name: Copy application new relic configuration
+  template:
+    src: newrelic.yml
+    dest: /srv/www/production/shared/config
     owner: deploy
     group: deploy
   notify: nginx reload
@@ -113,36 +142,6 @@
     - production
     - staging
   notify: nginx restart
-
-- name: Ensure the log directories exist
-  file:
-    state: directory
-    path: "/srv/www/{{ item }}/shared/log"
-    owner: deploy
-    group: deploy
-  with_items:
-    - production
-    - staging
-
-- name: Ensure the sitemaps directories exist
-  file:
-    state: directory
-    path: "/srv/www/{{ item }}/shared/sitemaps"
-    owner: deploy
-    group: deploy
-  with_items:
-    - production
-    - staging
-
-- name: Ensure the system directories exist
-  file:
-    state: directory
-    path: "/srv/www/{{ item }}/shared/system"
-    owner: deploy
-    group: deploy
-  with_items:
-    - production
-    - staging
 
 - name: Install nginx now
   apt:
