@@ -143,6 +143,18 @@
     - staging
   notify: nginx restart
 
+# This is so that cap 3 deploys will work which check the existence of the file on the other
+# end of the symbolic link
+- name: Ensure that sitemap.xml exists 
+  file:
+    path: "/srv/www/{{ item }}/shared/public/sitemap.xml"
+    owner: deploy
+    group: deploy
+    state: touch
+  with_items:
+    - production
+    - staging
+
 - name: Install nginx now
   apt:
     pkg: nginx
