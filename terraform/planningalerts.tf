@@ -12,6 +12,8 @@ resource "aws_instance" "planningalerts" {
   key_name      = aws_key_pair.deployer.key_name
   tags = {
     Name = "web${count.index+1}.planningalerts"
+    # The Application tag is used by capistrano to figure out which instances to deploy to
+    Application = "planningalerts"
   }
   security_groups         = [
     aws_security_group.planningalerts.name
