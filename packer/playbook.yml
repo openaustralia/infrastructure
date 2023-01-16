@@ -1,0 +1,67 @@
+# Ubuntu 16.04 LTS doesn't come with python pre-installed. We need that for
+# Ansible to work (for the gather facts). So install python first
+# - hosts: default
+#   become: true
+#   gather_facts: False
+
+#   tasks:
+#   - name: install python 2 (or python 3 on Ubuntu 20.04)
+#     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal) || apt install -y python-is-python3
+#     changed_when: False
+
+- hosts: default
+  become: true
+  tasks:
+    # Too strange. Installing this after an update doesn't work. It doesn't find it.
+    - name: Install python
+      apt:
+        pkg: "python-is-python3"
+
+    - name: apt update
+      apt:
+        update_cache: true
+    
+    - name: Install pip
+      apt:
+        pkg: python-pip
+      when: ansible_distribution_release != 'focal' and ansible_distribution_release != 'jammy'
+
+    - name: Install pip
+      apt:
+        pkg: python3-pip
+      when: ansible_distribution_release == 'focal' or ansible_distribution_release == 'jammy'
+
+    - name: Install boto which is required for EC2 stuff
+      pip: name=boto
+
+    - name: Get information about the RDS instance
+      rds:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        command: facts
+        instance_name: main-database
+        region: "{{ ec2_region }}"
+      register: rds_mysql
+      # Run this task even when running ansible-playbook with "--check"
+      check_mode: no
+
+    - name: Get information about the postgresql RDS instance
+      rds:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        command: facts
+        instance_name: postgresql
+        region: "{{ ec2_region }}"
+      register: rds_postgresql
+      # Run this task even when running ansible-playbook with "--check"
+      check_mode: no
+
+- hosts: default
+  become: true
+  roles:
+    - base-server
+
+- hosts: default
+  become: true
+  roles:
+    - planningalerts
