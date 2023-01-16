@@ -1,8 +1,8 @@
 deploy  ALL = NOPASSWD: /usr/local/rvm/wrappers/default/bundle exec foreman export *
-deploy  ALL = NOPASSWD: /bin/systemctl enable planningalerts-test-test.target
+deploy  ALL = NOPASSWD: /bin/systemctl enable planningalerts-staging.target
 deploy  ALL = NOPASSWD: /bin/systemctl enable planningalerts-production.target
 deploy  ALL = NOPASSWD: /bin/systemctl enable planningalerts-development.target
-deploy  ALL = NOPASSWD: /bin/systemctl restart planningalerts-test-test.target
+deploy  ALL = NOPASSWD: /bin/systemctl restart planningalerts-staging.target
 deploy  ALL = NOPASSWD: /bin/systemctl restart planningalerts-production.target
 deploy  ALL = NOPASSWD: /bin/systemctl restart planningalerts-development.target
 
