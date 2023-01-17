@@ -11,7 +11,7 @@ resource "aws_instance" "planningalerts-blue" {
   ebs_optimized = true
   key_name      = aws_key_pair.deployer.key_name
   tags = {
-    Name = "web${count.index+1}.planningalerts"
+    Name = "web${count.index+1}.blue.planningalerts"
     # The Application and Roles tag are used by capistrano-aws to figure out which instances to deploy to
     Application = "planningalerts"
     Roles = "app,web,db"
