@@ -7,7 +7,7 @@ variable "planningalerts_enable_blue_env" {
 variable "planningalerts_enable_green_env" {
   description = "Enable planningalerts green environment"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "planningalerts_blue_instance_count" {
