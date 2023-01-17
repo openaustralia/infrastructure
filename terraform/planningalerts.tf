@@ -3,7 +3,7 @@ variable "availability_zones" {
   default = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
 }
 
-resource "aws_instance" "planningalerts" {
+resource "aws_instance" "planningalerts-blue" {
   count = 2
   ami = var.ubuntu_22_ami
 
@@ -26,8 +26,8 @@ resource "aws_instance" "planningalerts" {
 }
 
 resource "aws_eip" "planningalerts" {
-  count = length(aws_instance.planningalerts)
-  instance = aws_instance.planningalerts[count.index].id
+  count = length(aws_instance.planningalerts-blue)
+  instance = aws_instance.planningalerts-blue[count.index].id
   tags = {
     Name = "planningalerts"
   }
@@ -103,15 +103,15 @@ resource "aws_lb_target_group" "planningalerts-staging" {
 }
 
 resource "aws_lb_target_group_attachment" "planningalerts-production" {
-  count = length(aws_instance.planningalerts)
+  count = length(aws_instance.planningalerts-blue)
   target_group_arn = aws_lb_target_group.planningalerts-production.arn
-  target_id        = aws_instance.planningalerts[count.index].id
+  target_id        = aws_instance.planningalerts-blue[count.index].id
 }
 
 resource "aws_lb_target_group_attachment" "planningalerts-staging" {
-  count = length(aws_instance.planningalerts)
+  count = length(aws_instance.planningalerts-blue)
   target_group_arn = aws_lb_target_group.planningalerts-staging.arn
-  target_id        = aws_instance.planningalerts[count.index].id
+  target_id        = aws_instance.planningalerts-blue[count.index].id
 }
 
 resource "aws_acm_certificate" "planningalerts-production" {
