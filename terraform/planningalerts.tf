@@ -123,13 +123,13 @@ resource "aws_lb_target_group" "planningalerts-staging" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "planningalerts-production" {
+resource "aws_lb_target_group_attachment" "planningalerts-blue-production" {
   count = length(aws_instance.planningalerts-blue)
   target_group_arn = aws_lb_target_group.planningalerts-production.arn
   target_id        = aws_instance.planningalerts-blue[count.index].id
 }
 
-resource "aws_lb_target_group_attachment" "planningalerts-staging" {
+resource "aws_lb_target_group_attachment" "planningalerts-blue-staging" {
   count = length(aws_instance.planningalerts-blue)
   target_group_arn = aws_lb_target_group.planningalerts-staging.arn
   target_id        = aws_instance.planningalerts-blue[count.index].id
