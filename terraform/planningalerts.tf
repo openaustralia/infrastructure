@@ -4,8 +4,8 @@ variable "availability_zones" {
 }
 
 resource "aws_instance" "planningalerts-blue" {
-  count = 2
-  ami = var.ubuntu_22_ami
+  count = var.planningalerts_enable_blue_env ? var.planningalerts_blue_instance_count : 0
+  ami = var.planningalerts_blue_ami
 
   instance_type = "t3.medium"
   ebs_optimized = true
