@@ -331,7 +331,7 @@ resource "google_apikeys_key" "google_maps_server_key" {
     name         = "e401e298-4aa7-4ee8-a53e-06b6da107b2a"
     restrictions {
         server_key_restrictions {
-            allowed_ips = aws_instance.planningalerts-blue[*].public_ip
+            allowed_ips = concat(aws_instance.planningalerts-blue[*].public_ip, aws_instance.planningalerts-green[*].public_ip)
         }
     }
 }
