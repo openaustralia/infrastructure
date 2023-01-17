@@ -9,7 +9,7 @@ resource "cloudflare_record" "pa_web" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "web${count.index+1}.planningalerts.org.au"
   type    = "A"
-  value   = aws_eip.planningalerts[count.index].public_ip
+  value   = aws_instance.planningalerts-blue[count.index].public_ip
 }
 
 # CNAME records
