@@ -19,7 +19,6 @@ resource "aws_instance" "planningalerts-blue" {
   security_groups         = [
     aws_security_group.planningalerts.name
   ]
-  disable_api_termination = true
   iam_instance_profile    = aws_iam_instance_profile.logging.name
 
   availability_zone = var.availability_zones[count.index % 3]
