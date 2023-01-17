@@ -25,6 +25,27 @@ resource "aws_instance" "planningalerts-blue" {
   availability_zone = var.availability_zones[count.index % 3]
 }
 
+resource "aws_instance" "planningalerts-green" {
+  count = var.planningalerts_enable_green_env ? var.planningalerts_green_instance_count : 0
+  ami = var.planningalerts_green_ami
+
+  instance_type = "t3.medium"
+  ebs_optimized = true
+  key_name      = aws_key_pair.deployer.key_name
+  tags = {
+    Name = "web${count.index+1}.green.planningalerts"
+    # The Application and Roles tag are used by capistrano-aws to figure out which instances to deploy to
+    Application = "planningalerts"
+    Roles = "app,web,db"
+  }
+  security_groups         = [
+    aws_security_group.planningalerts.name
+  ]
+  iam_instance_profile    = aws_iam_instance_profile.logging.name
+
+  availability_zone = var.availability_zones[count.index % 3]
+}
+
 resource "aws_eip" "planningalerts" {
   count = length(aws_instance.planningalerts-blue)
   instance = aws_instance.planningalerts-blue[count.index].id
