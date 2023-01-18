@@ -4,7 +4,7 @@ variable "planningalerts_org_au_zone_id" {
 
 # A records
 
-resource "cloudflare_record" "pa_web" {
+resource "cloudflare_record" "pa_web_blue" {
   count = length(aws_eip.planningalerts)
   zone_id = var.planningalerts_org_au_zone_id
   name    = "web${count.index+1}.planningalerts.org.au"
