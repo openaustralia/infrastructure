@@ -45,14 +45,6 @@ resource "aws_instance" "planningalerts-green" {
   availability_zone = var.availability_zones[count.index % 3]
 }
 
-resource "aws_eip" "planningalerts" {
-  count = length(aws_instance.planningalerts-blue)
-  instance = aws_instance.planningalerts-blue[count.index].id
-  tags = {
-    Name = "planningalerts"
-  }
-}
-
 resource "aws_elasticache_cluster" "planningalerts" {
   cluster_id           = "planningalerts"
   engine               = "redis"

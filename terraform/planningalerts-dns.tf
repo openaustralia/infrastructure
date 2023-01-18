@@ -5,7 +5,7 @@ variable "planningalerts_org_au_zone_id" {
 # A records
 
 resource "cloudflare_record" "pa_web_blue" {
-  count = length(aws_eip.planningalerts)
+  count = var.planningalerts_enable_blue_env ? length(aws_instance.planningalerts-blue) : 0
   zone_id = var.planningalerts_org_au_zone_id
   name    = "web${count.index+1}.planningalerts.org.au"
   type    = "A"
