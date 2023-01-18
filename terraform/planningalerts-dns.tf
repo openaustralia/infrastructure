@@ -7,9 +7,17 @@ variable "planningalerts_org_au_zone_id" {
 resource "cloudflare_record" "pa_web_blue" {
   count = var.planningalerts_enable_blue_env ? length(aws_instance.planningalerts-blue) : 0
   zone_id = var.planningalerts_org_au_zone_id
-  name    = "web${count.index+1}.planningalerts.org.au"
+  name    = "web${count.index+1}.blue.planningalerts.org.au"
   type    = "A"
   value   = aws_instance.planningalerts-blue[count.index].public_ip
+}
+
+resource "cloudflare_record" "pa_web_green" {
+  count = var.planningalerts_enable_green_env ? length(aws_instance.planningalerts-green) : 0
+  zone_id = var.planningalerts_org_au_zone_id
+  name    = "web${count.index+1}.green.planningalerts.org.au"
+  type    = "A"
+  value   = aws_instance.planningalerts-green[count.index].public_ip
 }
 
 # CNAME records
