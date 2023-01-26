@@ -73,3 +73,23 @@
     password: "{{ planningalerts_production_readonly_mysql_password }}"
     priv: 'pa-production.*:SELECT'
     host: "%"
+
+- name: Create posgresql user rtk-production-readonly
+  postgresql_user:
+    login_host: "{{ postgresql_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "rtk-production"
+    name: "rtk-production-readonly"
+    password: "{{ rtk_production_readonly_postgresql_password }}"
+    no_password_changes: true
+
+- name: Give the user rtk-production-readonly readonly access to the production righttoknow database
+  postgresql_privs:
+    login_host: "{{ postgresql_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "rtk-production"
+    role: "rtk-production-readonly"
+    privs: SELECT
+    objs: ALL_IN_SCHEMA
