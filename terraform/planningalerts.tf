@@ -330,3 +330,20 @@ resource "google_apikeys_key" "google_maps_server_key" {
 resource "aws_s3_bucket" "planningalerts_sitemaps_production" {
   bucket = "planningalerts-sitemaps-production"
 }
+
+resource "aws_iam_user" "planningalerts_sitemaps_production" {
+  name = "planningalerts-sitemaps-production"
+}
+
+resource "aws_iam_access_key" "planningalerts_sitemaps_production" {
+  user = aws_iam_user.planningalerts_sitemaps_production.name
+}
+
+# These values are needed by ansible for planningalerts
+output "planningalerts_sitemaps_production_secret_access_key" {
+  value = aws_iam_access_key.planningalerts_sitemaps_production.secret
+}
+
+output "planningalerts_sitemaps_production_access_key_id" {
+  value = aws_iam_access_key.planningalerts_sitemaps_production.id
+}
