@@ -326,3 +326,7 @@ resource "google_apikeys_key" "google_maps_server_key" {
         }
     }
 }
+
+resource "aws_s3_bucket" "planningalerts_sitemaps_production" {
+  bucket = "planningalerts-sitemaps-production"
+}
