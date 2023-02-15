@@ -347,3 +347,23 @@ output "planningalerts_sitemaps_production_secret_access_key" {
 output "planningalerts_sitemaps_production_access_key_id" {
   value = aws_iam_access_key.planningalerts_sitemaps_production.id
 }
+
+resource "aws_iam_user_policy" "upload_to_planningalerts_sitemaps" {
+  user   = aws_iam_user.planningalerts_sitemaps_production.name
+  name   = "upload"
+  policy = jsonencode(
+    {
+      Statement = [
+        {
+          Action   = [
+            "s3:PutObject",
+            "s3:PutObjectAcl",
+          ]
+          Effect   = "Allow"
+          Resource = "arn:aws:s3:::${aws_s3_bucket.planningalerts_sitemaps_production.bucket}/*"
+        },
+      ]
+      Version   = "2012-10-17"
+    }
+  )
+}
