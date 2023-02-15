@@ -191,39 +191,6 @@
     dest: /etc/sudoers.d/
     validate: visudo -cf %s
 
-- name: Set up (or remove) PlanningAlerts daily import and email job
-  cron:
-    name: planningalerts_import_and_email
-    user: deploy
-    hour: "12"
-    minute: "0"
-    job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake planningalerts:applications:import_and_email RAILS_ENV=production"
-    state: absent
-
-- name: PlanningAlerts daily XML sitemap generation
-  cron:
-    name: planningalerts_sitemap
-    user: deploy
-    hour: "15"
-    minute: "0"
-    # Using no_ping here because we don't want each host in turn to ping google in quick succession
-    job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake sitemap:refresh:no_ping RAILS_ENV=production"
-    state: absent
-
-# TODO: Do we want scraping and email to happen for staging too?
-
-- name: Install postfix so we can mail out from cron jobs
-  apt:
-    pkg: postfix
-
-# TODO: Make this mail to different addresses for development/production
-- name: Mail output of cron
-  cronvar:
-    name: MAILTO
-    user: deploy
-    value: web-administrators@openaustralia.org,q8z3f5c7d7g4e7m2@oaf.slack.com
-  when: "'ec2' in group_names"
-
 - name: Autoremove unneeded packages
   apt:
     autoremove: yes
