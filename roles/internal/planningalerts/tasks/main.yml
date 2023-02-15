@@ -208,7 +208,7 @@
     minute: "0"
     # Using no_ping here because we don't want each host in turn to ping google in quick succession
     job: "cd /srv/www/production/current && /usr/local/bin/bundle exec rake sitemap:refresh:no_ping RAILS_ENV=production"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+    state: absent
 
 # TODO: Do we want scraping and email to happen for staging too?
 
