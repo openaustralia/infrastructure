@@ -97,6 +97,13 @@ resource "cloudflare_record" "rtk_google_site_verification" {
   value   = "google-site-verification=ci77kXOm4-lxR3Tc1D1FlTzz0J_GWQES2wU5kFMIR-w"
 }
 
+resource "cloudflare_record" "rtk_facebook_domain_verification" {
+  zone_id = var.righttoknow_org_au_zone_id
+  name    = "righttoknow.org.au"
+  type    = "TXT"
+  value   = "facebook-domain-verification=vtlcbmfm4mihp4wql58lwz3nbhc8bt"
+}
+
 #Front DNS records
 resource "cloudflare_record" "oaf_rtk_front_mx" {
   zone_id  = var.righttoknow_org_au_zone_id

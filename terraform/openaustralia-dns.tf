@@ -258,6 +258,13 @@ resource "cloudflare_record" "oa_alt_google_site_verification" {
   value   = "google-site-verification=1xl-YdNs-D67htH3q438bFSGf1ThVHap5vXIFS6J0dI"
 }
 
+resource "cloudflare_record" "oa_alt_facebook_domain_verification" {
+  zone_id = var.openaustralia_org_au_zone_id
+  name    = "openaustralia.org.au"
+  type    = "TXT"
+  value   = "facebook-domain-verification=9fhej8uj8j643zkpahnblrfsst6iz5"
+}
+
 #Front DNS records
 resource "cloudflare_record" "oaf_oa_alt_front_mx" {
   zone_id  = var.openaustralia_org_au_zone_id

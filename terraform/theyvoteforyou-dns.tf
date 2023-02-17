@@ -130,6 +130,13 @@ resource "cloudflare_record" "google_site_verification" {
   value   = "google-site-verification=DHISCv3WoPmTzUWzYfzpeBd5NivPxC5a2s4uBdWZoY8"
 }
 
+resource "cloudflare_record" "facebook_domain_verification" {
+  zone_id = var.theyvoteforyou_org_au_zone_id
+  name    = "theyvoteforyou.org.au"
+  type    = "TXT"
+  value   = "facebook-domain-verification=gl65oi4ss3xepcuasglgxgqlhj1lbg"
+}
+
 ## theyvoteforyou.org
 
 resource "cloudflare_record" "alt1_root" {

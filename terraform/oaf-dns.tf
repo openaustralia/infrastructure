@@ -193,6 +193,13 @@ resource "cloudflare_record" "oaf_google_site_verification" {
   value   = "google-site-verification=RLhe_zgIDJMxpFFYFewv0KaRlWQvH-JDBxxpEV-8noY"
 }
 
+resource "cloudflare_record" "oaf_facebook_domain_verification" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "oaf.org.au"
+  type    = "TXT"
+  value   = "facebook-domain-verification=hfy8rxjyjsmjynz68xr373fy86lg4o"
+}
+
 resource "cloudflare_record" "oaf_cuttlefish_spf" {
   zone_id = var.oaf_org_au_zone_id
   name    = "cuttlefish.oaf.org.au"
