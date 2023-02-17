@@ -135,6 +135,13 @@ resource "cloudflare_record" "pa_google_site_verification" {
   value   = "google-site-verification=wZp42fwpmr6aGdCVqp7BJBn_kenD51hYLig7cMOFIBs"
 }
 
+resource "cloudflare_record" "pa_facebook_domain_verification" {
+  zone_id = var.planningalerts_org_au_zone_id
+  name    = "planningalerts.org.au"
+  type    = "TXT"
+  value   = "facebook-domain-verification=djdz2wywxnas3cxhrch14pfk145g93"
+}
+
 # TODO: Remove this once the one below is up and running
 resource "cloudflare_record" "pa_domainkey" {
   zone_id = var.planningalerts_org_au_zone_id
