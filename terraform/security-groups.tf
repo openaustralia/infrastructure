@@ -245,3 +245,17 @@ resource "aws_security_group" "redis-planningalerts" {
     ipv6_cidr_blocks = ["::/0"]
   }
 }
+
+# In our setup we have a memcached server running alongside each webserver node
+# so, each node acts as both a memcached client and server
+resource "aws_security_group" "planningalerts_memcached_server" {
+  name = "planningalerts-memcached-server"
+  description = "memcached servers for planningalerts"
+
+  ingress {
+    from_port = 11211
+    to_port   = 11211
+    protocol  = "tcp"
+    security_groups = [ aws_security_group.planningalerts.id ]
+  }
+}

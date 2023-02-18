@@ -17,7 +17,8 @@ resource "aws_instance" "planningalerts-blue" {
     Roles = "app,web,db"
   }
   security_groups         = [
-    aws_security_group.planningalerts.name
+    aws_security_group.planningalerts.name,
+    aws_security_group.planningalerts_memcached_server.name
   ]
   iam_instance_profile    = aws_iam_instance_profile.logging.name
 
@@ -38,7 +39,8 @@ resource "aws_instance" "planningalerts-green" {
     Roles = "app,web,db"
   }
   security_groups         = [
-    aws_security_group.planningalerts.name
+    aws_security_group.planningalerts.name,
+    aws_security_group.planningalerts_memcached_server.name
   ]
   iam_instance_profile    = aws_iam_instance_profile.logging.name
 
