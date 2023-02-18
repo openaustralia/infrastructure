@@ -31,6 +31,14 @@
   apt:
     pkg: memcached
 
+- name: Make memcached listen to the outside world
+  lineinfile:
+    path: /etc/memcached.conf
+    regexp: "^-l 127.0.0.1"
+    line: "-l 0.0.0.0"
+  notify:
+    - memchached restart
+
 - name: Install dependency for ansible mysql_db module
   apt:
     pkg: python3-mysqldb

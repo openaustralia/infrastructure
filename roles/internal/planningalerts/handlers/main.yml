@@ -9,3 +9,8 @@
   service:
     name: nginx
     state: reloaded
+
+- name: memchached restart
+  service:
+    name: memcached
+    state: restarted
