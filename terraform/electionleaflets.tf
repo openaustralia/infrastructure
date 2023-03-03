@@ -112,6 +112,14 @@ resource "aws_s3_bucket" "production" {
     type        = "CanonicalUser"
     permissions = ["FULL_CONTROL"]
   }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }
 
 resource "aws_s3_bucket" "staging" {
@@ -134,5 +142,13 @@ resource "aws_s3_bucket" "staging" {
     id          = data.aws_canonical_user_id.current_user.id
     type        = "CanonicalUser"
     permissions = ["FULL_CONTROL"]
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
   }
 }

@@ -331,6 +331,14 @@ resource "google_apikeys_key" "google_maps_server_key" {
 
 resource "aws_s3_bucket" "planningalerts_sitemaps_production" {
   bucket = "planningalerts-sitemaps-production"
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }
 
 resource "aws_iam_user" "planningalerts_sitemaps_production" {

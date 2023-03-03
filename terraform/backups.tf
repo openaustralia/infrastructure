@@ -47,4 +47,12 @@ resource "aws_s3_bucket" "oaf-backups" {
   provider = aws.us-east-1
   bucket   = "oaf-backups"
   acl      = "private"
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }

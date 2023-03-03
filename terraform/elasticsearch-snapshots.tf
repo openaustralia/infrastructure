@@ -36,4 +36,12 @@ resource "aws_iam_user_policy_attachment" "oaf-elasticsearch-snapshots" {
 resource "aws_s3_bucket" "oaf-elasticsearch-snapshots" {
   bucket = "oaf-elasticsearch-snapshots"
   acl    = "private"
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 }
