@@ -47,6 +47,47 @@ resource "aws_instance" "planningalerts-green" {
   availability_zone = var.availability_zones[count.index % 3]
 }
 
+resource "aws_db_instance" "planningalerts" {
+  # TODO: Less space should be needed in production
+  # TODO: Enable storage autoscaling
+  # TODO: Set maximum storage threshold to 200GB? 
+  allocated_storage = 50
+
+  # Using general purpose SSD
+  storage_type   = "gp3"
+  engine         = "postgres"
+  engine_version = "15.2"
+
+  # TODO: Upgrade instance_class to db.m6g.large for production (might be able to use smaller)
+  instance_class          = "db.t4g.micro"
+  identifier              = "planningalerts"
+  username                = "root"
+  password                = var.rds_admin_password
+  # TODO: Change publicly_accessible to false for production
+  publicly_accessible     = true
+  backup_retention_period = 35
+
+  # We want 3-3:30am Sydney time which is 4-4:30pm GMT
+  backup_window = "16:00-16:30"
+
+  # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
+  maintenance_window         = "Sun:17:00-Sun:17:30"
+  # TODO: Change multi_az to true for production
+  multi_az                   = false
+  auto_minor_version_upgrade = true
+
+  # TODO: Change apply_immediately to false for production
+  apply_immediately      = true
+  # TODO: Change skip_final_snapshot to false for production
+  skip_final_snapshot    = true
+
+  # TODO: Turn on performance insights for production
+  # TODO: Turn on enhanced monitoring for production
+
+  # TODO: Limit traffic to only from planningalerts servers for production?
+  vpc_security_group_ids = [aws_security_group.postgresql.id]
+}
+
 resource "aws_elasticache_cluster" "planningalerts" {
   cluster_id           = "planningalerts"
   engine               = "redis"
