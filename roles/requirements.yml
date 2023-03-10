@@ -1,32 +1,36 @@
-- src: ANXS.ntp
-  version: v2.0.0
+roles:
+  - src: ANXS.ntp
+    version: v2.0.0
 
-- src: jnv.unattended-upgrades
-  version: v1.0.1
+  - src: jnv.unattended-upgrades
+    version: v1.0.1
 
-- src: nickhammond.logrotate
-  # Version 0.0.3 contains the fix
-  # https://github.com/nickhammond/ansible-logrotate/commit/3e0c0895245b451120043a68b313cd1eadccda16
-  version: v0.0.3
+  - src: nickhammond.logrotate
+    # Version 0.0.3 contains the fix
+    # https://github.com/nickhammond/ansible-logrotate/commit/3e0c0895245b451120043a68b313cd1eadccda16
+    version: v0.0.3
 
-- src: rvm.ruby
-  # Switch to latest version as of Jan 2019
-  version: v2.1.2
+  - src: rvm.ruby
+    # Switch to latest version as of Jan 2019
+    version: v2.1.2
 
-- src: Stouts.backup
-  # Using version 3.4.2 because it's the first to include the fix
-  # https://github.com/Stouts/Stouts.backup/commit/17b8f624e85494da5c41acf478706e1c52428984
-  version: 3.4.2
+  - src: Stouts.backup
+    # Using version 3.4.2 because it's the first to include the fix
+    # https://github.com/Stouts/Stouts.backup/commit/17b8f624e85494da5c41acf478706e1c52428984
+    version: 3.4.2
 
-- src: MichaelRigart.aliases
-  version: bfffd92efff476f5a685ebd53d265f78babb48af
+  - src: MichaelRigart.aliases
+    version: bfffd92efff476f5a685ebd53d265f78babb48af
 
-- src: zzet.rbenv
-  # Latest version as of Jan 2021
-  version: 3.4.7
+  - src: zzet.rbenv
+    # Latest version as of Jan 2021
+    version: 3.4.7
 
-- src: newrelic.newrelic-infra
-  version: 0.5.0
+  - src: newrelic.newrelic-infra
+    version: 0.5.0
 
-- src: oefenweb.postfix
-  version: v2.6.2
+  - src: oefenweb.postfix
+    version: v2.6.2
+
+collections:
+  - community.postgresql
