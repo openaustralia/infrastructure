@@ -88,7 +88,7 @@
     priv: 'pa-staging.*:ALL'
     host: "%"
 
-- name: Create planningalerts posgresql role
+- name: Create planningalerts postgresql role
   postgresql_user:
     login_host: "{{ planningalerts_db_host }}"
     login_user: root
@@ -96,8 +96,34 @@
     db: "pa-{{ item }}"
     name: "pa-{{ item }}"
     password: "{{ (item == 'production') | ternary(planningalerts_production_postgres_password, planningalerts_staging_postgres_password) }}"
-    priv: ALL
     no_password_changes: true
+  with_items:
+    - production
+    - staging
+
+- name: Give planningalerts roles access to the database
+  postgresql_privs:
+    login_host: "{{ planningalerts_db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "pa-{{ item }}"
+    roles: "pa-{{ item }}"
+    privs: ALL
+    type: database
+  with_items:
+    - production
+    - staging
+
+- name: Give planningalerts roles access to the public schema
+  postgresql_privs:
+    login_host: "{{ planningalerts_db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "pa-{{ item }}"
+    roles: "pa-{{ item }}"
+    privs: ALL
+    type: schema
+    objs: public
   with_items:
     - production
     - staging
