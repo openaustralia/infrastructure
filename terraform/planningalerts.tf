@@ -47,6 +47,24 @@ resource "aws_instance" "planningalerts-green" {
   availability_zone = var.availability_zones[count.index % 3]
 }
 
+resource "aws_db_parameter_group" "md5" {
+    description = "Allow access via md5 for pgloader"
+    family      = "postgres15"
+    name        = "md5"
+
+    # With this setting new passwords use the old md5 password hashing. We need
+    # this set before passwords are created for the planningalerts postgresl roles
+    # so that pgloader can access postgresql.
+    # TODO: One migration is done we should switch this back to the default
+    # This will probably involve just removing this parameter group and switching
+    # back to the default
+    parameter {
+        apply_method = "immediate"
+        name         = "password_encryption"
+        value        = "md5"
+    }
+}
+
 resource "aws_db_instance" "planningalerts" {
   # TODO: Less space should be needed in production
   # TODO: Enable storage autoscaling
@@ -88,6 +106,8 @@ resource "aws_db_instance" "planningalerts" {
 
   # TODO: Limit traffic to only from planningalerts servers for production?
   vpc_security_group_ids = [aws_security_group.postgresql.id]
+  # TODO: Probably switch back to default parameter group name for production
+  parameter_group_name = aws_db_parameter_group.md5.name
 }
 
 resource "aws_elasticache_cluster" "planningalerts" {
