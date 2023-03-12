@@ -128,17 +128,17 @@
     - production
     - staging
 
-# We can't do this from the rails app because on AWS it requires special permissions
-- name: Add postgis extension to planningalerts database
-  community.postgresql.postgresql_ext:
-    login_host: "{{ planningalerts_db_host }}"
-    login_user: root
-    login_password: "{{ rds_admin_password }}"
-    name: postgis
-    db: "pa-{{ item }}"
-  with_items:
-    - production
-    - staging
+# # We can't do this from the rails app because on AWS it requires special permissions
+# - name: Add postgis extension to planningalerts database
+#   community.postgresql.postgresql_ext:
+#     login_host: "{{ planningalerts_db_host }}"
+#     login_user: root
+#     login_password: "{{ rds_admin_password }}"
+#     name: postgis
+#     db: "pa-{{ item }}"
+#   with_items:
+#     - production
+#     - staging
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
