@@ -131,6 +131,17 @@
     - production
     - staging
 
+- name: Create mysql user with readonly access to the production planningalerts database for metabase
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: pa-production-readonly
+    password: "{{ planningalerts_production_readonly_mysql_password }}"
+    priv: 'pa-production.*:SELECT'
+    host: "%"
+  run_once: true
+
 # We can't do this from the rails app because on AWS it requires special permissions
 # Can't figure out how not to get spatial_ref_sys installed in our database
 - name: Add postgis extension to planningalerts database

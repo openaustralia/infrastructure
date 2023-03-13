@@ -64,16 +64,6 @@
   docker_compose:
     project_src: /srv/www
 
-- name: Create mysql user with readonly access to the production planningalerts database
-  mysql_user:
-    login_host: "{{ mysql_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: pa-production-readonly
-    password: "{{ planningalerts_production_readonly_mysql_password }}"
-    priv: 'pa-production.*:SELECT'
-    host: "%"
-
 - name: Create posgresql user rtk-production-readonly
   postgresql_user:
     login_host: "{{ postgresql_host }}"
