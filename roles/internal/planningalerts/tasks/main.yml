@@ -133,7 +133,7 @@
     - staging
 
 # We can't do this from the rails app because on AWS it requires special permissions
-# TODO: Install postgis extension so that it doesn't put its tables in our database
+# Can't figure out how not to get spatial_ref_sys installed in our database
 - name: Add postgis extension to planningalerts database
   community.postgresql.postgresql_ext:
     login_host: "{{ planningalerts_db_host }}"
@@ -141,6 +141,7 @@
     login_password: "{{ rds_admin_password }}"
     name: postgis
     db: "pa-{{ item }}"
+  run_once: true
   with_items:
     - production
     - staging
