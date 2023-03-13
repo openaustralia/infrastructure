@@ -57,7 +57,6 @@
   apt:
     pkg: python3-psycopg2
 
-# TODO: Only need to run this on one of the machines. The other one will likely fail if a change needs to be made
 - name: Create planningalerts database on postgres
   postgresql_db:
     login_host: "{{ planningalerts_db_host }}"
