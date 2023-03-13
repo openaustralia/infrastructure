@@ -64,6 +64,7 @@
     login_user: root
     login_password: "{{ rds_admin_password }}"
     name: "pa-{{ item }}"
+  run_once: true
   with_items:
     - production
     - staging
@@ -97,6 +98,7 @@
     name: "pa-{{ item }}"
     password: "{{ (item == 'production') | ternary(planningalerts_production_postgres_password, planningalerts_staging_postgres_password) }}"
     no_password_changes: true
+  run_once: true
   with_items:
     - production
     - staging
@@ -110,6 +112,7 @@
     roles: "pa-{{ item }}"
     privs: ALL
     type: database
+  run_once: true
   with_items:
     - production
     - staging
@@ -124,6 +127,7 @@
     privs: ALL
     type: schema
     objs: public
+  run_once: true
   with_items:
     - production
     - staging
