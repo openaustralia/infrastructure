@@ -92,6 +92,8 @@
     password: "{{ postgres_password_production_readonly }}"
     no_password_changes: true
 
+# Note that this gives access to the CURRENT tables in the database. Any new tables won't be included.
+# This needs to get run again to include any new tables. I know... very far from ideal.
 - name: Give the user pa-production-readonly readonly access to the production planningalerts database
   postgresql_privs:
     login_host: "{{ planningalerts_db_host }}"
