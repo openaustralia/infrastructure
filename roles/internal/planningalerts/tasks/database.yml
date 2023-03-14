@@ -91,16 +91,30 @@
     name: "pa-production-readonly"
     password: "{{ postgres_password_production_readonly }}"
     no_password_changes: true
+  run_once: true
 
-- name: Give the user pa-production-readonly readonly access to the production planningalerts database
+- name: Give pa-production-readonly read-only access to the database
   postgresql_privs:
     login_host: "{{ planningalerts_db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
     db: "pa-production"
-    role: "pa-production-readonly"
+    roles: "pa-production-readonly"
     privs: SELECT
-    objs: ALL_IN_SCHEMA
+    type: database
+  run_once: true
+
+- name: Give pa-production-readonly read-only access to the public schema
+  postgresql_privs:
+    login_host: "{{ planningalerts_db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "pa-production"
+    roles: "pa-production-readonly"
+    privs: SELECT
+    type: schema
+    objs: public
+  run_once: true
 
 # We can't do this from the rails app because on AWS it requires special permissions
 # Can't figure out how not to get spatial_ref_sys installed in our database
