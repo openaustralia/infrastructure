@@ -15,3 +15,14 @@ production:
   password: "{{ mysql_password_production }}"
   # Set pool to the same as the sidekiq concurrency
   pool: 10
+
+# For postgres production uncomment the lines below
+# production:
+#   adapter: postgresql
+#   encoding: unicode
+#   database: pa-production
+#   # Set pool to the same as the sidekiq concurrency
+#   pool: 10
+#   host: "{{ planningalerts_db_host }}"
+#   username: pa-production
+#   password: "{{ postgres_password_production }}"
