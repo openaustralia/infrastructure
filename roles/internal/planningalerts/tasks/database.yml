@@ -1,5 +1,7 @@
 # Tasks to create planningalerts database and database users
 
+# MySQL
+
 - name: Install dependency for ansible mysql_db module
   apt:
     pkg: python3-mysqldb
@@ -10,6 +12,29 @@
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "pa-{{ stage }}"
+
+- name: "Create planningalerts user with access to the database on mysql ({{ stage }})"
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: "pa-{{ stage }}"
+    password: "{{ (stage == 'production') | ternary(planningalerts_production_mysql_password, planningalerts_staging_mysql_password) }}"
+    priv: "pa-{{ stage }}.*:ALL"
+    host: "%"
+
+- name: Create mysql user with readonly access to the production planningalerts database for metabase
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: pa-production-readonly
+    password: "{{ planningalerts_production_readonly_mysql_password }}"
+    priv: 'pa-production.*:SELECT'
+    host: "%"
+  run_once: true
+
+# Postgres
 
 - name: Install dependency for postgresql_db
   apt:
@@ -22,16 +47,6 @@
     login_password: "{{ rds_admin_password }}"
     name: "pa-{{ stage }}"
   run_once: true
-
-- name: "Create planningalerts user with access to the database on mysql ({{ stage }})"
-  mysql_user:
-    login_host: "{{ mysql_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: "pa-{{ stage }}"
-    password: "{{ (stage == 'production') | ternary(planningalerts_production_mysql_password, planningalerts_staging_mysql_password) }}"
-    priv: "pa-{{ stage }}.*:ALL"
-    host: "%"
 
 - name: "Create planningalerts postgresql role ({{ stage }})"
   postgresql_user:
@@ -65,17 +80,6 @@
     privs: ALL
     type: schema
     objs: public
-  run_once: true
-
-- name: Create mysql user with readonly access to the production planningalerts database for metabase
-  mysql_user:
-    login_host: "{{ mysql_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: pa-production-readonly
-    password: "{{ planningalerts_production_readonly_mysql_password }}"
-    priv: 'pa-production.*:SELECT'
-    host: "%"
   run_once: true
 
 # We can't do this from the rails app because on AWS it requires special permissions
