@@ -11,4 +11,4 @@ production:
   username: pa-staging
   # Set pool to the same as the sidekiq concurrency
   pool: 10
-  password: "{{ planningalerts_staging_mysql_password }}"
+  password: "{{ mysql_password_staging }}"
