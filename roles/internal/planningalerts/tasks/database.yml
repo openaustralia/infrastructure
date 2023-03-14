@@ -29,25 +29,18 @@
     - production
     - staging
 
-- name: Create planningalerts user with access to the database (production) on mysql
+- name: Create planningalerts user with access to the database on mysql
   mysql_user:
     login_host: "{{ mysql_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: pa-production
-    password: "{{ planningalerts_production_mysql_password }}"
-    priv: 'pa-production.*:ALL'
+    name: "pa-{{ item }}"
+    password: "{{ (item == 'production') | ternary(planningalerts_production_mysql_password, planningalerts_staging_mysql_password) }}"
+    priv: "pa-{{ item }}.*:ALL"
     host: "%"
-
-- name: Create planningalerts user with access to the database (staging) on mysql
-  mysql_user:
-    login_host: "{{ mysql_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: pa-staging
-    password: "{{ planningalerts_staging_mysql_password }}"
-    priv: 'pa-staging.*:ALL'
-    host: "%"
+  with_items:
+    - production
+    - staging
 
 - name: Create planningalerts postgresql role
   postgresql_user:
