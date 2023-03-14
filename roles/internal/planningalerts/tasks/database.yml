@@ -82,6 +82,26 @@
     objs: public
   run_once: true
 
+- name: Create posgresql user pa-production-readonly for metabase
+  postgresql_user:
+    login_host: "{{ planningalerts_db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "pa-production"
+    name: "pa-production-readonly"
+    password: "{{ postgres_password_production_readonly }}"
+    no_password_changes: true
+
+- name: Give the user pa-production-readonly readonly access to the production planningalerts database
+  postgresql_privs:
+    login_host: "{{ planningalerts_db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "pa-production"
+    role: "pa-production-readonly"
+    privs: SELECT
+    objs: ALL_IN_SCHEMA
+
 # We can't do this from the rails app because on AWS it requires special permissions
 # Can't figure out how not to get spatial_ref_sys installed in our database
 - name: "Add postgis extension to planningalerts database ({{ stage }})"
