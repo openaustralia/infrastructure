@@ -39,7 +39,12 @@
   notify:
     - memchached restart
 
-- import_tasks: database.yml
+- include_tasks: database.yml
+  vars:
+    stage: "{{ item }}"
+  with_items:
+    - production
+    - staging  
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
