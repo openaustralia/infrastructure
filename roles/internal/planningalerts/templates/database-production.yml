@@ -8,7 +8,10 @@ production:
   collation: utf8mb4_general_ci
   host: {{ mysql_host }}
   database: pa-production
+  # For mysql read-only access (during maintenance switch out to the two lines below)
+  # username: pa-production-readonly
+  # password: "{{ mysql_password_production_readonly }}"
   username: pa-production
+  password: "{{ mysql_password_production }}"
   # Set pool to the same as the sidekiq concurrency
   pool: 10
-  password: "{{ mysql_password_production }}"
