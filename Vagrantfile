@@ -63,10 +63,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     ansible.groups = {
       "righttoknow"      => ["righttoknow.org.au.test"],
-      "planningalerts"   => [
-        "web1.planningalerts.org.au.test",
-        "web2.planningalerts.org.au.test"
-      ],
+      "planningalerts"   => ["web.planningalerts.org.au.test"],
       "electionleaflets" => ["electionleaflets.org.au.test"],
       "theyvoteforyou"   => ["theyvoteforyou.org.au.test"],
       "oaf"              => ["oaf.org.au.test"],
@@ -79,8 +76,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "redis"            => ["redis.test"],
       "development"      => [
         "righttoknow.org.au.test",
-        "web1.planningalerts.org.au.test",
-        "web2.planningalerts.org.au.test",
+        "web.planningalerts.org.au.test",
         "electionleaflets.org.au.test",
         "theyvoteforyou.org.au.test",
         "oaf.org.au.test",
@@ -103,8 +99,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   hosts = {
     "righttoknow.org.au.test"         => "192.168.56.10",
-    "web1.planningalerts.org.au.test" => "192.168.56.11",
-    "web2.planningalerts.org.au.test" => "192.168.56.12",
+    "web.planningalerts.org.au.test"  => "192.168.56.11",
     "electionleaflets.org.au.test"    => "192.168.56.13",
     "theyvoteforyou.org.au.test"      => "192.168.56.14",
     "oaf.org.au.test"                 => "192.168.56.15",
@@ -125,7 +120,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.box = case hostname
                     # Only a few services so far are using a more recent version of Ubuntu
-                    when "web.metabase.oaf.org.au.test", "redis.test", "web1.planningalerts.org.au.test", "web2.planningalerts.org.au.test"
+                    when "web.metabase.oaf.org.au.test", "redis.test", "web.planningalerts.org.au.test"
                       # jammy (22.04 LTS) "standard" support ends in April 2027
                       "ubuntu/jammy64"
                     when "theyvoteforyou.org.au.test"
