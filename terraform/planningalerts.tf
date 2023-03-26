@@ -291,6 +291,26 @@ resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-staging-canonic
   }
 }
 
+resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
+  listener_arn = aws_lb_listener.main-https.arn
+  priority = 1
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "www.#{host}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["planningalerts.org.au", "test.planningalerts.org.au"]
+    }
+  }
+}
+
 resource "aws_lb_listener_rule" "main-https-redirect-sitemaps-production" {
   listener_arn = aws_lb_listener.main-https.arn
   priority     = 3
@@ -357,26 +377,6 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts-staging" {
         "www.test.planningalerts.org.au",
         "api.test.planningalerts.org.au"
       ]
-    }
-  }
-}
-
-resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
-  listener_arn = aws_lb_listener.main-https.arn
-  priority = 1
-
-  action {
-    type = "redirect"
-
-    redirect {
-      host        = "www.#{host}"
-      status_code = "HTTP_301"
-    }
-  }
-
-  condition {
-    host_header {
-      values = ["planningalerts.org.au", "test.planningalerts.org.au"]
     }
   }
 }
