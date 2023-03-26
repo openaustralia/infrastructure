@@ -76,8 +76,8 @@ resource "aws_db_instance" "planningalerts" {
   engine         = "postgres"
   engine_version = "15.2"
   # We can't specify iops when creating the database
-  # # This is the baseline for storage less than 400 GB
-  # iops = 3000
+  # This is the baseline for storage less than 400 GB
+  iops = 3000
 
   # TODO: Upgrade instance_class to db.m6g.large for production (might be able to use smaller)
   instance_class          = "db.t4g.micro"
