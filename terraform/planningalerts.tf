@@ -249,7 +249,7 @@ resource "aws_lb_listener_certificate" "planningalerts-staging" {
 
 resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-production-canonical" {
   listener_arn = aws_lb_listener.main-http.arn
-  priority = 3
+  priority = 1
 
   action {
     type = "redirect"
@@ -271,7 +271,7 @@ resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-production-cano
 
 resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-staging-canonical" {
   listener_arn = aws_lb_listener.main-http.arn
-  priority = 1
+  priority = 2
 
   action {
     type = "redirect"
