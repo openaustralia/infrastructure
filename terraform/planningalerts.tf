@@ -289,6 +289,37 @@ resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-staging-canonic
   }
 }
 
+resource "aws_lb_listener_rule" "main-https-redirect-sitemaps-production" {
+  listener_arn = aws_lb_listener.main-https.arn
+  priority     = 3
+
+  action {
+    type  = "redirect"
+
+    redirect {
+      host = aws_s3_bucket.planningalerts_sitemaps_production.bucket_regional_domain_name
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_302"
+    }
+  }
+
+  condition {
+    host_header {
+      values = [
+        "www.planningalerts.org.au",
+      ]
+    }
+  }
+  condition {
+    path_pattern {
+      values = [
+        "/sitemaps/*",
+      ]
+    }
+  }
+}
+
 # TODO: Rename
 resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
   listener_arn = aws_lb_listener.main-https.arn
