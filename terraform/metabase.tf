@@ -77,7 +77,8 @@ resource "aws_lb_listener_certificate" "metabase" {
 
 resource "aws_lb_listener_rule" "metabase" {
   listener_arn = aws_lb_listener.main-https.arn
-
+  priority = 6
+  
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.metabase.arn

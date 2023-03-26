@@ -249,6 +249,7 @@ resource "aws_lb_listener_certificate" "planningalerts-staging" {
 
 resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-production-canonical" {
   listener_arn = aws_lb_listener.main-http.arn
+  priority = 3
 
   action {
     type = "redirect"
@@ -270,6 +271,7 @@ resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-production-cano
 
 resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-staging-canonical" {
   listener_arn = aws_lb_listener.main-http.arn
+  priority = 1
 
   action {
     type = "redirect"
@@ -323,6 +325,7 @@ resource "aws_lb_listener_rule" "main-https-redirect-sitemaps-production" {
 # TODO: Rename
 resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
   listener_arn = aws_lb_listener.main-https.arn
+  priority = 4
 
   action {
     type             = "forward"
@@ -341,6 +344,7 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
 
 resource "aws_lb_listener_rule" "main-https-forward-planningalerts-staging" {
   listener_arn = aws_lb_listener.main-https.arn
+  priority = 5
 
   action {
     type             = "forward"
@@ -359,6 +363,7 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts-staging" {
 
 resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
   listener_arn = aws_lb_listener.main-https.arn
+  priority = 1
 
   action {
     type = "redirect"
