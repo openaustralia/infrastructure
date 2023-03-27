@@ -1,32 +1,4 @@
 ---
-- name: Remove apache2
-  apt:
-    name: apache2
-    state: absent
-
-- name: Add key for passenger
-  apt_key:
-    url: http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0xAC40B2F7
-    state: present
-
-- name: Apt via https
-  apt:
-    name: apt-transport-https
-    state: present
-
-- name: Apt add passenger to list
-  apt_repository:
-    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
-    state: present
-    update_cache: yes
-
-- name: Install nginx
-  apt:
-    pkg:
-      - libnginx-mod-http-passenger
-      - nginx
-    state: present
-
 - name: Install memcached
   apt:
     pkg: memcached
@@ -135,30 +107,6 @@
   with_items:
     - production
     - staging
-
-- name: Install nginx now
-  apt:
-    pkg: nginx
-  when: "'ec2' in group_names"
-
-- name: Config to restart passenger every n requests
-  copy:
-    src: limit-memory-leak.conf
-    dest: /etc/nginx/conf.d
-  notify: nginx restart
-
-- name: Copy nginx site configuration
-  template:
-    src: default
-    dest: /etc/nginx/sites-available/
-  notify: nginx reload
-
-- name: Enable site
-  file:
-    src: /etc/nginx/sites-available/default
-    dest: /etc/nginx/sites-enabled/default
-    state: link
-  notify: nginx reload
 
 - name: Allow deploy user to control services
   copy:
