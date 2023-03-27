@@ -1,6 +1,7 @@
 righttoknow_domain: righttoknow.org.au.test
 mysql_host: 192.168.56.17
 postgresql_host: 192.168.56.18
+planningalerts_db_host: 192.168.56.18
 redis_host: 192.168.56.22
 openaustralia_domain: openaustralia.org.au.test
 planningalerts_domain: planningalerts.org.au.test
