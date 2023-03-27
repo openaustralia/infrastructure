@@ -22,13 +22,6 @@ server {
   server_name _;
   server_name_in_redirect off;
 
-  auth_basic "Staging Site";
-  auth_basic_user_file htpasswd;
-
-  location /health_check {
-    auth_basic off;
-  }
-
   root /srv/www/staging/current/public;
   passenger_enabled on;
   passenger_ruby /usr/local/rvm/gems/ruby-3.1.3/wrappers/ruby;
