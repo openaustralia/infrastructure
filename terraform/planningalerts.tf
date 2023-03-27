@@ -118,7 +118,7 @@ resource "aws_elasticache_cluster" "planningalerts" {
   node_type            = "cache.t3.micro"
   num_cache_nodes      = 1
   parameter_group_name = aws_elasticache_parameter_group.sidekiq.name
-  engine_version       = "6.0.5"
+  engine_version       = "6.2.6"
   port                 = 6379
 
   apply_immediately    = false
