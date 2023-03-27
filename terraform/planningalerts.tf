@@ -146,6 +146,23 @@ resource "aws_elasticache_parameter_group" "sidekiq" {
   }
 }
 
+resource "aws_lb_target_group" "planningalerts-production-blue" {
+  name     = "planningalerts-production-blue"
+  port     = 8000
+  protocol = "HTTP"
+  vpc_id   = aws_default_vpc.default.id
+
+  health_check {
+    path = "/health_check"
+    # Increasing from the default of 5 to handle occasional slow downs we're
+    # seeing at the moment
+    # TODO: Can we drop this down again to the default?
+    timeout = 10
+    healthy_threshold = 5
+    unhealthy_threshold = 2
+  }
+}
+
 resource "aws_lb_target_group" "planningalerts-production-green" {
   name     = "planningalerts-production-green"
   port     = 8000
@@ -182,7 +199,7 @@ resource "aws_lb_target_group" "planningalerts-staging" {
 
 resource "aws_lb_target_group_attachment" "planningalerts-blue-production" {
   count = var.planningalerts_enable_blue_env ? length(aws_instance.planningalerts-blue) : 0
-  target_group_arn = aws_lb_target_group.planningalerts-production-green.arn
+  target_group_arn = aws_lb_target_group.planningalerts-production-blue.arn
   target_id        = aws_instance.planningalerts-blue[count.index].id
 }
 
