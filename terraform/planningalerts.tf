@@ -146,7 +146,7 @@ resource "aws_elasticache_parameter_group" "sidekiq" {
   }
 }
 
-resource "aws_lb_target_group" "planningalerts-production-green2" {
+resource "aws_lb_target_group" "planningalerts-production-green" {
   name     = "planningalerts-production-green"
   port     = 8000
   protocol = "HTTP"
@@ -180,15 +180,15 @@ resource "aws_lb_target_group" "planningalerts-staging" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "planningalerts-blue-production2" {
+resource "aws_lb_target_group_attachment" "planningalerts-blue-production" {
   count = var.planningalerts_enable_blue_env ? length(aws_instance.planningalerts-blue) : 0
-  target_group_arn = aws_lb_target_group.planningalerts-production-green2.arn
+  target_group_arn = aws_lb_target_group.planningalerts-production-green.arn
   target_id        = aws_instance.planningalerts-blue[count.index].id
 }
 
-resource "aws_lb_target_group_attachment" "planningalerts-green-production2" {
+resource "aws_lb_target_group_attachment" "planningalerts-green-production" {
   count = var.planningalerts_enable_green_env ? length(aws_instance.planningalerts-green) : 0
-  target_group_arn = aws_lb_target_group.planningalerts-production-green2.arn
+  target_group_arn = aws_lb_target_group.planningalerts-production-green.arn
   target_id        = aws_instance.planningalerts-green[count.index].id
 }
 
@@ -349,7 +349,7 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.planningalerts-production-green2.arn
+    target_group_arn = aws_lb_target_group.planningalerts-production-green.arn
   }
 
   condition {
