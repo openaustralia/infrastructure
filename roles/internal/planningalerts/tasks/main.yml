@@ -53,7 +53,7 @@
   with_items:
     - production
     - staging
-  notify: nginx reload
+  notify: restart web server
 
 - name: Copy application database configuration
   template:
@@ -64,7 +64,7 @@
   with_items:
     - production
     - staging
-  notify: nginx reload
+  notify: restart web server
 
 - name: Copy application new relic configuration
   template:
@@ -72,7 +72,7 @@
     dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
-  notify: nginx reload
+  notify: restart web server
 
 - name: Copy application new relic configuration
   template:
@@ -80,7 +80,7 @@
     dest: /srv/www/production/shared/config
     owner: deploy
     group: deploy
-  notify: nginx reload
+  notify: restart web server
 
 - name: Copy application environment variables
   template:
@@ -94,7 +94,7 @@
   with_items:
     - production
     - staging
-  notify: nginx restart
+  notify: restart web server
 
 # This is so that cap 3 deploys will work which check the existence of the file on the other
 # end of the symbolic link

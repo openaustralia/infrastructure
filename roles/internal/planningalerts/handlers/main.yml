@@ -1,14 +1,9 @@
 ---
 # handlers file for planningalerts
-- name: nginx restart
-  service:
-    name: nginx
-    state: restarted
-
-- name: nginx reload
-  service:
-    name: nginx
-    state: reloaded
+- name: restart web server
+  # TODO: These should restart puma instead
+  debug:
+    msg: "TODO: Restart puma here"
 
 - name: memchached restart
   service:
