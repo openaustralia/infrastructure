@@ -1,5 +1,5 @@
 source "amazon-ebs" "planningalerts-22" {
-  ami_name = "planningalerts-ubuntu-22.04"
+  ami_name = "planningalerts-puma-ubuntu-22.04"
   instance_type = "t3.small"
   region = "ap-southeast-2"
   source_ami_filter {
