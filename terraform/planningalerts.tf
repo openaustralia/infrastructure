@@ -147,7 +147,7 @@ resource "aws_elasticache_parameter_group" "sidekiq" {
 }
 
 resource "aws_lb_target_group" "planningalerts-production-green" {
-  name     = "planningalerts-production-green"
+  name     = "planningalerts-production"
   port     = 8000
   protocol = "HTTP"
   vpc_id   = aws_default_vpc.default.id
