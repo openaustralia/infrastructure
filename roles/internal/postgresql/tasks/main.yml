@@ -1,36 +1,37 @@
 ---
 # tasks file for postgresql
 
-- name: Add postgresql apt repository
-  apt_repository:
-    repo: deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
-    filename: pgdg
-
 - name: Import postgresql repository signing key
   apt_key:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     id: ACCC4CF8
 
-# We're currently running 11.16 in production
-- name: Install postgresql 11 server
+- name: Add postgresql apt repository
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main
+    filename: pgdg
+
+# We're currently running 15.2 in production
+- name: Install postgresql 15 server
   apt:
-    name: "postgresql-11"
-    update_cache: true
+    name: postgresql-15
 
 - name: Update postgresql config to bind to public ip
-  copy:
-    src: postgresql.conf
-    dest: /etc/postgresql/11/main
+  lineinfile:
+    dest: /etc/postgresql/15/main/postgresql.conf
+    regexp: "^#?listen_addresses"
+    line: "listen_addresses = '*' # what IP address(es) to listen on;"
   notify: postgresql restart
 
 - name: Allow all connections from the outside world
-  copy:
-    src: pg_hba.conf
-    dest: /etc/postgresql/11/main
+  lineinfile:
+    dest: /etc/postgresql/15/main/pg_hba.conf
+    line: "host    all             all             0.0.0.0/0               md5"
   notify: postgresql restart
 
 - name: Install dependency for postgresql_user
-  apt: pkg=python-psycopg2
+  apt:
+    pkg: python3-psycopg2
 
 - name: Create root user
   postgresql_user:

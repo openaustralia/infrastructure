@@ -59,7 +59,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.playbook_command = ".venv/bin/ansible-playbook"
 
     # Uncomment the following line if you want some verbose output from ansible
-    #ansible.verbose = "vv"
+    ansible.verbose = "vv"
 
     ansible.groups = {
       "righttoknow"      => ["righttoknow.org.au.test"],
@@ -105,7 +105,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "oaf.org.au.test"                 => "192.168.56.15",
     "openaustralia.org.au.test"       => "192.168.56.16",
     "mysql.test"                      => "192.168.56.17",
-    "postgresql.test"                 => "192.168.56.18",
+    "postgresql.test"                 => "192.168.56.23",
     "opengovernment.org.au.test"      => "192.168.56.19",
     "au.proxy.oaf.org.au.test"        => "192.168.56.20",
     "web.metabase.oaf.org.au.test"    => "192.168.56.21",
@@ -120,7 +120,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.box = case hostname
                     # Only a few services so far are using a more recent version of Ubuntu
-                    when "web.metabase.oaf.org.au.test", "redis.test", "web.planningalerts.org.au.test"
+                    when "web.metabase.oaf.org.au.test", "redis.test", "web.planningalerts.org.au.test", "postgresql.test"
                       # jammy (22.04 LTS) "standard" support ends in April 2027
                       "ubuntu/jammy64"
                     when "theyvoteforyou.org.au.test"
@@ -130,7 +130,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                       # bionic (18.04 LTS) "standard" support ends in April 2023
                       "ubuntu/bionic64"
                     when "electionleaflets.org.au.test", "openaustralia.org.au.test",
-                         "opengovernment.org.au.test", "au.proxy.oaf.org.au.test", "mysql.test", "postgresql.test"
+                         "opengovernment.org.au.test", "au.proxy.oaf.org.au.test", "mysql.test"
                       # xenial (16.04 LTS) "standard" support ended in April 2021!
                       "ubuntu/xenial64"
                     else
