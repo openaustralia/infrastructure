@@ -283,7 +283,10 @@ resource "aws_lb_listener_certificate" "planningalerts-staging" {
   certificate_arn = aws_acm_certificate.planningalerts-staging.arn
 }
 
-resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-production-canonical" {
+// Redirecting http://planningalerts.org.au -> https://planningalerts.org.au
+// rather than straight to the canonical base url https://www.planningalerts.org.au
+// to support HSTS. See https://hstspreload.org/
+resource "aws_lb_listener_rule" "planningalerts-redirect-http-to-https" {
   listener_arn = aws_lb_listener.main-http.arn
   priority = 1
 
@@ -291,7 +294,6 @@ resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-production-cano
     type = "redirect"
 
     redirect {
-      host        = "www.planningalerts.org.au"
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_301"
