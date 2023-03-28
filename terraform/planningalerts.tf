@@ -14,6 +14,7 @@ resource "aws_instance" "planningalerts-blue" {
     Name = "web${count.index+1}.blue.planningalerts"
     # The Application and Roles tag are used by capistrano-aws to figure out which instances to deploy to
     Application = "planningalerts"
+    BlueGreen = "blue"
     Roles = "app,web,db"
   }
   security_groups         = [
@@ -36,6 +37,7 @@ resource "aws_instance" "planningalerts-green" {
     Name = "web${count.index+1}.green.planningalerts"
     # The Application and Roles tag are used by capistrano-aws to figure out which instances to deploy to
     Application = "planningalerts"
+    BlueGreen = "green"
     Roles = "app,web,db"
   }
   security_groups         = [
