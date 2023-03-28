@@ -1,7 +1,7 @@
 variable "planningalerts_enable_blue_env" {
   description = "Enable planningalerts blue environment"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "planningalerts_enable_green_env" {
@@ -23,8 +23,9 @@ variable "planningalerts_green_instance_count" {
 }
 
 variable "planningalerts_blue_ami" {
-  # Same as var.ubuntu_22_ami but we can't directly add that here
-  default = "ami-0df609f69029c9bdb"
+  # planningalerts-puma-ubuntu-22.04
+  # TODO: Get this dynamically based on the name chosen in packer
+  default = "ami-0574a77d61e67436d"
 }
 
 variable "planningalerts_green_ami" {
