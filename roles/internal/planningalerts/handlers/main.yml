@@ -1,9 +1,13 @@
 ---
 # handlers file for planningalerts
 - name: restart web server
-  # TODO: These should restart puma instead
-  debug:
-    msg: "TODO: Restart puma here"
+  # This also restarts the background queue but we can live that
+  service:
+    name: "planningalerts-{{ item }}.target"
+    state: restarted
+  with_items:
+    - production
+    - staging
 
 - name: memchached restart
   service:
