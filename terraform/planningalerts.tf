@@ -182,8 +182,25 @@ resource "aws_lb_target_group" "planningalerts-production-green" {
   }
 }
 
-resource "aws_lb_target_group" "planningalerts-staging" {
-  name     = "planningalerts-staging"
+resource "aws_lb_target_group" "planningalerts-staging-blue" {
+  name     = "planningalerts-staging-blue"
+  port     = 9000
+  protocol = "HTTP"
+  vpc_id   = aws_default_vpc.default.id
+
+  health_check {
+    path = "/health_check"
+    # Increasing from the default of 5 to handle occasional slow downs we're
+    # seeing at the moment
+    # TODO: Can we drop this down again to the default?
+    timeout = 10
+    healthy_threshold = 5
+    unhealthy_threshold = 2
+  }
+}
+
+resource "aws_lb_target_group" "planningalerts-staging-green" {
+  name     = "planningalerts-staging-green"
   port     = 9000
   protocol = "HTTP"
   vpc_id   = aws_default_vpc.default.id
@@ -213,13 +230,13 @@ resource "aws_lb_target_group_attachment" "planningalerts-green-production" {
 
 resource "aws_lb_target_group_attachment" "planningalerts-blue-staging" {
   count = var.planningalerts_enable_blue_env ? length(aws_instance.planningalerts-blue) : 0
-  target_group_arn = aws_lb_target_group.planningalerts-staging.arn
+  target_group_arn = aws_lb_target_group.planningalerts-staging-blue.arn
   target_id        = aws_instance.planningalerts-blue[count.index].id
 }
 
 resource "aws_lb_target_group_attachment" "planningalerts-green-staging" {
   count = var.planningalerts_enable_green_env ? length(aws_instance.planningalerts-green) : 0
-  target_group_arn = aws_lb_target_group.planningalerts-staging.arn
+  target_group_arn = aws_lb_target_group.planningalerts-staging-green.arn
   target_id        = aws_instance.planningalerts-green[count.index].id
 }
 
@@ -396,7 +413,16 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts-staging" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.planningalerts-staging.arn
+    forward {
+      target_group {
+        arn = aws_lb_target_group.planningalerts-staging-blue.arn
+        weight = var.planningalerts_enable_blue_env ? var.planningalerts_blue_weight : 0
+      }
+      target_group {
+        arn = aws_lb_target_group.planningalerts-staging-green.arn
+        weight = var.planningalerts_enable_green_env ? var.planningalerts_green_weight : 0
+      }
+    }
   }
 
   condition {
