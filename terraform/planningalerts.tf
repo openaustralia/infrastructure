@@ -365,8 +365,17 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
   priority = 3
 
   action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.planningalerts-production-green.arn
+    type = "forward"
+    forward {
+      target_group {
+        arn = aws_lb_target_group.planningalerts-production-blue.arn
+        weight = 0
+      }
+      target_group {
+        arn = aws_lb_target_group.planningalerts-production-green.arn
+        weight = 1
+      }
+    }
   }
 
   condition {
