@@ -10,7 +10,7 @@ resource "aws_lb" "main" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.load-balancer.id]
 
-  subnets = data.aws_subnet_ids.default.ids
+  subnets = data.aws_subnets.default.ids
 
   enable_deletion_protection = true
 }
