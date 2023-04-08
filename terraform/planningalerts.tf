@@ -542,3 +542,9 @@ resource "aws_iam_user_policy" "upload_to_planningalerts_sitemaps" {
     }
   )
 }
+
+module "planningalerts-activestorage-s3-production" {
+  source = "./planningalerts-activestorage-s3"
+
+  env = "production"
+}
