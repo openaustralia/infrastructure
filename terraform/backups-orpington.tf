@@ -45,13 +45,19 @@ resource "aws_iam_user_policy_attachment" "oaf-backups-orpington" {
 
 resource "aws_s3_bucket" "oaf-backups-orpington" {
   bucket   = "oaf-backups-orpington"
-  acl      = "private"
+}
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+resource "aws_s3_bucket_server_side_encryption_configuration" "oaf-backups-orpington" {
+  bucket = aws_s3_bucket.oaf-backups-orpington.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
+
+resource "aws_s3_bucket_acl" "oaf-backups-orpington" {
+  bucket = aws_s3_bucket.oaf-backups-orpington.id
+  acl = "private"
 }
