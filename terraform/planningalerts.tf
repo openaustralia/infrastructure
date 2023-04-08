@@ -516,6 +516,7 @@ resource "aws_iam_access_key" "planningalerts_sitemaps_production" {
 
 output "planningalerts_sitemaps_production_secret_access_key" {
   value = aws_iam_access_key.planningalerts_sitemaps_production.secret
+  sensitive = true
 }
 
 output "planningalerts_sitemaps_production_access_key_id" {
