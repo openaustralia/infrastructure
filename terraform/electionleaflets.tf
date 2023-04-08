@@ -94,6 +94,22 @@ data "aws_canonical_user_id" "current_user" {}
 resource "aws_s3_bucket" "production" {
   provider = aws.ap-southeast-1
   bucket   = "electionleafletsaustralia"
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "production" {
+  provider = aws.ap-southeast-1
+  bucket = aws_s3_bucket.production.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_acl" "production" {
+  provider = aws.ap-southeast-1
+  bucket = aws_s3_bucket.production.id
 
   # We don't want to use the pre-canned "public-read" because this allows listing
   # of all the objects in the bucket. There might be hidden leaflets. So, we
@@ -101,23 +117,26 @@ resource "aws_s3_bucket" "production" {
   # TODO: Figure out how to set the proper permissions using the acl for the bucket
   # acl = "public-read"
 
-  grant {
-    type        = "Group"
-    permissions = ["READ_ACP"]
-    uri         = "http://acs.amazonaws.com/groups/global/AllUsers"
-  }
+  access_control_policy {
+    grant {
+      permission = "READ_ACP"
 
-  grant {
-    id          = data.aws_canonical_user_id.current_user.id
-    type        = "CanonicalUser"
-    permissions = ["FULL_CONTROL"]
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
+      grantee {
+        type = "Group"
+        uri  = "http://acs.amazonaws.com/groups/global/AllUsers"
       }
+    }
+    grant {
+      permission = "FULL_CONTROL"
+
+      grantee {
+        id = data.aws_canonical_user_id.current_user.id
+        type         = "CanonicalUser"
+      }
+    }
+
+    owner {
+      id = data.aws_canonical_user_id.current_user.id
     }
   }
 }
