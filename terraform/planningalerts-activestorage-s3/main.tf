@@ -20,3 +20,11 @@ resource "aws_s3_bucket_public_access_block" "main" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+resource "aws_iam_user" "main" {
+  name = "planningalerts-as-${var.env}"
+}
+
+resource "aws_iam_access_key" "main" {
+  user = aws_iam_user.main.name
+}

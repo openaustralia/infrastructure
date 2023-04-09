@@ -550,3 +550,12 @@ module "planningalerts-activestorage-s3-production" {
 
   env = "production"
 }
+
+output "planningalerts_activestorage_s3_production_secret_access_key" {
+  value = module.planningalerts-activestorage-s3-production.secret_access_key
+  sensitive = true
+}
+
+output "planningalerts_activestorage_s3_production_access_key_id" {
+  value = module.planningalerts-activestorage-s3-production.access_key_id
+}
