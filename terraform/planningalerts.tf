@@ -548,7 +548,7 @@ resource "aws_iam_user_policy" "upload_to_planningalerts_sitemaps" {
 module "planningalerts-activestorage-s3-production" {
   source = "./planningalerts-activestorage-s3"
 
-  env = "production"
+  name = "planningalerts-as-production"
 }
 
 output "planningalerts_activestorage_s3_production_secret_access_key" {
