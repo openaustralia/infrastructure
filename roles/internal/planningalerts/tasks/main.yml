@@ -34,14 +34,6 @@
 - name: Copy application database configuration
   template:
     src: "database-production.yml"
-    dest: /srv/www/production/shared/database.yml
-    owner: deploy
-    group: deploy
-  notify: restart web server
-
-- name: Copy application database configuration
-  template:
-    src: "database-production.yml"
     dest: /srv/www/production/shared/config/database.yml
     owner: deploy
     group: deploy
