@@ -549,7 +549,7 @@ module "planningalerts-activestorage-s3-production" {
   source = "./planningalerts-activestorage-s3"
 
   name = "planningalerts-as-production"
-  allowed_origins = ["https://www.planningalerts.org.au/"]
+  allowed_origins = ["https://www.planningalerts.org.au"]
 }
 
 output "planningalerts_activestorage_s3_production_secret_access_key" {
