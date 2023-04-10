@@ -25,6 +25,20 @@ resource "aws_s3_bucket_public_access_block" "main" {
   restrict_public_buckets = true
 }
 
+resource "aws_s3_bucket_cors_configuration" "main" {
+  bucket = aws_s3_bucket.main.id
+
+  # Example configuration from https://guides.rubyonrails.org/active_storage_overview.html#example-s3-cors-configuration
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["PUT"]
+    # TODO: Obviously change this to something sensible for production
+    allowed_origins = ["http://localhost:3000"]
+    expose_headers = ["Origin", "Content-Type", "Content-MD5", "Content-Disposition"]
+    max_age_seconds = 3600
+  }
+}
+
 resource "aws_iam_user_policy" "main" {
   user   = aws_iam_user.main.name
   policy = jsonencode(
