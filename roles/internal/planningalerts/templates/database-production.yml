@@ -10,9 +10,9 @@ production:
   database: pa-production
   # For mysql read-only access (during maintenance switch out to the two lines below)
   # username: pa-production-readonly
-  # password: "{{ mysql_password_production_readonly }}"
+  # password: "{{ mysql_password_readonly }}"
   username: pa-production
-  password: "{{ mysql_password_production }}"
+  password: "{{ mysql_password }}"
   # Set pool to the same as the sidekiq concurrency
   pool: 10
 
@@ -25,7 +25,7 @@ production:
 #   pool: 10
 #   host: "{{ planningalerts_db_host }}"
 #   username: pa-production
-#   password: "{{ postgres_password_production }}"
+#   password: "{{ postgres_password }}"
 
 # For postgres production READ-ONLY uncomment the lines below
 # production:
@@ -36,4 +36,4 @@ production:
 #   pool: 10
 #   host: "{{ planningalerts_db_host }}"
 #   username: pa-production-readonly
-#   password: "{{ postgres_password_production_readonly }}"
+#   password: "{{ postgres_password_readonly }}"
