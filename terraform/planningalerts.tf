@@ -560,3 +560,19 @@ output "planningalerts_activestorage_s3_production_secret_access_key" {
 output "planningalerts_activestorage_s3_production_access_key_id" {
   value = module.planningalerts-activestorage-s3-production.access_key_id
 }
+
+module "planningalerts-activestorage-s3-staging" {
+  source = "./planningalerts-activestorage-s3"
+
+  name = "planningalerts-as-staging"
+  allowed_origins = ["https://www.test.planningalerts.org.au"]
+}
+
+output "planningalerts_activestorage_s3_staging_secret_access_key" {
+  value = module.planningalerts-activestorage-s3-staging.secret_access_key
+  sensitive = true
+}
+
+output "planningalerts_activestorage_s3_staging_access_key_id" {
+  value = module.planningalerts-activestorage-s3-staging.access_key_id
+}
