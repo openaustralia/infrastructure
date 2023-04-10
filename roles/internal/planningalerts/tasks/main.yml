@@ -47,22 +47,6 @@
     group: deploy
   notify: restart web server
 
-- name: Copy application new relic configuration
-  template:
-    src: newrelic.yml
-    dest: /srv/www/production/shared/
-    owner: deploy
-    group: deploy
-  notify: restart web server
-
-- name: Copy application new relic configuration
-  template:
-    src: newrelic.yml
-    dest: /srv/www/production/shared/config
-    owner: deploy
-    group: deploy
-  notify: restart web server
-
 - name: Copy application environment variables
   template:
     src: "env.production"
