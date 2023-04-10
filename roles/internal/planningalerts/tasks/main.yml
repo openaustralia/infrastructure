@@ -86,7 +86,3 @@
     src: deploy_service_control
     dest: /etc/sudoers.d/
     validate: visudo -cf %s
-
-- name: Autoremove unneeded packages
-  apt:
-    autoremove: yes
