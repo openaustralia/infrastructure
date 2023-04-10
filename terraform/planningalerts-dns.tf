@@ -43,27 +43,6 @@ resource "cloudflare_record" "pa_api" {
   value   = aws_lb.main.dns_name
 }
 
-resource "cloudflare_record" "pa_test" {
-  zone_id = var.planningalerts_org_au_zone_id
-  name    = "test.planningalerts.org.au"
-  type    = "CNAME"
-  value   = aws_lb.main.dns_name
-}
-
-resource "cloudflare_record" "pa_www_test" {
-  zone_id = var.planningalerts_org_au_zone_id
-  name    = "www.test.planningalerts.org.au"
-  type    = "CNAME"
-  value   = aws_lb.main.dns_name
-}
-
-resource "cloudflare_record" "pa_api_test" {
-  zone_id = var.planningalerts_org_au_zone_id
-  name    = "api.test.planningalerts.org.au"
-  type    = "CNAME"
-  value   = aws_lb.main.dns_name
-}
-
 resource "cloudflare_record" "pa_email" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "email.planningalerts.org.au"
@@ -184,22 +163,6 @@ resource "cloudflare_record" "oaf_pa_front_domainkey" {
 resource "cloudflare_record" "cert-validation-production" {
   for_each = {
     for dvo in aws_acm_certificate.planningalerts-production.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  zone_id         = var.planningalerts_org_au_zone_id
-  name            = each.value.name
-  type            = each.value.type
-  value           = trimsuffix(each.value.record, ".")
-  ttl             = 60
-}
-
-resource "cloudflare_record" "cert-validation-staging" {
-  for_each = {
-    for dvo in aws_acm_certificate.planningalerts-staging.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type

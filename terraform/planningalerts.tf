@@ -207,35 +207,12 @@ resource "aws_acm_certificate" "planningalerts-production" {
   }
 }
 
-resource "aws_acm_certificate" "planningalerts-staging" {
-  domain_name       = "test.planningalerts.org.au"
-  subject_alternative_names = [
-    "www.test.planningalerts.org.au",
-    "api.test.planningalerts.org.au"
-  ]
-  validation_method = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 resource "aws_acm_certificate_validation" "planningalerts-production" {
   certificate_arn         = aws_acm_certificate.planningalerts-production.arn
   validation_record_fqdns = [for record in cloudflare_record.cert-validation-production : record.hostname]
 }
 
-resource "aws_acm_certificate_validation" "planningalerts-staging" {
-  certificate_arn         = aws_acm_certificate.planningalerts-staging.arn
-  validation_record_fqdns = [for record in cloudflare_record.cert-validation-staging : record.hostname]
-}
-
 # The production SSL certificate is currently the default cert on the load balancer
-
-resource "aws_lb_listener_certificate" "planningalerts-staging" {
-  listener_arn    = aws_lb_listener.main-https.arn
-  certificate_arn = aws_acm_certificate.planningalerts-staging.arn
-}
 
 // Redirecting http://planningalerts.org.au -> https://planningalerts.org.au
 // rather than straight to the canonical base url https://www.planningalerts.org.au
@@ -261,28 +238,6 @@ resource "aws_lb_listener_rule" "planningalerts-redirect-http-to-https" {
   }
 }
 
-resource "aws_lb_listener_rule" "redirect-http-to-planningalerts-staging-canonical" {
-  listener_arn = aws_lb_listener.main-http.arn
-  priority = 2
-
-  action {
-    type = "redirect"
-
-    redirect {
-      host        = "www.test.planningalerts.org.au"
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-
-  condition {
-    host_header {
-      values = ["test.planningalerts.org.au", "www.test.planningalerts.org.au"]
-    }
-  }
-}
-
 resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
   listener_arn = aws_lb_listener.main-https.arn
   priority = 1
@@ -298,7 +253,7 @@ resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
 
   condition {
     host_header {
-      values = ["planningalerts.org.au", "test.planningalerts.org.au"]
+      values = ["planningalerts.org.au"]
     }
   }
 }
@@ -374,8 +329,6 @@ resource "google_apikeys_key" "google_maps_email_key" {
             allowed_referrers = [
                 "https://planningalerts.org.au",
                 "https://www.planningalerts.org.au",
-                "https://test.planningalerts.org.au",
-                "https://www.test.planningalerts.org.au",
                 "https://cuttlefish.oaf.org.au",
                 "http://localhost:3000",
             ]
@@ -392,8 +345,6 @@ resource "google_apikeys_key" "google_maps_key" {
             allowed_referrers = [
                 "https://planningalerts.org.au",
                 "https://www.planningalerts.org.au",
-                "https://test.planningalerts.org.au",
-                "https://www.test.planningalerts.org.au",
                 "https://cuttlefish.oaf.org.au",
                 "http://localhost:3000",
             ]
