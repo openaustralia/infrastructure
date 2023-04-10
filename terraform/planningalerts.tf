@@ -549,8 +549,7 @@ module "planningalerts-activestorage-s3-production" {
   source = "./planningalerts-activestorage-s3"
 
   name = "planningalerts-as-production"
-  # TODO: Obviously change this to something sensible for production
-  allowed_origins = ["http://localhost:3000"]
+  allowed_origins = ["https://www.planningalerts.org.au/"]
 }
 
 output "planningalerts_activestorage_s3_production_secret_access_key" {
