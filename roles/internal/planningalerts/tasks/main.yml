@@ -12,8 +12,6 @@
     - memchached restart
 
 - include_tasks: database.yml
-  vars:
-    stage: production
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
