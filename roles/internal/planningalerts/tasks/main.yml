@@ -25,7 +25,6 @@
     - /srv/www/production/shared/config
     - /srv/www/production/shared/log
     - /srv/www/production/shared/public
-    - /srv/www/production/shared/sitemaps
     - /srv/www/production/shared/system
 
 - name: Ensure packages to build gem native extensions are installed
@@ -71,15 +70,6 @@
     owner: deploy
     group: deploy
   notify: restart web server
-
-# This is so that cap 3 deploys will work which check the existence of the file on the other
-# end of the symbolic link
-- name: Ensure that sitemap.xml exists 
-  file:
-    path: "/srv/www/production/shared/public/sitemap.xml"
-    owner: deploy
-    group: deploy
-    state: touch
 
 - name: Allow deploy user to control services
   copy:
