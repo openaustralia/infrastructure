@@ -13,10 +13,7 @@
 
 - include_tasks: database.yml
   vars:
-    stage: "{{ item }}"
-  with_items:
-    - production
-    - staging  
+    stage: production
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   file:
@@ -32,13 +29,6 @@
     - /srv/www/production/shared/public
     - /srv/www/production/shared/sitemaps
     - /srv/www/production/shared/system
-    - /srv/www/staging
-    - /srv/www/staging/shared
-    - /srv/www/staging/shared/config
-    - /srv/www/staging/shared/log
-    - /srv/www/staging/shared/public
-    - /srv/www/staging/shared/sitemaps
-    - /srv/www/staging/shared/system
 
 - name: Ensure packages to build gem native extensions are installed
   apt:
@@ -46,24 +36,18 @@
 
 - name: Copy application database configuration
   template:
-    src: "database-{{ item }}.yml"
-    dest: /srv/www/{{ item }}/shared/database.yml
+    src: "database-production.yml"
+    dest: /srv/www/production/shared/database.yml
     owner: deploy
     group: deploy
-  with_items:
-    - production
-    - staging
   notify: restart web server
 
 - name: Copy application database configuration
   template:
-    src: "database-{{ item }}.yml"
-    dest: /srv/www/{{ item }}/shared/config/database.yml
+    src: "database-production.yml"
+    dest: /srv/www/production/shared/config/database.yml
     owner: deploy
     group: deploy
-  with_items:
-    - production
-    - staging
   notify: restart web server
 
 - name: Copy application new relic configuration
@@ -84,29 +68,20 @@
 
 - name: Copy application environment variables
   template:
-    src: "env.{{ item }}"
-    # Naming of the file .env.production is a little misleading (in staging environment)
-    # Probably should just be called "env" and capistrano will need updating too
-    # TODO: Fix this
-    dest: "/srv/www/{{ item }}/shared/.env.production"
+    src: "env.production"
+    dest: "/srv/www/production/shared/.env.production"
     owner: deploy
     group: deploy
-  with_items:
-    - production
-    - staging
   notify: restart web server
 
 # This is so that cap 3 deploys will work which check the existence of the file on the other
 # end of the symbolic link
 - name: Ensure that sitemap.xml exists 
   file:
-    path: "/srv/www/{{ item }}/shared/public/sitemap.xml"
+    path: "/srv/www/production/shared/public/sitemap.xml"
     owner: deploy
     group: deploy
     state: touch
-  with_items:
-    - production
-    - staging
 
 - name: Allow deploy user to control services
   copy:
