@@ -32,8 +32,7 @@ resource "aws_s3_bucket_cors_configuration" "main" {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["PUT"]
-    # TODO: Obviously change this to something sensible for production
-    allowed_origins = ["http://localhost:3000"]
+    allowed_origins = var.allowed_origins
     expose_headers = ["Origin", "Content-Type", "Content-MD5", "Content-Disposition"]
     max_age_seconds = 3600
   }
