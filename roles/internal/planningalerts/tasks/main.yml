@@ -23,6 +23,7 @@
     - /srv/www/production
     - /srv/www/production/shared
     - /srv/www/production/shared/config
+    - /srv/www/production/shared/config/credentials
     - /srv/www/production/shared/log
     - /srv/www/production/shared/public
     - /srv/www/production/shared/system
@@ -43,6 +44,14 @@
   template:
     src: "env.production"
     dest: "/srv/www/production/shared/.env.production"
+    owner: deploy
+    group: deploy
+  notify: restart web server
+
+- name: Copy rails master key for production
+  template:
+    src: "production.key"
+    dest: "/srv/www/production/shared/config/credentials/production.key"
     owner: deploy
     group: deploy
   notify: restart web server
