@@ -29,6 +29,7 @@ resource "aws_db_instance" "main" {
   performance_insights_enabled = true
 
   # Enable enhanced monitoring
+  monitoring_role_arn = aws_iam_role.rds-monitoring-role.arn
   monitoring_interval = 60
 
   # Put the backup retention period to its maximum until we figure out what's a
@@ -51,6 +52,28 @@ resource "aws_db_instance" "main" {
   # TODO: Go through parameter group and see if anything is different than the 5.7 default and if so make a custom one for us
   # parameter_group_name       = aws_db_parameter_group.mysql_default.name
   parameter_group_name = "default.mysql5.7-db-3zfhxnxjf2w5aymy2dl3hbsk3m-upgrade"
+}
+
+resource "aws_iam_role" "rds-monitoring-role" {
+  name = "rds-monitoring-role"
+  assume_role_policy = jsonencode(
+    {
+      Statement = [
+        {
+          Action = "sts:AssumeRole"
+          Effect = "Allow"
+          Principal = {
+            Service = "monitoring.rds.amazonaws.com"
+          }
+          Sid = ""
+        },
+      ]
+      Version = "2012-10-17"
+    }
+  )
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole",
+  ]
 }
 
 # TODO: Do we want to explicitly set the available zone?
