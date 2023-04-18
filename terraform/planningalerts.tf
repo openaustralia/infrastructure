@@ -17,6 +17,7 @@ module "planningalerts-env-blue" {
   iam_instance_profile = aws_iam_instance_profile.logging.name
   key_name             = aws_key_pair.deployer.key_name
   vpc_id               = aws_default_vpc.default.id
+  zone_id              = var.planningalerts_org_au_zone_id
 }
 
 module "planningalerts-env-green" {
@@ -33,6 +34,7 @@ module "planningalerts-env-green" {
   iam_instance_profile = aws_iam_instance_profile.logging.name
   key_name             = aws_key_pair.deployer.key_name
   vpc_id               = aws_default_vpc.default.id
+  zone_id              = var.planningalerts_org_au_zone_id
 }
 
 resource "aws_db_parameter_group" "md5" {

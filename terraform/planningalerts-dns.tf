@@ -2,24 +2,6 @@ variable "planningalerts_org_au_zone_id" {
   default = "a826a2cd0f87d57ef60dc67c5738eec5"
 }
 
-# A records
-
-resource "cloudflare_record" "pa_web_blue" {
-  count   = var.planningalerts_enable_blue_env ? var.planningalerts_blue_instance_count : 0
-  zone_id = var.planningalerts_org_au_zone_id
-  name    = "web${count.index + 1}.blue.planningalerts.org.au"
-  type    = "A"
-  value   = module.planningalerts-env-blue.public_ips[count.index]
-}
-
-resource "cloudflare_record" "pa_web_green" {
-  count   = var.planningalerts_enable_green_env ? var.planningalerts_green_instance_count : 0
-  zone_id = var.planningalerts_org_au_zone_id
-  name    = "web${count.index + 1}.green.planningalerts.org.au"
-  type    = "A"
-  value   = module.planningalerts-env-green.public_ips[count.index]
-}
-
 # CNAME records
 
 resource "cloudflare_record" "pa_root" {

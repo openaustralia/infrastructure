@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 2.13.2"
+    }
+  }
+}
+
 resource "aws_instance" "main" {
   count = var.enable ? var.instance_count : 0
   ami   = var.ami
@@ -39,4 +48,12 @@ resource "aws_lb_target_group_attachment" "main" {
   count            = var.enable ? var.instance_count : 0
   target_group_arn = aws_lb_target_group.main.arn
   target_id        = aws_instance.main[count.index].id
+}
+
+resource "cloudflare_record" "main" {
+  count   = var.enable ? var.instance_count : 0
+  zone_id = var.zone_id
+  name    = "web${count.index + 1}.${var.env_name}.planningalerts.org.au"
+  type    = "A"
+  value   = aws_instance.main[count.index].public_ip
 }
