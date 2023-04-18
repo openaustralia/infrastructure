@@ -27,8 +27,6 @@ aws_secret_key: !vault |
 mysql_host: "{{ rds_mysql.instance.endpoint }}"
 postgresql_host: "{{ rds_postgresql.instance.endpoint }}"
 planningalerts_db_host: "{{ rds_planningalerts.instance.endpoint }}"
-# TODO: Would be nice to get the redis endpoint automatically (same as mysql and postgresql above)
-redis_host: planningalerts.bztev8.0001.apse2.cache.amazonaws.com
 newrelic_license_key: !vault |
           $ANSIBLE_VAULT;1.2;AES256;ec2
           63343465396536616465383664646636633632616133343734666464303438613965313037633032
