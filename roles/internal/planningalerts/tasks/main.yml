@@ -40,14 +40,6 @@
     group: deploy
   notify: restart web server
 
-- name: Copy application environment variables
-  template:
-    src: "env.production"
-    dest: "/srv/www/production/shared/.env.production"
-    owner: deploy
-    group: deploy
-  notify: restart web server
-
 - name: Copy rails master key for production
   template:
     src: "production.key"
