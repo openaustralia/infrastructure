@@ -44,7 +44,7 @@ resource "aws_iam_user_policy_attachment" "oaf-backups-orpington" {
 }
 
 resource "aws_s3_bucket" "oaf-backups-orpington" {
-  bucket   = "oaf-backups-orpington"
+  bucket = "oaf-backups-orpington"
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "oaf-backups-orpington" {
@@ -59,5 +59,5 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "oaf-backups-orpin
 
 resource "aws_s3_bucket_acl" "oaf-backups-orpington" {
   bucket = aws_s3_bucket.oaf-backups-orpington.id
-  acl = "private"
+  acl    = "private"
 }

@@ -177,7 +177,7 @@ resource "aws_security_group" "incoming_email" {
 }
 
 resource "aws_security_group" "planningalerts" {
-  name = "planningalerts"
+  name        = "planningalerts"
   description = "Web servers for PlanningAlerts"
 
   ingress {
@@ -226,14 +226,14 @@ resource "aws_security_group" "planningalerts" {
 }
 
 resource "aws_security_group" "redis-planningalerts" {
-  name = "redis-planningalerts"
+  name        = "redis-planningalerts"
   description = "Redis server for PlanningAlerts"
 
   ingress {
-    from_port = 6379
-    to_port   = 6379
-    protocol  = "tcp"
-    security_groups = [ aws_security_group.planningalerts.id ]
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [aws_security_group.planningalerts.id]
   }
 
   # Allow everything going out
@@ -249,13 +249,13 @@ resource "aws_security_group" "redis-planningalerts" {
 # In our setup we have a memcached server running alongside each webserver node
 # so, each node acts as both a memcached client and server
 resource "aws_security_group" "planningalerts_memcached_server" {
-  name = "planningalerts-memcached-server"
+  name        = "planningalerts-memcached-server"
   description = "memcached servers for planningalerts"
 
   ingress {
-    from_port = 11211
-    to_port   = 11211
-    protocol  = "tcp"
-    security_groups = [ aws_security_group.planningalerts.id ]
+    from_port       = 11211
+    to_port         = 11211
+    protocol        = "tcp"
+    security_groups = [aws_security_group.planningalerts.id]
   }
 }

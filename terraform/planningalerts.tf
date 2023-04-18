@@ -5,66 +5,66 @@ variable "availability_zones" {
 
 resource "aws_instance" "planningalerts-blue" {
   count = var.planningalerts_enable_blue_env ? var.planningalerts_blue_instance_count : 0
-  ami = var.planningalerts_blue_ami
+  ami   = var.planningalerts_blue_ami
 
   instance_type = "t3.medium"
   ebs_optimized = true
   key_name      = aws_key_pair.deployer.key_name
   tags = {
-    Name = "web${count.index+1}.blue.planningalerts"
+    Name = "web${count.index + 1}.blue.planningalerts"
     # The Application and Roles tag are used by capistrano-aws to figure out which instances to deploy to
     Application = "planningalerts"
-    BlueGreen = "blue"
-    Roles = "app,web,db"
+    BlueGreen   = "blue"
+    Roles       = "app,web,db"
   }
-  security_groups         = [
+  security_groups = [
     aws_security_group.planningalerts.name,
     aws_security_group.planningalerts_memcached_server.name
   ]
-  iam_instance_profile    = aws_iam_instance_profile.logging.name
+  iam_instance_profile = aws_iam_instance_profile.logging.name
 
   availability_zone = var.availability_zones[count.index % 3]
 }
 
 resource "aws_instance" "planningalerts-green" {
   count = var.planningalerts_enable_green_env ? var.planningalerts_green_instance_count : 0
-  ami = var.planningalerts_green_ami
+  ami   = var.planningalerts_green_ami
 
   instance_type = "t3.medium"
   ebs_optimized = true
   key_name      = aws_key_pair.deployer.key_name
   tags = {
-    Name = "web${count.index+1}.green.planningalerts"
+    Name = "web${count.index + 1}.green.planningalerts"
     # The Application and Roles tag are used by capistrano-aws to figure out which instances to deploy to
     Application = "planningalerts"
-    BlueGreen = "green"
-    Roles = "app,web,db"
+    BlueGreen   = "green"
+    Roles       = "app,web,db"
   }
-  security_groups         = [
+  security_groups = [
     aws_security_group.planningalerts.name,
     aws_security_group.planningalerts_memcached_server.name
   ]
-  iam_instance_profile    = aws_iam_instance_profile.logging.name
+  iam_instance_profile = aws_iam_instance_profile.logging.name
 
   availability_zone = var.availability_zones[count.index % 3]
 }
 
 resource "aws_db_parameter_group" "md5" {
-    description = "Allow access via md5 for pgloader"
-    family      = "postgres15"
-    name        = "md5"
+  description = "Allow access via md5 for pgloader"
+  family      = "postgres15"
+  name        = "md5"
 
-    # With this setting new passwords use the old md5 password hashing. We need
-    # this set before passwords are created for the planningalerts postgresl roles
-    # so that pgloader can access postgresql.
-    # TODO: One migration is done we should switch this back to the default
-    # This will probably involve just removing this parameter group and switching
-    # back to the default
-    parameter {
-        apply_method = "immediate"
-        name         = "password_encryption"
-        value        = "md5"
-    }
+  # With this setting new passwords use the old md5 password hashing. We need
+  # this set before passwords are created for the planningalerts postgresl roles
+  # so that pgloader can access postgresql.
+  # TODO: One migration is done we should switch this back to the default
+  # This will probably involve just removing this parameter group and switching
+  # back to the default
+  parameter {
+    apply_method = "immediate"
+    name         = "password_encryption"
+    value        = "md5"
+  }
 }
 
 resource "aws_db_instance" "planningalerts" {
@@ -82,10 +82,10 @@ resource "aws_db_instance" "planningalerts" {
   iops = 3000
 
   # TODO: Upgrade instance_class to db.m6g.large for production (might be able to use smaller)
-  instance_class          = "db.t4g.micro"
-  identifier              = "planningalerts"
-  username                = "root"
-  password                = var.rds_admin_password
+  instance_class = "db.t4g.micro"
+  identifier     = "planningalerts"
+  username       = "root"
+  password       = var.rds_admin_password
   # TODO: Change publicly_accessible to false for production
   publicly_accessible     = true
   backup_retention_period = 35
@@ -94,15 +94,15 @@ resource "aws_db_instance" "planningalerts" {
   backup_window = "16:00-16:30"
 
   # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
-  maintenance_window         = "Sun:17:00-Sun:17:30"
+  maintenance_window = "Sun:17:00-Sun:17:30"
   # TODO: Change multi_az to true for production
   multi_az                   = false
   auto_minor_version_upgrade = true
 
   # TODO: Change apply_immediately to false for production
-  apply_immediately      = true
+  apply_immediately = true
   # TODO: Change skip_final_snapshot to false for production
-  skip_final_snapshot    = true
+  skip_final_snapshot = true
 
   # TODO: Turn on performance insights for production
   # TODO: Turn on enhanced monitoring for production
@@ -114,8 +114,8 @@ resource "aws_db_instance" "planningalerts" {
 }
 
 resource "aws_elasticache_cluster" "planningalerts" {
-  cluster_id           = "planningalerts"
-  engine               = "redis"
+  cluster_id = "planningalerts"
+  engine     = "redis"
   # Smallest t3 available gives 0.5 GiB memory
   node_type            = "cache.t3.micro"
   num_cache_nodes      = 1
@@ -123,9 +123,9 @@ resource "aws_elasticache_cluster" "planningalerts" {
   engine_version       = "6.2"
   port                 = 6379
 
-  apply_immediately    = false
+  apply_immediately = false
 
-  security_group_ids = [ aws_security_group.redis-planningalerts.id ]
+  security_group_ids = [aws_security_group.redis-planningalerts.id]
 
   # We want Monday 4-5am Sydney time which is Sunday 5-6pm GMT.
   maintenance_window = "Sun:17:00-Sun:18:00"
@@ -159,8 +159,8 @@ resource "aws_lb_target_group" "planningalerts-production-blue" {
     # Increasing from the default of 5 to handle occasional slow downs we're
     # seeing at the moment
     # TODO: Can we drop this down again to the default?
-    timeout = 10
-    healthy_threshold = 5
+    timeout             = 10
+    healthy_threshold   = 5
     unhealthy_threshold = 2
   }
 }
@@ -176,26 +176,26 @@ resource "aws_lb_target_group" "planningalerts-production-green" {
     # Increasing from the default of 5 to handle occasional slow downs we're
     # seeing at the moment
     # TODO: Can we drop this down again to the default?
-    timeout = 10
-    healthy_threshold = 5
+    timeout             = 10
+    healthy_threshold   = 5
     unhealthy_threshold = 2
   }
 }
 
 resource "aws_lb_target_group_attachment" "planningalerts-blue-production" {
-  count = var.planningalerts_enable_blue_env ? length(aws_instance.planningalerts-blue) : 0
+  count            = var.planningalerts_enable_blue_env ? length(aws_instance.planningalerts-blue) : 0
   target_group_arn = aws_lb_target_group.planningalerts-production-blue.arn
   target_id        = aws_instance.planningalerts-blue[count.index].id
 }
 
 resource "aws_lb_target_group_attachment" "planningalerts-green-production" {
-  count = var.planningalerts_enable_green_env ? length(aws_instance.planningalerts-green) : 0
+  count            = var.planningalerts_enable_green_env ? length(aws_instance.planningalerts-green) : 0
   target_group_arn = aws_lb_target_group.planningalerts-production-green.arn
   target_id        = aws_instance.planningalerts-green[count.index].id
 }
 
 resource "aws_acm_certificate" "planningalerts-production" {
-  domain_name       = "planningalerts.org.au"
+  domain_name = "planningalerts.org.au"
   subject_alternative_names = [
     "www.planningalerts.org.au",
     "api.planningalerts.org.au"
@@ -219,7 +219,7 @@ resource "aws_acm_certificate_validation" "planningalerts-production" {
 // to support HSTS. See https://hstspreload.org/
 resource "aws_lb_listener_rule" "planningalerts-redirect-http-to-https" {
   listener_arn = aws_lb_listener.main-http.arn
-  priority = 1
+  priority     = 1
 
   action {
     type = "redirect"
@@ -240,7 +240,7 @@ resource "aws_lb_listener_rule" "planningalerts-redirect-http-to-https" {
 
 resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
   listener_arn = aws_lb_listener.main-https.arn
-  priority = 1
+  priority     = 1
 
   action {
     type = "redirect"
@@ -263,10 +263,10 @@ resource "aws_lb_listener_rule" "main-https-redirect-sitemaps-production" {
   priority     = 2
 
   action {
-    type  = "redirect"
+    type = "redirect"
 
     redirect {
-      host = aws_s3_bucket.planningalerts_sitemaps_production.bucket_regional_domain_name
+      host        = aws_s3_bucket.planningalerts_sitemaps_production.bucket_regional_domain_name
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_302"
@@ -292,17 +292,17 @@ resource "aws_lb_listener_rule" "main-https-redirect-sitemaps-production" {
 # TODO: Rename
 resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
   listener_arn = aws_lb_listener.main-https.arn
-  priority = 3
+  priority     = 3
 
   action {
     type = "forward"
     forward {
       target_group {
-        arn = aws_lb_target_group.planningalerts-production-blue.arn
+        arn    = aws_lb_target_group.planningalerts-production-blue.arn
         weight = var.planningalerts_enable_blue_env ? var.planningalerts_blue_weight : 0
       }
       target_group {
-        arn = aws_lb_target_group.planningalerts-production-green.arn
+        arn    = aws_lb_target_group.planningalerts-production-green.arn
         weight = var.planningalerts_enable_green_env ? var.planningalerts_green_weight : 0
       }
     }
@@ -321,45 +321,45 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
 # TODO: Check usage of all these keys and how they are set up
 # TODO: Probably all these keys could do with rotation. They've been in use for a while now.
 resource "google_apikeys_key" "google_maps_email_key" {
-    display_name = "PlanningAlerts Web API Key (google_maps_email_key)"
-    name         = "8405437045225725397"
+  display_name = "PlanningAlerts Web API Key (google_maps_email_key)"
+  name         = "8405437045225725397"
 
-    restrictions {
-        browser_key_restrictions {
-            allowed_referrers = [
-                "https://planningalerts.org.au",
-                "https://www.planningalerts.org.au",
-                "https://cuttlefish.oaf.org.au",
-                "http://localhost:3000",
-            ]
-        }
+  restrictions {
+    browser_key_restrictions {
+      allowed_referrers = [
+        "https://planningalerts.org.au",
+        "https://www.planningalerts.org.au",
+        "https://cuttlefish.oaf.org.au",
+        "http://localhost:3000",
+      ]
     }
+  }
 }
 
 resource "google_apikeys_key" "google_maps_key" {
-    display_name = "PlanningAlerts Web Static Street View key (google_maps_key)"
-    name         = "3f2cc059-ec01-4c0a-bc43-a5e9d1daa993"
+  display_name = "PlanningAlerts Web Static Street View key (google_maps_key)"
+  name         = "3f2cc059-ec01-4c0a-bc43-a5e9d1daa993"
 
-    restrictions {
-        browser_key_restrictions {
-            allowed_referrers = [
-                "https://planningalerts.org.au",
-                "https://www.planningalerts.org.au",
-                "https://cuttlefish.oaf.org.au",
-                "http://localhost:3000",
-            ]
-        }
+  restrictions {
+    browser_key_restrictions {
+      allowed_referrers = [
+        "https://planningalerts.org.au",
+        "https://www.planningalerts.org.au",
+        "https://cuttlefish.oaf.org.au",
+        "http://localhost:3000",
+      ]
     }
+  }
 }
 
 resource "google_apikeys_key" "google_maps_server_key" {
-    display_name = "PlanningAlerts Server API key (google_maps_server_key)"
-    name         = "e401e298-4aa7-4ee8-a53e-06b6da107b2a"
-    restrictions {
-        server_key_restrictions {
-            allowed_ips = concat(aws_instance.planningalerts-blue[*].public_ip, aws_instance.planningalerts-green[*].public_ip)
-        }
+  display_name = "PlanningAlerts Server API key (google_maps_server_key)"
+  name         = "e401e298-4aa7-4ee8-a53e-06b6da107b2a"
+  restrictions {
+    server_key_restrictions {
+      allowed_ips = concat(aws_instance.planningalerts-blue[*].public_ip, aws_instance.planningalerts-green[*].public_ip)
     }
+  }
 }
 
 resource "aws_s3_bucket" "planningalerts_sitemaps_production" {
@@ -394,7 +394,7 @@ resource "aws_iam_access_key" "planningalerts_sitemaps_production" {
 # cd ..; ansible-vault encrypt_string --name aws_secret_access_key "value from above" --encrypt-vault-id default
 
 output "planningalerts_sitemaps_production_secret_access_key" {
-  value = aws_iam_access_key.planningalerts_sitemaps_production.secret
+  value     = aws_iam_access_key.planningalerts_sitemaps_production.secret
   sensitive = true
 }
 
@@ -403,13 +403,13 @@ output "planningalerts_sitemaps_production_access_key_id" {
 }
 
 resource "aws_iam_user_policy" "upload_to_planningalerts_sitemaps" {
-  user   = aws_iam_user.planningalerts_sitemaps_production.name
-  name   = "upload"
+  user = aws_iam_user.planningalerts_sitemaps_production.name
+  name = "upload"
   policy = jsonencode(
     {
       Statement = [
         {
-          Action   = [
+          Action = [
             "s3:PutObject",
             "s3:PutObjectAcl",
           ]
@@ -417,7 +417,7 @@ resource "aws_iam_user_policy" "upload_to_planningalerts_sitemaps" {
           Resource = "arn:aws:s3:::${aws_s3_bucket.planningalerts_sitemaps_production.bucket}/*"
         },
       ]
-      Version   = "2012-10-17"
+      Version = "2012-10-17"
     }
   )
 }
@@ -425,12 +425,12 @@ resource "aws_iam_user_policy" "upload_to_planningalerts_sitemaps" {
 module "planningalerts-activestorage-s3-production" {
   source = "./planningalerts-activestorage-s3"
 
-  name = "planningalerts-as-production"
+  name            = "planningalerts-as-production"
   allowed_origins = ["https://www.planningalerts.org.au"]
 }
 
 output "planningalerts_activestorage_s3_production_secret_access_key" {
-  value = module.planningalerts-activestorage-s3-production.secret_access_key
+  value     = module.planningalerts-activestorage-s3-production.secret_access_key
   sensitive = true
 }
 

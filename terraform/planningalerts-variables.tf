@@ -12,14 +12,14 @@ variable "planningalerts_enable_green_env" {
 
 variable "planningalerts_blue_weight" {
   description = "Weighting of traffic to send to blue when enabled"
-  type = number
-  default = 1
+  type        = number
+  default     = 1
 }
 
 variable "planningalerts_green_weight" {
   description = "Weighting of traffic to send to green when enabled"
-  type = number
-  default = 1
+  type        = number
+  default     = 1
 }
 
 variable "planningalerts_blue_instance_count" {

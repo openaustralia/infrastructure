@@ -21,9 +21,9 @@ provider "cloudflare" {
 # To use this provider we authenticate with:
 # gcloud auth application-default login
 provider "google" {
-  project = "planningalerts-214303"
-  region = "australia-southeast1"
-  zone = "australia-southeast1-a"
+  project               = "planningalerts-214303"
+  region                = "australia-southeast1"
+  zone                  = "australia-southeast1-a"
   user_project_override = true
-  billing_project = "planningalerts-214303"
+  billing_project       = "planningalerts-214303"
 }

@@ -98,7 +98,7 @@ resource "aws_s3_bucket" "production" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "production" {
   provider = aws.ap-southeast-1
-  bucket = aws_s3_bucket.production.id
+  bucket   = aws_s3_bucket.production.id
 
   rule {
     apply_server_side_encryption_by_default {
@@ -109,7 +109,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "production" {
 
 resource "aws_s3_bucket_acl" "production" {
   provider = aws.ap-southeast-1
-  bucket = aws_s3_bucket.production.id
+  bucket   = aws_s3_bucket.production.id
 
   # We don't want to use the pre-canned "public-read" because this allows listing
   # of all the objects in the bucket. There might be hidden leaflets. So, we
@@ -130,8 +130,8 @@ resource "aws_s3_bucket_acl" "production" {
       permission = "FULL_CONTROL"
 
       grantee {
-        id = data.aws_canonical_user_id.current_user.id
-        type         = "CanonicalUser"
+        id   = data.aws_canonical_user_id.current_user.id
+        type = "CanonicalUser"
       }
     }
 
@@ -159,7 +159,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "staging" {
 
 resource "aws_s3_bucket_acl" "staging" {
   provider = aws.ap-southeast-1
-  bucket = aws_s3_bucket.staging.id
+  bucket   = aws_s3_bucket.staging.id
 
   # We don't want to use the pre-canned "public-read" because this allows listing
   # of all the objects in the bucket. There might be hidden leaflets. So, we
@@ -180,8 +180,8 @@ resource "aws_s3_bucket_acl" "staging" {
       permission = "FULL_CONTROL"
 
       grantee {
-        id = data.aws_canonical_user_id.current_user.id
-        type         = "CanonicalUser"
+        id   = data.aws_canonical_user_id.current_user.id
+        type = "CanonicalUser"
       }
     }
 

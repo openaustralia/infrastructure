@@ -11,7 +11,7 @@ resource "aws_instance" "metabase" {
   security_groups = [aws_security_group.planningalerts.name]
 
   disable_api_termination = true
-  iam_instance_profile = aws_iam_instance_profile.logging.name
+  iam_instance_profile    = aws_iam_instance_profile.logging.name
 }
 
 resource "aws_eip" "metabase" {
@@ -28,8 +28,8 @@ resource "aws_lb_target_group" "metabase" {
   vpc_id   = aws_default_vpc.default.id
 
   health_check {
-    path = "/api/health"
-    healthy_threshold = 5
+    path                = "/api/health"
+    healthy_threshold   = 5
     unhealthy_threshold = 2
   }
 }
@@ -77,7 +77,7 @@ resource "aws_lb_listener_certificate" "metabase" {
 
 resource "aws_lb_listener_rule" "metabase" {
   listener_arn = aws_lb_listener.main-https.arn
-  priority = 5
+  priority     = 5
 
   action {
     type             = "forward"
