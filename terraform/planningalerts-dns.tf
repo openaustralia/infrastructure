@@ -13,11 +13,11 @@ resource "cloudflare_record" "pa_web_blue" {
 }
 
 resource "cloudflare_record" "pa_web_green" {
-  count   = var.planningalerts_enable_green_env ? length(aws_instance.planningalerts-green) : 0
+  count   = var.planningalerts_enable_green_env ? var.planningalerts_green_instance_count : 0
   zone_id = var.planningalerts_org_au_zone_id
   name    = "web${count.index + 1}.green.planningalerts.org.au"
   type    = "A"
-  value   = aws_instance.planningalerts-green[count.index].public_ip
+  value   = module.planningalerts-env-green.public_ips[count.index]
 }
 
 # CNAME records

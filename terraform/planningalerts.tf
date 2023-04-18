@@ -18,27 +18,19 @@ module "planningalerts-env-blue" {
   key_name             = aws_key_pair.deployer.key_name
 }
 
-resource "aws_instance" "planningalerts-green" {
-  count = var.planningalerts_enable_green_env ? var.planningalerts_green_instance_count : 0
-  ami   = var.planningalerts_green_ami
-
-  instance_type = "t3.medium"
-  ebs_optimized = true
-  key_name      = aws_key_pair.deployer.key_name
-  tags = {
-    Name = "web${count.index + 1}.green.planningalerts"
-    # The Application and Roles tag are used by capistrano-aws to figure out which instances to deploy to
-    Application = "planningalerts"
-    BlueGreen   = "green"
-    Roles       = "app,web,db"
-  }
+module "planningalerts-env-green" {
+  source             = "./planningalerts-env"
+  instance_count     = var.planningalerts_green_instance_count
+  ami                = var.planningalerts_green_ami
+  enable             = var.planningalerts_enable_green_env
+  env_name           = "green"
+  availability_zones = var.availability_zones
   security_groups = [
     aws_security_group.planningalerts.name,
     aws_security_group.planningalerts_memcached_server.name
   ]
   iam_instance_profile = aws_iam_instance_profile.logging.name
-
-  availability_zone = var.availability_zones[count.index % 3]
+  key_name             = aws_key_pair.deployer.key_name
 }
 
 resource "aws_db_parameter_group" "md5" {
@@ -181,9 +173,9 @@ resource "aws_lb_target_group_attachment" "planningalerts-blue-production" {
 }
 
 resource "aws_lb_target_group_attachment" "planningalerts-green-production" {
-  count            = var.planningalerts_enable_green_env ? length(aws_instance.planningalerts-green) : 0
+  count            = var.planningalerts_enable_green_env ? var.planningalerts_green_instance_count : 0
   target_group_arn = aws_lb_target_group.planningalerts-production-green.arn
-  target_id        = aws_instance.planningalerts-green[count.index].id
+  target_id        = module.planningalerts-env-green.instance_ids[count.index]
 }
 
 resource "aws_acm_certificate" "planningalerts-production" {
@@ -349,7 +341,7 @@ resource "google_apikeys_key" "google_maps_server_key" {
   name         = "e401e298-4aa7-4ee8-a53e-06b6da107b2a"
   restrictions {
     server_key_restrictions {
-      allowed_ips = concat(module.planningalerts-env-blue.public_ips, aws_instance.planningalerts-green[*].public_ip)
+      allowed_ips = concat(module.planningalerts-env-blue.public_ips, module.planningalerts-env-green.public_ips)
     }
   }
 }
