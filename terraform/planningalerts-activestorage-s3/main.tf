@@ -17,7 +17,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "main" {
 }
 
 resource "aws_s3_bucket_public_access_block" "main" {
-  bucket                  = aws_s3_bucket.main.id
+  bucket = aws_s3_bucket.main.id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -33,18 +33,18 @@ resource "aws_s3_bucket_cors_configuration" "main" {
     allowed_headers = ["*"]
     allowed_methods = ["PUT"]
     allowed_origins = var.allowed_origins
-    expose_headers = ["Origin", "Content-Type", "Content-MD5", "Content-Disposition"]
+    expose_headers  = ["Origin", "Content-Type", "Content-MD5", "Content-Disposition"]
     max_age_seconds = 3600
   }
 }
 
 resource "aws_iam_user_policy" "main" {
-  user   = aws_iam_user.main.name
+  user = aws_iam_user.main.name
   policy = jsonencode(
     {
       Statement = [
         {
-          Action   = [
+          Action = [
             "s3:ListBucket",
             "s3:PutObject",
             "s3:GetObject",
@@ -54,7 +54,7 @@ resource "aws_iam_user_policy" "main" {
           Resource = "arn:aws:s3:::${aws_s3_bucket.main.id}/*"
         },
       ]
-      Version   = "2012-10-17"
+      Version = "2012-10-17"
     }
   )
 }
