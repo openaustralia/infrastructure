@@ -28,3 +28,6 @@ variable "iam_instance_profile" {
 
 variable "key_name" {
 }
+
+variable "vpc_id" {
+}

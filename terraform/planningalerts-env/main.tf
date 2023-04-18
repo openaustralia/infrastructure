@@ -17,3 +17,20 @@ resource "aws_instance" "main" {
 
   availability_zone = var.availability_zones[count.index % 3]
 }
+
+resource "aws_lb_target_group" "main" {
+  name     = "planningalerts-production-${var.env_name}"
+  port     = 8000
+  protocol = "HTTP"
+  vpc_id   = var.vpc_id
+
+  health_check {
+    path = "/health_check"
+    # Increasing from the default of 5 to handle occasional slow downs we're
+    # seeing at the moment
+    # TODO: Can we drop this down again to the default?
+    timeout             = 10
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+  }
+}

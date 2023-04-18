@@ -16,6 +16,7 @@ module "planningalerts-env-blue" {
   ]
   iam_instance_profile = aws_iam_instance_profile.logging.name
   key_name             = aws_key_pair.deployer.key_name
+  vpc_id               = aws_default_vpc.default.id
 }
 
 module "planningalerts-env-green" {
@@ -31,6 +32,7 @@ module "planningalerts-env-green" {
   ]
   iam_instance_profile = aws_iam_instance_profile.logging.name
   key_name             = aws_key_pair.deployer.key_name
+  vpc_id               = aws_default_vpc.default.id
 }
 
 resource "aws_db_parameter_group" "md5" {
@@ -132,49 +134,15 @@ resource "aws_elasticache_parameter_group" "sidekiq" {
   }
 }
 
-resource "aws_lb_target_group" "planningalerts-production-blue" {
-  name     = "planningalerts-production-blue"
-  port     = 8000
-  protocol = "HTTP"
-  vpc_id   = aws_default_vpc.default.id
-
-  health_check {
-    path = "/health_check"
-    # Increasing from the default of 5 to handle occasional slow downs we're
-    # seeing at the moment
-    # TODO: Can we drop this down again to the default?
-    timeout             = 10
-    healthy_threshold   = 5
-    unhealthy_threshold = 2
-  }
-}
-
-resource "aws_lb_target_group" "planningalerts-production-green" {
-  name     = "planningalerts-production-green"
-  port     = 8000
-  protocol = "HTTP"
-  vpc_id   = aws_default_vpc.default.id
-
-  health_check {
-    path = "/health_check"
-    # Increasing from the default of 5 to handle occasional slow downs we're
-    # seeing at the moment
-    # TODO: Can we drop this down again to the default?
-    timeout             = 10
-    healthy_threshold   = 5
-    unhealthy_threshold = 2
-  }
-}
-
 resource "aws_lb_target_group_attachment" "planningalerts-blue-production" {
   count            = var.planningalerts_enable_blue_env ? var.planningalerts_blue_instance_count : 0
-  target_group_arn = aws_lb_target_group.planningalerts-production-blue.arn
+  target_group_arn = module.planningalerts-env-blue.target_group_arn
   target_id        = module.planningalerts-env-blue.instance_ids[count.index]
 }
 
 resource "aws_lb_target_group_attachment" "planningalerts-green-production" {
   count            = var.planningalerts_enable_green_env ? var.planningalerts_green_instance_count : 0
-  target_group_arn = aws_lb_target_group.planningalerts-production-green.arn
+  target_group_arn = module.planningalerts-env-green.target_group_arn
   target_id        = module.planningalerts-env-green.instance_ids[count.index]
 }
 
@@ -282,11 +250,11 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
     type = "forward"
     forward {
       target_group {
-        arn    = aws_lb_target_group.planningalerts-production-blue.arn
+        arn    = module.planningalerts-env-blue.target_group_arn
         weight = var.planningalerts_enable_blue_env ? var.planningalerts_blue_weight : 0
       }
       target_group {
-        arn    = aws_lb_target_group.planningalerts-production-green.arn
+        arn    = module.planningalerts-env-green.target_group_arn
         weight = var.planningalerts_enable_green_env ? var.planningalerts_green_weight : 0
       }
     }
