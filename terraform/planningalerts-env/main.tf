@@ -34,3 +34,9 @@ resource "aws_lb_target_group" "main" {
     unhealthy_threshold = 2
   }
 }
+
+resource "aws_lb_target_group_attachment" "main" {
+  count            = var.enable ? var.instance_count : 0
+  target_group_arn = aws_lb_target_group.main.arn
+  target_id        = aws_instance.main[count.index].id
+}

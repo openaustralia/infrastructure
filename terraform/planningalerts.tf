@@ -134,18 +134,6 @@ resource "aws_elasticache_parameter_group" "sidekiq" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "planningalerts-blue-production" {
-  count            = var.planningalerts_enable_blue_env ? var.planningalerts_blue_instance_count : 0
-  target_group_arn = module.planningalerts-env-blue.target_group_arn
-  target_id        = module.planningalerts-env-blue.instance_ids[count.index]
-}
-
-resource "aws_lb_target_group_attachment" "planningalerts-green-production" {
-  count            = var.planningalerts_enable_green_env ? var.planningalerts_green_instance_count : 0
-  target_group_arn = module.planningalerts-env-green.target_group_arn
-  target_id        = module.planningalerts-env-green.instance_ids[count.index]
-}
-
 resource "aws_acm_certificate" "planningalerts-production" {
   domain_name = "planningalerts.org.au"
   subject_alternative_names = [
