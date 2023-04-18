@@ -5,11 +5,11 @@ variable "planningalerts_org_au_zone_id" {
 # A records
 
 resource "cloudflare_record" "pa_web_blue" {
-  count   = var.planningalerts_enable_blue_env ? length(aws_instance.planningalerts-blue) : 0
+  count   = var.planningalerts_enable_blue_env ? var.planningalerts_blue_instance_count : 0
   zone_id = var.planningalerts_org_au_zone_id
   name    = "web${count.index + 1}.blue.planningalerts.org.au"
   type    = "A"
-  value   = aws_instance.planningalerts-blue[count.index].public_ip
+  value   = module.planningalerts-env-blue.public_ips[count.index]
 }
 
 resource "cloudflare_record" "pa_web_green" {

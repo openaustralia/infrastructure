@@ -1,0 +1,19 @@
+resource "aws_instance" "main" {
+  count = var.enable ? var.instance_count : 0
+  ami   = var.ami
+
+  instance_type = "t3.medium"
+  ebs_optimized = true
+  key_name      = var.key_name
+  tags = {
+    Name = "web${count.index + 1}.${var.env_name}.planningalerts"
+    # The Application and Roles tag are used by capistrano-aws to figure out which instances to deploy to
+    Application = "planningalerts"
+    BlueGreen   = var.env_name
+    Roles       = "app,web,db"
+  }
+  security_groups      = var.security_groups
+  iam_instance_profile = var.iam_instance_profile
+
+  availability_zone = var.availability_zones[count.index % 3]
+}
