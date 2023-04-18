@@ -99,6 +99,13 @@ resource "aws_db_instance" "planningalerts" {
   vpc_security_group_ids = [aws_security_group.postgresql.id]
   # TODO: Probably switch back to default parameter group name for production
   parameter_group_name = aws_db_parameter_group.md5.name
+
+  # Enable performance insights
+  performance_insights_enabled = true
+
+  # Enable enhanced monitoring
+  monitoring_role_arn = aws_iam_role.rds-monitoring-role.arn
+  monitoring_interval = 60
 }
 
 resource "aws_elasticache_cluster" "planningalerts" {
