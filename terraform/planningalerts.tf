@@ -69,8 +69,10 @@ resource "aws_db_instance" "planningalerts" {
   # This is the baseline for storage less than 400 GB
   iops = 3000
 
-  # TODO: Upgrade instance_class to db.m6g.large for production (might be able to use smaller)
-  instance_class = "db.t4g.micro"
+  # We're using db.m5.large because we migrated from mysql which was using db.m5.large and
+  # AWS allowed us to cancel our mysql reserved instance if we bought the same class of postgres reserved instance.
+  # TODO: Switch over to db.m6g.large as soon as the reserved instance has expired (12/4/2024) and before we buy a new one
+  instance_class = "db.m5.large"
   identifier     = "planningalerts"
   username       = "root"
   password       = var.rds_admin_password
@@ -82,15 +84,13 @@ resource "aws_db_instance" "planningalerts" {
   backup_window = "16:00-16:30"
 
   # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
-  maintenance_window = "Sun:17:00-Sun:17:30"
-  # TODO: Change multi_az to true for production
-  multi_az                   = false
+  maintenance_window         = "Sun:17:00-Sun:17:30"
+  multi_az                   = true
   auto_minor_version_upgrade = true
 
   # TODO: Change apply_immediately to false for production
-  apply_immediately = true
-  # TODO: Change skip_final_snapshot to false for production
-  skip_final_snapshot = true
+  apply_immediately   = true
+  skip_final_snapshot = false
 
   # TODO: Turn on performance insights for production
   # TODO: Turn on enhanced monitoring for production
