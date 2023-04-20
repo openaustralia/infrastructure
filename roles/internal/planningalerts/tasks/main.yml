@@ -18,7 +18,7 @@
     state: directory
     owner: deploy
     group: deploy
-    path: '{{item}}'
+    path: "{{item}}"
   with_items:
     - /srv/www/production
     - /srv/www/production/shared
@@ -30,7 +30,10 @@
 
 - name: Ensure packages to build gem native extensions are installed
   apt:
-    pkg: ['libmysqlclient-dev', 'libxml2-dev', 'libxslt1-dev']
+    pkg:
+      - libmysqlclient-dev
+      - libxml2-dev
+      - libxslt1-dev
 
 - name: Copy rails master key for production
   template:
