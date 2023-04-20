@@ -1,11 +1,5 @@
 ---
 # handlers file for planningalerts
-- name: restart web server
-  # This also restarts the background queue but we can live that
-  service:
-    name: "planningalerts-production.target"
-    state: restarted
-
 - name: memchached restart
   service:
     name: memcached

@@ -38,7 +38,6 @@
     dest: "/srv/www/production/shared/config/credentials/production.key"
     owner: deploy
     group: deploy
-  notify: restart web server
 
 - name: Allow deploy user to control services
   copy:
