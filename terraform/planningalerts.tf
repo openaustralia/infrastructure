@@ -57,7 +57,7 @@ resource "aws_db_parameter_group" "md5" {
   # We're also disabling the forcing of ssl so that pgloader can do its business
   parameter {
     apply_method = "immediate"
-    name         = "force_ssl"
+    name         = "rds.force_ssl"
     value        = 0
   }
 }
