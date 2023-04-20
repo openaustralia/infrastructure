@@ -72,12 +72,11 @@ resource "aws_db_instance" "planningalerts" {
   # We're using db.m5.large because we migrated from mysql which was using db.m5.large and
   # AWS allowed us to cancel our mysql reserved instance if we bought the same class of postgres reserved instance.
   # TODO: Switch over to db.m6g.large as soon as the reserved instance has expired (12/4/2024) and before we buy a new one
-  instance_class = "db.m5.large"
-  identifier     = "planningalerts"
-  username       = "root"
-  password       = var.rds_admin_password
-  # TODO: Change publicly_accessible to false for production
-  publicly_accessible     = true
+  instance_class          = "db.m5.large"
+  identifier              = "planningalerts"
+  username                = "root"
+  password                = var.rds_admin_password
+  publicly_accessible     = false
   backup_retention_period = 35
 
   # We want 3-3:30am Sydney time which is 4-4:30pm GMT
