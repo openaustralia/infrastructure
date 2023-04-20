@@ -32,6 +32,7 @@
   apt:
     pkg:
       - libmysqlclient-dev
+      - libpq-dev
       - libxml2-dev
       - libxslt1-dev
 
