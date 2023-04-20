@@ -25,27 +25,28 @@ variable "planningalerts_blue_ami" {
 }
 
 // GREEN environment
+// Using this for the new postgresql based planningalerts configuration
 
 variable "planningalerts_enable_green_env" {
   description = "Enable planningalerts green environment"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "planningalerts_green_weight" {
   description = "Weighting of traffic to send to green when enabled"
   type        = number
-  default     = 1
+  default     = 0
 }
 
 variable "planningalerts_green_instance_count" {
   description = "Number of instance for green environment"
   type        = number
-  default     = 2
+  default     = 1
 }
 
 variable "planningalerts_green_ami" {
-  # planningalerts-ubuntu-22.04
+  # planningalerts-puma-ubuntu-22.04-v2
   # TODO: Get this dynamically based on the name chosen in packer
-  default = "ami-00d353be9cdd89469"
+  default = "ami-05aba378c77cf54e7"
 }
