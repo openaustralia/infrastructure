@@ -53,6 +53,13 @@ resource "aws_db_parameter_group" "md5" {
     name         = "password_encryption"
     value        = "md5"
   }
+
+  # We're also disabling the forcing of ssl so that pgloader can do its business
+  parameter {
+    apply_method = "immediate"
+    name         = "force_ssl"
+    value        = 0
+  }
 }
 
 resource "aws_db_instance" "planningalerts" {
