@@ -94,8 +94,7 @@ resource "aws_db_instance" "planningalerts" {
   multi_az                   = true
   auto_minor_version_upgrade = true
 
-  # TODO: Change apply_immediately to false for production
-  apply_immediately   = true
+  apply_immediately   = false
   skip_final_snapshot = false
 
   # TODO: Turn on performance insights for production
