@@ -16,7 +16,7 @@ variable "instance_count" {
   type        = number
 }
 
-variable "ami" {
+variable "ami_name" {
 }
 
 variable "security_groups" {

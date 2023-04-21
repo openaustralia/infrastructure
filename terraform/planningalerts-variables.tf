@@ -18,10 +18,8 @@ variable "planningalerts_blue_instance_count" {
   default     = 2
 }
 
-variable "planningalerts_blue_ami" {
-  # planningalerts-puma-ubuntu-22.04
-  # TODO: Get this dynamically based on the name chosen in packer
-  default = "ami-0574a77d61e67436d"
+variable "planningalerts_blue_ami_name" {
+  default = "planningalerts-puma-ubuntu-22.04"
 }
 
 // GREEN environment
@@ -45,8 +43,6 @@ variable "planningalerts_green_instance_count" {
   default     = 1
 }
 
-variable "planningalerts_green_ami" {
-  # planningalerts-puma-ubuntu-22.04-v2
-  # TODO: Get this dynamically based on the name chosen in packer
-  default = "ami-05aba378c77cf54e7"
+variable "planningalerts_green_ami_name" {
+  default = "planningalerts-puma-ubuntu-22.04-v2"
 }

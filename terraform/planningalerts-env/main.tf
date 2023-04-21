@@ -7,9 +7,17 @@ terraform {
   }
 }
 
+data "aws_ami" "main" {
+  owners = ["self"]
+  filter {
+    name   = "name"
+    values = [var.ami_name]
+  }
+}
+
 resource "aws_instance" "main" {
   count = var.enable ? var.instance_count : 0
-  ami   = var.ami
+  ami   = data.aws_ami.main.id
 
   instance_type = "t3.medium"
   ebs_optimized = true

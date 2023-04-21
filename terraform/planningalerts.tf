@@ -6,7 +6,7 @@ variable "availability_zones" {
 module "planningalerts-env-blue" {
   source             = "./planningalerts-env"
   instance_count     = var.planningalerts_blue_instance_count
-  ami                = var.planningalerts_blue_ami
+  ami_name           = var.planningalerts_blue_ami_name
   enable             = var.planningalerts_enable_blue_env
   env_name           = "blue"
   availability_zones = var.availability_zones
@@ -23,7 +23,7 @@ module "planningalerts-env-blue" {
 module "planningalerts-env-green" {
   source             = "./planningalerts-env"
   instance_count     = var.planningalerts_green_instance_count
-  ami                = var.planningalerts_green_ami
+  ami_name           = var.planningalerts_green_ami_name
   enable             = var.planningalerts_enable_green_env
   env_name           = "green"
   availability_zones = var.availability_zones
