@@ -97,9 +97,6 @@ resource "aws_db_instance" "planningalerts" {
   apply_immediately   = false
   skip_final_snapshot = false
 
-  # TODO: Turn on performance insights for production
-  # TODO: Turn on enhanced monitoring for production
-
   # TODO: Limit traffic to only from planningalerts servers for production?
   vpc_security_group_ids = [aws_security_group.postgresql.id]
   # TODO: Probably switch back to default parameter group name for production
