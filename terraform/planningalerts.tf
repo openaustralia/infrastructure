@@ -112,6 +112,8 @@ resource "aws_db_instance" "planningalerts" {
   # Enable enhanced monitoring
   monitoring_role_arn = aws_iam_role.rds-monitoring-role.arn
   monitoring_interval = 60
+
+  deletion_protection = true
 }
 
 resource "aws_elasticache_cluster" "planningalerts" {

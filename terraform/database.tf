@@ -52,6 +52,7 @@ resource "aws_db_instance" "main" {
   # TODO: Go through parameter group and see if anything is different than the 5.7 default and if so make a custom one for us
   # parameter_group_name       = aws_db_parameter_group.mysql_default.name
   parameter_group_name = "default.mysql5.7-db-3zfhxnxjf2w5aymy2dl3hbsk3m-upgrade"
+  deletion_protection = true
 }
 
 resource "aws_iam_role" "rds-monitoring-role" {
@@ -108,6 +109,7 @@ resource "aws_db_instance" "postgresql" {
   apply_immediately      = false
   skip_final_snapshot    = false
   vpc_security_group_ids = [aws_security_group.postgresql.id]
+  deletion_protection = true
 }
 
 resource "aws_db_parameter_group" "mysql_default" {
