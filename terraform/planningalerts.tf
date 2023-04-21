@@ -297,12 +297,18 @@ resource "google_apikeys_key" "google_maps_key" {
 
   restrictions {
     browser_key_restrictions {
-      allowed_referrers = [
-        "https://planningalerts.org.au",
-        "https://www.planningalerts.org.au",
-        "https://cuttlefish.oaf.org.au",
-        "http://localhost:3000",
-      ]
+      allowed_referrers = concat(
+        [
+          "https://planningalerts.org.au",
+          "https://www.planningalerts.org.au",
+          "https://cuttlefish.oaf.org.au",
+          "http://localhost:3000",
+        ],
+        # Allows maps to work when accessing the servers directly (not through the load balancer)
+        # Obviously not necessary for normal production use but useful for debugging and testing
+        [for s in module.planningalerts-env-blue.public_names : "http://${s}:8000"],
+        [for s in module.planningalerts-env-green.public_names : "http://${s}:8000"],
+      )
     }
   }
 }
