@@ -44,5 +44,5 @@ variable "planningalerts_green_instance_count" {
 }
 
 variable "planningalerts_green_ami_name" {
-  default = "planningalerts-puma-ubuntu-22.04-v2"
+  default = "planningalerts-puma-ubuntu-22.04-v3"
 }
