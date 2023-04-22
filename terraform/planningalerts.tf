@@ -37,6 +37,7 @@ module "planningalerts-env-green" {
   zone_id              = var.planningalerts_org_au_zone_id
 }
 
+# TODO: Delete this parameter group as soon as it's not used by the planningalerts db anymore
 resource "aws_db_parameter_group" "md5" {
   description = "Allow access via md5 for pgloader"
   family      = "postgres15"
@@ -99,8 +100,7 @@ resource "aws_db_instance" "planningalerts" {
 
   # TODO: Limit traffic to only from planningalerts servers for production?
   vpc_security_group_ids = [aws_security_group.postgresql.id]
-  # TODO: Probably switch back to default parameter group name for production
-  parameter_group_name = aws_db_parameter_group.md5.name
+  parameter_group_name   = "default.postgres15"
 
   # Enable performance insights
   performance_insights_enabled = true
