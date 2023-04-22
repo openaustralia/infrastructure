@@ -31,7 +31,6 @@
 - name: Ensure packages to build gem native extensions are installed
   apt:
     pkg:
-      - libmysqlclient-dev
       - libpq-dev
       - libxml2-dev
       - libxslt1-dev

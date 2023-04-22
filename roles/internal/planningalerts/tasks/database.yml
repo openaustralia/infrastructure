@@ -1,41 +1,5 @@
 # Tasks to create planningalerts database and database users
 
-# MySQL
-
-- name: Install dependency for ansible mysql_db module
-  apt:
-    pkg: python3-mysqldb
-
-- name: "Create planningalerts databases on mysql"
-  mysql_db:
-    login_host: "{{ mysql_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: "pa-production"
-
-- name: "Create planningalerts user with access to the database on mysql"
-  mysql_user:
-    login_host: "{{ mysql_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: "pa-production"
-    password: "{{ mysql_password }}"
-    priv: "pa-production.*:ALL"
-    host: "%"
-
-- name: Create mysql user with readonly access to the production planningalerts database for metabase
-  mysql_user:
-    login_host: "{{ mysql_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: pa-production-readonly
-    password: "{{ mysql_password_readonly }}"
-    priv: 'pa-production.*:SELECT'
-    host: "%"
-  run_once: true
-
-# Postgres
-
 - name: Install dependency for postgresql_db
   apt:
     pkg: python3-psycopg2
