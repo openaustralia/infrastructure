@@ -3,7 +3,7 @@
 variable "planningalerts_enable_blue_env" {
   description = "Enable planningalerts blue environment"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "planningalerts_blue_weight" {
