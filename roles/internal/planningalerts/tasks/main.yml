@@ -35,6 +35,9 @@
       - libpq-dev
       - libxml2-dev
       - libxslt1-dev
+      # Needed for rgeo geos support. See https://github.com/rgeo/rgeo/issues/227#issuecomment-1145169888
+      - libgeos++-dev
+      - libgeos-dev
 
 - name: Copy rails master key for production
   template:
