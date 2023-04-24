@@ -7,17 +7,7 @@ resource "aws_db_instance" "main" {
   engine         = "mysql"
   engine_version = "5.7.38"
 
-  # 1. We went from db.t2.small to db.t2.medium before we discovered that the
-  #    database migration service hadn't migrated the databases indexes. Oops!!
-  #    We might be able to go back down to small in the short term but would
-  #    rather leave us with spare capacity in the short term while we iron out
-  #    the kinks rather than dashing around upping capacity to debug problems.
-  # 2. With db.t2.medium it turned out we were running out of cpu credits
-  #    after a few days. So, upping to db.m4.large as the smallest "standard"
-  #    database instance
-  # 3. Upgraded to m5 because it's more recent. Pretty much the same price and
-  #    same vcpu and memory.
-  instance_class      = "db.m5.large"
+  instance_class      = "db.t3.small"
   identifier          = "main-database"
   username            = "admin"
   password            = var.rds_admin_password
@@ -25,8 +15,9 @@ resource "aws_db_instance" "main" {
 
   # TODO: Do we actually need this extra monitoring always on?
 
-  # Enable performance insights
-  performance_insights_enabled = true
+  # db.t3.small doesn't support performance_insights.
+  # So if we want to use it we need to upgrade the database to db.t3.medium
+  performance_insights_enabled = false
 
   # Enable enhanced monitoring
   monitoring_role_arn = aws_iam_role.rds-monitoring-role.arn
@@ -52,7 +43,7 @@ resource "aws_db_instance" "main" {
   # TODO: Go through parameter group and see if anything is different than the 5.7 default and if so make a custom one for us
   # parameter_group_name       = aws_db_parameter_group.mysql_default.name
   parameter_group_name = "default.mysql5.7-db-3zfhxnxjf2w5aymy2dl3hbsk3m-upgrade"
-  deletion_protection = true
+  deletion_protection  = true
 }
 
 resource "aws_iam_role" "rds-monitoring-role" {
@@ -109,7 +100,7 @@ resource "aws_db_instance" "postgresql" {
   apply_immediately      = false
   skip_final_snapshot    = false
   vpc_security_group_ids = [aws_security_group.postgresql.id]
-  deletion_protection = true
+  deletion_protection    = true
 }
 
 resource "aws_db_parameter_group" "mysql_default" {
