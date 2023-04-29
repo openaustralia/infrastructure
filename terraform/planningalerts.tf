@@ -12,7 +12,9 @@ module "planningalerts-env-blue" {
   availability_zones = var.availability_zones
   security_groups = [
     aws_security_group.planningalerts.name,
-    aws_security_group.planningalerts_memcached_server.name
+    aws_security_group.planningalerts_memcached_server.name,
+    # TODO: Only allow incoming email via load balancer
+    aws_security_group.incoming_email.name
   ]
   iam_instance_profile = aws_iam_instance_profile.logging.name
   key_name             = aws_key_pair.deployer.key_name
@@ -29,7 +31,9 @@ module "planningalerts-env-green" {
   availability_zones = var.availability_zones
   security_groups = [
     aws_security_group.planningalerts.name,
-    aws_security_group.planningalerts_memcached_server.name
+    aws_security_group.planningalerts_memcached_server.name,
+    # TODO: Only allow incoming email via load balancer
+    aws_security_group.incoming_email.name
   ]
   iam_instance_profile = aws_iam_instance_profile.logging.name
   key_name             = aws_key_pair.deployer.key_name
