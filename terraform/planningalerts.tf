@@ -13,7 +13,6 @@ module "planningalerts-env-blue" {
   security_groups = [
     aws_security_group.planningalerts.name,
     aws_security_group.planningalerts_memcached_server.name,
-    # TODO: Only allow incoming email via load balancer
     aws_security_group.incoming_email.name
   ]
   iam_instance_profile = aws_iam_instance_profile.logging.name
@@ -32,7 +31,6 @@ module "planningalerts-env-green" {
   security_groups = [
     aws_security_group.planningalerts.name,
     aws_security_group.planningalerts_memcached_server.name,
-    # TODO: Only allow incoming email via load balancer
     aws_security_group.incoming_email.name
   ]
   iam_instance_profile = aws_iam_instance_profile.logging.name
