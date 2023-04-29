@@ -4,3 +4,8 @@
   service:
     name: memcached
     state: restarted
+
+- name: restart postfix
+  service:
+    name: postfix
+    state: restarted

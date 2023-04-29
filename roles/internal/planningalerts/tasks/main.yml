@@ -50,3 +50,38 @@
     src: deploy_service_control
     dest: /etc/sudoers.d/
     validate: visudo -cf %s
+
+- name: Install postfix to handle incoming email
+  apt:
+    pkg: postfix
+
+- name: Update postfix configuration
+  template:
+    src: "{{ item }}"
+    dest: /etc/postfix
+  with_items:
+    - transport
+    - virtual_alias
+  notify: restart postfix
+
+- name: Install script to handle incoming email
+  template:
+    src: incoming-email.sh
+    dest: /usr/local/bin
+    # Make it executable
+    mode: 0755
+
+# Crude way of running postconf below. Will always change things and not
+# restart postfix when needed
+
+- name: Set postfix pipe handler
+  command: postconf -M -e "planningalerts/unix=planningalerts unix - n n - 50 pipe flags=R user=deploy directory=/srv/www/production/current argv=/usr/local/bin/incoming-email.sh"
+
+- name: Set postfix virtual alias
+  command:  postconf -e "virtual_alias_maps=regexp:/etc/postfix/virtual_alias"
+
+- name: Set postfix transport maps
+  command: postconf -e "transport_maps=regexp:/etc/postfix/transport"
+
+- name: Set postfix destination
+  command: postconf -e "mydestination=planningalerts.org.au"
