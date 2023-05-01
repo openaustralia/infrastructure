@@ -2,6 +2,17 @@ variable "planningalerts_org_au_zone_id" {
   default = "a826a2cd0f87d57ef60dc67c5738eec5"
 }
 
+# A records
+
+# Round-robin DNS - doing this to avoid having to put in a network load balancer which would cost us money obviously
+resource "cloudflare_record" "pa_incoming_email" {
+  count   = length(concat(module.planningalerts-env-blue.public_ips, module.planningalerts-env-green.public_ips))
+  zone_id = var.planningalerts_org_au_zone_id
+  name    = "incoming.email.planningalerts.org.au"
+  type    = "A"
+  value   = concat(module.planningalerts-env-blue.public_ips, module.planningalerts-env-green.public_ips)[count.index]
+}
+
 # CNAME records
 
 resource "cloudflare_record" "pa_root" {
