@@ -15,7 +15,7 @@ variable "planningalerts_blue_weight" {
 variable "planningalerts_blue_instance_count" {
   description = "Number of instance for blue environment"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "planningalerts_blue_ami_name" {
