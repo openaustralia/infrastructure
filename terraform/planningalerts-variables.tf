@@ -3,7 +3,7 @@
 variable "planningalerts_enable_blue_env" {
   description = "Enable planningalerts blue environment"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "planningalerts_blue_weight" {
@@ -15,15 +15,14 @@ variable "planningalerts_blue_weight" {
 variable "planningalerts_blue_instance_count" {
   description = "Number of instance for blue environment"
   type        = number
-  default     = 2
+  default     = 1
 }
 
 variable "planningalerts_blue_ami_name" {
-  default = "planningalerts-puma-ubuntu-22.04"
+  default = "planningalerts-puma-ubuntu-22.04-v3"
 }
 
 // GREEN environment
-// Using this for the new postgresql based planningalerts configuration
 
 variable "planningalerts_enable_green_env" {
   description = "Enable planningalerts green environment"
