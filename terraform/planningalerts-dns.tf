@@ -4,13 +4,22 @@ variable "planningalerts_org_au_zone_id" {
 
 # A records
 
+locals {
+  # Only include environment if the weight is set to 1. This is a very hacky way of doing something
+  # like the weighting on the load balancer for the round robin DNS below
+  planningalerts_all_public_ips = concat(
+    var.planningalerts_blue_weight == 1 ? module.planningalerts-env-blue.public_ips : [],
+    var.planningalerts_green_weight == 1 ? module.planningalerts-env-green.public_ips : []
+  )
+}
+
 # Round-robin DNS - doing this to avoid having to put in a network load balancer which would cost us money obviously
 resource "cloudflare_record" "pa_incoming_email" {
-  count   = length(concat(module.planningalerts-env-blue.public_ips, module.planningalerts-env-green.public_ips))
+  count   = length(local.planningalerts_all_public_ips)
   zone_id = var.planningalerts_org_au_zone_id
   name    = "incoming.email.planningalerts.org.au"
   type    = "A"
-  value   = concat(module.planningalerts-env-blue.public_ips, module.planningalerts-env-green.public_ips)[count.index]
+  value   = local.planningalerts_all_public_ips[count.index]
 }
 
 # CNAME records
