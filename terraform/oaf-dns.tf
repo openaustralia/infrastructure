@@ -83,6 +83,13 @@ resource "cloudflare_record" "social" {
   value   = "vip.masto.host"
 }
 
+resource "cloudflare_record" "oaf_donate" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "donate.oaf.org.au"
+  type    = "CNAME"
+  value   = "hosting.raisely.com"
+}
+
 # MX records
 resource "cloudflare_record" "oaf_mx1" {
   zone_id  = var.oaf_org_au_zone_id
