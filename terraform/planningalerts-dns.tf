@@ -60,7 +60,7 @@ resource "cloudflare_record" "pa_email2" {
 }
 
 resource "cloudflare_record" "pa_donate" {
-  zone_id = var.oaf_org_au_zone_id
+  zone_id = var.planningalerts_org_au_zone_id
   name    = "donate.planningalerts.org.au"
   type    = "CNAME"
   value   = "hosting.raisely.com"
