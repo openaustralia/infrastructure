@@ -27,3 +27,7 @@ provider "google" {
   user_project_override = true
   billing_project       = "planningalerts-214303"
 }
+
+provider "linode" {
+  token = var.linode_api_token
+}

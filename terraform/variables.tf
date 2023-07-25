@@ -23,6 +23,9 @@ variable "theyvoteforyou_db_password" {
 variable "cloudflare_api_token" {
 }
 
+variable "linode_api_token" {
+}
+
 # TODO: Get this automatically by managing Linode infrastructure with terraform
 variable "cuttlefish_ipv4" {
   default = "23.239.22.35"
