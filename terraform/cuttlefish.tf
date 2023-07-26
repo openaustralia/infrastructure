@@ -34,10 +34,12 @@ resource "linode_database_postgresql" "cuttlefish" {
   # Using same maintenance window as used in planningalerts database
   updates {
     day_of_week = "sunday"
-    duration = 1
-    frequency = "weekly"
+    duration    = 1
+    frequency   = "weekly"
     hour_of_day = 17
   }
-  # Only allow the database to be contacted directly from the cuttlefish instance via the private network
-  allow_list = [linode_instance.cuttlefish.private_ip_address]
+  # Only allow the database to be contacted directly from the cuttlefish instance.
+  # For some reason the ip address needs to be the public ip address even when
+  # contacting the database via the private network
+  allow_list = [linode_instance.cuttlefish.ip_address]
 }
