@@ -38,4 +38,6 @@ resource "linode_database_postgresql" "cuttlefish" {
     frequency = "weekly"
     hour_of_day = 17
   }
+  # Only allow the database to be contacted directly from the cuttlefish instance via the private network
+  allow_list = [linode_instance.cuttlefish.private_ip_address]
 }
