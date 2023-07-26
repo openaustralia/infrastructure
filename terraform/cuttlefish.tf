@@ -20,3 +20,22 @@ resource "linode_rdns" "cuttlefish_ipv6" {
   address = cidrhost(linode_instance.cuttlefish.ipv6, 0)
   rdns    = "cuttlefish.oaf.org.au"
 }
+
+resource "linode_database_postgresql" "cuttlefish" {
+  # This is the current latest available version which is different than
+  # what is currently used in production on cuttlefish
+  engine_id      = "postgresql/14.6"
+  label          = "cuttlefish"
+  region         = "us-west"
+  type           = "g6-standard-2"
+  ssl_connection = true
+  # We're sticking with a single node to save money
+  cluster_size = 1
+  # Using same maintenance window as used in planningalerts database
+  updates {
+    day_of_week = "sunday"
+    duration = 1
+    frequency = "weekly"
+    hour_of_day = 17
+  }
+}
