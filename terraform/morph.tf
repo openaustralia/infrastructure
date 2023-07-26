@@ -11,3 +11,9 @@ resource "linode_instance" "morph" {
   # We can't set the image below because it would force replacement
   # image            = "linode/ubuntu16.04lts"
 }
+
+# I don't really understand why we set up reverse DNS when we created the instance manually
+resource "linode_rdns" "morph_ipv4" {
+  address = linode_instance.morph.ip_address
+  rdns    = "morph.io"
+}
