@@ -11,6 +11,16 @@ resource "linode_instance" "cuttlefish" {
   # this was originally created with Ubuntu 14.04
 }
 
+# Temporary instance to run pgcopydb (https://pgcopydb.readthedocs.io/en/latest/index.html)
+# for migrating postgres database from local one to managed one run by linode
+resource "linode_instance" "cuttlefish_db_migration" {
+  region = "us-west"
+  type   = "g6-standard-4"
+  label  = "cuttlefish_db_migration"
+  booted = true
+  image  = "linode/ubuntu23.04"
+}
+
 resource "linode_rdns" "cuttlefish_ipv4" {
   address = linode_instance.cuttlefish.ip_address
   rdns    = "cuttlefish.oaf.org.au"
