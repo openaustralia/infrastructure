@@ -51,5 +51,6 @@ resource "linode_database_postgresql" "cuttlefish" {
   # Only allow the database to be contacted directly from the cuttlefish instance.
   # For some reason the ip address needs to be the public ip address even when
   # contacting the database via the private network
-  allow_list = [linode_instance.cuttlefish.ip_address]
+  # Also temporarily allow migration instance access as well
+  allow_list = [linode_instance.cuttlefish.ip_address, linode_instance.cuttlefish_db_migration.ip_address]
 }
