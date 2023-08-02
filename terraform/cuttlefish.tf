@@ -34,10 +34,11 @@ resource "linode_rdns" "cuttlefish_ipv6" {
 resource "linode_database_postgresql" "cuttlefish" {
   # This is the current latest available version which is different than
   # what is currently used in production on cuttlefish
-  engine_id      = "postgresql/14.6"
-  label          = "cuttlefish"
-  region         = "us-west"
-  type           = "g6-standard-2"
+  engine_id = "postgresql/14.6"
+  label     = "cuttlefish"
+  region    = "us-west"
+  # Temporarily upgrading to g6-standard-4 to see if the "the database system is in recovery mode" problem goes away
+  type           = "g6-standard-4"
   ssl_connection = true
   # We're sticking with a single node to save money
   cluster_size = 1
