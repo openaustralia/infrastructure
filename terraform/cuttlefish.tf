@@ -57,12 +57,18 @@ resource "linode_database_postgresql" "cuttlefish" {
 
 # These values are needed by ansible for cuttlefish
 # They need to be added semi-manually in the following way
+# `terraform output cuttlefish_db_host`
 # `terraform output cuttlefish_db_root_username`
 # `terraform output cuttlefish_db_root_password`
 # `cd <cuttlefish repo>`
+# Edit value db_host in provisioning/roles/cuttlefish-app/vars/main.yml to be value of "terraform output cuttlefish_db_host" above
 # Edit value db_root_username in provisioning/roles/cuttlefish-app/vars/main.yml to be value of "terraform output cuttlefish_db_root_username" above
 # `ansible-vault encrypt_string --name db_root_password <value from terraform output cuttlefish_db_root_password above> --encrypt-vault-id default`
 # Edit value db_root_password in provisioning/roles/cuttlefish-app/vars/main.yml to be output of command above
+
+output "cuttlefish_db_host" {
+  value = linode_database_postgresql.cuttlefish.host_secondary
+}
 
 output "cuttlefish_db_root_username" {
   value     = linode_database_postgresql.cuttlefish.root_username
