@@ -79,10 +79,7 @@ resource "aws_db_instance" "planningalerts" {
   # This is the baseline for storage less than 400 GB
   iops = 3000
 
-  # We're using db.m5.large because we migrated from mysql which was using db.m5.large and
-  # AWS allowed us to cancel our mysql reserved instance if we bought the same class of postgres reserved instance.
-  # TODO: Switch over to db.m6g.large as soon as the reserved instance has expired (12/4/2024) and before we buy a new one
-  instance_class          = "db.m5.large"
+  instance_class          = "db.m7g.large"
   identifier              = "planningalerts"
   username                = "root"
   password                = var.rds_admin_password

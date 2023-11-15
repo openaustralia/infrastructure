@@ -7,6 +7,8 @@ resource "aws_db_instance" "main" {
   engine         = "mysql"
   engine_version = "5.7.42"
 
+  # We can't currently upgrade to the graviton instance type because we're on an
+  # older version of mysql
   instance_class      = "db.t3.small"
   identifier          = "main-database"
   username            = "admin"
@@ -79,10 +81,7 @@ resource "aws_db_instance" "postgresql" {
   engine         = "postgres"
   engine_version = "15.2"
 
-  # Let's start in production with db.t2.medium. We should watch the cpu credits
-  # Dropping down to db.t2.small because we're under-using
-  # Switching to t3.small because it's more recent, same price, and double the cpu
-  instance_class          = "db.t3.small"
+  instance_class          = "db.t4g.small"
   identifier              = "postgresql"
   username                = "root"
   password                = var.rds_admin_password
