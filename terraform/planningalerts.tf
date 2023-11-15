@@ -79,7 +79,9 @@ resource "aws_db_instance" "planningalerts" {
   # This is the baseline for storage less than 400 GB
   iops = 3000
 
-  instance_class          = "db.m7g.large"
+  # Even though db.m7g.large are available we can't use them
+  # yet because we can't buy reserved instances for them. Sigh.
+  instance_class          = "db.m6g.large"
   identifier              = "planningalerts"
   username                = "root"
   password                = var.rds_admin_password
