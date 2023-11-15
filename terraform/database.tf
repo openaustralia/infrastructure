@@ -5,7 +5,7 @@ resource "aws_db_instance" "main" {
   # Using general purpose SSD
   storage_type   = "gp2"
   engine         = "mysql"
-  engine_version = "5.7.38"
+  engine_version = "5.7.42"
 
   instance_class      = "db.t3.small"
   identifier          = "main-database"
