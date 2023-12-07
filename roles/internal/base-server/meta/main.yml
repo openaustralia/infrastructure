@@ -6,6 +6,8 @@ dependencies:
       - {user: deploy, alias: root}
       - {user: root, alias: web-administrators@openaustralia.org}
   - role: ANXS.ntp
+    # ietf has stopped providing the leap seconds file
+    ntp_leapurl: https://hpiers.obspm.fr/iers/bul/bulc/ntp/leap-seconds.list
   - role: jnv.unattended-upgrades
     unattended_automatic_reboot: true
   - role: awscloudwatch
