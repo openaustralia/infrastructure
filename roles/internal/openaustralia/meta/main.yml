@@ -121,6 +121,8 @@ galaxy_info:
   #- system
   #- web
 dependencies:
+  # rvm actually has some trouble now. I think it's old certs on this version of the OS
+  # which is really not great.
   - role: rvm.ruby
     rvm1_rubies:
       - ruby-2.7.2
