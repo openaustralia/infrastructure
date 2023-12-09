@@ -58,6 +58,17 @@
     priv: 'tvfy-production.*:ALL'
     host: "%"
 
+- name: Create mysql user with readonly access to the production theyvoteforyou database for metabase
+  mysql_user:
+    login_host: "{{ mysql_host }}"
+    login_user: admin
+    login_password: "{{ rds_admin_password }}"
+    name: tvfy-production-readonly
+    password: "{{ mysql_production_password_readonly }}"
+    priv: 'tvfy-production.*:SELECT'
+    host: "%"
+  run_once: true
+
 - name: Create theyvoteforyou user with access to the database (staging)
   mysql_user:
     login_host: "{{ mysql_host }}"
