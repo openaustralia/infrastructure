@@ -32,7 +32,7 @@ resource "aws_eip" "righttoknow" {
 resource "aws_ebs_volume" "righttoknow_data" {
   availability_zone = "ap-southeast-2c"
 
-  size = 120
+  size = 240
   type = "gp3"
   tags = {
     Name = "righttoknow_data"
