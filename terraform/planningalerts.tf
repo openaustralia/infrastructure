@@ -74,7 +74,7 @@ resource "aws_db_instance" "planningalerts" {
   # Using general purpose SSD
   storage_type   = "gp3"
   engine         = "postgres"
-  engine_version = "15.2"
+  engine_version = "15.5"
   # We can't specify iops when creating the database
   # This is the baseline for storage less than 400 GB
   iops = 3000
