@@ -3,7 +3,7 @@
 variable "planningalerts_enable_blue_env" {
   description = "Enable planningalerts blue environment"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "planningalerts_blue_weight" {
@@ -19,7 +19,7 @@ variable "planningalerts_blue_instance_count" {
 }
 
 variable "planningalerts_blue_ami_name" {
-  default = "planningalerts-puma-ubuntu-22.04-v3"
+  default = "planningalerts-puma-ubuntu-22.04-v4"
 }
 
 // GREEN environment
