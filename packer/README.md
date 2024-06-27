@@ -3,4 +3,5 @@
 First install packer then:
 
 $ cd packer
+$ packer init .
 $ packer build planningalerts.pkr.hcl

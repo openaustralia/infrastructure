@@ -1,7 +1,21 @@
+packer {
+  required_plugins {
+    ansible = {
+      version = "~> 1"
+      source = "github.com/hashicorp/ansible"
+    }
+  }
+}
+
 source "amazon-ebs" "planningalerts-22" {
-  ami_name = "planningalerts-puma-ubuntu-22.04-v3"
+  ami_name = "planningalerts-puma-ubuntu-22.04-v4"
   instance_type = "t3.small"
   region = "ap-southeast-2"
+  ami_block_device_mappings {
+    // Double the volume size to 16 GiB from the default of 8 GiB
+    device_name = "/dev/sda1"
+    volume_size = 16
+  }
   source_ami_filter {
     filters = {
       name = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
