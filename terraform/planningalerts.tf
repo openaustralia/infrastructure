@@ -259,6 +259,12 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
         arn    = module.planningalerts-env-green.target_group_arn
         weight = var.planningalerts_enable_green_env ? var.planningalerts_green_weight : 0
       }
+      stickiness {
+        enabled = false
+        # The documentation and the tool disagree about whether duration is optional
+        # I'm guessing i'm using an older version of terraform?
+        duration = 1
+      }
     }
   }
 
