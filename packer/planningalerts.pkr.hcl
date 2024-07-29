@@ -7,8 +7,8 @@ packer {
   }
 }
 
-source "amazon-ebs" "planningalerts-22" {
-  ami_name = "planningalerts-puma-ubuntu-22.04-v4"
+source "amazon-ebs" "planningalerts-ruby33" {
+  ami_name = "planningalerts-ruby-3.3-v1"
   instance_type = "t3.small"
   region = "ap-southeast-2"
   ami_block_device_mappings {
@@ -31,9 +31,9 @@ source "amazon-ebs" "planningalerts-22" {
 }
 
 build {
-  name = "planningalerts-22"
+  name = "planningalerts-ruby33"
   sources = [
-    "source.amazon-ebs.planningalerts-22"
+    "source.amazon-ebs.planningalerts-ruby33"
   ]
 
   provisioner "ansible" {
