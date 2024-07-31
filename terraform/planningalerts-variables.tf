@@ -27,7 +27,7 @@ variable "planningalerts_blue_ami_name" {
 variable "planningalerts_enable_green_env" {
   description = "Enable planningalerts green environment"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "planningalerts_green_weight" {
