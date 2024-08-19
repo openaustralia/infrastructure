@@ -152,6 +152,13 @@ resource "cloudflare_record" "oaf_github_challenge2" {
   value   = "209f2b7179"
 }
 
+resource "cloudflare_record" "oaf_domainkey_google" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "google._domainkey.oaf.org.au"
+  type    = "TXT"
+  value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvlrS/9YendfJ0TnN9iBW67qaWDOyaNKDqeruhNBQZYqCNWSodX+tn7octjR2Xs4VJE5Ex8noA8LTqILBGQHyPDAk0FUg9BS3jaQyfwdUqiZmDqfQlc07urXLHbdttnpBNNh21Mut/RHohHMJa7b1cTXGwU//FBiJNXf4fy+XaS7/TBi0ydTvajdE6/3RnQn/0TthC3AvxQoqom0P1nEVB4RFbDNkud0/ajISwi9Gz+JEH/jiScq5D1rWWWG6ALkfTVuYxazpAAdKU4c7OsKRbE1zp4BKXpHWzx2nWVy5pmIR2ohi3yIuFEYl24LhIstH3hOBw2zF+j1HvWATDmJ9aQIDAQAB"
+}
+
 ## openaustraliafoundation.org.au
 
 # A records
@@ -232,4 +239,11 @@ resource "cloudflare_record" "oaf_alt_google_site_verification" {
   name    = "openaustraliafoundation.org.au"
   type    = "TXT"
   value   = "google-site-verification=sNfu9GJBQDlBYvdsXm8b61JjxxPfDy2JH9ok2UKHu48"
+}
+
+resource "cloudflare_record" "oaf_alt_domainkey_google" {
+  zone_id = var.openaustraliafoundation_org_au_zone_id
+  name    = "google._domainkey.openaustraliafoundation.org.au"
+  type    = "TXT"
+  value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz6aQEaWYi4O0qYTauYZhhABGd+ZkC2vnWS5soLS0cjW4Q/W75fYyBULC65HdCcTjbLVGuPh2tmFxjwoW20Vlh/qpqsWeBYIo20KSKgRFAPqFwbCXuumEcDoGcjKm7O9uTAO+cLe1wkT2XtpAA+Vk1pTSismJvt93YXUaX6lZuIaO5BO9d221ax5N/YJnZ29EIYzXUtStojC6QxkQ506XB4Y1s6SaNr+UJHBtLTJl/ffqwcCqL6DyxkrYKDoKxWxj1fO8aNrPSE2xQYbgCYIcOYOOUZmwyuY/4ILKjlOdJfz0OLcn1/2sbCLO8oTeXZe/ftt2xsMCEAkO+ROc67BFeQIDAQAB"
 }

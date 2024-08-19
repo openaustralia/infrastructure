@@ -137,6 +137,13 @@ resource "cloudflare_record" "facebook_domain_verification" {
   value   = "facebook-domain-verification=gl65oi4ss3xepcuasglgxgqlhj1lbg"
 }
 
+resource "cloudflare_record" "tvfy_domainkey_google" {
+  zone_id = var.theyvoteforyou_org_au_zone_id
+  name    = "google._domainkey.theyvoteforyou.org.au"
+  type    = "TXT"
+  value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6GEPSzIyB0M2Fpuk6nAJth9sE3xU30e7dn5Q1NihGNbBaxFP01qxohr6eP0F2OeokQI0Gk7/uxtl0mWNe7oCdgxjflX7DVW5B5jSpXUI3wM5sppFFvwen3joDhnWP4fnu8PLkBNTcJ32crG2u4BcyCBaz7bmM7utFZgnsTo1NuAaq6Hs5SU2nv4i5dPgbSF9UjjZ+/FfCXqzmQpmWHVGvyweHiVosXX/nZyYl9QeroT2YDpcD93DIidtiDR79QPDqLtqAk8lJFN9nyYo9DCnsxheROXHfPFlr1tkhYJJ+HxSnB368SZFH3HNzhvS9WYscjYYXHw1TtI972MOCtPqiwIDAQAB"
+}
+
 ## theyvoteforyou.org
 
 resource "cloudflare_record" "alt1_root" {

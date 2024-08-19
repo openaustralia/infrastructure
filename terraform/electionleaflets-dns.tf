@@ -118,3 +118,10 @@ resource "cloudflare_record" "el_google_site_verification" {
   type    = "TXT"
   value   = "google-site-verification=3Nb8GKm812AwhbSI4GsOntVXeDFJT9nyk68RjQoRuYQ"
 }
+
+resource "cloudflare_record" "el_domainkey_google" {
+  zone_id = var.electionleaflets_org_au_zone_id
+  name    = "google._domainkey.electionleaflets.org.au"
+  type    = "TXT"
+  value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxi3IIb7fJ5Hn4R2W/zIbxA1T5YSQvsjFPIuR9YC5yJZkfsPKbd9IblkVr1PF6gNoHM4ADM7ArQuJTxQA/YIlrs63e6N+9iOIb8dXelzENTcpO+OFjRjBtuD3EMQxg9bfoHft+3WFfyMfsnXpQRAQO0J864w2YuVZs2wgvJFVkNo+HKeb8k099FA+lJg9zoRH0OjJDad6ITveb2/c+sXYS/83k1CI17C4F+6n3Y+aizELfeRZ2h38n8E3giGoiNyJmJzSFq/zYwWs11WG12gBmNshtJM7tn3kOyjWAUBT2REOTWkYm0IT957yqehr+YB5PquvLifx8Xsok4oie9y4SwIDAQAB"
+}

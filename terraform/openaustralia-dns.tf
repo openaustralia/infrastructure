@@ -139,6 +139,13 @@ resource "cloudflare_record" "oa_cuttlefish_domainkey2" {
   value   = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnTduUSfwRbdTef45qgzmJ75zTtwiFgtadq/KFfY18/1plQiSSvzpOTNZQjuPW+5X9AeHQhPGtrxLd26ho/V/8FTj2YiAkpi0uwjPBMiERNhOYT9AJzImNpTmFaa9Sq2JXnhYJQHZhlEVu2iE3ZQEZ+3gIbgvS23vFSYwv3n3HwcbAo3epYCekVglKBZvbGvChXZvmN90wz5ovTv74VPOiq96xPWkzcbA5CEiEGfJT8VqNdciQlbEy3Mpijyj/2qPvwZzDCG2xVS47FUr7xYXPRd/JUx7qDw+xlaFUQuT9S6/6zYWwJW7qJ4REIPvC/paORPfnsyqk8c6MIOH9nMXzQIDAQAB"
 }
 
+resource "cloudflare_record" "oa_google_domainkey" {
+  zone_id = var.openaustralia_org_zone_id
+  name    = "google._domainkey.openaustralia.org"
+  type    = "TXT"
+  value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyElfjTkZNV7cZIExju+igJVVoL57U39ZNt3d0slj3IAjnP9p6zgB0IiIdTTj9Ak2o9e0Ni0y53QnNvW2bgbOPw1dCT1HgOyNwqQniTPAEbFv/HtwOT6oD+dMeBQvFvIwtdMAj/ZOoQlAX4M8dn/Z9I8NWpKqNLLjQiuMtapFRaJCVKMtiqVhqnlYseuRLC14LNm/juAq11g/p9wFbuHcUJg30nZinOJEvDYck9Vw1JXACTkZM70GtWCobqd0CZHvPK7raZoGfRBSpqMVfTY2MNvvuK3riZ2RloSCM6EkF8aqf27DKTtGp6/EYbibTEprqwWy8/Pvap+hPHtbH87JrQIDAQAB"
+}
+
 ## openaustralia.org.au
 
 # A records
@@ -263,4 +270,11 @@ resource "cloudflare_record" "oa_alt_facebook_domain_verification" {
   name    = "openaustralia.org.au"
   type    = "TXT"
   value   = "facebook-domain-verification=9fhej8uj8j643zkpahnblrfsst6iz5"
+}
+
+resource "cloudflare_record" "oa_alt_domainkey_google" {
+  zone_id = var.openaustralia_org_au_zone_id
+  name    = "google._domainkey.openaustralia.org.au"
+  type    = "TXT"
+  value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlL0dk9aaopGcbFKfugmxVqdUKCnpYTrnQj0Sz6RW1a+kFK44snSraBdMe6B14mvfUH1xkIuEiuKKWYIkYq5FHHZYcszVwt66FieU6HTaOvMNwDuXEJgU2zMIvGsUNiDO87CiEMZf0KhqyTrXIldVO/d9A5U7iZRy4poIKOQlm6NNEk6brfUXHct9S/Z4H6dlaowxUdjIp37838/U0AVTDiYYbSDrv2w60e1zTZy1y/9YXEGPlDpue4ijjJz1tjvJtS6cxfKT8elmXEOAo5j45K8NONJ4bEGNmTJxPMQwox0gBFwXwrf7pd4uYUpJW6GH9/vx7AW/jZe0SafCV/f0NQIDAQAB"
 }
