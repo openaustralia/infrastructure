@@ -178,46 +178,45 @@
 # This list of packages came from https://github.com/mysociety/alaveteli/blob/0.34.0.1/config/packages.ubuntu-bionic
 - name: Install packages required by Alaveteli
   apt:
-    name: "{{ item }}"
+    name:
+      - build-essential
+      - bundler
+      - catdoc
+      - elinks
+      - gettext
+      - ghostscript
+      - gnuplot-nox
+      - imagemagick
+      - libicu-dev
+      - libmagic-dev
+      - libmagickwand-dev
+      - libpq-dev
+      - libsqlite3-dev
+      - libxml2-dev
+      - libxslt-dev
+      - links
+      - lockfile-progs
+      - memcached
+      - mutt
+      - pdftk-java
+      - poppler-utils
+      - postgresql
+      - postgresql-client
+      - python-yaml
+      - rake
+      - ruby
+      - ruby-dev
+      - sqlite3
+      - tnef
+      - ttf-bitstream-vera
+      - unrtf
+      - unzip
+      - uuid-dev
+      # See separate installation below
+      # - wkhtmltopdf-static
+      - wv
+      - xapian-tools
     state: present
-  with_items:
-    - build-essential
-    - bundler
-    - catdoc
-    - elinks
-    - gettext
-    - ghostscript
-    - gnuplot-nox
-    - imagemagick
-    - libicu-dev
-    - libmagic-dev
-    - libmagickwand-dev
-    - libpq-dev
-    - libsqlite3-dev
-    - libxml2-dev
-    - libxslt-dev
-    - links
-    - lockfile-progs
-    - memcached
-    - mutt
-    - pdftk-java
-    - poppler-utils
-    - postgresql
-    - postgresql-client
-    - python-yaml
-    - rake
-    - ruby
-    - ruby-dev
-    - sqlite3
-    - tnef
-    - ttf-bitstream-vera
-    - unrtf
-    - unzip
-    - uuid-dev
-    # See separate installation below
-    # - wkhtmltopdf-static
-    - wv
-    - xapian-tools
 
 # Get wkhtmltopdf from project website
 - name: Install wkhtmltopdf
