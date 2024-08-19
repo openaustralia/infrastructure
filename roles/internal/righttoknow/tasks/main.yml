@@ -435,12 +435,12 @@
   template:
     src: "opendkim.conf"
     dest: /etc
+  notify: restart opendkim
 
 # Generated public/private keypair for opendkim with:
 # opendkim-genkey -b 2048 -d righttoknow.org.au -D /etc/dkimkeys -s default -v
 # TODO: Do we instead want to put it inside a directory called "righttoknow.org.au"?
 
-# TODO: Do we need to restart something after doing this?
 - name: Copy across DKIM keypair
   copy:
     src: "dkimkeys/{{ item }}"
@@ -453,6 +453,7 @@
     # It isn't strictly necessary to copy across default.txt as this is just a record of what needs to be added to DNS
     # Doing this to try to be a little self-documenting, I guess.
     - default.txt
+  notify: restart opendkim
 
 - name: Update postfix configuration
   template:
