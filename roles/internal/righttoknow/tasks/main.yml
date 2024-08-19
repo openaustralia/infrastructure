@@ -427,6 +427,9 @@
     pkg:
       - postfix
       - opendkim
+      # Only needed to run opendkim-genkey
+      # TODO: Probably don't need opendkim-tools in production
+      - opendkim-tools
 
 - name: Update opendkim configuration
   template:
