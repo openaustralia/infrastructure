@@ -105,7 +105,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "oaf.org.au.test"                 => "192.168.56.15",
     "openaustralia.org.au.test"       => "192.168.56.16",
     "mysql.test"                      => "192.168.56.17",
-    "postgresql.test"                 => "192.168.56.23",
+    # TODO: Do we want to seperate out the postgres for PA and everything else
+    # so they can track production versions more accurately?
+    "postgresql.test"                 => "192.168.56.18",
     "opengovernment.org.au.test"      => "192.168.56.19",
     "au.proxy.oaf.org.au.test"        => "192.168.56.20",
     "web.metabase.oaf.org.au.test"    => "192.168.56.21",
