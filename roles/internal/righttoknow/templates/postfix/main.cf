@@ -46,3 +46,9 @@ transport_maps = regexp:/etc/postfix/transport
 message_size_limit = 30720000
 #Use TLS if the receiving server supports it
 smtp_tls_security_level = may
+
+# Milter configuration
+milter_default_action = accept
+milter_protocol = 6
+smtpd_milters = local:/var/run/opendkim/opendkim.sock
+non_smtpd_milters = $smtpd_milters
