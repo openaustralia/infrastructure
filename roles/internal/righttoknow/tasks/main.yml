@@ -431,6 +431,10 @@
       # TODO: Probably don't need opendkim-tools in production
       - opendkim-tools
 
+# Generated public/private keypair for opendkim with:
+# opendkim-genkey -b 2048 -d righttoknow.org.au -D /etc/dkimkeys -s default -v
+# TODO: Do we instead want to put it inside a directory called "righttoknow.org.au"?
+
 - name: Update opendkim configuration
   template:
     src: "opendkim.conf"
