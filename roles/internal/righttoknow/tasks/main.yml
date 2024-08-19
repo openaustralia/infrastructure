@@ -431,14 +431,28 @@
       # TODO: Probably don't need opendkim-tools in production
       - opendkim-tools
 
-# Generated public/private keypair for opendkim with:
-# opendkim-genkey -b 2048 -d righttoknow.org.au -D /etc/dkimkeys -s default -v
-# TODO: Do we instead want to put it inside a directory called "righttoknow.org.au"?
-
 - name: Update opendkim configuration
   template:
     src: "opendkim.conf"
     dest: /etc
+
+# Generated public/private keypair for opendkim with:
+# opendkim-genkey -b 2048 -d righttoknow.org.au -D /etc/dkimkeys -s default -v
+# TODO: Do we instead want to put it inside a directory called "righttoknow.org.au"?
+
+# TODO: Do we need to restart something after doing this?
+- name: Copy across DKIM keypair
+  copy:
+    src: "dkimkeys/{{ item }}"
+    dest: /etc/dkimkeys
+    owner: opendkim
+    group: opendkim
+    mode: "0600"
+  with_items:
+    - default.private
+    # It isn't strictly necessary to copy across default.txt as this is just a record of what needs to be added to DNS
+    # Doing this to try to be a little self-documenting, I guess.
+    - default.txt
 
 - name: Update postfix configuration
   template:
