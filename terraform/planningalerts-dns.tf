@@ -145,29 +145,6 @@ resource "cloudflare_record" "pa_domainkey2" {
   value   = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoUPCB2huZQkwFnEMn0/jorQ/nHsNul1gQqHbQsX2unANX+dXnnmF0y+rFnB93mlmOVemv+vnQik/DGr+3aCQqOia5t5xXTsbPenmstC1tfCNDl9irQb7sCP8IeiLdcxJ5upsH8PtAod9r7J/Uo8KdXxMPbBFvVT/X9qe25dHkZUqwJHGn7peLmSTe2Ti4ZRTlyolc1orKD7sHx7iI+lU/9Ga1at2kykrXGAs4bUDPY2cmsSMcwqYRu6DQgBz01g9pqaOmDZ7mKwbI7M2m9kX6AWFCb9YqyeyZpW42bytlsKiVsH5bwQmhNFJ/vqTuwyyvBlIDcforixhRGZ13Ufj2QIDAQAB"
 }
 
-#Front DNS records
-resource "cloudflare_record" "oaf_pa_front_mx" {
-  zone_id  = var.planningalerts_org_au_zone_id
-  name     = "front-mail.planningalerts.org.au"
-  type     = "MX"
-  priority = 100
-  value    = "mx.sendgrid.net"
-}
-
-resource "cloudflare_record" "oaf_pa_front_spf" {
-  zone_id = var.planningalerts_org_au_zone_id
-  name    = "front-mail.planningalerts.org.au"
-  type    = "TXT"
-  value   = "v=spf1 a include:sendgrid.net ~all"
-}
-
-resource "cloudflare_record" "oaf_pa_front_domainkey" {
-  zone_id = var.planningalerts_org_au_zone_id
-  name    = "m1._domainkey.planningalerts.org.au"
-  type    = "TXT"
-  value   = "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC4PZZJiwMfMB/CuIZ9yAtNEGzfKzQ7WC7hfGg8UyavtYlDDBgSP6P1AiTBTMzTQbLChvf+Ef5CK46w+RwmgWpL38sxRwjahk45aQxoMOk2FJm7iHnP6zAGUnqAiL8iCdTjn5sp/txNf22bXrx3YS54ePBrfZQxOvkOvE24XZKXXwIDAQAB"
-}
-
 # Certification validation data
 resource "cloudflare_record" "cert-validation-production" {
   for_each = {
