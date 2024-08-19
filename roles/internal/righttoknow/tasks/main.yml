@@ -422,9 +422,11 @@
     dest: /lib/systemd/system/varnish.service
   notify: restart varnish
 
-- name: Install postfix for email handling
+- name: Install postfix (and opendkim) for email handling
   apt:
-    pkg: postfix
+    pkg:
+      - postfix
+      - opendkim
 
 - name: Update postfix configuration
   template:
