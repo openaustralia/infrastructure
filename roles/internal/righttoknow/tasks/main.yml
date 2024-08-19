@@ -437,14 +437,21 @@
     dest: /etc
   notify: restart opendkim
 
+- name: Create directory for DKIM keypair
+  file:
+    path: /etc/dkimkeys/righttoknow.org.au
+    owner: opendkim
+    group: opendkim
+    mode: 0700
+    state: directory
+
 # Generated public/private keypair for opendkim with:
 # opendkim-genkey -b 2048 -d righttoknow.org.au -D /etc/dkimkeys -s default -v
-# TODO: Do we instead want to put it inside a directory called "righttoknow.org.au"?
 
 - name: Copy across DKIM keypair
   copy:
     src: "dkimkeys/{{ item }}"
-    dest: /etc/dkimkeys
+    dest: /etc/dkimkeys/righttoknow.org.au
     owner: opendkim
     group: opendkim
     mode: "0600"
