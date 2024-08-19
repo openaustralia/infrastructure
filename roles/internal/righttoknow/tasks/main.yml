@@ -456,6 +456,18 @@
     - default.txt
   notify: restart opendkim
 
+- name: Create directory for opendkim socket that's accessible by postfix
+  file:
+    path: /var/spool/postfix/opendkim
+    owner: opendkim
+    group: postfix
+    state: directory
+
+- name: Postfix needs to be part of opendkim group to access the socket
+  user:
+    name: postfix
+    groups: opendkim
+
 - name: Update opendkim configuration
   template:
     src: "opendkim.conf"

@@ -50,5 +50,5 @@ smtp_tls_security_level = may
 # Milter configuration
 milter_default_action = accept
 milter_protocol = 6
-smtpd_milters = local:/var/run/opendkim/opendkim.sock
+smtpd_milters = local:opendkim/opendkim.sock
 non_smtpd_milters = $smtpd_milters
