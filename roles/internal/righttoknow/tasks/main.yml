@@ -428,6 +428,11 @@
       - postfix
       - opendkim
 
+- name: Update opendkim configuration
+  template:
+    src: "opendkim.conf"
+    dest: /etc
+
 - name: Update postfix configuration
   template:
     src: "postfix/{{ item }}"
