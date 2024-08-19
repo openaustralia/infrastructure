@@ -431,12 +431,6 @@
       # TODO: Probably don't need opendkim-tools in production
       - opendkim-tools
 
-- name: Update opendkim configuration
-  template:
-    src: "opendkim.conf"
-    dest: /etc
-  notify: restart opendkim
-
 - name: Create directory for DKIM keypair
   file:
     path: /etc/dkimkeys/righttoknow.org.au
@@ -460,6 +454,12 @@
     # It isn't strictly necessary to copy across default.txt as this is just a record of what needs to be added to DNS
     # Doing this to try to be a little self-documenting, I guess.
     - default.txt
+  notify: restart opendkim
+
+- name: Update opendkim configuration
+  template:
+    src: "opendkim.conf"
+    dest: /etc
   notify: restart opendkim
 
 - name: Update postfix configuration
