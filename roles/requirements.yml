@@ -23,8 +23,10 @@ roles:
     version: bfffd92efff476f5a685ebd53d265f78babb48af
 
   - src: zzet.rbenv
-    # Latest version as of Jan 2021
-    version: 3.4.7
+    # Latest version as of Aug 2024
+    # Need to upgrade from 3.4.7 to include the fix
+    # https://github.com/zzet/rbenv/commit/8d0f552cf4375688dc302220da280b6cc01c8d25
+    version: 3.6.0
 
   - src: newrelic.newrelic-infra
     version: 0.5.0
