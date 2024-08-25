@@ -11,7 +11,7 @@ terraform {
   }
 }
 
-resource "linode_instance" "cuttlefish" {
+resource "linode_instance" "main" {
   region           = "us-west"
   type             = "g6-standard-4"
   label            = "cuttlefish"
@@ -24,12 +24,27 @@ resource "linode_instance" "cuttlefish" {
   # this was originally created with Ubuntu 14.04
 }
 
-resource "linode_rdns" "cuttlefish_ipv4" {
-  address = linode_instance.cuttlefish.ip_address
+resource "linode_rdns" "ipv4" {
+  address = linode_instance.main.ip_address
   rdns    = "cuttlefish.oaf.org.au"
 }
 
-resource "linode_rdns" "cuttlefish_ipv6" {
-  address = cidrhost(linode_instance.cuttlefish.ipv6, 0)
+resource "linode_rdns" "ipv6" {
+  address = cidrhost(linode_instance.main.ipv6, 0)
   rdns    = "cuttlefish.oaf.org.au"
+}
+
+moved {
+  from = linode_instance.cuttlefish
+  to   = linode_instance.main
+}
+
+moved {
+  from = linode_rdns.cuttlefish_ipv4
+  to   = linode_rdns.ipv4
+}
+
+moved {
+  from = linode_rdns.cuttlefish_ipv6
+  to   = linode_rdns.ipv6
 }
