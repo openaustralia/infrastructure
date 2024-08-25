@@ -33,18 +33,3 @@ resource "linode_rdns" "ipv6" {
   address = cidrhost(linode_instance.main.ipv6, 0)
   rdns    = "cuttlefish.oaf.org.au"
 }
-
-moved {
-  from = linode_instance.cuttlefish
-  to   = linode_instance.main
-}
-
-moved {
-  from = linode_rdns.cuttlefish_ipv4
-  to   = linode_rdns.ipv4
-}
-
-moved {
-  from = linode_rdns.cuttlefish_ipv6
-  to   = linode_rdns.ipv6
-}
