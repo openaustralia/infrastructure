@@ -159,6 +159,19 @@ resource "cloudflare_record" "oaf_domainkey_google" {
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvlrS/9YendfJ0TnN9iBW67qaWDOyaNKDqeruhNBQZYqCNWSodX+tn7octjR2Xs4VJE5Ex8noA8LTqILBGQHyPDAk0FUg9BS3jaQyfwdUqiZmDqfQlc07urXLHbdttnpBNNh21Mut/RHohHMJa7b1cTXGwU//FBiJNXf4fy+XaS7/TBi0ydTvajdE6/3RnQn/0TthC3AvxQoqom0P1nEVB4RFbDNkud0/ajISwi9Gz+JEH/jiScq5D1rWWWG6ALkfTVuYxazpAAdKU4c7OsKRbE1zp4BKXpHWzx2nWVy5pmIR2ohi3yIuFEYl24LhIstH3hOBw2zF+j1HvWATDmJ9aQIDAQAB"
 }
 
+resource "cloudflare_record" "oaf_domainkey_cuttlefish" {
+  zone_id = var.oaf_org_au_zone_id
+  # This is named badly. It is in fact used by all of wordpress on oaf.org.au to send email
+  name  = "civicrm_37.cuttlefish._domainkey.oaf.org.au"
+  type  = "TXT"
+  value = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7fLXgEr26+qIswukULxl1OIPfz2CZ1iPcy4+LsveWZKGi1mU4jcy2vregS8FOm1B/V2nI354jBxlEi4XLxElcThq7zrFcDLXPNkrCg7yyPCF3qBnISlWDF/EwB0wOE1VF3QcwcILdR9vzRHP2yo0uTkz+stZpzVgthfM4FAOd5vDQ+cYxCwKTtXyCBUHH+/c2KUYnKiAOEXmuOUfwdo7uAPdClyg8mPAqYzjEQtPlktulD3rLQp3bom5lkGVLzklfiD77JVK1PD1a9C2OItG55KYbie3EPrXLkecGMob1ulhvz7ml/bSx3bqDUcbelnVLlT9VjeRiEUWoSYzJxXoMwIDAQAB"
+}
+
+moved {
+  from = module.cuttlefish.cloudflare_record.oaf_domainkey2
+  to   = cloudflare_record.oaf_domainkey_cuttlefish
+}
+
 ## openaustraliafoundation.org.au
 
 # A records
