@@ -125,3 +125,16 @@ resource "cloudflare_record" "el_domainkey_google" {
   type    = "TXT"
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxi3IIb7fJ5Hn4R2W/zIbxA1T5YSQvsjFPIuR9YC5yJZkfsPKbd9IblkVr1PF6gNoHM4ADM7ArQuJTxQA/YIlrs63e6N+9iOIb8dXelzENTcpO+OFjRjBtuD3EMQxg9bfoHft+3WFfyMfsnXpQRAQO0J864w2YuVZs2wgvJFVkNo+HKeb8k099FA+lJg9zoRH0OjJDad6ITveb2/c+sXYS/83k1CI17C4F+6n3Y+aizELfeRZ2h38n8E3giGoiNyJmJzSFq/zYwWs11WG12gBmNshtJM7tn3kOyjWAUBT2REOTWkYm0IT957yqehr+YB5PquvLifx8Xsok4oie9y4SwIDAQAB"
 }
+
+# For the time being we're just using DMARC records to get some data on what's
+# happening with email that we're sending (and whether anyone else is impersonating
+# us).
+# We're using a free service provided by https://dmarc.postmarkapp.com/
+# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# Report goes to webmaster@electionleaflets.org.au
+resource "cloudflare_record" "el_dmarc" {
+  zone_id = var.electionleaflets_org_au_zone_id
+  name    = "_dmarc.electionleaflets.org.au"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+p2egbdcedhn@dmarc.postmarkapp.com; sp=none; aspf=r;"
+}

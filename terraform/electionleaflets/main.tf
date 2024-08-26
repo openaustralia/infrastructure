@@ -1,15 +1,29 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 2.13.2"
+    }
+  }
+}
+
+provider "aws" {
+  alias  = "ap-southeast-1"
+  region = "ap-southeast-1"
+}
+
 resource "aws_instance" "electionleaflets" {
-  ami           = var.ubuntu_16_ami
+  ami           = var.ami
   instance_type = "t3.nano"
   ebs_optimized = true
   key_name      = "deployer_key"
   tags = {
     Name = "electionleaflets"
   }
-  security_groups         = [aws_security_group.webserver.name]
+  security_groups         = [var.security_group.name]
   availability_zone       = aws_ebs_volume.electionleaflets_data.availability_zone
   disable_api_termination = true
-  iam_instance_profile    = aws_iam_instance_profile.logging.name
+  iam_instance_profile    = var.instance_profile.name
 }
 
 resource "aws_eip" "electionleaflets" {
