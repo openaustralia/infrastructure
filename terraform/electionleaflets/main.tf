@@ -12,7 +12,7 @@ provider "aws" {
   region = "ap-southeast-1"
 }
 
-resource "aws_instance" "electionleaflets" {
+resource "aws_instance" "main" {
   ami           = var.ami
   instance_type = "t3.nano"
   ebs_optimized = true
@@ -21,23 +21,28 @@ resource "aws_instance" "electionleaflets" {
     Name = "electionleaflets"
   }
   security_groups         = [var.security_group.name]
-  availability_zone       = aws_ebs_volume.electionleaflets_data.availability_zone
+  availability_zone       = aws_ebs_volume.data.availability_zone
   disable_api_termination = true
   iam_instance_profile    = var.instance_profile.name
 }
 
 resource "aws_eip" "electionleaflets" {
-  instance = aws_instance.electionleaflets.id
+  instance = aws_instance.main.id
   tags = {
     Name = "electionleaflets"
   }
+}
+
+moved {
+  from = aws_instance.electionleaflets
+  to   = aws_instance.main
 }
 
 # We'll create a seperate EBS volume for all the application
 # data that can not be regenerated. e.g. parliamentary XML,
 # register of members interests scans, etc..
 
-resource "aws_ebs_volume" "electionleaflets_data" {
+resource "aws_ebs_volume" "data" {
   availability_zone = "ap-southeast-2c"
 
   # 10 Gb is an educated guess based on seeing how much space is taken up
@@ -50,10 +55,20 @@ resource "aws_ebs_volume" "electionleaflets_data" {
   }
 }
 
-resource "aws_volume_attachment" "electionleaflets_data" {
+moved {
+  from = aws_ebs_volume.electionleaflets_data
+  to   = aws_ebs_volume.data
+}
+
+resource "aws_volume_attachment" "data" {
   device_name = "/dev/sdh"
-  volume_id   = aws_ebs_volume.electionleaflets_data.id
-  instance_id = aws_instance.electionleaflets.id
+  volume_id   = aws_ebs_volume.data.id
+  instance_id = aws_instance.main.id
+}
+
+moved {
+  from = aws_volume_attachment.electionleaflets_data
+  to   = aws_volume_attachment.data
 }
 
 # TODO: backup EBS volume by taking daily snapshots
@@ -61,11 +76,16 @@ resource "aws_volume_attachment" "electionleaflets_data" {
 # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/TakeScheduledSnapshot.html
 # https://www.terraform.io/docs/providers/aws/r/cloudwatch_event_rule.html
 
-resource "aws_iam_user" "electionleaflets" {
+resource "aws_iam_user" "main" {
   name = "electionleaflets"
 }
 
-resource "aws_iam_policy" "electionleaflets" {
+moved {
+  from = aws_iam_user.electionleaflets
+  to   = aws_iam_user.main
+}
+
+resource "aws_iam_policy" "main" {
   name   = "S3BucketAccessTo_electionleafletsaustralia"
   policy = <<EOF
 {
@@ -98,12 +118,24 @@ EOF
 
 }
 
-resource "aws_iam_user_policy_attachment" "electionleaflets" {
-  user       = aws_iam_user.electionleaflets.name
-  policy_arn = aws_iam_policy.electionleaflets.arn
+moved {
+  from = aws_iam_policy.electionleaflets
+  to   = aws_iam_policy.main
+}
+
+resource "aws_iam_user_policy_attachment" "main" {
+  user       = aws_iam_user.main.name
+  policy_arn = aws_iam_policy.main.arn
+}
+
+moved {
+  from = aws_iam_user_policy_attachment.electionleaflets
+  to   = aws_iam_user_policy_attachment.main
 }
 
 data "aws_canonical_user_id" "current_user" {}
+
+# TODO: Extract production and staging bucket configuration into module
 
 resource "aws_s3_bucket" "production" {
   provider = aws.ap-southeast-1
