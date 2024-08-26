@@ -33,11 +33,6 @@ resource "aws_eip" "electionleaflets" {
   }
 }
 
-moved {
-  from = aws_instance.electionleaflets
-  to   = aws_instance.main
-}
-
 # We'll create a seperate EBS volume for all the application
 # data that can not be regenerated. e.g. parliamentary XML,
 # register of members interests scans, etc..
@@ -55,20 +50,10 @@ resource "aws_ebs_volume" "data" {
   }
 }
 
-moved {
-  from = aws_ebs_volume.electionleaflets_data
-  to   = aws_ebs_volume.data
-}
-
 resource "aws_volume_attachment" "data" {
   device_name = "/dev/sdh"
   volume_id   = aws_ebs_volume.data.id
   instance_id = aws_instance.main.id
-}
-
-moved {
-  from = aws_volume_attachment.electionleaflets_data
-  to   = aws_volume_attachment.data
 }
 
 # TODO: backup EBS volume by taking daily snapshots
@@ -78,11 +63,6 @@ moved {
 
 resource "aws_iam_user" "main" {
   name = "electionleaflets"
-}
-
-moved {
-  from = aws_iam_user.electionleaflets
-  to   = aws_iam_user.main
 }
 
 resource "aws_iam_policy" "main" {
@@ -118,19 +98,9 @@ EOF
 
 }
 
-moved {
-  from = aws_iam_policy.electionleaflets
-  to   = aws_iam_policy.main
-}
-
 resource "aws_iam_user_policy_attachment" "main" {
   user       = aws_iam_user.main.name
   policy_arn = aws_iam_policy.main.arn
-}
-
-moved {
-  from = aws_iam_user_policy_attachment.electionleaflets
-  to   = aws_iam_user_policy_attachment.main
 }
 
 data "aws_canonical_user_id" "current_user" {}
