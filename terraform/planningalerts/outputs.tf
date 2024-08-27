@@ -1,3 +1,3 @@
 output "certificate_production" {
-  value = aws_acm_certificate.planningalerts-production
+  value = aws_acm_certificate.main
 }

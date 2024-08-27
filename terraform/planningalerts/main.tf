@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-module "planningalerts-env-blue" {
+module "env-blue" {
   source             = "../planningalerts-env"
   instance_count     = var.instance_count
   ami_name           = var.blue_ami_name
@@ -16,7 +16,7 @@ module "planningalerts-env-blue" {
   availability_zones = var.availability_zones
   security_groups = [
     var.security_group_behind_lb.name,
-    aws_security_group.planningalerts_memcached_server.name,
+    aws_security_group.memcached_server.name,
     var.security_group_incoming_email.name
   ]
   iam_instance_profile = var.instance_profile.name
@@ -25,7 +25,12 @@ module "planningalerts-env-blue" {
   zone_id              = var.zone_id
 }
 
-module "planningalerts-env-green" {
+moved {
+  from = module.planningalerts-env-blue
+  to   = module.env-blue
+}
+
+module "env-green" {
   source             = "../planningalerts-env"
   instance_count     = var.instance_count
   ami_name           = var.green_ami_name
@@ -34,13 +39,18 @@ module "planningalerts-env-green" {
   availability_zones = var.availability_zones
   security_groups = [
     var.security_group_behind_lb.name,
-    aws_security_group.planningalerts_memcached_server.name,
+    aws_security_group.memcached_server.name,
     var.security_group_incoming_email.name
   ]
   iam_instance_profile = var.instance_profile.name
   key_name             = var.deployer_key.key_name
   vpc_id               = var.vpc.id
   zone_id              = var.zone_id
+}
+
+moved {
+  from = module.planningalerts-env-green
+  to   = module.env-green
 }
 
 # TODO: Delete this parameter group as soon as it's not used by the planningalerts db anymore
@@ -69,7 +79,7 @@ resource "aws_db_parameter_group" "md5" {
   }
 }
 
-resource "aws_db_instance" "planningalerts" {
+resource "aws_db_instance" "main" {
   # TODO: Less space should be needed in production
   # TODO: Enable storage autoscaling
   # TODO: Set maximum storage threshold to 200GB? 
@@ -117,7 +127,12 @@ resource "aws_db_instance" "planningalerts" {
   deletion_protection = true
 }
 
-resource "aws_elasticache_cluster" "planningalerts" {
+moved {
+  from = aws_db_instance.planningalerts
+  to   = aws_db_instance.main
+}
+
+resource "aws_elasticache_cluster" "main" {
   cluster_id = "planningalerts"
   engine     = "redis"
   # Smallest t3 available gives 0.5 GiB memory
@@ -129,7 +144,7 @@ resource "aws_elasticache_cluster" "planningalerts" {
 
   apply_immediately = false
 
-  security_group_ids = [aws_security_group.redis-planningalerts.id]
+  security_group_ids = [aws_security_group.redis.id]
 
   # We want Monday 4-5am Sydney time which is Sunday 5-6pm GMT.
   maintenance_window = "Sun:17:00-Sun:18:00"
@@ -138,6 +153,11 @@ resource "aws_elasticache_cluster" "planningalerts" {
 
   # We want 2:30-3:30am Sydney time which is 3:30-4:30pm GMT
   snapshot_window = "15:30-16:30"
+}
+
+moved {
+  from = aws_elasticache_cluster.planningalerts
+  to   = aws_elasticache_cluster.main
 }
 
 # Redis setup required for sidekiq.
@@ -152,7 +172,7 @@ resource "aws_elasticache_parameter_group" "sidekiq" {
   }
 }
 
-resource "aws_acm_certificate" "planningalerts-production" {
+resource "aws_acm_certificate" "main" {
   domain_name = "planningalerts.org.au"
   subject_alternative_names = [
     "www.planningalerts.org.au",
@@ -165,9 +185,19 @@ resource "aws_acm_certificate" "planningalerts-production" {
   }
 }
 
-resource "aws_acm_certificate_validation" "planningalerts-production" {
-  certificate_arn         = aws_acm_certificate.planningalerts-production.arn
+moved {
+  from = aws_acm_certificate.planningalerts-production
+  to   = aws_acm_certificate.main
+}
+
+resource "aws_acm_certificate_validation" "main" {
+  certificate_arn         = aws_acm_certificate.main.arn
   validation_record_fqdns = [for record in cloudflare_record.cert-validation-production : record.hostname]
+}
+
+moved {
+  from = aws_acm_certificate_validation.planningalerts-production
+  to   = aws_acm_certificate_validation.main
 }
 
 # The production SSL certificate is currently the default cert on the load balancer
@@ -175,7 +205,7 @@ resource "aws_acm_certificate_validation" "planningalerts-production" {
 // Redirecting http://planningalerts.org.au -> https://planningalerts.org.au
 // rather than straight to the canonical base url https://www.planningalerts.org.au
 // to support HSTS. See https://hstspreload.org/
-resource "aws_lb_listener_rule" "planningalerts-redirect-http-to-https" {
+resource "aws_lb_listener_rule" "redirect-http-to-https" {
   listener_arn = var.listener_http.arn
   priority     = 1
 
@@ -196,7 +226,12 @@ resource "aws_lb_listener_rule" "planningalerts-redirect-http-to-https" {
   }
 }
 
-resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
+moved {
+  from = aws_lb_listener_rule.planningalerts-redirect-http-to-https
+  to   = aws_lb_listener_rule.redirect-http-to-https
+}
+
+resource "aws_lb_listener_rule" "redirect-https-to-canonical" {
   listener_arn = var.listener_https.arn
   priority     = 1
 
@@ -216,7 +251,12 @@ resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
   }
 }
 
-resource "aws_lb_listener_rule" "main-https-redirect-sitemaps-production" {
+moved {
+  from = aws_lb_listener_rule.redirect-https-to-planningalerts-canonical
+  to   = aws_lb_listener_rule.redirect-https-to-canonical
+}
+
+resource "aws_lb_listener_rule" "main-https-redirect-sitemaps" {
   listener_arn = var.listener_https.arn
   priority     = 2
 
@@ -224,7 +264,7 @@ resource "aws_lb_listener_rule" "main-https-redirect-sitemaps-production" {
     type = "redirect"
 
     redirect {
-      host        = aws_s3_bucket.planningalerts_sitemaps_production.bucket_regional_domain_name
+      host        = aws_s3_bucket.sitemaps.bucket_regional_domain_name
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_302"
@@ -247,8 +287,12 @@ resource "aws_lb_listener_rule" "main-https-redirect-sitemaps-production" {
   }
 }
 
-# TODO: Rename
-resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
+moved {
+  from = aws_lb_listener_rule.main-https-redirect-sitemaps-production
+  to   = aws_lb_listener_rule.main-https-redirect-sitemaps
+}
+
+resource "aws_lb_listener_rule" "forward" {
   listener_arn = var.listener_https.arn
   priority     = 3
 
@@ -256,11 +300,11 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
     type = "forward"
     forward {
       target_group {
-        arn    = module.planningalerts-env-blue.target_group_arn
+        arn    = module.env-blue.target_group_arn
         weight = var.blue_enabled ? var.blue_weight : 0
       }
       target_group {
-        arn    = module.planningalerts-env-green.target_group_arn
+        arn    = module.env-green.target_group_arn
         weight = var.green_enabled ? var.green_weight : 0
       }
       stickiness {
@@ -280,6 +324,11 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
       ]
     }
   }
+}
+
+moved {
+  from = aws_lb_listener_rule.main-https-forward-planningalerts
+  to   = aws_lb_listener_rule.forward
 }
 
 # TODO: Check usage of all these keys and how they are set up
@@ -315,8 +364,8 @@ resource "google_apikeys_key" "google_maps_key" {
         ],
         # Allows maps to work when accessing the servers directly (not through the load balancer)
         # Obviously not necessary for normal production use but useful for debugging and testing
-        [for s in module.planningalerts-env-blue.public_names : "http://${s}:8000"],
-        [for s in module.planningalerts-env-green.public_names : "http://${s}:8000"],
+        [for s in module.env-blue.public_names : "http://${s}:8000"],
+        [for s in module.env-green.public_names : "http://${s}:8000"],
       )
     }
   }
@@ -327,17 +376,22 @@ resource "google_apikeys_key" "google_maps_server_key" {
   name         = "e401e298-4aa7-4ee8-a53e-06b6da107b2a"
   restrictions {
     server_key_restrictions {
-      allowed_ips = concat(module.planningalerts-env-blue.public_ips, module.planningalerts-env-green.public_ips)
+      allowed_ips = concat(module.env-blue.public_ips, module.env-green.public_ips)
     }
   }
 }
 
-resource "aws_s3_bucket" "planningalerts_sitemaps_production" {
+resource "aws_s3_bucket" "sitemaps" {
   bucket = "planningalerts-sitemaps-production"
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "planningalerts_sitemaps_production" {
-  bucket = aws_s3_bucket.planningalerts_sitemaps_production.id
+moved {
+  from = aws_s3_bucket.planningalerts_sitemaps_production
+  to   = aws_s3_bucket.sitemaps
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "sitemaps" {
+  bucket = aws_s3_bucket.sitemaps.id
 
   rule {
     apply_server_side_encryption_by_default {
@@ -346,12 +400,27 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "planningalerts_si
   }
 }
 
-resource "aws_iam_user" "planningalerts_sitemaps_production" {
+moved {
+  from = aws_s3_bucket_server_side_encryption_configuration.planningalerts_sitemaps_production
+  to   = aws_s3_bucket_server_side_encryption_configuration.sitemaps
+}
+
+resource "aws_iam_user" "sitemaps" {
   name = "planningalerts-sitemaps-production"
 }
 
-resource "aws_iam_access_key" "planningalerts_sitemaps_production" {
-  user = aws_iam_user.planningalerts_sitemaps_production.name
+moved {
+  from = aws_iam_user.planningalerts_sitemaps_production
+  to   = aws_iam_user.sitemaps
+}
+
+resource "aws_iam_access_key" "sitemaps" {
+  user = aws_iam_user.sitemaps.name
+}
+
+moved {
+  from = aws_iam_access_key.planningalerts_sitemaps_production
+  to   = aws_iam_access_key.sitemaps
 }
 
 # These values are needed by ansible for planningalerts
@@ -364,16 +433,16 @@ resource "aws_iam_access_key" "planningalerts_sitemaps_production" {
 # cd ..; ansible-vault encrypt_string --name aws_secret_access_key "value from above" --encrypt-vault-id default
 
 output "planningalerts_sitemaps_production_secret_access_key" {
-  value     = aws_iam_access_key.planningalerts_sitemaps_production.secret
+  value     = aws_iam_access_key.sitemaps.secret
   sensitive = true
 }
 
 output "planningalerts_sitemaps_production_access_key_id" {
-  value = aws_iam_access_key.planningalerts_sitemaps_production.id
+  value = aws_iam_access_key.sitemaps.id
 }
 
-resource "aws_iam_user_policy" "upload_to_planningalerts_sitemaps" {
-  user = aws_iam_user.planningalerts_sitemaps_production.name
+resource "aws_iam_user_policy" "upload_to_sitemaps" {
+  user = aws_iam_user.sitemaps.name
   name = "upload"
   policy = jsonencode(
     {
@@ -384,7 +453,7 @@ resource "aws_iam_user_policy" "upload_to_planningalerts_sitemaps" {
             "s3:PutObjectAcl",
           ]
           Effect   = "Allow"
-          Resource = "arn:aws:s3:::${aws_s3_bucket.planningalerts_sitemaps_production.bucket}/*"
+          Resource = "arn:aws:s3:::${aws_s3_bucket.sitemaps.bucket}/*"
         },
       ]
       Version = "2012-10-17"
@@ -392,27 +461,37 @@ resource "aws_iam_user_policy" "upload_to_planningalerts_sitemaps" {
   )
 }
 
-module "planningalerts-activestorage-s3-production" {
+moved {
+  from = aws_iam_user_policy.upload_to_planningalerts_sitemaps
+  to   = aws_iam_user_policy.upload_to_sitemaps
+}
+
+module "activestorage-s3" {
   source = "../planningalerts-activestorage-s3"
 
   name            = "planningalerts-as-production"
   allowed_origins = ["https://www.planningalerts.org.au"]
 }
 
+moved {
+  from = module.planningalerts-activestorage-s3-production
+  to   = module.activestorage-s3
+}
+
 output "planningalerts_activestorage_s3_production_secret_access_key" {
-  value     = module.planningalerts-activestorage-s3-production.secret_access_key
+  value     = module.activestorage-s3.secret_access_key
   sensitive = true
 }
 
 output "planningalerts_activestorage_s3_production_access_key_id" {
-  value = module.planningalerts-activestorage-s3-production.access_key_id
+  value = module.activestorage-s3.access_key_id
 }
 
 # TODO: Move this to its own file
 
 # In our setup we have a memcached server running alongside each webserver node
 # so, each node acts as both a memcached client and server
-resource "aws_security_group" "planningalerts_memcached_server" {
+resource "aws_security_group" "memcached_server" {
   name        = "planningalerts-memcached-server"
   description = "memcached servers for planningalerts"
 
@@ -424,7 +503,12 @@ resource "aws_security_group" "planningalerts_memcached_server" {
   }
 }
 
-resource "aws_security_group" "redis-planningalerts" {
+moved {
+  from = aws_security_group.planningalerts_memcached_server
+  to   = aws_security_group.memcached_server
+}
+
+resource "aws_security_group" "redis" {
   name        = "redis-planningalerts"
   description = "Redis server for PlanningAlerts"
 
@@ -443,5 +527,10 @@ resource "aws_security_group" "redis-planningalerts" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+}
+
+moved {
+  from = aws_security_group.redis-planningalerts
+  to   = aws_security_group.redis
 }
 
