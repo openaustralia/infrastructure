@@ -27,4 +27,14 @@ module "planningalerts" {
   security_group_behind_lb      = aws_security_group.planningalerts
   vpc                           = aws_default_vpc.default
   availability_zones            = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
+  # blue environment setup
+  blue_enabled        = true
+  blue_weight         = 1
+  blue_instance_count = 2
+  blue_ami_name       = "planningalerts-ruby-3.3-v1"
+  # green environment setup
+  green_enabled        = false
+  green_weight         = 0
+  green_instance_count = 2
+  green_ami_name       = "planningalerts-puma-ubuntu-22.04-v4"
 }

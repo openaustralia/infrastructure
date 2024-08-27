@@ -9,9 +9,9 @@ terraform {
 
 module "planningalerts-env-blue" {
   source             = "../planningalerts-env"
-  instance_count     = var.planningalerts_blue_instance_count
-  ami_name           = var.planningalerts_blue_ami_name
-  enable             = var.planningalerts_enable_blue_env
+  instance_count     = var.blue_instance_count
+  ami_name           = var.blue_ami_name
+  enable             = var.blue_enabled
   env_name           = "blue"
   availability_zones = var.availability_zones
   security_groups = [
@@ -27,9 +27,9 @@ module "planningalerts-env-blue" {
 
 module "planningalerts-env-green" {
   source             = "../planningalerts-env"
-  instance_count     = var.planningalerts_green_instance_count
-  ami_name           = var.planningalerts_green_ami_name
-  enable             = var.planningalerts_enable_green_env
+  instance_count     = var.green_instance_count
+  ami_name           = var.green_ami_name
+  enable             = var.green_enabled
   env_name           = "green"
   availability_zones = var.availability_zones
   security_groups = [
@@ -257,11 +257,11 @@ resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
     forward {
       target_group {
         arn    = module.planningalerts-env-blue.target_group_arn
-        weight = var.planningalerts_enable_blue_env ? var.planningalerts_blue_weight : 0
+        weight = var.blue_enabled ? var.blue_weight : 0
       }
       target_group {
         arn    = module.planningalerts-env-green.target_group_arn
-        weight = var.planningalerts_enable_green_env ? var.planningalerts_green_weight : 0
+        weight = var.green_enabled ? var.green_weight : 0
       }
       stickiness {
         enabled = false
