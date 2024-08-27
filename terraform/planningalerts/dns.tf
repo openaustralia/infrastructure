@@ -41,13 +41,6 @@ resource "cloudflare_record" "api" {
   value   = var.load_balancer.dns_name
 }
 
-resource "cloudflare_record" "email" {
-  zone_id = var.zone_id
-  name    = "email.planningalerts.org.au"
-  type    = "CNAME"
-  value   = "cuttlefish.io"
-}
-
 resource "cloudflare_record" "email2" {
   zone_id = var.zone_id
   name    = "email2.planningalerts.org.au"
