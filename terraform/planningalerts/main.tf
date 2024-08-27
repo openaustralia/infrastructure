@@ -353,6 +353,8 @@ resource "aws_iam_access_key" "sitemaps" {
   user = aws_iam_user.sitemaps.name
 }
 
+# TODO: These need to be output by the top level!
+
 # These values are needed by ansible for planningalerts
 # They should be encrypted and put in group_vars/planningalerts.yml
 # Take the output of this command:
