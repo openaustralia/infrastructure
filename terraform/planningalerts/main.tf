@@ -22,7 +22,7 @@ module "planningalerts-env-blue" {
   iam_instance_profile = var.instance_profile.name
   key_name             = var.deployer_key.key_name
   vpc_id               = var.vpc.id
-  zone_id              = var.planningalerts_org_au_zone_id
+  zone_id              = var.zone_id
 }
 
 module "planningalerts-env-green" {
@@ -40,7 +40,7 @@ module "planningalerts-env-green" {
   iam_instance_profile = var.instance_profile.name
   key_name             = var.deployer_key.key_name
   vpc_id               = var.vpc.id
-  zone_id              = var.planningalerts_org_au_zone_id
+  zone_id              = var.zone_id
 }
 
 # TODO: Delete this parameter group as soon as it's not used by the planningalerts db anymore
