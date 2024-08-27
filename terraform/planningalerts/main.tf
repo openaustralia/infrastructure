@@ -167,7 +167,7 @@ resource "aws_acm_certificate" "main" {
 
 resource "aws_acm_certificate_validation" "main" {
   certificate_arn         = aws_acm_certificate.main.arn
-  validation_record_fqdns = [for record in cloudflare_record.cert-validation-production : record.hostname]
+  validation_record_fqdns = [for record in cloudflare_record.cert-validation : record.hostname]
 }
 
 # The production SSL certificate is currently the default cert on the load balancer

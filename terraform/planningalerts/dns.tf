@@ -149,7 +149,7 @@ resource "cloudflare_record" "domainkey_google" {
 }
 
 # Certification validation data
-resource "cloudflare_record" "cert-validation-production" {
+resource "cloudflare_record" "cert-validation" {
   for_each = {
     for dvo in aws_acm_certificate.main.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
@@ -163,6 +163,11 @@ resource "cloudflare_record" "cert-validation-production" {
   type    = each.value.type
   value   = trimsuffix(each.value.record, ".")
   ttl     = 60
+}
+
+moved {
+  from = cloudflare_record.cert-validation-production
+  to   = cloudflare_record.cert-validation
 }
 
 # For the time being we're just using DMARC records to get some data on what's
