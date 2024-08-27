@@ -96,11 +96,6 @@ resource "cloudflare_record" "domainkey" {
   value   = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoUPCB2huZQkwFnEMn0/jorQ/nHsNul1gQqHbQsX2unANX+dXnnmF0y+rFnB93mlmOVemv+vnQik/DGr+3aCQqOia5t5xXTsbPenmstC1tfCNDl9irQb7sCP8IeiLdcxJ5upsH8PtAod9r7J/Uo8KdXxMPbBFvVT/X9qe25dHkZUqwJHGn7peLmSTe2Ti4ZRTlyolc1orKD7sHx7iI+lU/9Ga1at2kykrXGAs4bUDPY2cmsSMcwqYRu6DQgBz01g9pqaOmDZ7mKwbI7M2m9kX6AWFCb9YqyeyZpW42bytlsKiVsH5bwQmhNFJ/vqTuwyyvBlIDcforixhRGZ13Ufj2QIDAQAB"
 }
 
-moved {
-  from = cloudflare_record.domainkey2
-  to   = cloudflare_record.domainkey
-}
-
 resource "cloudflare_record" "domainkey_google" {
   zone_id = var.zone_id
   name    = "google._domainkey.planningalerts.org.au"
@@ -123,11 +118,6 @@ resource "cloudflare_record" "cert-validation" {
   type    = each.value.type
   value   = trimsuffix(each.value.record, ".")
   ttl     = 60
-}
-
-moved {
-  from = cloudflare_record.cert-validation-production
-  to   = cloudflare_record.cert-validation
 }
 
 # For the time being we're just using DMARC records to get some data on what's
