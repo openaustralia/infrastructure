@@ -1,41 +1,50 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 2.13.2"
+    }
+  }
+}
+
 variable "availability_zones" {
   type    = list(string)
   default = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
 }
 
 module "planningalerts-env-blue" {
-  source             = "./planningalerts-env"
+  source             = "../planningalerts-env"
   instance_count     = var.planningalerts_blue_instance_count
   ami_name           = var.planningalerts_blue_ami_name
   enable             = var.planningalerts_enable_blue_env
   env_name           = "blue"
   availability_zones = var.availability_zones
   security_groups = [
-    aws_security_group.planningalerts.name,
+    var.security_group_behind_lb.name,
     aws_security_group.planningalerts_memcached_server.name,
-    aws_security_group.incoming_email.name
+    var.security_group_incoming_email.name
   ]
-  iam_instance_profile = aws_iam_instance_profile.logging.name
-  key_name             = aws_key_pair.deployer.key_name
-  vpc_id               = aws_default_vpc.default.id
+  iam_instance_profile = var.instance_profile.name
+  key_name             = var.deployer_key.key_name
+  vpc_id               = var.vpc.id
   zone_id              = var.planningalerts_org_au_zone_id
 }
 
 module "planningalerts-env-green" {
-  source             = "./planningalerts-env"
+  source             = "../planningalerts-env"
   instance_count     = var.planningalerts_green_instance_count
   ami_name           = var.planningalerts_green_ami_name
   enable             = var.planningalerts_enable_green_env
   env_name           = "green"
   availability_zones = var.availability_zones
   security_groups = [
-    aws_security_group.planningalerts.name,
+    var.security_group_behind_lb.name,
     aws_security_group.planningalerts_memcached_server.name,
-    aws_security_group.incoming_email.name
+    var.security_group_incoming_email.name
   ]
-  iam_instance_profile = aws_iam_instance_profile.logging.name
-  key_name             = aws_key_pair.deployer.key_name
-  vpc_id               = aws_default_vpc.default.id
+  iam_instance_profile = var.instance_profile.name
+  key_name             = var.deployer_key.key_name
+  vpc_id               = var.vpc.id
   zone_id              = var.planningalerts_org_au_zone_id
 }
 
@@ -100,14 +109,14 @@ resource "aws_db_instance" "planningalerts" {
   skip_final_snapshot = false
 
   # TODO: Limit traffic to only from planningalerts servers for production?
-  vpc_security_group_ids = [aws_security_group.postgresql.id]
+  vpc_security_group_ids = [var.security_group_postgresql.id]
   parameter_group_name   = "default.postgres15"
 
   # Enable performance insights
   performance_insights_enabled = true
 
   # Enable enhanced monitoring
-  monitoring_role_arn = aws_iam_role.rds-monitoring-role.arn
+  monitoring_role_arn = var.rds_monitoring_role.arn
   monitoring_interval = 60
 
   deletion_protection = true
@@ -172,7 +181,7 @@ resource "aws_acm_certificate_validation" "planningalerts-production" {
 // rather than straight to the canonical base url https://www.planningalerts.org.au
 // to support HSTS. See https://hstspreload.org/
 resource "aws_lb_listener_rule" "planningalerts-redirect-http-to-https" {
-  listener_arn = aws_lb_listener.main-http.arn
+  listener_arn = var.listener_http.arn
   priority     = 1
 
   action {
@@ -193,7 +202,7 @@ resource "aws_lb_listener_rule" "planningalerts-redirect-http-to-https" {
 }
 
 resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
-  listener_arn = aws_lb_listener.main-https.arn
+  listener_arn = var.listener_https.arn
   priority     = 1
 
   action {
@@ -213,7 +222,7 @@ resource "aws_lb_listener_rule" "redirect-https-to-planningalerts-canonical" {
 }
 
 resource "aws_lb_listener_rule" "main-https-redirect-sitemaps-production" {
-  listener_arn = aws_lb_listener.main-https.arn
+  listener_arn = var.listener_https.arn
   priority     = 2
 
   action {
@@ -245,7 +254,7 @@ resource "aws_lb_listener_rule" "main-https-redirect-sitemaps-production" {
 
 # TODO: Rename
 resource "aws_lb_listener_rule" "main-https-forward-planningalerts" {
-  listener_arn = aws_lb_listener.main-https.arn
+  listener_arn = var.listener_https.arn
   priority     = 3
 
   action {
@@ -389,7 +398,7 @@ resource "aws_iam_user_policy" "upload_to_planningalerts_sitemaps" {
 }
 
 module "planningalerts-activestorage-s3-production" {
-  source = "./planningalerts-activestorage-s3"
+  source = "../planningalerts-activestorage-s3"
 
   name            = "planningalerts-as-production"
   allowed_origins = ["https://www.planningalerts.org.au"]
@@ -403,3 +412,41 @@ output "planningalerts_activestorage_s3_production_secret_access_key" {
 output "planningalerts_activestorage_s3_production_access_key_id" {
   value = module.planningalerts-activestorage-s3-production.access_key_id
 }
+
+# TODO: Move this to its own file
+
+# In our setup we have a memcached server running alongside each webserver node
+# so, each node acts as both a memcached client and server
+resource "aws_security_group" "planningalerts_memcached_server" {
+  name        = "planningalerts-memcached-server"
+  description = "memcached servers for planningalerts"
+
+  ingress {
+    from_port       = 11211
+    to_port         = 11211
+    protocol        = "tcp"
+    security_groups = [var.security_group_behind_lb.id]
+  }
+}
+
+resource "aws_security_group" "redis-planningalerts" {
+  name        = "redis-planningalerts"
+  description = "Redis server for PlanningAlerts"
+
+  ingress {
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [var.security_group_behind_lb.id]
+  }
+
+  # Allow everything going out
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+

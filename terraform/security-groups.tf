@@ -176,6 +176,9 @@ resource "aws_security_group" "incoming_email" {
   }
 }
 
+# TODO: Rename this to something more generic
+# Because this is really a general webserver sitting behind a load balancer setup and it's
+# currently used by planning alerts and metabase
 resource "aws_security_group" "planningalerts" {
   name        = "planningalerts"
   description = "Web servers for PlanningAlerts"
@@ -222,40 +225,5 @@ resource "aws_security_group" "planningalerts" {
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
-  }
-}
-
-resource "aws_security_group" "redis-planningalerts" {
-  name        = "redis-planningalerts"
-  description = "Redis server for PlanningAlerts"
-
-  ingress {
-    from_port       = 6379
-    to_port         = 6379
-    protocol        = "tcp"
-    security_groups = [aws_security_group.planningalerts.id]
-  }
-
-  # Allow everything going out
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-}
-
-# In our setup we have a memcached server running alongside each webserver node
-# so, each node acts as both a memcached client and server
-resource "aws_security_group" "planningalerts_memcached_server" {
-  name        = "planningalerts-memcached-server"
-  description = "memcached servers for planningalerts"
-
-  ingress {
-    from_port       = 11211
-    to_port         = 11211
-    protocol        = "tcp"
-    security_groups = [aws_security_group.planningalerts.id]
   }
 }

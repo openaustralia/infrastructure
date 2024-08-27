@@ -45,3 +45,19 @@ variable "planningalerts_green_instance_count" {
 variable "planningalerts_green_ami_name" {
   default = "planningalerts-puma-ubuntu-22.04-v4"
 }
+
+// Other configuration
+
+variable "instance_profile" {}
+# Not sure if it's better to pass this in or whether this module should just make its own version of it
+variable "security_group_incoming_email" {}
+variable "deployer_key" {}
+variable "load_balancer" {}
+variable "security_group_postgresql" {}
+variable "rds_monitoring_role" {}
+variable "rds_admin_password" {}
+variable "listener_http" {}
+variable "listener_https" {}
+variable "security_group_behind_lb" {}
+variable "vpc" {}
+

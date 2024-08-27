@@ -39,7 +39,7 @@ resource "aws_lb_listener" "main-https" {
   # TODO: Do we want a more secure SSL security policy?
   # See https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html
   ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = aws_acm_certificate.planningalerts-production.arn
+  certificate_arn = module.planningalerts.certificate_production.arn
 
   default_action {
     type = "fixed-response"

@@ -28,21 +28,21 @@ resource "cloudflare_record" "pa_root" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "planningalerts.org.au"
   type    = "CNAME"
-  value   = aws_lb.main.dns_name
+  value   = var.load_balancer.dns_name
 }
 
 resource "cloudflare_record" "pa_www" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "www.planningalerts.org.au"
   type    = "CNAME"
-  value   = aws_lb.main.dns_name
+  value   = var.load_balancer.dns_name
 }
 
 resource "cloudflare_record" "pa_api" {
   zone_id = var.planningalerts_org_au_zone_id
   name    = "api.planningalerts.org.au"
   type    = "CNAME"
-  value   = aws_lb.main.dns_name
+  value   = var.load_balancer.dns_name
 }
 
 resource "cloudflare_record" "pa_email" {
@@ -167,4 +167,17 @@ resource "cloudflare_record" "cert-validation-production" {
   type    = each.value.type
   value   = trimsuffix(each.value.record, ".")
   ttl     = 60
+}
+
+# For the time being we're just using DMARC records to get some data on what's
+# happening with email that we're sending (and whether anyone else is impersonating
+# us).
+# We're using a free service provided by https://dmarc.postmarkapp.com/
+# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# Report goes to contact@oaf.org.au
+resource "cloudflare_record" "pa_dmarc" {
+  zone_id = var.planningalerts_org_au_zone_id
+  name    = "_dmarc.planningalerts.org.au"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+b1g0fn6boqu@dmarc.postmarkapp.com; sp=none; aspf=r;"
 }
