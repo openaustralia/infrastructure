@@ -43,25 +43,6 @@ module "env-green" {
   zone_id              = var.zone_id
 }
 
-resource "aws_acm_certificate" "main" {
-  domain_name = "planningalerts.org.au"
-  subject_alternative_names = [
-    "www.planningalerts.org.au",
-    "api.planningalerts.org.au"
-  ]
-  validation_method = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_acm_certificate_validation" "main" {
-  certificate_arn         = aws_acm_certificate.main.arn
-  validation_record_fqdns = [for record in cloudflare_record.cert-validation : record.hostname]
-}
-
-# The production SSL certificate is currently the default cert on the load balancer
 
 // Redirecting http://planningalerts.org.au -> https://planningalerts.org.au
 // rather than straight to the canonical base url https://www.planningalerts.org.au

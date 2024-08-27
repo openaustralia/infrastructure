@@ -103,23 +103,6 @@ resource "cloudflare_record" "domainkey_google" {
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkUq+EPS6XemyHdVi5CCW7+M+X1XMrAg85Y2oYEUYVcB2IU+1HF/fGUdY9w8wvphSC/28wznJOOTl92pj6/DvwRcfpogRrjITYmPZQMOC0SQ4/4nOeL5ug6fNWFg74LZQvQJqWGAQuUhiSiwxUpkUHAv6H5iE/EKDVOdeWjPWjsIkoAC5HdAie0WCcq3gDlfDJZ3L6K7/nGorPd96764EYG/pdsN43/jzcU23vVGJlhw9my1jvkxNnMS1xRkUuk/JcCIRWp4RkgQOkK7JEoNXB2u+bgW+8mLlGX66dag2l67CR+qzOuE1nHcOu5ADLqVh42MOTNMhw75TzugEbtn0QQIDAQAB"
 }
 
-# Certification validation data
-resource "cloudflare_record" "cert-validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.main.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  zone_id = var.zone_id
-  name    = each.value.name
-  type    = each.value.type
-  value   = trimsuffix(each.value.record, ".")
-  ttl     = 60
-}
-
 # For the time being we're just using DMARC records to get some data on what's
 # happening with email that we're sending (and whether anyone else is impersonating
 # us).
