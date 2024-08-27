@@ -89,14 +89,6 @@ resource "cloudflare_record" "facebook_domain_verification" {
   value   = "facebook-domain-verification=djdz2wywxnas3cxhrch14pfk145g93"
 }
 
-# TODO: Remove this once the one below is up and running
-resource "cloudflare_record" "domainkey" {
-  zone_id = var.zone_id
-  name    = "cuttlefish._domainkey.planningalerts.org.au"
-  type    = "TXT"
-  value   = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoUPCB2huZQkwFnEMn0/jorQ/nHsNul1gQqHbQsX2unANX+dXnnmF0y+rFnB93mlmOVemv+vnQik/DGr+3aCQqOia5t5xXTsbPenmstC1tfCNDl9irQb7sCP8IeiLdcxJ5upsH8PtAod9r7J/Uo8KdXxMPbBFvVT/X9qe25dHkZUqwJHGn7peLmSTe2Ti4ZRTlyolc1orKD7sHx7iI+lU/9Ga1at2kykrXGAs4bUDPY2cmsSMcwqYRu6DQgBz01g9pqaOmDZ7mKwbI7M2m9kX6AWFCb9YqyeyZpW42bytlsKiVsH5bwQmhNFJ/vqTuwyyvBlIDcforixhRGZ13Ufj2QIDAQAB"
-}
-
 resource "cloudflare_record" "domainkey2" {
   zone_id = var.zone_id
   name    = "planningalerts_3.cuttlefish._domainkey.planningalerts.org.au"
