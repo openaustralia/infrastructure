@@ -10,11 +10,6 @@ variable "blue_weight" {
   type        = number
 }
 
-variable "blue_instance_count" {
-  description = "Number of instance for blue environment"
-  type        = number
-}
-
 variable "blue_ami_name" {}
 
 // GREEN environment
@@ -29,14 +24,14 @@ variable "green_weight" {
   type        = number
 }
 
-variable "green_instance_count" {
-  description = "Number of instance for green environment"
-  type        = number
-}
-
 variable "green_ami_name" {}
 
 // Other configuration
+
+variable "instance_count" {
+  description = "Number of instances for each environment (blue/green)"
+  type        = number
+}
 
 variable "instance_profile" {}
 # Not sure if it's better to pass this in or whether this module should just make its own version of it
