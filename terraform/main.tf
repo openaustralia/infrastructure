@@ -26,4 +26,5 @@ module "planningalerts" {
   listener_https                = aws_lb_listener.main-https
   security_group_behind_lb      = aws_security_group.planningalerts
   vpc                           = aws_default_vpc.default
+  availability_zones            = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
 }

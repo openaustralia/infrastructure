@@ -60,4 +60,7 @@ variable "listener_http" {}
 variable "listener_https" {}
 variable "security_group_behind_lb" {}
 variable "vpc" {}
+variable "availability_zones" {
+  type = list(string)
+}
 

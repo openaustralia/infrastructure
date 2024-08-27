@@ -7,11 +7,6 @@ terraform {
   }
 }
 
-variable "availability_zones" {
-  type    = list(string)
-  default = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
-}
-
 module "planningalerts-env-blue" {
   source             = "../planningalerts-env"
   instance_count     = var.planningalerts_blue_instance_count
