@@ -56,44 +56,14 @@ resource "cloudflare_record" "donate" {
 }
 
 # MX records
-resource "cloudflare_record" "mx1" {
+
+# We can now use a single MX record for Google workspace
+resource "cloudflare_record" "mx" {
   zone_id  = var.zone_id
   name     = "planningalerts.org.au"
   type     = "MX"
   priority = 1
-  value    = "aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "mx2" {
-  zone_id  = var.zone_id
-  name     = "planningalerts.org.au"
-  type     = "MX"
-  priority = 5
-  value    = "alt1.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "mx3" {
-  zone_id  = var.zone_id
-  name     = "planningalerts.org.au"
-  type     = "MX"
-  priority = 5
-  value    = "alt2.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "mx4" {
-  zone_id  = var.zone_id
-  name     = "planningalerts.org.au"
-  type     = "MX"
-  priority = 10
-  value    = "aspmx2.googlemail.com"
-}
-
-resource "cloudflare_record" "mx5" {
-  zone_id  = var.zone_id
-  name     = "planningalerts.org.au"
-  type     = "MX"
-  priority = 10
-  value    = "aspmx3.googlemail.com"
+  value    = "smtp.google.com"
 }
 
 # TXT records
