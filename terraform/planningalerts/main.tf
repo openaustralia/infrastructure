@@ -51,8 +51,6 @@ module "activestorage-s3" {
   allowed_origins = ["https://www.planningalerts.org.au"]
 }
 
-# TODO: Move this to its own file
-
 # In our setup we have a memcached server running alongside each webserver node
 # so, each node acts as both a memcached client and server
 resource "aws_security_group" "memcached_server" {
