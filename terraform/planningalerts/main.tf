@@ -8,7 +8,7 @@ terraform {
 }
 
 module "env-blue" {
-  source             = "../planningalerts-env"
+  source             = "./env"
   instance_count     = var.instance_count
   ami_name           = var.blue_ami_name
   enable             = var.blue_enabled
@@ -26,7 +26,7 @@ module "env-blue" {
 }
 
 module "env-green" {
-  source             = "../planningalerts-env"
+  source             = "./env"
   instance_count     = var.instance_count
   ami_name           = var.green_ami_name
   enable             = var.green_enabled
