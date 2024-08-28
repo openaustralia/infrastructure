@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "aws_instance" "theyvoteforyou" {
+resource "aws_instance" "main" {
   ami = var.ami
 
   instance_type = "t3.large"
@@ -23,15 +23,25 @@ resource "aws_instance" "theyvoteforyou" {
   availability_zone = "ap-southeast-2a"
 }
 
-resource "aws_eip" "theyvoteforyou" {
-  instance = aws_instance.theyvoteforyou.id
+moved {
+  from = aws_instance.theyvoteforyou
+  to   = aws_instance.main
+}
+
+resource "aws_eip" "main" {
+  instance = aws_instance.main.id
   tags = {
     Name = "theyvoteforyou"
   }
 }
 
-resource "aws_ebs_volume" "theyvoteforyou_data" {
-  availability_zone = aws_instance.theyvoteforyou.availability_zone
+moved {
+  from = aws_eip.theyvoteforyou
+  to   = aws_eip.main
+}
+
+resource "aws_ebs_volume" "data" {
+  availability_zone = aws_instance.main.availability_zone
 
   size = 30
   type = "gp3"
@@ -40,8 +50,18 @@ resource "aws_ebs_volume" "theyvoteforyou_data" {
   }
 }
 
-resource "aws_volume_attachment" "theyvoteforyou_data" {
+moved {
+  from = aws_ebs_volume.theyvoteforyou_data
+  to   = aws_ebs_volume.data
+}
+
+resource "aws_volume_attachment" "data" {
   device_name = "/dev/sdi"
-  volume_id   = aws_ebs_volume.theyvoteforyou_data.id
-  instance_id = aws_instance.theyvoteforyou.id
+  volume_id   = aws_ebs_volume.data.id
+  instance_id = aws_instance.main.id
+}
+
+moved {
+  from = aws_volume_attachment.theyvoteforyou_data
+  to   = aws_volume_attachment.data
 }

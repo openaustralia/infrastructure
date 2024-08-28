@@ -1,15 +1,3 @@
-variable "theyvoteforyou_org_au_zone_id" {
-  default = "5ffc72ab294d0bdcd481fd19b9ab8326"
-}
-
-variable "theyvoteforyou_org_zone_id" {
-  default = "4ea2ceb027e2299e27c8cc1a8c59b029"
-}
-
-variable "theyvoteforyou_com_au_zone_id" {
-  default = "dd36844e39e23c27ae5f316bc516d692"
-}
-
 ## theyvoteforyou.org.au
 
 # A records
@@ -17,7 +5,7 @@ resource "cloudflare_record" "root" {
   zone_id = var.theyvoteforyou_org_au_zone_id
   name    = "theyvoteforyou.org.au"
   type    = "A"
-  value   = aws_eip.theyvoteforyou.public_ip
+  value   = aws_eip.main.public_ip
 }
 
 # CNAME records
@@ -163,7 +151,7 @@ resource "cloudflare_record" "alt1_root" {
   zone_id = var.theyvoteforyou_org_zone_id
   name    = "theyvoteforyou.org"
   type    = "A"
-  value   = aws_eip.theyvoteforyou.public_ip
+  value   = aws_eip.main.public_ip
 }
 
 resource "cloudflare_record" "alt1_www" {
@@ -192,7 +180,7 @@ resource "cloudflare_record" "alt2_root" {
   zone_id = var.theyvoteforyou_com_au_zone_id
   name    = "theyvoteforyou.com.au"
   type    = "A"
-  value   = aws_eip.theyvoteforyou.public_ip
+  value   = aws_eip.main.public_ip
 }
 
 resource "cloudflare_record" "alt2_www" {
