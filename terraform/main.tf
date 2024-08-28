@@ -47,7 +47,6 @@ module "planningalerts" {
 # terraform output planningalerts_sitemaps_secret_access_key
 # cd ..; ansible-vault encrypt_string --name aws_secret_access_key "value from above" --encrypt-vault-id default
 
-# TODO: Rename
 output "planningalerts_sitemaps_secret_access_key" {
   value     = module.planningalerts.sitemaps_secret_access_key
   sensitive = true
