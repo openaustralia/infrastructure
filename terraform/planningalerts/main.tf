@@ -25,11 +25,6 @@ module "blue" {
   zone_id              = var.zone_id
 }
 
-moved {
-  from = module.env-blue
-  to   = module.blue
-}
-
 module "green" {
   source             = "./env"
   instance_count     = var.instance_count
@@ -46,11 +41,6 @@ module "green" {
   key_name             = var.deployer_key.key_name
   vpc_id               = var.vpc.id
   zone_id              = var.zone_id
-}
-
-moved {
-  from = module.env-green
-  to   = module.green
 }
 
 module "activestorage-s3" {
