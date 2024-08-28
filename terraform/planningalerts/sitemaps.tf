@@ -39,10 +39,3 @@ resource "aws_iam_user_policy" "upload_to_sitemaps" {
     }
   )
 }
-
-module "activestorage-s3" {
-  source = "../planningalerts-activestorage-s3"
-
-  name            = "planningalerts-as-production"
-  allowed_origins = ["https://www.planningalerts.org.au"]
-}

@@ -43,6 +43,14 @@ module "env-green" {
   zone_id              = var.zone_id
 }
 
+
+module "activestorage-s3" {
+  source = "../planningalerts-activestorage-s3"
+
+  name            = "planningalerts-as-production"
+  allowed_origins = ["https://www.planningalerts.org.au"]
+}
+
 # TODO: Move this to its own file
 
 # In our setup we have a memcached server running alongside each webserver node
