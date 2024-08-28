@@ -1,3 +1,5 @@
+# Creates an S3 bucket that is configured for use by rails active storage
+
 resource "aws_s3_bucket" "main" {
   bucket = var.name
 }

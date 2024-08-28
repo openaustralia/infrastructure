@@ -45,7 +45,7 @@ module "env-green" {
 
 
 module "activestorage-s3" {
-  source = "../planningalerts-activestorage-s3"
+  source = "../activestorage-s3"
 
   name            = "planningalerts-as-production"
   allowed_origins = ["https://www.planningalerts.org.au"]
