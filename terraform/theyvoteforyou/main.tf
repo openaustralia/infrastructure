@@ -23,21 +23,11 @@ resource "aws_instance" "main" {
   availability_zone = "ap-southeast-2a"
 }
 
-moved {
-  from = aws_instance.theyvoteforyou
-  to   = aws_instance.main
-}
-
 resource "aws_eip" "main" {
   instance = aws_instance.main.id
   tags = {
     Name = "theyvoteforyou"
   }
-}
-
-moved {
-  from = aws_eip.theyvoteforyou
-  to   = aws_eip.main
 }
 
 resource "aws_ebs_volume" "data" {
@@ -50,18 +40,8 @@ resource "aws_ebs_volume" "data" {
   }
 }
 
-moved {
-  from = aws_ebs_volume.theyvoteforyou_data
-  to   = aws_ebs_volume.data
-}
-
 resource "aws_volume_attachment" "data" {
   device_name = "/dev/sdi"
   volume_id   = aws_ebs_volume.data.id
   instance_id = aws_instance.main.id
-}
-
-moved {
-  from = aws_volume_attachment.theyvoteforyou_data
-  to   = aws_volume_attachment.data
 }
