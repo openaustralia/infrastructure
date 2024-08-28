@@ -4,8 +4,8 @@ locals {
   # Only include environment if the weight is set to 1. This is a very hacky way of doing something
   # like the weighting on the load balancer for the round robin DNS below
   planningalerts_all_public_ips = concat(
-    var.blue_weight == 1 ? module.env-blue.public_ips : [],
-    var.green_weight == 1 ? module.env-green.public_ips : []
+    var.blue_weight == 1 ? module.blue.public_ips : [],
+    var.green_weight == 1 ? module.green.public_ips : []
   )
 }
 

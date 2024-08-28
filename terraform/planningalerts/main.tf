@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-module "env-blue" {
+module "blue" {
   source             = "./env"
   instance_count     = var.instance_count
   ami_name           = var.blue_ami_name
@@ -25,7 +25,12 @@ module "env-blue" {
   zone_id              = var.zone_id
 }
 
-module "env-green" {
+moved {
+  from = module.env-blue
+  to   = module.blue
+}
+
+module "green" {
   source             = "./env"
   instance_count     = var.instance_count
   ami_name           = var.green_ami_name
@@ -43,6 +48,10 @@ module "env-green" {
   zone_id              = var.zone_id
 }
 
+moved {
+  from = module.env-green
+  to   = module.green
+}
 
 module "activestorage-s3" {
   source = "../activestorage-s3"

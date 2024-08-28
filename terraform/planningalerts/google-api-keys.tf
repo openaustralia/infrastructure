@@ -31,8 +31,8 @@ resource "google_apikeys_key" "google_maps_key" {
         ],
         # Allows maps to work when accessing the servers directly (not through the load balancer)
         # Obviously not necessary for normal production use but useful for debugging and testing
-        [for s in module.env-blue.public_names : "http://${s}:8000"],
-        [for s in module.env-green.public_names : "http://${s}:8000"],
+        [for s in module.blue.public_names : "http://${s}:8000"],
+        [for s in module.green.public_names : "http://${s}:8000"],
       )
     }
   }
@@ -43,7 +43,7 @@ resource "google_apikeys_key" "google_maps_server_key" {
   name         = "e401e298-4aa7-4ee8-a53e-06b6da107b2a"
   restrictions {
     server_key_restrictions {
-      allowed_ips = concat(module.env-blue.public_ips, module.env-green.public_ips)
+      allowed_ips = concat(module.blue.public_ips, module.green.public_ips)
     }
   }
 }

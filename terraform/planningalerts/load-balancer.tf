@@ -81,11 +81,11 @@ resource "aws_lb_listener_rule" "forward" {
     type = "forward"
     forward {
       target_group {
-        arn    = module.env-blue.target_group_arn
+        arn    = module.blue.target_group_arn
         weight = var.blue_enabled ? var.blue_weight : 0
       }
       target_group {
-        arn    = module.env-green.target_group_arn
+        arn    = module.green.target_group_arn
         weight = var.green_enabled ? var.green_weight : 0
       }
       stickiness {
