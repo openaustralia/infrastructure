@@ -37,3 +37,22 @@ module "planningalerts" {
   green_weight   = 0
   green_ami_name = "planningalerts-puma-ubuntu-22.04-v4"
 }
+
+# These values are needed by ansible for planningalerts
+# They should be encrypted and put in group_vars/planningalerts.yml
+# Take the output of this command:
+# terraform output planningalerts_sitemaps_production_access_key_id
+# cd ..; ansible-vault encrypt_string --name aws_access_key_id "value from above" --encrypt-vault-id default
+# AND
+# terraform output planningalerts_sitemaps_production_secret_access_key
+# cd ..; ansible-vault encrypt_string --name aws_secret_access_key "value from above" --encrypt-vault-id default
+
+# TODO: Rename
+output "planningalerts_sitemaps_production_secret_access_key" {
+  value     = module.planningalerts.planningalerts_sitemaps_production_secret_access_key
+  sensitive = true
+}
+
+output "planningalerts_sitemaps_production_access_key_id" {
+  value = module.planningalerts.planningalerts_sitemaps_production_access_key_id
+}
