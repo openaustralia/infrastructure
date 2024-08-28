@@ -41,18 +41,18 @@ module "planningalerts" {
 # These values are needed by ansible for planningalerts
 # They should be encrypted and put in group_vars/planningalerts.yml
 # Take the output of this command:
-# terraform output planningalerts_sitemaps_production_access_key_id
+# terraform output planningalerts_sitemaps_access_key_id
 # cd ..; ansible-vault encrypt_string --name aws_access_key_id "value from above" --encrypt-vault-id default
 # AND
-# terraform output planningalerts_sitemaps_production_secret_access_key
+# terraform output planningalerts_sitemaps_secret_access_key
 # cd ..; ansible-vault encrypt_string --name aws_secret_access_key "value from above" --encrypt-vault-id default
 
 # TODO: Rename
-output "planningalerts_sitemaps_production_secret_access_key" {
+output "planningalerts_sitemaps_secret_access_key" {
   value     = module.planningalerts.sitemaps_secret_access_key
   sensitive = true
 }
 
-output "planningalerts_sitemaps_production_access_key_id" {
+output "planningalerts_sitemaps_access_key_id" {
   value = module.planningalerts.sitemaps_access_key_id
 }
