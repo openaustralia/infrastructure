@@ -92,15 +92,6 @@ module "activestorage-s3" {
   allowed_origins = ["https://www.planningalerts.org.au"]
 }
 
-output "planningalerts_activestorage_s3_production_secret_access_key" {
-  value     = module.activestorage-s3.secret_access_key
-  sensitive = true
-}
-
-output "planningalerts_activestorage_s3_production_access_key_id" {
-  value = module.activestorage-s3.access_key_id
-}
-
 # TODO: Move this to its own file
 
 # In our setup we have a memcached server running alongside each webserver node

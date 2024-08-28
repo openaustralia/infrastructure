@@ -56,3 +56,12 @@ output "planningalerts_sitemaps_secret_access_key" {
 output "planningalerts_sitemaps_access_key_id" {
   value = module.planningalerts.sitemaps_access_key_id
 }
+
+output "planningalerts_activestorage_s3_secret_access_key" {
+  value     = module.planningalerts.activestorage_s3_secret_access_key
+  sensitive = true
+}
+
+output "planningalerts_activestorage_s3_access_key_id" {
+  value = module.planningalerts.activestorage_s3_access_key_id
+}
