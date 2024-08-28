@@ -49,10 +49,10 @@ module "planningalerts" {
 
 # TODO: Rename
 output "planningalerts_sitemaps_production_secret_access_key" {
-  value     = module.planningalerts.planningalerts_sitemaps_production_secret_access_key
+  value     = module.planningalerts.sitemaps_secret_access_key
   sensitive = true
 }
 
 output "planningalerts_sitemaps_production_access_key_id" {
-  value = module.planningalerts.planningalerts_sitemaps_production_access_key_id
+  value = module.planningalerts.sitemaps_access_key_id
 }
