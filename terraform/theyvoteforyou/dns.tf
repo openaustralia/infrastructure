@@ -144,6 +144,19 @@ resource "cloudflare_record" "tvfy_domainkey_google" {
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6GEPSzIyB0M2Fpuk6nAJth9sE3xU30e7dn5Q1NihGNbBaxFP01qxohr6eP0F2OeokQI0Gk7/uxtl0mWNe7oCdgxjflX7DVW5B5jSpXUI3wM5sppFFvwen3joDhnWP4fnu8PLkBNTcJ32crG2u4BcyCBaz7bmM7utFZgnsTo1NuAaq6Hs5SU2nv4i5dPgbSF9UjjZ+/FfCXqzmQpmWHVGvyweHiVosXX/nZyYl9QeroT2YDpcD93DIidtiDR79QPDqLtqAk8lJFN9nyYo9DCnsxheROXHfPFlr1tkhYJJ+HxSnB368SZFH3HNzhvS9WYscjYYXHw1TtI972MOCtPqiwIDAQAB"
 }
 
+# For the time being we're just using DMARC records to get some data on what's
+# happening with email that we're sending (and whether anyone else is impersonating
+# us).
+# We're using a free service provided by https://dmarc.postmarkapp.com/
+# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# Report goes to webmaster@theyvoteforyou.org.au
+resource "cloudflare_record" "tvfy_dmarc" {
+  zone_id = var.theyvoteforyou_org_au_zone_id
+  name    = "_dmarc.theyvoteforyou.org.au"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ldnqce6nisu@dmarc.postmarkapp.com; sp=none; aspf=r;"
+}
+
 ## theyvoteforyou.org
 
 resource "cloudflare_record" "alt1_root" {
@@ -160,6 +173,19 @@ resource "cloudflare_record" "alt1_www" {
   value   = "theyvoteforyou.org"
 }
 
+# For the time being we're just using DMARC records to get some data on what's
+# happening with email that we're sending (and whether anyone else is impersonating
+# us).
+# We're using a free service provided by https://dmarc.postmarkapp.com/
+# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# Report goes to webmaster@theyvoteforyou.org
+resource "cloudflare_record" "tvfy_alt1_dmarc" {
+  zone_id = var.theyvoteforyou_org_zone_id
+  name    = "_dmarc.theyvoteforyou.org"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+qbce7gaoklg@dmarc.postmarkapp.com; sp=none; aspf=r;"
+}
+
 ## theyvoteforyou.com.au
 
 resource "cloudflare_record" "alt2_root" {
@@ -174,4 +200,17 @@ resource "cloudflare_record" "alt2_www" {
   name    = "www.theyvoteforyou.com.au"
   type    = "CNAME"
   value   = "theyvoteforyou.com.au"
+}
+
+# For the time being we're just using DMARC records to get some data on what's
+# happening with email that we're sending (and whether anyone else is impersonating
+# us).
+# We're using a free service provided by https://dmarc.postmarkapp.com/
+# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# Report goes to webmaster@theyvoteforyou.com.au
+resource "cloudflare_record" "tvfy_alt2_dmarc" {
+  zone_id = var.theyvoteforyou_com_au_zone_id
+  name    = "_dmarc.theyvoteforyou.com.au"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ffljniarmuh@dmarc.postmarkapp.com; sp=none; aspf=r;"
 }

@@ -1,18 +1,24 @@
-# (We're still using Ansible for configuring the servers themselves and
-# the normal application deployment is still done with capistrano)
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 2.13.2"
+    }
+  }
+}
 
 resource "aws_instance" "theyvoteforyou" {
-  ami = var.ubuntu_20_ami
+  ami = var.ami
 
   instance_type = "t3.large"
   ebs_optimized = true
-  key_name      = aws_key_pair.deployer.key_name
+  key_name      = var.deployer_key.key_name
   tags = {
     Name = "theyvoteforyou"
   }
-  security_groups         = [aws_security_group.webserver.name]
+  security_groups         = [var.security_group.name]
   disable_api_termination = true
-  iam_instance_profile    = aws_iam_instance_profile.logging.name
+  iam_instance_profile    = var.instance_profile.name
   # Setting the availability zone because it needs to be the same as the disk
   availability_zone = "ap-southeast-2a"
 }

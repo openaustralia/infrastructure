@@ -64,3 +64,152 @@ output "planningalerts_activestorage_s3_secret_access_key" {
 output "planningalerts_activestorage_s3_access_key_id" {
   value = module.planningalerts.activestorage_s3_access_key_id
 }
+
+module "theyvoteforyou" {
+  source           = "./theyvoteforyou"
+  ami              = var.ubuntu_20_ami
+  deployer_key     = aws_key_pair.deployer
+  security_group   = aws_security_group.webserver
+  instance_profile = aws_iam_instance_profile.logging
+}
+
+moved {
+  from = cloudflare_record.root
+  to   = module.theyvoteforyou.cloudflare_record.root
+}
+
+moved {
+  from = cloudflare_record.www
+  to   = module.theyvoteforyou.cloudflare_record.www
+}
+
+moved {
+  from = cloudflare_record.test
+  to   = module.theyvoteforyou.cloudflare_record.test
+}
+
+moved {
+  from = cloudflare_record.www_test
+  to   = module.theyvoteforyou.cloudflare_record.www_test
+}
+
+moved {
+  from = cloudflare_record.email
+  to   = module.theyvoteforyou.cloudflare_record.email
+}
+
+moved {
+  from = cloudflare_record.email2
+  to   = module.theyvoteforyou.cloudflare_record.email2
+}
+
+moved {
+  from = cloudflare_record.mx1
+  to   = module.theyvoteforyou.cloudflare_record.mx1
+}
+
+moved {
+  from = cloudflare_record.mx2
+  to   = module.theyvoteforyou.cloudflare_record.mx2
+}
+
+moved {
+  from = cloudflare_record.mx3
+  to   = module.theyvoteforyou.cloudflare_record.mx3
+}
+
+moved {
+  from = cloudflare_record.mx4
+  to   = module.theyvoteforyou.cloudflare_record.mx4
+}
+
+moved {
+  from = cloudflare_record.mx5
+  to   = module.theyvoteforyou.cloudflare_record.mx5
+}
+
+moved {
+  from = cloudflare_record.spf
+  to   = module.theyvoteforyou.cloudflare_record.spf
+}
+
+moved {
+  from = cloudflare_record.cuttlefish
+  to   = module.theyvoteforyou.cloudflare_record.cuttlefish
+}
+
+moved {
+  from = cloudflare_record.cuttlefish2
+  to   = module.theyvoteforyou.cloudflare_record.cuttlefish2
+}
+
+moved {
+  from = cloudflare_record.google_site_verification
+  to   = module.theyvoteforyou.cloudflare_record.google_site_verification
+}
+
+moved {
+  from = cloudflare_record.facebook_domain_verification
+  to   = module.theyvoteforyou.cloudflare_record.facebook_domain_verification
+}
+
+moved {
+  from = cloudflare_record.tvfy_domainkey_google
+  to   = module.theyvoteforyou.cloudflare_record.tvfy_domainkey_google
+}
+
+moved {
+  from = cloudflare_record.tvfy_dmarc
+  to   = module.theyvoteforyou.cloudflare_record.tvfy_dmarc
+}
+
+moved {
+  from = cloudflare_record.alt1_root
+  to   = module.theyvoteforyou.cloudflare_record.alt1_root
+}
+
+moved {
+  from = cloudflare_record.alt1_www
+  to   = module.theyvoteforyou.cloudflare_record.alt1_www
+}
+
+moved {
+  from = cloudflare_record.tvfy_alt1_dmarc
+  to   = module.theyvoteforyou.cloudflare_record.tvfy_alt1_dmarc
+}
+
+moved {
+  from = cloudflare_record.alt2_root
+  to   = module.theyvoteforyou.cloudflare_record.alt2_root
+}
+
+moved {
+  from = cloudflare_record.alt2_www
+  to   = module.theyvoteforyou.cloudflare_record.alt2_www
+}
+
+moved {
+  from = cloudflare_record.tvfy_alt2_dmarc
+  to   = module.theyvoteforyou.cloudflare_record.tvfy_alt2_dmarc
+}
+
+
+moved {
+  from = aws_instance.theyvoteforyou
+  to   = module.theyvoteforyou.aws_instance.theyvoteforyou
+}
+
+moved {
+  from = aws_eip.theyvoteforyou
+  to   = module.theyvoteforyou.aws_eip.theyvoteforyou
+}
+
+moved {
+  from = aws_ebs_volume.theyvoteforyou_data
+  to   = module.theyvoteforyou.aws_ebs_volume.theyvoteforyou_data
+}
+
+moved {
+  from = aws_volume_attachment.theyvoteforyou_data
+  to   = module.theyvoteforyou.aws_volume_attachment.theyvoteforyou_data
+}

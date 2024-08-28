@@ -60,27 +60,3 @@ resource "cloudflare_record" "rtk_dmarc" {
   type    = "TXT"
   value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+aysyay6u9ct@dmarc.postmarkapp.com; sp=none; aspf=r;"
 }
-
-# Report goes to webmaster@theyvoteforyou.org.au
-resource "cloudflare_record" "tvfy_dmarc" {
-  zone_id = var.theyvoteforyou_org_au_zone_id
-  name    = "_dmarc.theyvoteforyou.org.au"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ldnqce6nisu@dmarc.postmarkapp.com; sp=none; aspf=r;"
-}
-
-# Report goes to webmaster@theyvoteforyou.org
-resource "cloudflare_record" "tvfy_alt1_dmarc" {
-  zone_id = var.theyvoteforyou_org_zone_id
-  name    = "_dmarc.theyvoteforyou.org"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+qbce7gaoklg@dmarc.postmarkapp.com; sp=none; aspf=r;"
-}
-
-# Report goes to webmaster@theyvoteforyou.com.au
-resource "cloudflare_record" "tvfy_alt2_dmarc" {
-  zone_id = var.theyvoteforyou_com_au_zone_id
-  name    = "_dmarc.theyvoteforyou.com.au"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ffljniarmuh@dmarc.postmarkapp.com; sp=none; aspf=r;"
-}
