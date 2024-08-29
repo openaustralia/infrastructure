@@ -29,21 +29,11 @@ resource "aws_instance" "main" {
   iam_instance_profile    = var.instance_profile.name
 }
 
-moved {
-  from = aws_instance.righttoknow
-  to   = aws_instance.main
-}
-
 resource "aws_eip" "main" {
   instance = aws_instance.main.id
   tags = {
     Name = "righttoknow"
   }
-}
-
-moved {
-  from = aws_eip.righttoknow
-  to   = aws_eip.main
 }
 
 resource "aws_ebs_volume" "data" {
@@ -56,18 +46,8 @@ resource "aws_ebs_volume" "data" {
   }
 }
 
-moved {
-  from = aws_ebs_volume.righttoknow_data
-  to   = aws_ebs_volume.data
-}
-
 resource "aws_volume_attachment" "data" {
   device_name = "/dev/sdi"
   volume_id   = aws_ebs_volume.data.id
   instance_id = aws_instance.main.id
-}
-
-moved {
-  from = aws_volume_attachment.righttoknow_data
-  to   = aws_volume_attachment.data
 }

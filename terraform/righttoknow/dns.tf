@@ -6,22 +6,12 @@ resource "cloudflare_record" "root" {
   value   = aws_eip.main.public_ip
 }
 
-moved {
-  from = cloudflare_record.rtk_root
-  to   = cloudflare_record.root
-}
-
 # CNAME records
 resource "cloudflare_record" "www" {
   zone_id = var.righttoknow_org_au_zone_id
   name    = "www.righttoknow.org.au"
   type    = "CNAME"
   value   = "righttoknow.org.au"
-}
-
-moved {
-  from = cloudflare_record.rtk_www
-  to   = cloudflare_record.www
 }
 
 resource "cloudflare_record" "test" {
@@ -31,21 +21,11 @@ resource "cloudflare_record" "test" {
   value   = "righttoknow.org.au"
 }
 
-moved {
-  from = cloudflare_record.rtk_test
-  to   = cloudflare_record.test
-}
-
 resource "cloudflare_record" "www_test" {
   zone_id = var.righttoknow_org_au_zone_id
   name    = "www.test.righttoknow.org.au"
   type    = "CNAME"
   value   = "righttoknow.org.au"
-}
-
-moved {
-  from = cloudflare_record.rtk_www_test
-  to   = cloudflare_record.www_test
 }
 
 # MX records
@@ -57,22 +37,12 @@ resource "cloudflare_record" "mx1" {
   value    = "aspmx.l.google.com"
 }
 
-moved {
-  from = cloudflare_record.rtk_mx1
-  to   = cloudflare_record.mx1
-}
-
 resource "cloudflare_record" "mx2" {
   zone_id  = var.righttoknow_org_au_zone_id
   name     = "righttoknow.org.au"
   type     = "MX"
   priority = 20
   value    = "alt1.aspmx.l.google.com"
-}
-
-moved {
-  from = cloudflare_record.rtk_mx2
-  to   = cloudflare_record.mx2
 }
 
 resource "cloudflare_record" "mx3" {
@@ -83,11 +53,6 @@ resource "cloudflare_record" "mx3" {
   value    = "alt2.aspmx.l.google.com"
 }
 
-moved {
-  from = cloudflare_record.rtk_mx3
-  to   = cloudflare_record.mx3
-}
-
 resource "cloudflare_record" "mx4" {
   zone_id  = var.righttoknow_org_au_zone_id
   name     = "righttoknow.org.au"
@@ -96,22 +61,12 @@ resource "cloudflare_record" "mx4" {
   value    = "aspmx2.googlemail.com"
 }
 
-moved {
-  from = cloudflare_record.rtk_mx4
-  to   = cloudflare_record.mx4
-}
-
 resource "cloudflare_record" "mx5" {
   zone_id  = var.righttoknow_org_au_zone_id
   name     = "righttoknow.org.au"
   type     = "MX"
   priority = 30
   value    = "aspmx3.googlemail.com"
-}
-
-moved {
-  from = cloudflare_record.rtk_mx5
-  to   = cloudflare_record.mx5
 }
 
 # TODO Check how this record is being used
@@ -123,22 +78,12 @@ resource "cloudflare_record" "server" {
   value    = "righttoknow.org.au"
 }
 
-moved {
-  from = cloudflare_record.rtk_server
-  to   = cloudflare_record.server
-}
-
 # TXT records
 resource "cloudflare_record" "spf" {
   zone_id = var.righttoknow_org_au_zone_id
   name    = "righttoknow.org.au"
   type    = "TXT"
   value   = "v=spf1 a include:_spf.google.com ~all"
-}
-
-moved {
-  from = cloudflare_record.rtk_spf
-  to   = cloudflare_record.spf
 }
 
 resource "cloudflare_record" "google_site_verification" {
@@ -148,21 +93,11 @@ resource "cloudflare_record" "google_site_verification" {
   value   = "google-site-verification=ci77kXOm4-lxR3Tc1D1FlTzz0J_GWQES2wU5kFMIR-w"
 }
 
-moved {
-  from = cloudflare_record.rtk_google_site_verification
-  to   = cloudflare_record.google_site_verification
-}
-
 resource "cloudflare_record" "facebook_domain_verification" {
   zone_id = var.righttoknow_org_au_zone_id
   name    = "righttoknow.org.au"
   type    = "TXT"
   value   = "facebook-domain-verification=vtlcbmfm4mihp4wql58lwz3nbhc8bt"
-}
-
-moved {
-  from = cloudflare_record.rtk_facebook_domain_verification
-  to   = cloudflare_record.facebook_domain_verification
 }
 
 # Note that this record comes from roles/internal/righttoknow/files/dkimkeys/default.txt which in turn is generated
@@ -174,21 +109,11 @@ resource "cloudflare_record" "default_domainkey" {
   value   = "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzWFLO143fpHeVU27EjmOsY4hpKtR+/PI+idJItMWiHSwjgcX21QYMbQjPcHfHFhsDbblBBQy/MtcTwynSYFp1SWkTI8EsHLS1+pp1HAI3wx7ZWLmwE6di+qRKu+3ooPFSIUbA+TvA7GJmHBfBf/ubASWff4t5ByZ9edZOA4lZ7pGdG7O0duH+/hhggH/LFMPX6a0CzyXYjsfTvtyYMJvvRsoepEs/QjtdBarZS2roR7qxZQhSRUlbZgSNAbyO0+3wJptpxvAXleSuOFoN5nHMV4LT+vuF0g+FDxIpbJu+bW08IKL1qMSH8Gtwd20Hy34h88IHPg8zx5FUoeeOS5W/wIDAQAB"
 }
 
-moved {
-  from = cloudflare_record.rtk_default_domainkey
-  to   = cloudflare_record.default_domainkey
-}
-
 resource "cloudflare_record" "google_domainkey" {
   zone_id = var.righttoknow_org_au_zone_id
   name    = "google._domainkey.righttoknow.org.au"
   type    = "TXT"
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm30i+FaCipo1Eef8vrV66CRcdQGDfniuKP1ND2hj0VKiYf9LO15q7ZF9mE14zlOKmP//tS/EbdEXk6eAi0ps6oUf2jIvajyuDzLhz7Xn528LQDdxDRlh+2IdA+Z7jslLW7y0zJdYyp12X/Nx+mZrwbgoZJHplcmIZHQYWv00HX46ioR9eK8Yf6+0kU31ScAMcAphmjS4euYejsY0I0SoTlYDqJ/XNiiE2bl8wFfoG6/mgdHddpuPKKEs0cJc0Opt6ZzHuLdzQ+atnZJkqKQZWhkvrsMqeODBOoCE44SCW+5smT6TARDnGrnKTzvfEPZGoLQPojQHc3Ii+Bq3FtFsFwIDAQAB"
-}
-
-moved {
-  from = cloudflare_record.rtk_google_domainkey
-  to   = cloudflare_record.google_domainkey
 }
 
 # For the time being we're just using DMARC records to get some data on what's
@@ -202,9 +127,4 @@ resource "cloudflare_record" "dmarc" {
   name    = "_dmarc.righttoknow.org.au"
   type    = "TXT"
   value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+aysyay6u9ct@dmarc.postmarkapp.com; sp=none; aspf=r;"
-}
-
-moved {
-  from = cloudflare_record.rtk_dmarc
-  to   = cloudflare_record.dmarc
 }
