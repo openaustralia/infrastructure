@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "aws_instance" "righttoknow" {
+resource "aws_instance" "main" {
   ami = var.ami
   # Changed it from t2.small to t2.medium because provisioning was very slow
   # Changed from t2.medium to t2.large because it was running out of memory
@@ -24,19 +24,29 @@ resource "aws_instance" "righttoknow" {
     var.security_group_webserver.name,
     var.security_group_incoming_email.name,
   ]
-  availability_zone       = aws_ebs_volume.righttoknow_data.availability_zone
+  availability_zone       = aws_ebs_volume.data.availability_zone
   disable_api_termination = true
   iam_instance_profile    = var.instance_profile.name
 }
 
-resource "aws_eip" "righttoknow" {
-  instance = aws_instance.righttoknow.id
+moved {
+  from = aws_instance.righttoknow
+  to   = aws_instance.main
+}
+
+resource "aws_eip" "main" {
+  instance = aws_instance.main.id
   tags = {
     Name = "righttoknow"
   }
 }
 
-resource "aws_ebs_volume" "righttoknow_data" {
+moved {
+  from = aws_eip.righttoknow
+  to   = aws_eip.main
+}
+
+resource "aws_ebs_volume" "data" {
   availability_zone = "ap-southeast-2c"
 
   size = 240
@@ -46,8 +56,18 @@ resource "aws_ebs_volume" "righttoknow_data" {
   }
 }
 
-resource "aws_volume_attachment" "righttoknow_data" {
+moved {
+  from = aws_ebs_volume.righttoknow_data
+  to   = aws_ebs_volume.data
+}
+
+resource "aws_volume_attachment" "data" {
   device_name = "/dev/sdi"
-  volume_id   = aws_ebs_volume.righttoknow_data.id
-  instance_id = aws_instance.righttoknow.id
+  volume_id   = aws_ebs_volume.data.id
+  instance_id = aws_instance.main.id
+}
+
+moved {
+  from = aws_volume_attachment.righttoknow_data
+  to   = aws_volume_attachment.data
 }
