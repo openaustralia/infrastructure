@@ -32,18 +32,8 @@ resource "linode_instance" "main" {
   }
 }
 
-moved {
-  from = linode_instance.morph
-  to   = linode_instance.main
-}
-
 # I don't really understand why we set up reverse DNS when we created the instance manually
 resource "linode_rdns" "main" {
   address = linode_instance.main.ip_address
   rdns    = "morph.io"
-}
-
-moved {
-  from = linode_rdns.morph_ipv4
-  to   = linode_rdns.main
 }
