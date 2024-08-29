@@ -52,11 +52,3 @@ resource "cloudflare_record" "opengovernment_dmarc" {
   type    = "TXT"
   value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+hm1wga71eti@dmarc.postmarkapp.com; sp=none; aspf=r;"
 }
-
-# Report goes to webmaster@righttoknow.org.au
-resource "cloudflare_record" "rtk_dmarc" {
-  zone_id = var.righttoknow_org_au_zone_id
-  name    = "_dmarc.righttoknow.org.au"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+aysyay6u9ct@dmarc.postmarkapp.com; sp=none; aspf=r;"
-}

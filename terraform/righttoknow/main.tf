@@ -1,7 +1,14 @@
-resource "aws_instance" "righttoknow" {
-  # This has been upgraded in place to Ubuntu 18.04
-  ami = var.ubuntu_16_ami
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 2.13.2"
+    }
+  }
+}
 
+resource "aws_instance" "righttoknow" {
+  ami = var.ami
   # Changed it from t2.small to t2.medium because provisioning was very slow
   # Changed from t2.medium to t2.large because it was running out of memory
   # when running script/rebuild-xapian-index
@@ -14,12 +21,12 @@ resource "aws_instance" "righttoknow" {
     Name = "righttoknow"
   }
   security_groups = [
-    aws_security_group.webserver.name,
-    aws_security_group.incoming_email.name,
+    var.security_group_webserver.name,
+    var.security_group_incoming_email.name,
   ]
   availability_zone       = aws_ebs_volume.righttoknow_data.availability_zone
   disable_api_termination = true
-  iam_instance_profile    = aws_iam_instance_profile.logging.name
+  iam_instance_profile    = var.instance_profile.name
 }
 
 resource "aws_eip" "righttoknow" {
