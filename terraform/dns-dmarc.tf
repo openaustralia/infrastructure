@@ -5,14 +5,6 @@
 # We're using a free service provided by https://dmarc.postmarkapp.com/
 # This generates a weekly DMARC report which gets sent by email on Monday mornings
 
-# Report goes to webmaster@morph.io
-resource "cloudflare_record" "morph_dmarc" {
-  zone_id = var.morph_io_zone_id
-  name    = "_dmarc.morph.io"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+yuyhziqptlw@dmarc.postmarkapp.com; sp=none; aspf=r;"
-}
-
 # Report goes to webmaster@oaf.org.au
 resource "cloudflare_record" "oaf_dmarc" {
   zone_id = var.oaf_org_au_zone_id

@@ -1,13 +1,9 @@
-variable "morph_io_zone_id" {
-  default = "194b659721d5dafa766f2064a5ac8819"
-}
-
 # A records
 resource "cloudflare_record" "morph_root" {
   zone_id = var.morph_io_zone_id
   name    = "morph.io"
   type    = "A"
-  value   = var.morph_ipv4
+  value   = var.ipv4
 }
 
 # CNAME records
@@ -136,6 +132,19 @@ resource "cloudflare_record" "morph_google_domainkey" {
   name    = "google._domainkey.morph.io"
   type    = "TXT"
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuVyV09pmp6w9YCOWQ9+2p/xe6w7mbZYgg0v4d+51GSoVrQNwp5RERtg76xhl3pbHSLVmtQyfdavLZN/r38/b3NS7E9AsD3dOUIa1iy60YklKVgcWr5eMIviL3E9FXqyQBULoffTWDj69Q/uVsmZmD1VFDICzEctlgKLs9cdtky4kssQQOfJ2KVMfa/GNCorF628jeHiqB6A2UsP/RQ40VVDunDatWO/0mmwHSRJSB61RSro2dYqzo8lzKOBWxnZDxkDO13Dg41VAlOReu4qDRn1MbCj3T79Ur1I6GJj09Em/va/VD4qKJPPt+lW7fKPqVlQ1RqEtSJUGMmiSEKlbYwIDAQAB"
+}
+
+# For the time being we're just using DMARC records to get some data on what's
+# happening with email that we're sending (and whether anyone else is impersonating
+# us).
+# We're using a free service provided by https://dmarc.postmarkapp.com/
+# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# Report goes to webmaster@morph.io
+resource "cloudflare_record" "morph_dmarc" {
+  zone_id = var.morph_io_zone_id
+  name    = "_dmarc.morph.io"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+yuyhziqptlw@dmarc.postmarkapp.com; sp=none; aspf=r;"
 }
 
 

@@ -1,3 +1,15 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 2.13.2"
+    }
+    linode = {
+      source = "linode/linode"
+    }
+  }
+}
+
 resource "linode_instance" "morph" {
   region           = "us-west"
   type             = "g6-standard-8"

@@ -54,3 +54,114 @@ module "righttoknow" {
   # This has been upgraded in place to Ubuntu 18.04
   ami = var.ubuntu_16_ami
 }
+
+module "morph" {
+  source = "./morph"
+  ipv4   = var.morph_ipv4
+}
+
+moved {
+  from = cloudflare_record.morph_root
+  to   = module.morph.cloudflare_record.morph_root
+}
+
+moved {
+  from = cloudflare_record.morph_www
+  to   = module.morph.cloudflare_record.morph_www
+}
+
+moved {
+  from = cloudflare_record.morph_api
+  to   = module.morph.cloudflare_record.morph_api
+}
+
+moved {
+  from = cloudflare_record.morph_discuss
+  to   = module.morph.cloudflare_record.morph_discuss
+}
+
+moved {
+  from = cloudflare_record.morph_faye
+  to   = module.morph.cloudflare_record.morph_faye
+}
+
+moved {
+  from = cloudflare_record.morph_help
+  to   = module.morph.cloudflare_record.morph_help
+}
+
+moved {
+  from = cloudflare_record.morph_email
+  to   = module.morph.cloudflare_record.morph_email
+}
+
+moved {
+  from = cloudflare_record.morph_email2
+  to   = module.morph.cloudflare_record.morph_email2
+}
+
+moved {
+  from = cloudflare_record.morph_mx1
+  to   = module.morph.cloudflare_record.morph_mx1
+}
+
+moved {
+  from = cloudflare_record.morph_mx2
+  to   = module.morph.cloudflare_record.morph_mx2
+}
+
+moved {
+  from = cloudflare_record.morph_mx3
+  to   = module.morph.cloudflare_record.morph_mx3
+}
+
+moved {
+  from = cloudflare_record.morph_mx4
+  to   = module.morph.cloudflare_record.morph_mx4
+}
+
+moved {
+  from = cloudflare_record.morph_mx5
+  to   = module.morph.cloudflare_record.morph_mx5
+}
+
+moved {
+  from = cloudflare_record.morph_spf
+  to   = module.morph.cloudflare_record.morph_spf
+}
+
+moved {
+  from = cloudflare_record.morph_google_site_verification
+  to   = module.morph.cloudflare_record.morph_google_site_verification
+}
+
+moved {
+  from = cloudflare_record.morph_domainkey
+  to   = module.morph.cloudflare_record.morph_domainkey
+}
+
+moved {
+  from = cloudflare_record.morph_domainkey2
+  to   = module.morph.cloudflare_record.morph_domainkey2
+}
+
+moved {
+  from = cloudflare_record.morph_google_domainkey
+  to   = module.morph.cloudflare_record.morph_google_domainkey
+}
+
+moved {
+  from = cloudflare_record.morph_dmarc
+  to   = module.morph.cloudflare_record.morph_dmarc
+}
+
+moved {
+  from = linode_instance.morph
+  to   = module.morph.linode_instance.morph
+}
+
+moved {
+  from = linode_rdns.morph_ipv4
+  to   = module.morph.linode_rdns.morph_ipv4
+}
+
