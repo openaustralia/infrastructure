@@ -10,7 +10,7 @@ terraform {
   }
 }
 
-resource "linode_instance" "morph" {
+resource "linode_instance" "main" {
   region           = "us-west"
   type             = "g6-standard-8"
   label            = "morph"
@@ -32,8 +32,18 @@ resource "linode_instance" "morph" {
   }
 }
 
+moved {
+  from = linode_instance.morph
+  to   = linode_instance.main
+}
+
 # I don't really understand why we set up reverse DNS when we created the instance manually
-resource "linode_rdns" "morph_ipv4" {
-  address = linode_instance.morph.ip_address
+resource "linode_rdns" "main" {
+  address = linode_instance.main.ip_address
   rdns    = "morph.io"
+}
+
+moved {
+  from = linode_rdns.morph_ipv4
+  to   = linode_rdns.main
 }
