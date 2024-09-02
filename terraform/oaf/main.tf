@@ -20,19 +20,9 @@ resource "aws_instance" "main" {
   iam_instance_profile    = var.instance_profile.name
 }
 
-moved {
-  from = aws_instance.oaf
-  to   = aws_instance.main
-}
-
 resource "aws_eip" "main" {
   instance = aws_instance.main.id
   tags = {
     Name = "oaf"
   }
-}
-
-moved {
-  from = aws_eip.oaf
-  to   = aws_eip.main
 }
