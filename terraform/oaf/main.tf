@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "aws_instance" "oaf" {
+resource "aws_instance" "main" {
   ami           = var.ami
   instance_type = "t3.small"
   ebs_optimized = true
@@ -20,9 +20,19 @@ resource "aws_instance" "oaf" {
   iam_instance_profile    = var.instance_profile.name
 }
 
-resource "aws_eip" "oaf" {
-  instance = aws_instance.oaf.id
+moved {
+  from = aws_instance.oaf
+  to   = aws_instance.main
+}
+
+resource "aws_eip" "main" {
+  instance = aws_instance.main.id
   tags = {
     Name = "oaf"
   }
+}
+
+moved {
+  from = aws_eip.oaf
+  to   = aws_eip.main
 }
