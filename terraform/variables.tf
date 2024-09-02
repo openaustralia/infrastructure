@@ -74,3 +74,7 @@ variable "ubuntu_22_ami" {
   # Virtualization type: hvm
   default = "ami-0df609f69029c9bdb"
 }
+
+variable "oaf_org_au_zone_id" {
+  default = "9289b2adebd1dac52cb9e6f8344a56da"
+}

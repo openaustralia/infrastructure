@@ -21,6 +21,20 @@ resource "aws_eip" "metabase" {
   }
 }
 
+resource "cloudflare_record" "web_metabase" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "web.metabase.oaf.org.au"
+  type    = "A"
+  value   = aws_eip.metabase.public_ip
+}
+
+resource "cloudflare_record" "metabase" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "metabase.oaf.org.au"
+  type    = "CNAME"
+  value   = aws_lb.main.dns_name
+}
+
 resource "aws_lb_target_group" "metabase" {
   name     = "metabase"
   port     = 8000

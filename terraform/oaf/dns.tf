@@ -1,6 +1,3 @@
-variable "oaf_org_au_zone_id" {
-  default = "9289b2adebd1dac52cb9e6f8344a56da"
-}
 
 variable "openaustraliafoundation_org_au_zone_id" {
   default = "5774055545c9ecb0d16b723857185e0e"
@@ -13,20 +10,6 @@ resource "cloudflare_record" "oaf_root" {
   name    = "oaf.org.au"
   type    = "A"
   value   = aws_eip.oaf.public_ip
-}
-
-resource "cloudflare_record" "au_proxy" {
-  zone_id = var.oaf_org_au_zone_id
-  name    = "au.proxy.oaf.org.au"
-  type    = "A"
-  value   = aws_eip.au_proxy.public_ip
-}
-
-resource "cloudflare_record" "web_metabase" {
-  zone_id = var.oaf_org_au_zone_id
-  name    = "web.metabase.oaf.org.au"
-  type    = "A"
-  value   = aws_eip.metabase.public_ip
 }
 
 # CNAME records
@@ -50,13 +33,6 @@ resource "cloudflare_record" "oaf_email" {
   name    = "email.oaf.org.au"
   type    = "CNAME"
   value   = "cname.createsend.com"
-}
-
-resource "cloudflare_record" "metabase" {
-  zone_id = var.oaf_org_au_zone_id
-  name    = "metabase.oaf.org.au"
-  type    = "CNAME"
-  value   = aws_lb.main.dns_name
 }
 
 # For mastodon hosting
@@ -167,6 +143,19 @@ resource "cloudflare_record" "oaf_domainkey_cuttlefish" {
   value = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7fLXgEr26+qIswukULxl1OIPfz2CZ1iPcy4+LsveWZKGi1mU4jcy2vregS8FOm1B/V2nI354jBxlEi4XLxElcThq7zrFcDLXPNkrCg7yyPCF3qBnISlWDF/EwB0wOE1VF3QcwcILdR9vzRHP2yo0uTkz+stZpzVgthfM4FAOd5vDQ+cYxCwKTtXyCBUHH+/c2KUYnKiAOEXmuOUfwdo7uAPdClyg8mPAqYzjEQtPlktulD3rLQp3bom5lkGVLzklfiD77JVK1PD1a9C2OItG55KYbie3EPrXLkecGMob1ulhvz7ml/bSx3bqDUcbelnVLlT9VjeRiEUWoSYzJxXoMwIDAQAB"
 }
 
+# For the time being we're just using DMARC records to get some data on what's
+# happening with email that we're sending (and whether anyone else is impersonating
+# us).
+# We're using a free service provided by https://dmarc.postmarkapp.com/
+# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# Report goes to webmaster@oaf.org.au
+resource "cloudflare_record" "oaf_dmarc" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "_dmarc.oaf.org.au"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; sp=none; aspf=r;"
+}
+
 ## openaustraliafoundation.org.au
 
 # A records
@@ -254,4 +243,17 @@ resource "cloudflare_record" "oaf_alt_domainkey_google" {
   name    = "google._domainkey.openaustraliafoundation.org.au"
   type    = "TXT"
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz6aQEaWYi4O0qYTauYZhhABGd+ZkC2vnWS5soLS0cjW4Q/W75fYyBULC65HdCcTjbLVGuPh2tmFxjwoW20Vlh/qpqsWeBYIo20KSKgRFAPqFwbCXuumEcDoGcjKm7O9uTAO+cLe1wkT2XtpAA+Vk1pTSismJvt93YXUaX6lZuIaO5BO9d221ax5N/YJnZ29EIYzXUtStojC6QxkQ506XB4Y1s6SaNr+UJHBtLTJl/ffqwcCqL6DyxkrYKDoKxWxj1fO8aNrPSE2xQYbgCYIcOYOOUZmwyuY/4ILKjlOdJfz0OLcn1/2sbCLO8oTeXZe/ftt2xsMCEAkO+ROc67BFeQIDAQAB"
+}
+
+# For the time being we're just using DMARC records to get some data on what's
+# happening with email that we're sending (and whether anyone else is impersonating
+# us).
+# We're using a free service provided by https://dmarc.postmarkapp.com/
+# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# Report goes to webmaster@openaustraliafoundation.org.au
+resource "cloudflare_record" "oaf_alt_dmarc" {
+  zone_id = var.openaustraliafoundation_org_au_zone_id
+  name    = "_dmarc.openaustraliafoundation.org.au"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+tziobvarown@dmarc.postmarkapp.com; sp=none; aspf=r;"
 }
