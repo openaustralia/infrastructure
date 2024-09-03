@@ -6,8 +6,3 @@ resource "cloudflare_record" "social" {
   type    = "CNAME"
   value   = "vip.masto.host"
 }
-
-moved {
-  from = module.oaf.cloudflare_record.social
-  to   = cloudflare_record.social
-}
