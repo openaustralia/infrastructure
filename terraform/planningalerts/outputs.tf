@@ -1,5 +1,5 @@
 output "certificate_production" {
-  value = aws_acm_certificate.main
+  value = module.certificate.certificate
 }
 
 output "sitemaps_secret_access_key" {
