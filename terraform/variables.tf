@@ -78,3 +78,47 @@ variable "ubuntu_22_ami" {
 variable "oaf_org_au_zone_id" {
   default = "9289b2adebd1dac52cb9e6f8344a56da"
 }
+
+variable "electionleaflets_org_au_zone_id" {
+  default = "4cd5afd47047e6a7e37563d013d431ae"
+}
+
+variable "morph_io_zone_id" {
+  default = "194b659721d5dafa766f2064a5ac8819"
+}
+
+variable "openaustraliafoundation_org_au_zone_id" {
+  default = "5774055545c9ecb0d16b723857185e0e"
+}
+
+variable "openaustralia_org_zone_id" {
+  default = "6f375d3f3dcd53599e538454c02161b2"
+}
+
+variable "openaustralia_org_au_zone_id" {
+  default = "f8ae8cc5a255e25cc39bbb91177dfc47"
+}
+
+variable "opengovernment_org_au_zone_id" {
+  default = "980de1807f4ff1c23c4b7dcfed7b31df"
+}
+
+variable "planningalerts_zone_id" {
+  default = "a826a2cd0f87d57ef60dc67c5738eec5"
+}
+
+variable "righttoknow_org_au_zone_id" {
+  default = "44b07a3486191276e3e6b0919dd86fff"
+}
+
+variable "theyvoteforyou_org_au_zone_id" {
+  default = "5ffc72ab294d0bdcd481fd19b9ab8326"
+}
+
+variable "theyvoteforyou_org_zone_id" {
+  default = "4ea2ceb027e2299e27c8cc1a8c59b029"
+}
+
+variable "theyvoteforyou_com_au_zone_id" {
+  default = "dd36844e39e23c27ae5f316bc516d692"
+}

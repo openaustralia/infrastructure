@@ -48,7 +48,4 @@ variable "vpc" {}
 variable "availability_zones" {
   type = list(string)
 }
-
-variable "zone_id" {
-  default = "a826a2cd0f87d57ef60dc67c5738eec5"
-}
+variable "zone_id" {}

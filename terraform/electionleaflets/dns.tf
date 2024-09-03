@@ -1,7 +1,3 @@
-variable "electionleaflets_org_au_zone_id" {
-  default = "4cd5afd47047e6a7e37563d013d431ae"
-}
-
 # A records
 resource "cloudflare_record" "root" {
   zone_id = var.electionleaflets_org_au_zone_id

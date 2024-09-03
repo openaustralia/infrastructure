@@ -6,10 +6,11 @@ module "cuttlefish" {
 }
 
 module "electionleaflets" {
-  source           = "./electionleaflets"
-  security_group   = aws_security_group.webserver
-  instance_profile = aws_iam_instance_profile.logging
-  ami              = var.ubuntu_16_ami
+  source                          = "./electionleaflets"
+  security_group                  = aws_security_group.webserver
+  instance_profile                = aws_iam_instance_profile.logging
+  ami                             = var.ubuntu_16_ami
+  electionleaflets_org_au_zone_id = var.electionleaflets_org_au_zone_id
 }
 
 module "planningalerts" {
@@ -27,6 +28,7 @@ module "planningalerts" {
   security_group_behind_lb      = aws_security_group.planningalerts
   vpc                           = aws_default_vpc.default
   availability_zones            = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
+  zone_id                       = var.planningalerts_zone_id
   instance_count                = 2
   # blue environment setup
   blue_enabled  = true
@@ -39,11 +41,14 @@ module "planningalerts" {
 }
 
 module "theyvoteforyou" {
-  source           = "./theyvoteforyou"
-  ami              = var.ubuntu_20_ami
-  deployer_key     = aws_key_pair.deployer
-  security_group   = aws_security_group.webserver
-  instance_profile = aws_iam_instance_profile.logging
+  source                        = "./theyvoteforyou"
+  ami                           = var.ubuntu_20_ami
+  deployer_key                  = aws_key_pair.deployer
+  security_group                = aws_security_group.webserver
+  instance_profile              = aws_iam_instance_profile.logging
+  theyvoteforyou_com_au_zone_id = var.theyvoteforyou_com_au_zone_id
+  theyvoteforyou_org_au_zone_id = var.theyvoteforyou_org_au_zone_id
+  theyvoteforyou_org_zone_id    = var.theyvoteforyou_org_zone_id
 }
 
 module "righttoknow" {
@@ -51,20 +56,23 @@ module "righttoknow" {
   security_group_webserver      = aws_security_group.webserver
   security_group_incoming_email = aws_security_group.incoming_email
   instance_profile              = aws_iam_instance_profile.logging
+  righttoknow_org_au_zone_id    = var.righttoknow_org_au_zone_id
   # This has been upgraded in place to Ubuntu 18.04
   ami = var.ubuntu_16_ami
 }
 
 module "morph" {
-  source = "./morph"
-  ipv4   = var.morph_ipv4
+  source           = "./morph"
+  ipv4             = var.morph_ipv4
+  morph_io_zone_id = var.morph_io_zone_id
 }
 
 module "oaf" {
-  source                   = "./oaf"
-  oaf_org_au_zone_id       = var.oaf_org_au_zone_id
-  security_group_webserver = aws_security_group.webserver
-  instance_profile         = aws_iam_instance_profile.logging
+  source                                 = "./oaf"
+  oaf_org_au_zone_id                     = var.oaf_org_au_zone_id
+  openaustraliafoundation_org_au_zone_id = var.openaustraliafoundation_org_au_zone_id
+  security_group_webserver               = aws_security_group.webserver
+  instance_profile                       = aws_iam_instance_profile.logging
   # This has been upgraded in place to Ubuntu 18.04
   ami = var.ubuntu_16_ami
 }
@@ -83,17 +91,20 @@ module "metabase" {
 }
 
 module "openaustralia" {
-  source                   = "./openaustralia"
-  security_group_webserver = aws_security_group.webserver
-  instance_profile         = aws_iam_instance_profile.logging
-  ami                      = var.ubuntu_16_ami
+  source                       = "./openaustralia"
+  security_group_webserver     = aws_security_group.webserver
+  instance_profile             = aws_iam_instance_profile.logging
+  ami                          = var.ubuntu_16_ami
+  openaustralia_org_zone_id    = var.openaustralia_org_zone_id
+  openaustralia_org_au_zone_id = var.openaustralia_org_au_zone_id
 }
 
 module "opengovernment" {
   source = "./opengovernment"
   # TODO: Why is this needed here but not anywhere else?
-  cuttlefish_ipv4          = var.cuttlefish_ipv4
-  security_group_webserver = aws_security_group.webserver
-  instance_profile         = aws_iam_instance_profile.logging
-  ami                      = var.ubuntu_16_ami
+  cuttlefish_ipv4               = var.cuttlefish_ipv4
+  security_group_webserver      = aws_security_group.webserver
+  instance_profile              = aws_iam_instance_profile.logging
+  ami                           = var.ubuntu_16_ami
+  opengovernment_org_au_zone_id = var.opengovernment_org_au_zone_id
 }
