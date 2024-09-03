@@ -62,8 +62,9 @@ resource "aws_lb_target_group_attachment" "main" {
 }
 
 module "certificate" {
-  source             = "../aws-certificate"
-  oaf_org_au_zone_id = var.oaf_org_au_zone_id
+  source      = "../aws-certificate"
+  zone_id     = var.oaf_org_au_zone_id
+  domain_name = "metabase.oaf.org.au"
 }
 
 moved {

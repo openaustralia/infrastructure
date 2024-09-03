@@ -1,1 +1,2 @@
-variable "oaf_org_au_zone_id" {}
+variable "zone_id" {}
+variable "domain_name" {}

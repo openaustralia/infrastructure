@@ -8,7 +8,7 @@ terraform {
 }
 
 resource "aws_acm_certificate" "main" {
-  domain_name       = "metabase.oaf.org.au"
+  domain_name       = var.domain_name
   validation_method = "DNS"
 
   lifecycle {
@@ -26,7 +26,7 @@ resource "cloudflare_record" "cert_validation" {
     }
   }
 
-  zone_id = var.oaf_org_au_zone_id
+  zone_id = var.zone_id
   name    = each.value.name
   type    = each.value.type
   value   = trimsuffix(each.value.record, ".")
