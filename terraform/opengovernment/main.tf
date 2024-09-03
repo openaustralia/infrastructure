@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "aws_instance" "opengovernment" {
+resource "aws_instance" "main" {
   ami = var.ami
 
   instance_type = "t3.micro"
@@ -21,9 +21,19 @@ resource "aws_instance" "opengovernment" {
   iam_instance_profile    = var.instance_profile.name
 }
 
-resource "aws_eip" "opengovernment" {
-  instance = aws_instance.opengovernment.id
+moved {
+  from = aws_instance.opengovernment
+  to   = aws_instance.main
+}
+
+resource "aws_eip" "main" {
+  instance = aws_instance.main.id
   tags = {
     Name = "opengovernment"
   }
+}
+
+moved {
+  from = aws_eip.opengovernment
+  to   = aws_eip.main
 }
