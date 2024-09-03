@@ -30,14 +30,14 @@ resource "aws_eip" "main" {
 }
 
 resource "cloudflare_record" "web" {
-  zone_id = var.oaf_org_au_zone_id
+  zone_id = var.zone_id
   name    = "web.metabase.oaf.org.au"
   type    = "A"
   value   = aws_eip.main.public_ip
 }
 
 resource "cloudflare_record" "root" {
-  zone_id = var.oaf_org_au_zone_id
+  zone_id = var.zone_id
   name    = "metabase.oaf.org.au"
   type    = "CNAME"
   value   = var.load_balancer.dns_name
@@ -63,7 +63,7 @@ resource "aws_lb_target_group_attachment" "main" {
 
 module "certificate" {
   source                    = "../aws-certificate"
-  zone_id                   = var.oaf_org_au_zone_id
+  zone_id                   = var.zone_id
   domain_name               = "metabase.oaf.org.au"
   subject_alternative_names = []
 }
