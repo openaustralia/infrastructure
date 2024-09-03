@@ -61,41 +61,29 @@ resource "aws_lb_target_group_attachment" "main" {
   target_id        = aws_instance.main.id
 }
 
-# TODO: Extract certificate generation into module
-resource "aws_acm_certificate" "main" {
-  domain_name       = "metabase.oaf.org.au"
-  validation_method = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
+module "certificate" {
+  source             = "../aws-certificate"
+  oaf_org_au_zone_id = var.oaf_org_au_zone_id
 }
 
-# Certification validation data
-resource "cloudflare_record" "cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.main.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  zone_id = var.oaf_org_au_zone_id
-  name    = each.value.name
-  type    = each.value.type
-  value   = trimsuffix(each.value.record, ".")
-  ttl     = 60
+moved {
+  from = aws_acm_certificate.main
+  to   = module.certificate.aws_acm_certificate.main
 }
 
-resource "aws_acm_certificate_validation" "main" {
-  certificate_arn         = aws_acm_certificate.main.arn
-  validation_record_fqdns = [for record in cloudflare_record.cert_validation : record.hostname]
+moved {
+  from = cloudflare_record.cert_validation
+  to   = module.certificate.cloudflare_record.cert_validation
+}
+
+moved {
+  from = aws_acm_certificate_validation.main
+  to   = module.certificate.aws_acm_certificate_validation.main
 }
 
 resource "aws_lb_listener_certificate" "main" {
   listener_arn    = var.listener_https.arn
-  certificate_arn = aws_acm_certificate.main.arn
+  certificate_arn = module.certificate.certificate.arn
 }
 
 resource "aws_lb_listener_rule" "main" {
@@ -115,3 +103,11 @@ resource "aws_lb_listener_rule" "main" {
     }
   }
 }
+
+
+
+
+
+
+
+
