@@ -1,6 +1,6 @@
 module "cuttlefish" {
   source          = "./cuttlefish"
-  zone_id         = var.oaf_org_au_zone_id
+  zone_id         = cloudflare_zone.oaf_org_au.id
   cuttlefish_ipv4 = var.cuttlefish_ipv4
   cuttlefish_ipv6 = var.cuttlefish_ipv6
 }
@@ -69,7 +69,7 @@ module "morph" {
 
 module "oaf" {
   source                                 = "./oaf"
-  oaf_org_au_zone_id                     = var.oaf_org_au_zone_id
+  oaf_org_au_zone_id                     = cloudflare_zone.oaf_org_au.id
   openaustraliafoundation_org_au_zone_id = var.openaustraliafoundation_org_au_zone_id
   security_group_webserver               = aws_security_group.webserver
   instance_profile                       = aws_iam_instance_profile.logging
@@ -84,7 +84,7 @@ module "metabase" {
   security_group_behind_lb = aws_security_group.planningalerts
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_22_ami
-  zone_id                  = var.oaf_org_au_zone_id
+  zone_id                  = cloudflare_zone.oaf_org_au.id
   load_balancer            = aws_lb.main
   vpc                      = aws_default_vpc.default
   listener_https           = aws_lb_listener.main-https
