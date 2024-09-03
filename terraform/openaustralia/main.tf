@@ -24,21 +24,11 @@ resource "aws_instance" "main" {
   iam_instance_profile    = var.instance_profile.name
 }
 
-moved {
-  from = aws_instance.openaustralia
-  to   = aws_instance.main
-}
-
 resource "aws_eip" "main" {
   instance = aws_instance.main.id
   tags = {
     Name = "openaustralia"
   }
-}
-
-moved {
-  from = aws_eip.openaustralia
-  to   = aws_eip.main
 }
 
 # We'll create a seperate EBS volume for all the application
@@ -58,20 +48,10 @@ resource "aws_ebs_volume" "data" {
   }
 }
 
-moved {
-  from = aws_ebs_volume.openaustralia_data
-  to   = aws_ebs_volume.data
-}
-
 resource "aws_volume_attachment" "data" {
   device_name = "/dev/sdh"
   volume_id   = aws_ebs_volume.data.id
   instance_id = aws_instance.main.id
-}
-
-moved {
-  from = aws_volume_attachment.openaustralia_data
-  to   = aws_volume_attachment.data
 }
 
 # TODO: backup EBS volume by taking daily snapshots
