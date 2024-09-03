@@ -145,20 +145,50 @@ variable "opengovernment_org_au_zone_id" {
   default = "980de1807f4ff1c23c4b7dcfed7b31df"
 }
 
+resource "cloudflare_zone" "planningalerts" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "planningalerts.org.au"
+}
+
 variable "planningalerts_zone_id" {
   default = "a826a2cd0f87d57ef60dc67c5738eec5"
+}
+
+resource "cloudflare_zone" "righttoknow_org_au" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "righttoknow.org.au"
 }
 
 variable "righttoknow_org_au_zone_id" {
   default = "44b07a3486191276e3e6b0919dd86fff"
 }
 
+resource "cloudflare_zone" "theyvoteforyou_org_au" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "theyvoteforyou.org.au"
+}
+
 variable "theyvoteforyou_org_au_zone_id" {
   default = "5ffc72ab294d0bdcd481fd19b9ab8326"
 }
 
+resource "cloudflare_zone" "theyvoteforyou_org" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "theyvoteforyou.org"
+}
+
 variable "theyvoteforyou_org_zone_id" {
   default = "4ea2ceb027e2299e27c8cc1a8c59b029"
+}
+
+resource "cloudflare_zone" "theyvoteforyou_com_au" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "theyvoteforyou.com.au"
 }
 
 variable "theyvoteforyou_com_au_zone_id" {
