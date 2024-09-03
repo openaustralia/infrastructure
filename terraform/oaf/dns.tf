@@ -23,14 +23,6 @@ resource "cloudflare_record" "www" {
   value   = "oaf.org.au"
 }
 
-# For campaign monitor
-resource "cloudflare_record" "email" {
-  zone_id = var.oaf_org_au_zone_id
-  name    = "email.oaf.org.au"
-  type    = "CNAME"
-  value   = "cname.createsend.com"
-}
-
 # For mastodon hosting
 
 resource "cloudflare_record" "social" {
@@ -101,13 +93,6 @@ resource "cloudflare_record" "facebook_domain_verification" {
   name    = "oaf.org.au"
   type    = "TXT"
   value   = "facebook-domain-verification=hfy8rxjyjsmjynz68xr373fy86lg4o"
-}
-
-resource "cloudflare_record" "domainkey_campaign_monitor" {
-  zone_id = var.oaf_org_au_zone_id
-  name    = "cm._domainkey.oaf.org.au"
-  type    = "TXT"
-  value   = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC7c0O/Ihi0wMb89k9UvkFPqM00DWEcm5kgCkhSTHN5rKcMtlCrijBYqZQgBcig/M6Zl6o6z9nKp4egpJ9Yf8ndZEz/r7AcQIeTjLwxIIlFSbABuBoQPoxTUrIvzRCWUTgCocvi3sNrzxYvYfFPq7LmxjI+RzK3UD84rKBaJtYULwIDAQAB"
 }
 
 resource "cloudflare_record" "github_challenge" {
