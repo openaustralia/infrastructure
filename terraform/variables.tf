@@ -75,30 +75,70 @@ variable "ubuntu_22_ami" {
   default = "ami-0df609f69029c9bdb"
 }
 
+variable "cloudflare_account_id" {
+  default = "668e6ebb9952c26ec3c17a85fb3a25a1"
+}
+
 resource "cloudflare_zone" "oaf_org_au" {
-  account_id = "668e6ebb9952c26ec3c17a85fb3a25a1"
-  zone       = "oaf.org.au"
+  account_id = var.cloudflare_account_id
   plan       = "free"
+  zone       = "oaf.org.au"
+}
+
+resource "cloudflare_zone" "electionleaflets_org_au" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "electionleaflets.org.au"
 }
 
 variable "electionleaflets_org_au_zone_id" {
   default = "4cd5afd47047e6a7e37563d013d431ae"
 }
 
+resource "cloudflare_zone" "morph_io" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "morph.io"
+}
+
 variable "morph_io_zone_id" {
   default = "194b659721d5dafa766f2064a5ac8819"
+}
+
+resource "cloudflare_zone" "openaustraliafoundation_org_au" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "openaustraliafoundation.org.au"
 }
 
 variable "openaustraliafoundation_org_au_zone_id" {
   default = "5774055545c9ecb0d16b723857185e0e"
 }
 
+resource "cloudflare_zone" "openaustralia_org" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "openaustralia.org"
+}
+
 variable "openaustralia_org_zone_id" {
   default = "6f375d3f3dcd53599e538454c02161b2"
 }
 
+resource "cloudflare_zone" "openaustralia_org_au" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "openaustralia.org.au"
+}
+
 variable "openaustralia_org_au_zone_id" {
   default = "f8ae8cc5a255e25cc39bbb91177dfc47"
+}
+
+resource "cloudflare_zone" "opengovernment_org_au" {
+  account_id = var.cloudflare_account_id
+  plan       = "free"
+  zone       = "opengovernment.org.au"
 }
 
 variable "opengovernment_org_au_zone_id" {
