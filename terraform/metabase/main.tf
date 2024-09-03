@@ -68,21 +68,6 @@ module "certificate" {
   subject_alternative_names = []
 }
 
-moved {
-  from = aws_acm_certificate.main
-  to   = module.certificate.aws_acm_certificate.main
-}
-
-moved {
-  from = cloudflare_record.cert_validation
-  to   = module.certificate.cloudflare_record.cert_validation
-}
-
-moved {
-  from = aws_acm_certificate_validation.main
-  to   = module.certificate.aws_acm_certificate_validation.main
-}
-
 resource "aws_lb_listener_certificate" "main" {
   listener_arn    = var.listener_https.arn
   certificate_arn = module.certificate.certificate.arn
