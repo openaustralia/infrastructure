@@ -58,44 +58,14 @@ resource "cloudflare_record" "email2" {
 }
 
 # MX records
-resource "cloudflare_record" "mx1" {
-  zone_id  = var.morph_io_zone_id
-  name     = "morph.io"
-  type     = "MX"
-  priority = 10
-  value    = "aspmx.l.google.com"
-}
 
-resource "cloudflare_record" "mx2" {
+# We can now use a single MX record for Google workspace
+resource "cloudflare_record" "mx" {
   zone_id  = var.morph_io_zone_id
   name     = "morph.io"
   type     = "MX"
-  priority = 20
-  value    = "alt1.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "mx3" {
-  zone_id  = var.morph_io_zone_id
-  name     = "morph.io"
-  type     = "MX"
-  priority = 20
-  value    = "alt2.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "mx4" {
-  zone_id  = var.morph_io_zone_id
-  name     = "morph.io"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx2.googlemail.com"
-}
-
-resource "cloudflare_record" "mx5" {
-  zone_id  = var.morph_io_zone_id
-  name     = "morph.io"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx3.googlemail.com"
+  priority = 1
+  value    = "smtp.google.com"
 }
 
 # TXT records

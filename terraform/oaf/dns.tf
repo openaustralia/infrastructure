@@ -24,44 +24,14 @@ resource "cloudflare_record" "www" {
 }
 
 # MX records
-resource "cloudflare_record" "mx1" {
-  zone_id  = var.oaf_org_au_zone_id
-  name     = "oaf.org.au"
-  type     = "MX"
-  priority = 10
-  value    = "aspmx.l.google.com"
-}
 
-resource "cloudflare_record" "mx2" {
+# We can now use a single MX record for Google workspace
+resource "cloudflare_record" "mx" {
   zone_id  = var.oaf_org_au_zone_id
   name     = "oaf.org.au"
   type     = "MX"
-  priority = 20
-  value    = "alt1.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "mx3" {
-  zone_id  = var.oaf_org_au_zone_id
-  name     = "oaf.org.au"
-  type     = "MX"
-  priority = 20
-  value    = "alt2.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "mx4" {
-  zone_id  = var.oaf_org_au_zone_id
-  name     = "oaf.org.au"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx2.googlemail.com"
-}
-
-resource "cloudflare_record" "mx5" {
-  zone_id  = var.oaf_org_au_zone_id
-  name     = "oaf.org.au"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx3.googlemail.com"
+  priority = 1
+  value    = "smtp.google.com"
 }
 
 # TXT records
@@ -155,44 +125,14 @@ resource "cloudflare_record" "alt_test" {
 }
 
 # MX records
-resource "cloudflare_record" "alt_mx1" {
+
+# We can now use a single MX record for Google workspace
+resource "cloudflare_record" "alt_mx" {
   zone_id  = var.openaustraliafoundation_org_au_zone_id
   name     = "openaustraliafoundation.org.au"
   type     = "MX"
   priority = 1
-  value    = "aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "alt_mx2" {
-  zone_id  = var.openaustraliafoundation_org_au_zone_id
-  name     = "openaustraliafoundation.org.au"
-  type     = "MX"
-  priority = 5
-  value    = "alt1.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "alt_mx3" {
-  zone_id  = var.openaustraliafoundation_org_au_zone_id
-  name     = "openaustraliafoundation.org.au"
-  type     = "MX"
-  priority = 5
-  value    = "alt2.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "alt_mx4" {
-  zone_id  = var.openaustraliafoundation_org_au_zone_id
-  name     = "openaustraliafoundation.org.au"
-  type     = "MX"
-  priority = 10
-  value    = "aspmx2.googlemail.com"
-}
-
-resource "cloudflare_record" "alt_mx5" {
-  zone_id  = var.openaustraliafoundation_org_au_zone_id
-  name     = "openaustraliafoundation.org.au"
-  type     = "MX"
-  priority = 10
-  value    = "aspmx3.googlemail.com"
+  value    = "smtp.google.com"
 }
 
 # TXT records

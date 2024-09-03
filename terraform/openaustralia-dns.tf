@@ -60,60 +60,14 @@ resource "cloudflare_record" "oa_hackfest" {
 }
 
 # MX records
-resource "cloudflare_record" "oa_mx1" {
-  zone_id  = var.openaustralia_org_zone_id
-  name     = "openaustralia.org"
-  type     = "MX"
-  priority = 10
-  value    = "aspmx.l.google.com"
-}
 
-resource "cloudflare_record" "oa_mx2" {
+# We can now use a single MX record for Google workspace
+resource "cloudflare_record" "oa_mx" {
   zone_id  = var.openaustralia_org_zone_id
   name     = "openaustralia.org"
   type     = "MX"
-  priority = 20
-  value    = "alt1.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "oa_mx3" {
-  zone_id  = var.openaustralia_org_zone_id
-  name     = "openaustralia.org"
-  type     = "MX"
-  priority = 20
-  value    = "alt2.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "oa_mx4" {
-  zone_id  = var.openaustralia_org_zone_id
-  name     = "openaustralia.org"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx2.googlemail.com"
-}
-
-resource "cloudflare_record" "oa_mx5" {
-  zone_id  = var.openaustralia_org_zone_id
-  name     = "openaustralia.org"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx3.googlemail.com"
-}
-
-resource "cloudflare_record" "oa_mx6" {
-  zone_id  = var.openaustralia_org_zone_id
-  name     = "openaustralia.org"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx4.googlemail.com"
-}
-
-resource "cloudflare_record" "oa_mx7" {
-  zone_id  = var.openaustralia_org_zone_id
-  name     = "openaustralia.org"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx5.googlemail.com"
+  priority = 1
+  value    = "smtp.google.com"
 }
 
 # TXT records
@@ -194,60 +148,14 @@ resource "cloudflare_record" "oa_alt_software" {
 }
 
 # MX records
-resource "cloudflare_record" "oa_alt_mx1" {
-  zone_id  = var.openaustralia_org_au_zone_id
-  name     = "openaustralia.org.au"
-  type     = "MX"
-  priority = 10
-  value    = "aspmx.l.google.com"
-}
 
-resource "cloudflare_record" "oa_alt_mx2" {
+# We can now use a single MX record for Google workspace
+resource "cloudflare_record" "oa_alt_mx" {
   zone_id  = var.openaustralia_org_au_zone_id
   name     = "openaustralia.org.au"
   type     = "MX"
-  priority = 20
-  value    = "alt1.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "oa_alt_mx3" {
-  zone_id  = var.openaustralia_org_au_zone_id
-  name     = "openaustralia.org.au"
-  type     = "MX"
-  priority = 20
-  value    = "alt2.aspmx.l.google.com"
-}
-
-resource "cloudflare_record" "oa_alt_mx4" {
-  zone_id  = var.openaustralia_org_au_zone_id
-  name     = "openaustralia.org.au"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx2.googlemail.com"
-}
-
-resource "cloudflare_record" "oa_alt_mx5" {
-  zone_id  = var.openaustralia_org_au_zone_id
-  name     = "openaustralia.org.au"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx3.googlemail.com"
-}
-
-resource "cloudflare_record" "oa_alt_mx6" {
-  zone_id  = var.openaustralia_org_au_zone_id
-  name     = "openaustralia.org.au"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx4.googlemail.com"
-}
-
-resource "cloudflare_record" "oa_alt_mx7" {
-  zone_id  = var.openaustralia_org_au_zone_id
-  name     = "openaustralia.org.au"
-  type     = "MX"
-  priority = 30
-  value    = "aspmx5.googlemail.com"
+  priority = 1
+  value    = "smtp.google.com"
 }
 
 # TXT records
