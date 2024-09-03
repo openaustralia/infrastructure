@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "aws_instance" "openaustralia" {
+resource "aws_instance" "main" {
   ami = var.ami
 
   # Running sitemap generation (a ruby process, suprise, surprise) pegged the
@@ -19,23 +19,33 @@ resource "aws_instance" "openaustralia" {
     Name = "openaustralia"
   }
   security_groups         = [var.security_group_webserver.name]
-  availability_zone       = aws_ebs_volume.openaustralia_data.availability_zone
+  availability_zone       = aws_ebs_volume.data.availability_zone
   disable_api_termination = true
   iam_instance_profile    = var.instance_profile.name
 }
 
-resource "aws_eip" "openaustralia" {
-  instance = aws_instance.openaustralia.id
+moved {
+  from = aws_instance.openaustralia
+  to   = aws_instance.main
+}
+
+resource "aws_eip" "main" {
+  instance = aws_instance.main.id
   tags = {
     Name = "openaustralia"
   }
+}
+
+moved {
+  from = aws_eip.openaustralia
+  to   = aws_eip.main
 }
 
 # We'll create a seperate EBS volume for all the application
 # data that can not be regenerated. e.g. parliamentary XML,
 # register of members interests scans, etc..
 
-resource "aws_ebs_volume" "openaustralia_data" {
+resource "aws_ebs_volume" "data" {
   availability_zone = "ap-southeast-2c"
 
   # 10 Gb is an educated guess based on seeing how much space is taken up
@@ -48,10 +58,20 @@ resource "aws_ebs_volume" "openaustralia_data" {
   }
 }
 
-resource "aws_volume_attachment" "openaustralia_data" {
+moved {
+  from = aws_ebs_volume.openaustralia_data
+  to   = aws_ebs_volume.data
+}
+
+resource "aws_volume_attachment" "data" {
   device_name = "/dev/sdh"
-  volume_id   = aws_ebs_volume.openaustralia_data.id
-  instance_id = aws_instance.openaustralia.id
+  volume_id   = aws_ebs_volume.data.id
+  instance_id = aws_instance.main.id
+}
+
+moved {
+  from = aws_volume_attachment.openaustralia_data
+  to   = aws_volume_attachment.data
 }
 
 # TODO: backup EBS volume by taking daily snapshots
