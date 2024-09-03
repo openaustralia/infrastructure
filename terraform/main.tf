@@ -68,3 +68,71 @@ module "oaf" {
   # This has been upgraded in place to Ubuntu 18.04
   ami = var.ubuntu_16_ami
 }
+
+module "metabase" {
+  source = "./metabase"
+  # This security group also lets in port 9000 for staging which we're not using
+  # TODO: In fact we're not using port 9000 anywhere behind the load balancer anymore. Get rid of it
+  security_group_behind_lb = aws_security_group.planningalerts
+  instance_profile         = aws_iam_instance_profile.logging
+  ami                      = var.ubuntu_22_ami
+  oaf_org_au_zone_id       = var.oaf_org_au_zone_id
+  load_balancer            = aws_lb.main
+  vpc                      = aws_default_vpc.default
+  listener_https           = aws_lb_listener.main-https
+}
+
+moved {
+  from = aws_instance.metabase
+  to   = module.metabase.aws_instance.metabase
+}
+
+moved {
+  from = aws_eip.metabase
+  to   = module.metabase.aws_eip.metabase
+}
+
+moved {
+  from = cloudflare_record.web_metabase
+  to   = module.metabase.cloudflare_record.web_metabase
+}
+
+moved {
+  from = cloudflare_record.metabase
+  to   = module.metabase.cloudflare_record.metabase
+}
+
+moved {
+  from = aws_lb_target_group.metabase
+  to   = module.metabase.aws_lb_target_group.metabase
+}
+
+moved {
+  from = aws_lb_target_group_attachment.metabase
+  to   = module.metabase.aws_lb_target_group_attachment.metabase
+}
+
+moved {
+  from = aws_acm_certificate.metabase
+  to   = module.metabase.aws_acm_certificate.metabase
+}
+
+moved {
+  from = cloudflare_record.metabase_cert_validation
+  to   = module.metabase.cloudflare_record.metabase_cert_validation
+}
+
+moved {
+  from = aws_acm_certificate_validation.metabase
+  to   = module.metabase.aws_acm_certificate_validation.metabase
+}
+
+moved {
+  from = aws_lb_listener_certificate.metabase
+  to   = module.metabase.aws_lb_listener_certificate.metabase
+}
+
+moved {
+  from = aws_lb_listener_rule.metabase
+  to   = module.metabase.aws_lb_listener_rule.metabase
+}

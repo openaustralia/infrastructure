@@ -1,5 +1,14 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 2.13.2"
+    }
+  }
+}
+
 resource "aws_instance" "metabase" {
-  ami = var.ubuntu_22_ami
+  ami = var.ami
 
   instance_type = "t3.small"
   ebs_optimized = true
@@ -7,11 +16,10 @@ resource "aws_instance" "metabase" {
   tags = {
     Name = "metabase"
   }
-  # This security group also lets in port 9000 for staging which we're not using
-  security_groups = [aws_security_group.planningalerts.name]
+  security_groups = [var.security_group_behind_lb.name]
 
   disable_api_termination = true
-  iam_instance_profile    = aws_iam_instance_profile.logging.name
+  iam_instance_profile    = var.instance_profile.name
 }
 
 resource "aws_eip" "metabase" {
@@ -32,14 +40,14 @@ resource "cloudflare_record" "metabase" {
   zone_id = var.oaf_org_au_zone_id
   name    = "metabase.oaf.org.au"
   type    = "CNAME"
-  value   = aws_lb.main.dns_name
+  value   = var.load_balancer.dns_name
 }
 
 resource "aws_lb_target_group" "metabase" {
   name     = "metabase"
   port     = 8000
   protocol = "HTTP"
-  vpc_id   = aws_default_vpc.default.id
+  vpc_id   = var.vpc.id
 
   health_check {
     path                = "/api/health"
@@ -85,12 +93,12 @@ resource "aws_acm_certificate_validation" "metabase" {
 }
 
 resource "aws_lb_listener_certificate" "metabase" {
-  listener_arn    = aws_lb_listener.main-https.arn
+  listener_arn    = var.listener_https.arn
   certificate_arn = aws_acm_certificate.metabase.arn
 }
 
 resource "aws_lb_listener_rule" "metabase" {
-  listener_arn = aws_lb_listener.main-https.arn
+  listener_arn = var.listener_https.arn
   priority     = 5
 
   action {
