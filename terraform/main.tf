@@ -10,7 +10,7 @@ module "electionleaflets" {
   security_group   = aws_security_group.webserver
   instance_profile = aws_iam_instance_profile.logging
   ami              = var.ubuntu_16_ami
-  zone_id          = var.electionleaflets_org_au_zone_id
+  zone_id          = cloudflare_zone.electionleaflets_org_au.id
 }
 
 module "planningalerts" {
@@ -28,7 +28,7 @@ module "planningalerts" {
   security_group_behind_lb      = aws_security_group.planningalerts
   vpc                           = aws_default_vpc.default
   availability_zones            = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
-  zone_id                       = var.planningalerts_zone_id
+  zone_id                       = cloudflare_zone.planningalerts.id
   instance_count                = 2
   # blue environment setup
   blue_enabled  = true
@@ -46,9 +46,9 @@ module "theyvoteforyou" {
   deployer_key     = aws_key_pair.deployer
   security_group   = aws_security_group.webserver
   instance_profile = aws_iam_instance_profile.logging
-  com_au_zone_id   = var.theyvoteforyou_com_au_zone_id
-  org_au_zone_id   = var.theyvoteforyou_org_au_zone_id
-  org_zone_id      = var.theyvoteforyou_org_zone_id
+  com_au_zone_id   = cloudflare_zone.theyvoteforyou_com_au.id
+  org_au_zone_id   = cloudflare_zone.theyvoteforyou_org_au.id
+  org_zone_id      = cloudflare_zone.theyvoteforyou_org.id
 }
 
 module "righttoknow" {
@@ -56,7 +56,7 @@ module "righttoknow" {
   security_group_webserver      = aws_security_group.webserver
   security_group_incoming_email = aws_security_group.incoming_email
   instance_profile              = aws_iam_instance_profile.logging
-  zone_id                       = var.righttoknow_org_au_zone_id
+  zone_id                       = cloudflare_zone.righttoknow_org_au.id
   # This has been upgraded in place to Ubuntu 18.04
   ami = var.ubuntu_16_ami
 }
@@ -64,13 +64,13 @@ module "righttoknow" {
 module "morph" {
   source  = "./morph"
   ipv4    = var.morph_ipv4
-  zone_id = var.morph_io_zone_id
+  zone_id = cloudflare_zone.morph_io.id
 }
 
 module "oaf" {
   source                                 = "./oaf"
   oaf_org_au_zone_id                     = cloudflare_zone.oaf_org_au.id
-  openaustraliafoundation_org_au_zone_id = var.openaustraliafoundation_org_au_zone_id
+  openaustraliafoundation_org_au_zone_id = cloudflare_zone.openaustraliafoundation_org_au.id
   security_group_webserver               = aws_security_group.webserver
   instance_profile                       = aws_iam_instance_profile.logging
   # This has been upgraded in place to Ubuntu 18.04
@@ -95,8 +95,8 @@ module "openaustralia" {
   security_group_webserver = aws_security_group.webserver
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_16_ami
-  org_zone_id              = var.openaustralia_org_zone_id
-  org_au_zone_id           = var.openaustralia_org_au_zone_id
+  org_zone_id              = cloudflare_zone.openaustralia_org.id
+  org_au_zone_id           = cloudflare_zone.openaustralia_org_au.id
 }
 
 module "opengovernment" {
@@ -106,5 +106,5 @@ module "opengovernment" {
   security_group_webserver = aws_security_group.webserver
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_16_ami
-  zone_id                  = var.opengovernment_org_au_zone_id
+  zone_id                  = cloudflare_zone.opengovernment_org_au.id
 }
