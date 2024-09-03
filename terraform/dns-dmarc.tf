@@ -5,22 +5,6 @@
 # We're using a free service provided by https://dmarc.postmarkapp.com/
 # This generates a weekly DMARC report which gets sent by email on Monday mornings
 
-# Report goes to webmaster@openaustralia.org
-resource "cloudflare_record" "oa_dmarc" {
-  zone_id = var.openaustralia_org_zone_id
-  name    = "_dmarc.openaustralia.org"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+dkbgzuudi8i@dmarc.postmarkapp.com; sp=none; aspf=r;"
-}
-
-# Report goes to webmaster@openaustralia.org.au
-resource "cloudflare_record" "oa_alt_dmarc" {
-  zone_id = var.openaustralia_org_au_zone_id
-  name    = "_dmarc.openaustralia.org.au"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+no6xy3wrymr@dmarc.postmarkapp.com; sp=none; aspf=r;"
-}
-
 # Report goes to webmaster@opengovernment.org.au
 resource "cloudflare_record" "opengovernment_dmarc" {
   zone_id = var.opengovernment_org_au_zone_id

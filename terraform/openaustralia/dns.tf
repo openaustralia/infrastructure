@@ -100,6 +100,19 @@ resource "cloudflare_record" "oa_google_domainkey" {
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyElfjTkZNV7cZIExju+igJVVoL57U39ZNt3d0slj3IAjnP9p6zgB0IiIdTTj9Ak2o9e0Ni0y53QnNvW2bgbOPw1dCT1HgOyNwqQniTPAEbFv/HtwOT6oD+dMeBQvFvIwtdMAj/ZOoQlAX4M8dn/Z9I8NWpKqNLLjQiuMtapFRaJCVKMtiqVhqnlYseuRLC14LNm/juAq11g/p9wFbuHcUJg30nZinOJEvDYck9Vw1JXACTkZM70GtWCobqd0CZHvPK7raZoGfRBSpqMVfTY2MNvvuK3riZ2RloSCM6EkF8aqf27DKTtGp6/EYbibTEprqwWy8/Pvap+hPHtbH87JrQIDAQAB"
 }
 
+# For the time being we're just using DMARC records to get some data on what's
+# happening with email that we're sending (and whether anyone else is impersonating
+# us).
+# We're using a free service provided by https://dmarc.postmarkapp.com/
+# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# Report goes to webmaster@openaustralia.org
+resource "cloudflare_record" "oa_dmarc" {
+  zone_id = var.openaustralia_org_zone_id
+  name    = "_dmarc.openaustralia.org"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+dkbgzuudi8i@dmarc.postmarkapp.com; sp=none; aspf=r;"
+}
+
 ## openaustralia.org.au
 
 # A records
@@ -186,3 +199,17 @@ resource "cloudflare_record" "oa_alt_domainkey_google" {
   type    = "TXT"
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlL0dk9aaopGcbFKfugmxVqdUKCnpYTrnQj0Sz6RW1a+kFK44snSraBdMe6B14mvfUH1xkIuEiuKKWYIkYq5FHHZYcszVwt66FieU6HTaOvMNwDuXEJgU2zMIvGsUNiDO87CiEMZf0KhqyTrXIldVO/d9A5U7iZRy4poIKOQlm6NNEk6brfUXHct9S/Z4H6dlaowxUdjIp37838/U0AVTDiYYbSDrv2w60e1zTZy1y/9YXEGPlDpue4ijjJz1tjvJtS6cxfKT8elmXEOAo5j45K8NONJ4bEGNmTJxPMQwox0gBFwXwrf7pd4uYUpJW6GH9/vx7AW/jZe0SafCV/f0NQIDAQAB"
 }
+
+# For the time being we're just using DMARC records to get some data on what's
+# happening with email that we're sending (and whether anyone else is impersonating
+# us).
+# We're using a free service provided by https://dmarc.postmarkapp.com/
+# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# Report goes to webmaster@openaustralia.org.au
+resource "cloudflare_record" "oa_alt_dmarc" {
+  zone_id = var.openaustralia_org_au_zone_id
+  name    = "_dmarc.openaustralia.org.au"
+  type    = "TXT"
+  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+no6xy3wrymr@dmarc.postmarkapp.com; sp=none; aspf=r;"
+}
+

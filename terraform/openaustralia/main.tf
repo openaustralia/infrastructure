@@ -1,5 +1,14 @@
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 2.13.2"
+    }
+  }
+}
+
 resource "aws_instance" "openaustralia" {
-  ami = var.ubuntu_16_ami
+  ami = var.ami
 
   # Running sitemap generation (a ruby process, suprise, surprise) pegged the
   # memory usage on a t2.small. So, upping to a t2.medium.
@@ -9,10 +18,10 @@ resource "aws_instance" "openaustralia" {
   tags = {
     Name = "openaustralia"
   }
-  security_groups         = [aws_security_group.webserver.name]
+  security_groups         = [var.security_group_webserver.name]
   availability_zone       = aws_ebs_volume.openaustralia_data.availability_zone
   disable_api_termination = true
-  iam_instance_profile    = aws_iam_instance_profile.logging.name
+  iam_instance_profile    = var.instance_profile.name
 }
 
 resource "aws_eip" "openaustralia" {
