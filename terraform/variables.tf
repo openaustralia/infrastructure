@@ -78,6 +78,7 @@ variable "ubuntu_22_ami" {
 resource "cloudflare_zone" "oaf_org_au" {
   account_id = "668e6ebb9952c26ec3c17a85fb3a25a1"
   zone       = "oaf.org.au"
+  plan       = "free"
 }
 
 variable "electionleaflets_org_au_zone_id" {
