@@ -88,3 +88,64 @@ module "openaustralia" {
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_16_ami
 }
+
+module "opengovernment" {
+  source = "./opengovernment"
+  # TODO: Why is this needed here but not anywhere else?
+  cuttlefish_ipv4          = var.cuttlefish_ipv4
+  security_group_webserver = aws_security_group.webserver
+  instance_profile         = aws_iam_instance_profile.logging
+  ami                      = var.ubuntu_16_ami
+}
+
+
+moved {
+  from = cloudflare_record.opengovernment_root
+  to   = module.opengovernment.cloudflare_record.opengovernment_root
+}
+
+moved {
+  from = cloudflare_record.opengovernment_www
+  to   = module.opengovernment.cloudflare_record.opengovernment_www
+}
+
+moved {
+  from = cloudflare_record.opengovernment_mx
+  to   = module.opengovernment.cloudflare_record.opengovernment_mx
+}
+
+moved {
+  from = cloudflare_record.opengovernment_spf
+  to   = module.opengovernment.cloudflare_record.opengovernment_spf
+}
+
+moved {
+  from = cloudflare_record.opengovernment_google_site_verification
+  to   = module.opengovernment.cloudflare_record.opengovernment_google_site_verification
+}
+
+moved {
+  from = cloudflare_record.opengovernment_domainkey
+  to   = module.opengovernment.cloudflare_record.opengovernment_domainkey
+}
+
+moved {
+  from = cloudflare_record.opengovernment_domainkey2
+  to   = module.opengovernment.cloudflare_record.opengovernment_domainkey2
+}
+
+moved {
+  from = cloudflare_record.opengovernment_dmarc
+  to   = module.opengovernment.cloudflare_record.opengovernment_dmarc
+}
+
+moved {
+  from = aws_instance.opengovernment
+  to   = module.opengovernment.aws_instance.opengovernment
+}
+
+moved {
+  from = aws_eip.opengovernment
+  to   = module.opengovernment.aws_eip.opengovernment
+}
+
