@@ -21,19 +21,9 @@ resource "aws_instance" "main" {
   iam_instance_profile    = var.instance_profile.name
 }
 
-moved {
-  from = aws_instance.opengovernment
-  to   = aws_instance.main
-}
-
 resource "aws_eip" "main" {
   instance = aws_instance.main.id
   tags = {
     Name = "opengovernment"
   }
-}
-
-moved {
-  from = aws_eip.opengovernment
-  to   = aws_eip.main
 }
