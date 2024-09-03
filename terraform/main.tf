@@ -1,8 +1,6 @@
 module "cuttlefish" {
-  source          = "./cuttlefish"
-  zone_id         = cloudflare_zone.oaf_org_au.id
-  cuttlefish_ipv4 = var.cuttlefish_ipv4
-  cuttlefish_ipv6 = var.cuttlefish_ipv6
+  source  = "./cuttlefish"
+  zone_id = cloudflare_zone.oaf_org_au.id
 }
 
 module "electionleaflets" {

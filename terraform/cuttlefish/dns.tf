@@ -4,7 +4,7 @@ resource "cloudflare_record" "a" {
   zone_id = var.zone_id
   name    = "cuttlefish.oaf.org.au"
   type    = "A"
-  value   = var.cuttlefish_ipv4
+  value   = linode_instance.main.ip_address
 }
 
 # AAAA records
@@ -12,7 +12,7 @@ resource "cloudflare_record" "aaaa" {
   zone_id = var.zone_id
   name    = "cuttlefish.oaf.org.au"
   type    = "AAAA"
-  value   = var.cuttlefish_ipv6
+  value   = cidrhost(linode_instance.main.ipv6, 0)
 }
 
 # MX records
@@ -32,7 +32,7 @@ resource "cloudflare_record" "spf" {
   zone_id = var.zone_id
   name    = "cuttlefish.oaf.org.au"
   type    = "TXT"
-  value   = "v=spf1 include:_spf.google.com ip4:${var.cuttlefish_ipv4} ip6:${var.cuttlefish_ipv6} -all"
+  value   = "v=spf1 include:_spf.google.com ip4:${linode_instance.main.ip_address} ip6:${cidrhost(linode_instance.main.ipv6, 0)} -all"
 }
 
 resource "cloudflare_record" "cuttlefish_domainkey_cuttlefish" {
