@@ -61,7 +61,6 @@ module "righttoknow" {
 
 module "morph" {
   source  = "./morph"
-  ipv4    = var.morph_ipv4
   zone_id = cloudflare_zone.morph_io.id
 }
 

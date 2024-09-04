@@ -3,7 +3,7 @@ resource "cloudflare_record" "root" {
   zone_id = var.zone_id
   name    = "morph.io"
   type    = "A"
-  value   = var.ipv4
+  value   = linode_instance.main.ip_address
 }
 
 # CNAME records

@@ -26,11 +26,6 @@ variable "cloudflare_api_token" {
 variable "linode_api_token" {
 }
 
-# TODO: Get this automatically by managing Linode infrastructure with terraform
-variable "morph_ipv4" {
-  default = "173.255.208.251"
-}
-
 # AMI for Ubuntu 16.04 LTS, locked to a specific version so that we don't
 # keep re-provisioning the servers when the AMI gets updated
 variable "ubuntu_16_ami" {
