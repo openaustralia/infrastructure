@@ -30,7 +30,7 @@ resource "cloudflare_record" "spf" {
   zone_id = var.zone_id
   name    = "opengovernment.org.au"
   type    = "TXT"
-  value   = "v=spf1 include:_spf.google.com ip4:${var.cuttlefish_ipv4} ~all"
+  value   = "v=spf1 include:_spf.google.com a:cuttlefish.oaf.org.au ~all"
 }
 
 resource "cloudflare_record" "google_site_verification" {

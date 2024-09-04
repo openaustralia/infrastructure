@@ -58,6 +58,7 @@ resource "cloudflare_record" "mx" {
 
 # TXT records
 
+# TODO: I think this spf record needs to include cuttlefish (like planningalerts)
 resource "cloudflare_record" "spf" {
   zone_id = var.org_au_zone_id
   name    = "theyvoteforyou.org.au"

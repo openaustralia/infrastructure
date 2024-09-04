@@ -98,9 +98,7 @@ module "openaustralia" {
 }
 
 module "opengovernment" {
-  source = "./opengovernment"
-  # TODO: Why is this needed here but not anywhere else?
-  cuttlefish_ipv4          = var.cuttlefish_ipv4
+  source                   = "./opengovernment"
   security_group_webserver = aws_security_group.webserver
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_16_ami
