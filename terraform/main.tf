@@ -120,5 +120,10 @@ module "opengovernment" {
   security_group_webserver = aws_security_group.webserver
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_16_ami
-  zone_id                  = cloudflare_zone.opengovernment_org_au.id
+  cloudflare_account_id    = var.cloudflare_account_id
+}
+
+moved {
+  from = cloudflare_zone.opengovernment_org_au
+  to   = module.opengovernment.cloudflare_zone.main
 }
