@@ -4,11 +4,16 @@ module "cuttlefish" {
 }
 
 module "electionleaflets" {
-  source           = "./electionleaflets"
-  security_group   = aws_security_group.webserver
-  instance_profile = aws_iam_instance_profile.logging
-  ami              = var.ubuntu_16_ami
-  zone_id          = cloudflare_zone.electionleaflets_org_au.id
+  source                = "./electionleaflets"
+  security_group        = aws_security_group.webserver
+  instance_profile      = aws_iam_instance_profile.logging
+  ami                   = var.ubuntu_16_ami
+  cloudflare_account_id = var.cloudflare_account_id
+}
+
+moved {
+  from = cloudflare_zone.electionleaflets_org_au
+  to   = module.electionleaflets.cloudflare_zone.main
 }
 
 module "planningalerts" {
