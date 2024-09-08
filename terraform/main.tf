@@ -102,8 +102,17 @@ module "openaustralia" {
   security_group_webserver = aws_security_group.webserver
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_16_ami
-  org_zone_id              = cloudflare_zone.openaustralia_org.id
-  org_au_zone_id           = cloudflare_zone.openaustralia_org_au.id
+  cloudflare_account_id    = var.cloudflare_account_id
+}
+
+moved {
+  from = cloudflare_zone.openaustralia_org
+  to   = module.openaustralia.cloudflare_zone.org
+}
+
+moved {
+  from = cloudflare_zone.openaustralia_org_au
+  to   = module.openaustralia.cloudflare_zone.org_au
 }
 
 module "opengovernment" {

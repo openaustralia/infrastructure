@@ -11,18 +11,6 @@ resource "cloudflare_zone" "openaustraliafoundation_org_au" {
   zone       = "openaustraliafoundation.org.au"
 }
 
-resource "cloudflare_zone" "openaustralia_org" {
-  account_id = var.cloudflare_account_id
-  plan       = "free"
-  zone       = "openaustralia.org"
-}
-
-resource "cloudflare_zone" "openaustralia_org_au" {
-  account_id = var.cloudflare_account_id
-  plan       = "free"
-  zone       = "openaustralia.org.au"
-}
-
 resource "cloudflare_zone" "opengovernment_org_au" {
   account_id = var.cloudflare_account_id
   plan       = "free"
