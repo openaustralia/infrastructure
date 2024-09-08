@@ -1,1 +1,1 @@
-variable "zone_id" {}
+variable "cloudflare_account_id" {}

@@ -5,12 +5,6 @@ resource "cloudflare_zone" "oaf_org_au" {
   zone       = "oaf.org.au"
 }
 
-resource "cloudflare_zone" "morph_io" {
-  account_id = var.cloudflare_account_id
-  plan       = "free"
-  zone       = "morph.io"
-}
-
 resource "cloudflare_zone" "openaustraliafoundation_org_au" {
   account_id = var.cloudflare_account_id
   plan       = "free"

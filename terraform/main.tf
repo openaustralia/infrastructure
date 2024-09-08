@@ -65,8 +65,13 @@ module "righttoknow" {
 }
 
 module "morph" {
-  source  = "./morph"
-  zone_id = cloudflare_zone.morph_io.id
+  source                = "./morph"
+  cloudflare_account_id = var.cloudflare_account_id
+}
+
+moved {
+  from = cloudflare_zone.morph_io
+  to   = module.morph.cloudflare_zone.main
 }
 
 module "oaf" {
