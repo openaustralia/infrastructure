@@ -49,14 +49,27 @@ moved {
 }
 
 module "theyvoteforyou" {
-  source           = "./theyvoteforyou"
-  ami              = var.ubuntu_20_ami
-  deployer_key     = aws_key_pair.deployer
-  security_group   = aws_security_group.webserver
-  instance_profile = aws_iam_instance_profile.logging
-  com_au_zone_id   = cloudflare_zone.theyvoteforyou_com_au.id
-  org_au_zone_id   = cloudflare_zone.theyvoteforyou_org_au.id
-  org_zone_id      = cloudflare_zone.theyvoteforyou_org.id
+  source                = "./theyvoteforyou"
+  ami                   = var.ubuntu_20_ami
+  deployer_key          = aws_key_pair.deployer
+  security_group        = aws_security_group.webserver
+  instance_profile      = aws_iam_instance_profile.logging
+  cloudflare_account_id = var.cloudflare_account_id
+}
+
+moved {
+  from = cloudflare_zone.theyvoteforyou_org_au
+  to   = module.theyvoteforyou.cloudflare_zone.org_au
+}
+
+moved {
+  from = cloudflare_zone.theyvoteforyou_org
+  to   = module.theyvoteforyou.cloudflare_zone.org
+}
+
+moved {
+  from = cloudflare_zone.theyvoteforyou_com_au
+  to   = module.theyvoteforyou.cloudflare_zone.com_au
 }
 
 module "righttoknow" {
