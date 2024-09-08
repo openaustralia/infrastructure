@@ -11,12 +11,6 @@ resource "cloudflare_zone" "openaustraliafoundation_org_au" {
   zone       = "openaustraliafoundation.org.au"
 }
 
-resource "cloudflare_zone" "righttoknow_org_au" {
-  account_id = var.cloudflare_account_id
-  plan       = "free"
-  zone       = "righttoknow.org.au"
-}
-
 resource "cloudflare_zone" "theyvoteforyou_org_au" {
   account_id = var.cloudflare_account_id
   plan       = "free"

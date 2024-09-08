@@ -64,9 +64,14 @@ module "righttoknow" {
   security_group_webserver      = aws_security_group.webserver
   security_group_incoming_email = aws_security_group.incoming_email
   instance_profile              = aws_iam_instance_profile.logging
-  zone_id                       = cloudflare_zone.righttoknow_org_au.id
+  cloudflare_account_id         = var.cloudflare_account_id
   # This has been upgraded in place to Ubuntu 18.04
   ami = var.ubuntu_16_ami
+}
+
+moved {
+  from = cloudflare_zone.righttoknow_org_au
+  to   = module.righttoknow.cloudflare_zone.main
 }
 
 module "morph" {
