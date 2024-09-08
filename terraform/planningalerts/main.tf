@@ -22,7 +22,7 @@ module "blue" {
   iam_instance_profile = var.instance_profile.name
   key_name             = var.deployer_key.key_name
   vpc_id               = var.vpc.id
-  zone_id              = var.zone_id
+  zone_id              = cloudflare_zone.main.id
 }
 
 module "green" {
@@ -40,7 +40,7 @@ module "green" {
   iam_instance_profile = var.instance_profile.name
   key_name             = var.deployer_key.key_name
   vpc_id               = var.vpc.id
-  zone_id              = var.zone_id
+  zone_id              = cloudflare_zone.main.id
 }
 
 module "activestorage-s3" {

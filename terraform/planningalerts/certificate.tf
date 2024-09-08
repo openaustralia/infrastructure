@@ -5,5 +5,5 @@ module "certificate" {
     "www.planningalerts.org.au",
     "api.planningalerts.org.au"
   ]
-  zone_id = var.zone_id
+  zone_id = cloudflare_zone.main.id
 }

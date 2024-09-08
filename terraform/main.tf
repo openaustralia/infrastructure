@@ -31,7 +31,7 @@ module "planningalerts" {
   security_group_behind_lb      = aws_security_group.planningalerts
   vpc                           = aws_default_vpc.default
   availability_zones            = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
-  zone_id                       = cloudflare_zone.planningalerts.id
+  cloudflare_account_id         = var.cloudflare_account_id
   instance_count                = 2
   # blue environment setup
   blue_enabled  = true
@@ -41,6 +41,11 @@ module "planningalerts" {
   green_enabled  = false
   green_weight   = 0
   green_ami_name = "planningalerts-puma-ubuntu-22.04-v4"
+}
+
+moved {
+  from = cloudflare_zone.planningalerts
+  to   = module.planningalerts.cloudflare_zone.main
 }
 
 module "theyvoteforyou" {
