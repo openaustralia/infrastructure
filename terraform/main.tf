@@ -11,11 +11,6 @@ module "electionleaflets" {
   cloudflare_account_id = var.cloudflare_account_id
 }
 
-moved {
-  from = cloudflare_zone.electionleaflets_org_au
-  to   = module.electionleaflets.cloudflare_zone.main
-}
-
 module "planningalerts" {
   source           = "./planningalerts"
   instance_profile = aws_iam_instance_profile.logging
@@ -43,11 +38,6 @@ module "planningalerts" {
   green_ami_name = "planningalerts-puma-ubuntu-22.04-v4"
 }
 
-moved {
-  from = cloudflare_zone.planningalerts
-  to   = module.planningalerts.cloudflare_zone.main
-}
-
 module "theyvoteforyou" {
   source                = "./theyvoteforyou"
   ami                   = var.ubuntu_20_ami
@@ -55,21 +45,6 @@ module "theyvoteforyou" {
   security_group        = aws_security_group.webserver
   instance_profile      = aws_iam_instance_profile.logging
   cloudflare_account_id = var.cloudflare_account_id
-}
-
-moved {
-  from = cloudflare_zone.theyvoteforyou_org_au
-  to   = module.theyvoteforyou.cloudflare_zone.org_au
-}
-
-moved {
-  from = cloudflare_zone.theyvoteforyou_org
-  to   = module.theyvoteforyou.cloudflare_zone.org
-}
-
-moved {
-  from = cloudflare_zone.theyvoteforyou_com_au
-  to   = module.theyvoteforyou.cloudflare_zone.com_au
 }
 
 module "righttoknow" {
@@ -82,19 +57,9 @@ module "righttoknow" {
   ami = var.ubuntu_16_ami
 }
 
-moved {
-  from = cloudflare_zone.righttoknow_org_au
-  to   = module.righttoknow.cloudflare_zone.main
-}
-
 module "morph" {
   source                = "./morph"
   cloudflare_account_id = var.cloudflare_account_id
-}
-
-moved {
-  from = cloudflare_zone.morph_io
-  to   = module.morph.cloudflare_zone.main
 }
 
 module "oaf" {
@@ -128,16 +93,6 @@ module "openaustralia" {
   cloudflare_account_id    = var.cloudflare_account_id
 }
 
-moved {
-  from = cloudflare_zone.openaustralia_org
-  to   = module.openaustralia.cloudflare_zone.org
-}
-
-moved {
-  from = cloudflare_zone.openaustralia_org_au
-  to   = module.openaustralia.cloudflare_zone.org_au
-}
-
 module "opengovernment" {
   source                   = "./opengovernment"
   security_group_webserver = aws_security_group.webserver
@@ -146,22 +101,7 @@ module "opengovernment" {
   cloudflare_account_id    = var.cloudflare_account_id
 }
 
-moved {
-  from = cloudflare_zone.opengovernment_org_au
-  to   = module.opengovernment.cloudflare_zone.main
-}
-
 module "campaign-monitor" {
   source  = "./campaign-monitor"
   zone_id = cloudflare_zone.oaf_org_au.id
-}
-
-moved {
-  from = cloudflare_record.campaign_monitor_root
-  to   = module.campaign-monitor.cloudflare_record.campaign_monitor_root
-}
-
-moved {
-  from = cloudflare_record.campaign_monitor_domainkey
-  to   = module.campaign-monitor.cloudflare_record.campaign_monitor_domainkey
 }
