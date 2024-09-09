@@ -105,3 +105,39 @@ module "campaign-monitor" {
   source  = "./campaign-monitor"
   zone_id = cloudflare_zone.oaf_org_au.id
 }
+
+module "raisely" {
+  source  = "./raisely"
+  zone_id = cloudflare_zone.oaf_org_au.id
+}
+
+moved {
+  from = cloudflare_record.oaf_donate
+  to   = module.raisely.cloudflare_record.oaf_donate
+}
+
+moved {
+  from = cloudflare_record.oaf_donate_email
+  to   = module.raisely.cloudflare_record.oaf_donate_email
+}
+
+moved {
+  from = cloudflare_record.oaf_donate_domainkey
+  to   = module.raisely.cloudflare_record.oaf_donate_domainkey
+}
+
+moved {
+  from = cloudflare_record.oaf_donate_spf
+  to   = module.raisely.cloudflare_record.oaf_donate_spf
+}
+
+moved {
+  from = cloudflare_record.oaf_donate_mxa
+  to   = module.raisely.cloudflare_record.oaf_donate_mxa
+}
+
+moved {
+  from = cloudflare_record.oaf_donate_mxb
+  to   = module.raisely.cloudflare_record.oaf_donate_mxb
+}
+
