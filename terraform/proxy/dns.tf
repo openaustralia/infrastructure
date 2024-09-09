@@ -4,8 +4,3 @@ resource "cloudflare_record" "root" {
   type    = "A"
   value   = aws_eip.main.public_ip
 }
-
-moved {
-  from = cloudflare_record.au_proxy
-  to   = cloudflare_record.root
-}

@@ -111,36 +111,6 @@ module "raisely" {
   zone_id = cloudflare_zone.oaf_org_au.id
 }
 
-moved {
-  from = cloudflare_record.oaf_donate
-  to   = module.raisely.cloudflare_record.oaf_donate
-}
-
-moved {
-  from = cloudflare_record.oaf_donate_email
-  to   = module.raisely.cloudflare_record.oaf_donate_email
-}
-
-moved {
-  from = cloudflare_record.oaf_donate_domainkey
-  to   = module.raisely.cloudflare_record.oaf_donate_domainkey
-}
-
-moved {
-  from = cloudflare_record.oaf_donate_spf
-  to   = module.raisely.cloudflare_record.oaf_donate_spf
-}
-
-moved {
-  from = cloudflare_record.oaf_donate_mxa
-  to   = module.raisely.cloudflare_record.oaf_donate_mxa
-}
-
-moved {
-  from = cloudflare_record.oaf_donate_mxb
-  to   = module.raisely.cloudflare_record.oaf_donate_mxb
-}
-
 module "proxy" {
   source           = "./proxy"
   ami              = var.ubuntu_16_ami
@@ -148,32 +118,7 @@ module "proxy" {
   zone_id          = cloudflare_zone.oaf_org_au.id
 }
 
-moved {
-  from = cloudflare_record.au_proxy
-  to   = module.proxy.cloudflare_record.au_proxy
-}
-
-moved {
-  from = aws_instance.au_proxy
-  to   = module.proxy.aws_instance.au_proxy
-}
-
-moved {
-  from = aws_eip.au_proxy
-  to   = module.proxy.aws_eip.au_proxy
-}
-
-moved {
-  from = aws_security_group.proxy
-  to   = module.proxy.aws_security_group.proxy
-}
-
 module "social" {
   source  = "./social"
   zone_id = cloudflare_zone.oaf_org_au.id
-}
-
-moved {
-  from = cloudflare_record.social
-  to   = module.social.cloudflare_record.social
 }

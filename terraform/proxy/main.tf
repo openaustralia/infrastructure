@@ -23,21 +23,11 @@ resource "aws_instance" "main" {
   iam_instance_profile = var.instance_profile.name
 }
 
-moved {
-  from = aws_instance.au_proxy
-  to   = aws_instance.main
-}
-
 resource "aws_eip" "main" {
   instance = aws_instance.main.id
   tags = {
     Name = "au.proxy"
   }
-}
-
-moved {
-  from = aws_eip.au_proxy
-  to   = aws_eip.main
 }
 
 resource "aws_security_group" "main" {
@@ -77,9 +67,4 @@ resource "aws_security_group" "main" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-}
-
-moved {
-  from = aws_security_group.proxy
-  to   = aws_security_group.main
 }

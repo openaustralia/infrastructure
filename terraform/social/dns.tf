@@ -15,8 +15,3 @@ resource "cloudflare_record" "root" {
   type    = "CNAME"
   value   = "vip.masto.host"
 }
-
-moved {
-  from = cloudflare_record.social
-  to   = cloudflare_record.root
-}
