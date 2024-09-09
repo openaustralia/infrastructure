@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-resource "aws_instance" "au_proxy" {
+resource "aws_instance" "main" {
   ami = var.ami
 
   # Keeping this as small as we possibly can
@@ -17,20 +17,30 @@ resource "aws_instance" "au_proxy" {
   tags = {
     Name = "au.proxy"
   }
-  security_groups = [aws_security_group.proxy.name]
+  security_groups = [aws_security_group.main.name]
 
   # disable_api_termination = true
   iam_instance_profile = var.instance_profile.name
 }
 
-resource "aws_eip" "au_proxy" {
-  instance = aws_instance.au_proxy.id
+moved {
+  from = aws_instance.au_proxy
+  to   = aws_instance.main
+}
+
+resource "aws_eip" "main" {
+  instance = aws_instance.main.id
   tags = {
     Name = "au.proxy"
   }
 }
 
-resource "aws_security_group" "proxy" {
+moved {
+  from = aws_eip.au_proxy
+  to   = aws_eip.main
+}
+
+resource "aws_security_group" "main" {
   name        = "proxy"
   description = "standard security group for web proxies running on port 8888"
 
@@ -67,4 +77,9 @@ resource "aws_security_group" "proxy" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+}
+
+moved {
+  from = aws_security_group.proxy
+  to   = aws_security_group.main
 }
