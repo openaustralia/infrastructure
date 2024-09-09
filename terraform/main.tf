@@ -150,3 +150,18 @@ moved {
   from = cloudflare_zone.opengovernment_org_au
   to   = module.opengovernment.cloudflare_zone.main
 }
+
+module "campaign-monitor" {
+  source  = "./campaign-monitor"
+  zone_id = cloudflare_zone.oaf_org_au.id
+}
+
+moved {
+  from = cloudflare_record.campaign_monitor_root
+  to   = module.campaign-monitor.cloudflare_record.campaign_monitor_root
+}
+
+moved {
+  from = cloudflare_record.campaign_monitor_domainkey
+  to   = module.campaign-monitor.cloudflare_record.campaign_monitor_domainkey
+}
