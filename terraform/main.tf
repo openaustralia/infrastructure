@@ -167,3 +167,13 @@ moved {
   from = aws_security_group.proxy
   to   = module.proxy.aws_security_group.proxy
 }
+
+module "social" {
+  source  = "./social"
+  zone_id = cloudflare_zone.oaf_org_au.id
+}
+
+moved {
+  from = cloudflare_record.social
+  to   = module.social.cloudflare_record.social
+}

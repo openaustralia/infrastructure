@@ -1,0 +1,1 @@
+variable "zone_id" {}
