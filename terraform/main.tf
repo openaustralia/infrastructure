@@ -141,3 +141,29 @@ moved {
   to   = module.raisely.cloudflare_record.oaf_donate_mxb
 }
 
+module "proxy" {
+  source           = "./proxy"
+  ami              = var.ubuntu_16_ami
+  instance_profile = aws_iam_instance_profile.logging
+  zone_id          = cloudflare_zone.oaf_org_au.id
+}
+
+moved {
+  from = cloudflare_record.au_proxy
+  to   = module.proxy.cloudflare_record.au_proxy
+}
+
+moved {
+  from = aws_instance.au_proxy
+  to   = module.proxy.aws_instance.au_proxy
+}
+
+moved {
+  from = aws_eip.au_proxy
+  to   = module.proxy.aws_eip.au_proxy
+}
+
+moved {
+  from = aws_security_group.proxy
+  to   = module.proxy.aws_security_group.proxy
+}
