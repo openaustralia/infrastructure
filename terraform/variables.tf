@@ -60,6 +60,15 @@ variable "ubuntu_22_ami" {
   default = "ami-0df609f69029c9bdb"
 }
 
+# AMI for Ubuntu 24.04 LTS, locked to a specific version so that we don't
+# keep re-provisioning the servers when the AMI gets updated
+variable "ubuntu_24_ami" {
+  # Created by: Canonical
+  # Virtualization type: hvm
+  # 64-bit x86
+  default = "ami-001f2488b35ca8aad"
+}
+
 variable "cloudflare_account_id" {
   default = "668e6ebb9952c26ec3c17a85fb3a25a1"
 }

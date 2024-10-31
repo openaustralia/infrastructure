@@ -83,6 +83,13 @@ module "metabase" {
   listener_https           = aws_lb_listener.main-https
 }
 
+module "plausible" {
+  source                   = "./plausible"
+  ami                      = var.ubuntu_24_ami
+  security_group_behind_lb = aws_security_group.planningalerts
+  instance_profile         = aws_iam_instance_profile.logging
+}
+
 module "openaustralia" {
   source                   = "./openaustralia"
   security_group_webserver = aws_security_group.webserver
