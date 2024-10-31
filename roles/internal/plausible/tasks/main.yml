@@ -1,2 +1,7 @@
 ---
-# tasks file for plausible
+- name: git checkout plausible-ce
+  ansible.builtin.git:
+    repo: "https://github.com/plausible/community-edition"
+    version: v2.1.4
+    depth: 1
+    dest: /srv/www
