@@ -91,6 +91,9 @@ module "plausible" {
   security_group_behind_lb = aws_security_group.planningalerts
   instance_profile         = aws_iam_instance_profile.logging
   zone_id                  = cloudflare_zone.oaf_org_au.id
+  load_balancer            = aws_lb.main
+  vpc                      = aws_default_vpc.default
+  listener_https           = aws_lb_listener.main-https
 }
 
 module "openaustralia" {
