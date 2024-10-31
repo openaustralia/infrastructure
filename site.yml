@@ -145,6 +145,11 @@
   roles:
     - metabase
 
+- hosts: plausible
+  become: true
+  roles:
+    - plausible
+
 - hosts: redis
   become: true
   tasks:

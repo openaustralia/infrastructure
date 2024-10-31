@@ -84,8 +84,10 @@ module "metabase" {
 }
 
 module "plausible" {
-  source                   = "./plausible"
-  ami                      = var.ubuntu_24_ami
+  source = "./plausible"
+  # At the moment we need to upgrade Ansible to make ubuntu 24.04 work I think
+  # TODO: Fix this
+  ami                      = var.ubuntu_22_ami
   security_group_behind_lb = aws_security_group.planningalerts
   instance_profile         = aws_iam_instance_profile.logging
   zone_id                  = cloudflare_zone.oaf_org_au.id
