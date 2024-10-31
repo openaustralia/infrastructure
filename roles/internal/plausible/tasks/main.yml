@@ -1,7 +1,36 @@
 ---
+- name: Ensure that we have the Docker repository key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+
+- name: Ensure that we have the docker repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable"
+
+- name: Install docker and docker compose
+  apt:
+    name:
+      - docker-ce 
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+
 - name: git checkout plausible-ce
   ansible.builtin.git:
     repo: "https://github.com/plausible/community-edition"
     version: v2.1.4
     depth: 1
     dest: /srv/www
+
+- name: Copy across .env
+  template:
+    src: env
+    dest: /srv/www/.env
+
+- name: Copy across compose.override.yml
+  template:
+    src: compose.override.yml
+    dest: /srv/www/
+
+# TODO: Connect to RDS postgres rather than its own
+# TODO: Add backups for databases
