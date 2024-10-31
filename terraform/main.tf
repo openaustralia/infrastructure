@@ -88,6 +88,7 @@ module "plausible" {
   ami                      = var.ubuntu_24_ami
   security_group_behind_lb = aws_security_group.planningalerts
   instance_profile         = aws_iam_instance_profile.logging
+  zone_id                  = cloudflare_zone.oaf_org_au.id
 }
 
 module "openaustralia" {
