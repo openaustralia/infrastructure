@@ -79,7 +79,7 @@ resource "aws_db_instance" "postgresql" {
   # Using general purpose SSD
   storage_type   = "gp2"
   engine         = "postgres"
-  engine_version = "15.5"
+  engine_version = "15.7"
 
   instance_class          = "db.t4g.small"
   identifier              = "postgresql"
