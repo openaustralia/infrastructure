@@ -1,3 +1,3 @@
-BASE_URL=http://web.plausible.oaf.org.au:8000
+BASE_URL=https://plausible.oaf.org.au
 SECRET_KEY_BASE={{ secret_key_base }}
 HTTP_PORT=8000
