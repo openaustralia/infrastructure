@@ -73,9 +73,7 @@ module "oaf" {
 }
 
 module "metabase" {
-  source = "./metabase"
-  # This security group also lets in port 9000 for staging which we're not using
-  # TODO: In fact we're not using port 9000 anywhere behind the load balancer anymore. Get rid of it
+  source                   = "./metabase"
   security_group_behind_lb = aws_security_group.planningalerts
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_22_ami

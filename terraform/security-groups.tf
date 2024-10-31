@@ -161,15 +161,6 @@ resource "aws_security_group" "planningalerts" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  # Staging http port
-  ingress {
-    from_port        = 9000
-    to_port          = 9000
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
   # Allow pings from hosts on the internet
   ingress {
     protocol         = "icmp"
