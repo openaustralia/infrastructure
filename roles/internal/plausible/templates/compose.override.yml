@@ -1,3 +1,4 @@
+# TODO: Don't need to run postgres here anymore
 services:
   plausible:
     ports:
