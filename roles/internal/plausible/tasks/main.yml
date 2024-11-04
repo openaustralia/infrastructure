@@ -32,13 +32,15 @@
     src: compose.override.yml
     dest: /srv/www/
 
-# Requires: ansible-galaxy collection install "community.docker"
+# Requires: ansible-galaxy collection install "community.docker:<4.0.0"
 # Commented out for the time being because it's not working with this
 # ancient version of ansible
 # TODO: Fix this
-# - name: Run plausible
-#   community.docker.docker_compose_v2:
-#     project_src: /srv/www
+# For this to work we had to upgrade from ansible 2.9.x to 2.10.x. However this
+# change is untested for every role other than "plausible". Ugh.
+- name: Run plausible
+  community.docker.docker_compose_v2:
+    project_src: /srv/www
 
 # TODO: Connect to RDS postgres rather than its own
 # TODO: Add backups for databases

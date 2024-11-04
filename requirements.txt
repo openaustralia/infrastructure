@@ -1,4 +1,6 @@
 pip~=20.0
-ansible~=2.9.0
+# Note that ansible 2.10 is currently untested for every role other than
+# plausible. For those other roles we currently know it works with ansible 2.9
+ansible~=2.10.0
 boto3
 botocore
