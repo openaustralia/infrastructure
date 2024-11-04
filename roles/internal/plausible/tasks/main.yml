@@ -32,5 +32,14 @@
     src: compose.override.yml
     dest: /srv/www/
 
+# Requires: ansible-galaxy collection install "community.docker"
+# Commented out for the time being because it's not working with this
+# ancient version of ansible
+# TODO: Fix this
+# - name: Run plausible
+#   community.docker.docker_compose_v2:
+#     project_src: /srv/www
+
 # TODO: Connect to RDS postgres rather than its own
 # TODO: Add backups for databases
+# TODO: Add email configuration
