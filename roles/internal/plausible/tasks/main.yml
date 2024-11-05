@@ -76,5 +76,9 @@
     # Only start up what we need
     services: plausible
 
+# There are a bunch of things that need to be done for a decent production
+# setup for a locally hosted plausible that we don't currently have:
 # TODO: Add backups for clickhouse
 # TODO: Add email configuration
+# TODO: Add integration with Google search
+# TODO: Add zero-downtime deploys for docker compose
