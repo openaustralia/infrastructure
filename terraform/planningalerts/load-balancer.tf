@@ -73,6 +73,31 @@ resource "aws_lb_listener_rule" "main-https-redirect-sitemaps" {
   }
 }
 
+resource "aws_lb_listener_rule" "plausible_script" {
+  listener_arn = var.listener_https.arn
+  priority     = 3
+
+  action {
+    type             = "forward"
+    target_group_arn = var.plausible_lb_target_group.arn
+  }
+
+  condition {
+    host_header {
+      values = [
+        "www.planningalerts.org.au",
+      ]
+    }
+  }
+  condition {
+    path_pattern {
+      values = [
+        "/js/script.*",
+      ]
+    }
+  }
+}
+
 resource "aws_lb_listener_rule" "forward" {
   listener_arn = var.listener_https.arn
   priority     = 5
