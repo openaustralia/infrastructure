@@ -7,7 +7,11 @@ opengovernment.org.au
 electionleaflets.org.au
 au.proxy.oaf.org.au
 web.metabase.oaf.org.au
-web.plausible.oaf.org.au
+; We've decided to use the hosted version at plausible.io for the time
+; being because it was just a little too much work to get a decent
+; production worthy setup going. That could of course change and we always
+; have to option to switch because it's open-source.
+; web.plausible.oaf.org.au
 
 [theyvoteforyou]
 theyvoteforyou.org.au
@@ -34,4 +38,5 @@ au.proxy.oaf.org.au
 web.metabase.oaf.org.au
 
 [plausible]
-web.plausible.oaf.org.au
+; See comment above
+; web.plausible.oaf.org.au

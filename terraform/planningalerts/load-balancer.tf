@@ -73,55 +73,57 @@ resource "aws_lb_listener_rule" "main-https-redirect-sitemaps" {
   }
 }
 
-resource "aws_lb_listener_rule" "plausible_script" {
-  listener_arn = var.listener_https.arn
-  priority     = 3
+# We're using hosted plausible.io for the time being
 
-  action {
-    type             = "forward"
-    target_group_arn = var.plausible_lb_target_group.arn
-  }
+# resource "aws_lb_listener_rule" "plausible_script" {
+#   listener_arn = var.listener_https.arn
+#   priority     = 3
 
-  condition {
-    host_header {
-      values = [
-        "www.planningalerts.org.au",
-      ]
-    }
-  }
-  condition {
-    path_pattern {
-      values = [
-        "/js/script.*",
-      ]
-    }
-  }
-}
+#   action {
+#     type             = "forward"
+#     target_group_arn = var.plausible_lb_target_group.arn
+#   }
 
-resource "aws_lb_listener_rule" "plausible_event" {
-  listener_arn = var.listener_https.arn
-  priority     = 4
+#   condition {
+#     host_header {
+#       values = [
+#         "www.planningalerts.org.au",
+#       ]
+#     }
+#   }
+#   condition {
+#     path_pattern {
+#       values = [
+#         "/js/script.*",
+#       ]
+#     }
+#   }
+# }
 
-  action {
-    type             = "forward"
-    target_group_arn = var.plausible_lb_target_group.arn
-  }
+# resource "aws_lb_listener_rule" "plausible_event" {
+#   listener_arn = var.listener_https.arn
+#   priority     = 4
 
-  condition {
-    host_header {
-      values = [
-        "www.planningalerts.org.au",
-      ]
-    }
-  }
-  condition {
-    path_pattern {
-      values = [
-        "/api/event",
-      ]
-    }
-  }
-}
+#   action {
+#     type             = "forward"
+#     target_group_arn = var.plausible_lb_target_group.arn
+#   }
+
+#   condition {
+#     host_header {
+#       values = [
+#         "www.planningalerts.org.au",
+#       ]
+#     }
+#   }
+#   condition {
+#     path_pattern {
+#       values = [
+#         "/api/event",
+#       ]
+#     }
+#   }
+# }
 
 resource "aws_lb_listener_rule" "forward" {
   listener_arn = var.listener_https.arn
