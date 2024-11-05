@@ -75,7 +75,7 @@ resource "aws_lb_listener_certificate" "main" {
 
 resource "aws_lb_listener_rule" "main" {
   listener_arn = var.listener_https.arn
-  priority     = 5
+  priority     = 6
 
   action {
     type             = "forward"

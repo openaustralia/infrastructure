@@ -75,7 +75,7 @@ resource "aws_lb_listener_rule" "main-https-redirect-sitemaps" {
 
 resource "aws_lb_listener_rule" "forward" {
   listener_arn = var.listener_https.arn
-  priority     = 3
+  priority     = 5
 
   action {
     type = "forward"
