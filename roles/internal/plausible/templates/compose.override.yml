@@ -3,3 +3,10 @@ services:
   plausible:
     ports:
       - 8000:8000
+
+    environment:
+      - DATABASE_CACERTFILE
+
+    volumes:
+      # TODO: Put this in a better place on the container
+      - /srv/www/db.pem:/var/lib/db.pem
