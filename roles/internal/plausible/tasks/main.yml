@@ -73,7 +73,8 @@
 - name: Run plausible
   community.docker.docker_compose_v2:
     project_src: /srv/www
+    # Only start up what we need
+    services: plausible
 
 # TODO: Add backups for clickhouse
-# TODO: Disable local postgres that isn't used
 # TODO: Add email configuration

@@ -1,4 +1,3 @@
-# TODO: Don't need to run postgres here anymore
 services:
   plausible:
     ports:
@@ -10,3 +9,12 @@ services:
     volumes:
       # TODO: Put this in a better place on the container
       - /srv/www/db.pem:/var/lib/db.pem
+
+    depends_on:
+      plausible_db:
+        condition: service_completed_successfully
+
+  # We don't need to run postgres locally anymore
+  plausible_db:
+    entrypoint: ["/bin/true"]
+    restart: no
