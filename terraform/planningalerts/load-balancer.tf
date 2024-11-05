@@ -98,6 +98,31 @@ resource "aws_lb_listener_rule" "plausible_script" {
   }
 }
 
+resource "aws_lb_listener_rule" "plausible_event" {
+  listener_arn = var.listener_https.arn
+  priority     = 4
+
+  action {
+    type             = "forward"
+    target_group_arn = var.plausible_lb_target_group.arn
+  }
+
+  condition {
+    host_header {
+      values = [
+        "www.planningalerts.org.au",
+      ]
+    }
+  }
+  condition {
+    path_pattern {
+      values = [
+        "/api/event",
+      ]
+    }
+  }
+}
+
 resource "aws_lb_listener_rule" "forward" {
   listener_arn = var.listener_https.arn
   priority     = 5
