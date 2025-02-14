@@ -140,6 +140,17 @@
     - staging
   notify: nginx reload
 
+- name: Copy application skylight.io configuration
+  template:
+    src: skylight.yml
+    dest: "/srv/www/{{ item }}/shared/config/"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
+  notify: nginx reload
+
 - name: Ensure package to build gem native extensions are installed
   apt:
     pkg: libmysqlclient-dev
