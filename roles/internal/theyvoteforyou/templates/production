@@ -19,6 +19,15 @@ server {
     add_header Cache-Control public;
   }
 
+  location / {
+    # Block overly aggressive bot that isn't giving a sensible user agent
+    deny 47.79.0.0/21;
+    deny 47.79.112.0/20;
+    deny 47.82.0.0/19;
+    deny 47.82.12.0/23;
+    deny 47.82.14.0/23;
+  }
+
   ssl on;
   ssl_certificate /etc/letsencrypt/live/{{ theyvoteforyou_domain }}/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/{{ theyvoteforyou_domain }}/privkey.pem;
