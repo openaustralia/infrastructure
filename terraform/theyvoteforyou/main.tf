@@ -10,7 +10,9 @@ terraform {
 resource "aws_instance" "main" {
   ami = var.ami
 
-  instance_type = "t3.large"
+  # Increased to t3.xlarge because of performance issues (and nasty bots) in the run up to the 2025 Federal election
+  # TODO: Probably want to drop it back down once the flurry has passed
+  instance_type = "t3.xlarge"
   ebs_optimized = true
   key_name      = var.deployer_key.key_name
   tags = {
