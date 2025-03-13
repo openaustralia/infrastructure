@@ -56,6 +56,13 @@ resource "cloudflare_record" "facebook_domain_verification" {
   value   = "facebook-domain-verification=hfy8rxjyjsmjynz68xr373fy86lg4o"
 }
 
+resource "cloudflare_record" "bluesky_domain_verification" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "_atproto.oaf.org.au"
+  type    = "TXT"
+  value   = "did=did:plc:go25mxaixuu35qmmpx42zltv"
+}
+
 resource "cloudflare_record" "github_challenge" {
   zone_id = var.oaf_org_au_zone_id
   name    = "_github-challenge-openaustralia.www.oaf.org.au"
