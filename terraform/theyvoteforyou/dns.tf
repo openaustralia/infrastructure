@@ -63,6 +63,13 @@ resource "cloudflare_record" "email2" {
   value   = "cuttlefish.oaf.org.au"
 }
 
+resource "cloudflare_record" "shopify" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "swag.theyvoteforyou.org.au"
+  type    = "CNAME"
+  value   = "shops.myshopify.com"
+}
+
 # MX records
 
 # We can now use a single MX record for Google workspace
