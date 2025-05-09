@@ -1,5 +1,0 @@
-BASE_URL=https://plausible.oaf.org.au
-SECRET_KEY_BASE={{ secret_key_base }}
-HTTP_PORT=8000
-DATABASE_URL=postgres://plausible:{{ db_password }}@{{ postgresql_host }}:5432/plausible
-DATABASE_CACERTFILE=/var/lib/db.pem
