@@ -1,6 +1,5 @@
 
 .vagrant
-.vault_pass.txt
 roles/external
 test.pem
 set-aws-access-keys.sh
