@@ -1,6 +1,7 @@
 
 .vagrant
 roles/external
+collections/
 test.pem
 set-aws-access-keys.sh
 ec2-provisioning.retry

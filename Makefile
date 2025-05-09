@@ -14,7 +14,10 @@ venv: .venv/bin/activate
 	.venv/bin/pip install -Ur requirements.txt
 	touch .venv/bin/activate
 
-roles/external: venv roles/requirements.yml
+collections:
+	.venv/bin/ansible-galaxy collection install -r roles/requirements.yml
+
+roles/external: venv collections roles/requirements.yml
 	.venv/bin/ansible-galaxy install -r roles/requirements.yml -p roles/external
 
 roles: roles/external
@@ -33,4 +36,7 @@ retry: venv roles site.retry
 	.venv/bin/ansible-playbook site.yml -l @site.retry
 
 clean:
-	rm -rf .venv roles/external site.retry .vagrant
+	rm -rf .venv roles/external site.retry collections 
+	
+clean-all: clean
+	rm -rf .vagrant
