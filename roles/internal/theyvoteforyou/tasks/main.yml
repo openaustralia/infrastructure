@@ -90,10 +90,12 @@
     - /srv/www/production
     - /srv/www/production/shared
     - /srv/www/production/shared/config
+    - /srv/www/production/shared/config/credentials
     - /srv/www/production/shared/public
     - /srv/www/staging
     - /srv/www/staging/shared
     - /srv/www/staging/shared/config
+    - /srv/www/staging/shared/config/credentials
     - /srv/www/staging/shared/public
 
 - name: Copy application settings
@@ -118,10 +120,22 @@
     - staging
   notify: nginx reload
 
+# TODO: Remove secrets once we've completed the migration over to use credentials (below) instead
 - name: Copy application secrets
   template:
     src: secrets.yml
     dest: "/srv/www/{{ item }}/shared/config/"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
+  notify: nginx reload
+
+- name: Copy rails master key for production
+  template:
+    src: production.key
+    dest: "/srv/www/{{ item }}/shared/config/credentials/production.key"
     owner: deploy
     group: deploy
   with_items:
