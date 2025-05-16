@@ -23,6 +23,11 @@ resource "aws_instance" "main" {
   iam_instance_profile    = var.instance_profile.name
   # Setting the availability zone because it needs to be the same as the disk
   availability_zone = "ap-southeast-2a"
+  # Because with 8 (the default) just having two versions of ruby with gems installed side-by-side
+  # was enough to fill up the disk.
+  root_block_device {
+    volume_size = 16
+  }
 }
 
 resource "aws_eip" "main" {
