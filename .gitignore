@@ -17,3 +17,4 @@ certificates/*.key
 certificates/*.pem
 
 .venv/
+.venv2/
