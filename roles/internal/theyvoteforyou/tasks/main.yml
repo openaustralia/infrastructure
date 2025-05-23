@@ -120,18 +120,6 @@
     - staging
   notify: nginx reload
 
-# TODO: Remove secrets once we've completed the migration over to use credentials (below) instead
-- name: Copy application secrets
-  template:
-    src: secrets.yml
-    dest: "/srv/www/{{ item }}/shared/config/"
-    owner: deploy
-    group: deploy
-  with_items:
-    - production
-    - staging
-  notify: nginx reload
-
 - name: Copy rails master key for production
   template:
     src: production.key
