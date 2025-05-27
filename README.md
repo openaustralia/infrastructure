@@ -185,7 +185,8 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
   - Terraform requires some extra extra secrets in order to access the S3 bucket we use to store Terraform's permanent state. You can put these in the usual place that AWS CLI tools look - `~/.aws/credentials`.
   - Terraform requires some extra secrets in addition to those used by Ansible. Ask James about secrets.auto.tfvars
     - Note that some of these secrets are the same secrets used as AWS credentials above - but they'll need to be provided again in order to populate the Terraform variables as well
-  - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use. `gcloud auth application-default login` 
+  - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use. `gcloud auth application-default login`
+  - Terraform runs `prepkey.sh` to grab your SSH public key to use as a deployer key in AWS. This script makes some simple assumptions: that `jq` is installed, and that your public key can be found at `~/.ssh/id_rsa.pub`.
 - Secrets: Ansible looks at the four symlinks in the root of this repo and expect to find passphrases to unlock secrets used for production deployments. Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password). If Keybase isn't working for you, any method you have to put the right value into the right file will be fine. You may need to update the `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location.
 
 ### <a name='Environmentsetup'></a>Environment setup
