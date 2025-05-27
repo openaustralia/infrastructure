@@ -137,7 +137,7 @@ We'd like to expand this in future, when we have time
 We've moved RTK on to upstream Alavateli, so the instructions below for a dev environment are out of date. Please refer to [openaustralia/righttoknow](https://github.com/openaustralia/righttoknow?tab=readme-ov-file#development)'s README for instructions.
 
 #### <a name='PlanningAlertsProduction'></a>PlanningAlerts Production
-We now have two productions servers, and a blue/green deployment process driven out of Terraform
+We now have two productions servers. Everyday deployment is still run by Capistrano. For major upgrades (eg, updating Ruby version), we have the option of a blue/green deployment driven by Terraform so that we can update things without downtime.
 
 ### <a name='-1'></a>2018-05-26
 
@@ -179,15 +179,17 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 - For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
 - In order to run Ansible, you'll need Python < 3.12 installed
 	- 3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
+  - Secrets: Ansible looks at the four symlinks in the root of this repo and expect to find passphrases to unlock secrets used for production deployments. Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password). If Keybase isn't working for you, any method you have to put the right value into the right file will be fine. You may need to update the `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location.
 - In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
 - For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
-- For a few things, including PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
+- For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
   - Terraform requires some extra extra secrets in order to access the S3 bucket we use to store Terraform's permanent state. You can put these in the usual place that AWS CLI tools look - `~/.aws/credentials`.
   - Terraform requires some extra secrets in addition to those used by Ansible. Ask James about secrets.auto.tfvars
     - Note that some of these secrets are the same secrets used as AWS credentials above - but they'll need to be provided again in order to populate the Terraform variables as well
   - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use. `gcloud auth application-default login`
   - Terraform runs `prepkey.sh` to grab your SSH public key to use as a deployer key in AWS. This script makes some simple assumptions: that `jq` is installed, and that your public key can be found at `~/.ssh/id_rsa.pub`.
-- Secrets: Ansible looks at the four symlinks in the root of this repo and expect to find passphrases to unlock secrets used for production deployments. Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password). If Keybase isn't working for you, any method you have to put the right value into the right file will be fine. You may need to update the `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location.
+  - We host DNS on Cloudflare. An API key to manage these zones is one of the secrets you'll need to provide. To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organizatoin - see Matthew or James for details
+
 
 ### <a name='Environmentsetup'></a>Environment setup
 
