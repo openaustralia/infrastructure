@@ -182,6 +182,10 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 - In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
 - For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
 - For a few things, including PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
+  - Terraform requires some extra extra secrets in order to access the S3 bucket we use to store Terraform's permanent state. You can put these in the usual place that AWS CLI tools look - `~/.aws/credentials`.
+  - Terraform requires some extra secrets in addition to those used by Ansible. Ask James about secrets.auto.tfvars
+    - Note that some of these secrets are the same secrets used as AWS credentials above - but they'll need to be provided again in order to populate the Terraform variables as well
+  - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use. `gcloud auth application-default login` 
 - Secrets: Ansible looks at the four symlinks in the root of this repo and expect to find passphrases to unlock secrets used for production deployments. Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password). If Keybase isn't working for you, any method you have to put the right value into the right file will be fine. You may need to update the `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location.
 
 ### <a name='Environmentsetup'></a>Environment setup
@@ -189,7 +193,7 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 There's a very handy `Makefile` included which will:
 - install Vagrant plugins
 - Create a python virtual environment
-- Install `ansible-galaxy` roles and 
+- Install `ansible-galaxy` roles and collections
 
 Simply run
 
