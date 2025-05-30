@@ -4,8 +4,14 @@ packer {
       version = "~> 1"
       source = "github.com/hashicorp/ansible"
     }
+    amazon = {
+      source  = "github.com/hashicorp/amazon"
+      version = "~> 1"
+    }
   }
 }
+
+
 
 source "amazon-ebs" "planningalerts-ruby33" {
   ami_name = "planningalerts-ruby-3.3-v1"
