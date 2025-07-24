@@ -240,15 +240,15 @@ In your checked out copy (`production` branch) of the Alaveteli repo add the fol
 ```yaml
 production:
   branch: production
-  repository: git://github.com/openaustralia/alaveteli.git
+  repository: https://github.com/openaustralia/alaveteli.git
   server: righttoknow.org.au
   user: deploy
   deploy_to: /srv/www/production
   rails_env: production
   daemon_name: alaveteli-production
 staging:
-  branch: 0.38.3.0
-  repository: git://github.com/mysociety/alaveteli.git
+  branch: staging
+  repository: https://github.com/openaustralia/alaveteli.git
   server: righttoknow.org.au
   user: deploy
   deploy_to: /srv/www/staging
@@ -256,7 +256,7 @@ staging:
   daemon_name: alaveteli-staging
 development:
   branch: production
-  repository: git://github.com/openaustralia/alaveteli.git
+  repository: https://github.com/openaustralia/alaveteli.git
   server: righttoknow.org.au.test
   user: deploy
   deploy_to: /srv/www/production
