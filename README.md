@@ -235,7 +235,9 @@ the top of `update-ssl-certs.yaml`.
 
 ### Deploying Right To Know to your local development server
 
-In your checked out copy (`production` branch) of the Alaveteli repo add the following to `config/deploy.yml`
+If you haven't already, check out our [Alaveteli Repo](https://github.com/openaustralia/alaveteli). 
+
+In your checked out (`production` branch) of the Alaveteli repo add the following to `config/deploy.yml`
 
 ```yaml
 production:
