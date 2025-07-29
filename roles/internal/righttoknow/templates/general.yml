@@ -1260,6 +1260,22 @@ ENABLE_PRO_PRICING: {{ enable_pro_pricing }}
 #
 # ---
 ENABLE_PRO_SELF_SERVE: false
+
+# **WARNING** Projects is not ready for re-use.
+#
+# ENABLE_PROJECTS – Boolean (default: false)
+#
+# ---
+ENABLE_PROJECTS: false
+
+# If SURVEY_URL is present, one month after a request has been made, Alaveteli
+# will email users with a link to a survey.
+#
+# SURVEY_URL – String (default: '')
+#
+# ---
+SURVEY_URL: ''
+
 # Retains records of IP addresses used to sign in to user accounts for the
 # configured number of days. This value should be less than or equal to the
 # number of days of logs retained according to your logrotate configuration,
