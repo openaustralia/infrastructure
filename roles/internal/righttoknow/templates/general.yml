@@ -735,7 +735,7 @@ MTA_LOG_TYPE: "postfix"
 #   DONATION_URL: http://www.mysociety.org/donate
 #
 # ---
-DONATION_URL: 'https://www.oaf.org.au/donate/righttoknow/'
+DONATION_URL: 'https://donate.oaf.org.au/'
 
 # If PUBLIC_BODY_STATISTICS_PAGE is set to true, Alaveteli will make a page of
 # statistics on the performance of public bodies (which you can see at
