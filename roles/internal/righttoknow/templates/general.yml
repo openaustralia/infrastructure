@@ -805,6 +805,7 @@ SHARED_FILES_PATH: ''
 SHARED_FILES:
   - config/database.yml
   - config/general.yml
+  - config/storage.yml
   - config/rails_env.rb
   - config/newrelic.yml
   - config/httpd.conf
@@ -829,6 +830,9 @@ SHARED_DIRECTORIES:
   - files/
   - cache/
   - lib/acts_as_xapian/xapiandbs/
+  - log/
+  - storage/
+  - tmp/pids
   - vendor/bundle
   - public/assets
 
