@@ -1145,8 +1145,6 @@ POP_MAILER_PASSWORD: ''
 # ---
 POP_MAILER_ENABLE_SSL: true
 
-ENABLE_PRO_PRICING: {{ enable_pro_pricing }}
-
 # Stripe.com publishable key. Only required for Alaveteli Pro.
 #
 # STRIPE_PUBLISHABLE_KEY - String (default: '')
@@ -1221,3 +1219,12 @@ STRIPE_TAX_RATE: '0.00'
 # PRO_REFERRAL_COUPON: 'PROREFERRAL'
 # ---
 PRO_REFERRAL_COUPON: '{{ pro_referral_coupon }}'
+
+# If ENABLE_PRO_PRICING is set to true, Alaveteli let users enter their bank
+# details and subscribe to a Stripe subscription which grants them access to the
+# pro role and all the features of Alaveteli Professional.
+#
+# ENABLE_PRO_PRICING – Boolean (default: false)
+#
+# ---
+ENABLE_PRO_PRICING: {{ enable_pro_pricing }}
