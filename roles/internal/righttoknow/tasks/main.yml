@@ -397,6 +397,16 @@
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
   notify: nginx restart
 
+- name: Copy Storage Configuration (Production)
+  copy:
+    src: storage.yml
+    dest: /srv/www/production/shared/
+
+- name: Copy Storage Configuration (Staging)
+  copy:
+    src: storage.yml
+    dest: /srv/www/staging/shared/
+
 - import_tasks: certificates.yml
 - import_tasks: cron.yml
 
