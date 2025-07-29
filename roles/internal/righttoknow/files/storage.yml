@@ -24,7 +24,7 @@
 
 raw_emails_disk: &raw_emails_disk
   service: Disk
-  root: <%= Rails.root.join('storage/raw_emails') %>
+  root: <%= Rails.root.join('files/raw_emails') %>
 
 raw_emails_production: &raw_emails_production
   <<: *raw_emails_disk
@@ -43,7 +43,7 @@ raw_emails:
 
 attachments_disk: &attachments_disk
   service: Disk
-  root: <%= Rails.root.join('storage/attachments') %>
+  root: <%= Rails.root.join('cache/attachments') %>
 
 attachments_production: &attachments_production
   <<: *attachments_disk
