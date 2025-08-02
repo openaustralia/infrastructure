@@ -130,7 +130,7 @@ FACEBOOK_USERNAME: ''
 #   TWITTER_USERNAME: 'whatdotheyknow'
 #
 # ---
-TWITTER_USERNAME: 'righttoknowau'
+TWITTER_USERNAME: ''
 
 # Set the widget_id to get the Twitter sidebar on the blog page.
 # To get one https://twitter.com/settings/widgets
@@ -142,7 +142,7 @@ TWITTER_USERNAME: 'righttoknowau'
 #   TWITTER_WIDGET_ID: '833549204689320031'
 #
 # ---
-TWITTER_WIDGET_ID: '263502299333267456'
+TWITTER_WIDGET_ID: ''
 
 # The locales you want your site to support. If there is more than one, use
 # spaces betwween the entries.
