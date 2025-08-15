@@ -364,7 +364,6 @@
     site_name: "Right to Know"
     incoming_email_prefix: "foi+"
     staging_site: "0"
-    ga_code: "UA-3107958-10"
     override_all_public_body_request_emails: null
     stage: production
     stripe_publishable_key: "{{ stripe_publishable_key_live }}"
@@ -386,7 +385,6 @@
     site_name: "Right to Know (STAGING)"
     incoming_email_prefix: "foitest+"
     staging_site: "1"
-    ga_code: ""
     override_all_public_body_request_emails: "contact@righttoknow.org.au"
     stage: staging
     stripe_publishable_key: "{{ stripe_publishable_key_test }}"
