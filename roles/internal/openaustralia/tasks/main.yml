@@ -168,88 +168,118 @@
   apt: pkg=apache2
   when: "'ec2' in group_names"
 
-# Install php5 on xenial requires a few more jumps than usual
-- name: Add repo for installing php5
+
+# Using the archived ondrej/php PPA with explicit keyserver. This no-longer has PHP5.6 packages so now using php7.0 and have updated associated dependencies including xapian
+- name: Add GPG key for ondrej/php PPA
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 14AA40EC0831756756D7F66C4F4EA0AAE5267A6C
+    state: present
+
+- name: Add ondrej/php PPA repository
   apt_repository:
-    repo: 'ppa:ondrej/php'
-
-- name: Install required packages
-  apt:
-    name: "{{ item }}"
+    repo: 'deb http://ppa.launchpad.net/ondrej/php/ubuntu xenial main'
+    state: present
     update_cache: yes
-  with_items:
-    - php5.6
-    - php5.6-curl
-    - php5.6-mysql
-    - apache2
-    - libapache2-mod-php5.6
-    - imagemagick
-    - libmagickcore-dev
-    - libmagickwand-dev
-    - ghostscript
-    - libxslt1-dev
-    - libxml-twig-perl
-    - msmtp
-    - libdbi-perl
-    - libdbd-mysql-perl
-    - php5.6-dev
-    - libxapian-dev
-    - xapian-tools
-    - libsearch-xapian-perl
-    - libxml-rss-perl
-    - libmysqlclient-dev
-    # Need the mysql command line when setting up a database initially
-    - mysql-client-core-5.7
 
-# Matching the version number of libxapian-dev above
+# Add Xapian PPA for version 1.4 support
+- name: Add Xapian PPA repository
+  apt_repository:
+    repo: 'ppa:xapian/backports'
+    state: present
+    update_cache: yes
+
+# Update apt cache after adding repository
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+# Force upgrade Xapian packages to newer version from PPA
+- name: Upgrade Xapian packages to version 1.4+ from PPA
+  apt:
+    name:
+      - libxapian-dev
+      - xapian-tools
+    state: latest
+    update_cache: yes
+
+- name: Install required packages (using PHP 7.0 as fallback since PHP 5.6 unavailable)
+  apt:
+    name:
+      - php7.0
+      - php7.0-curl
+      - php7.0-mysql
+      - apache2
+      - libapache2-mod-php7.0
+      - imagemagick
+      - libmagickcore-dev
+      - libmagickwand-dev
+      - ghostscript
+      - libxslt1-dev
+      - libxml-twig-perl
+      - msmtp
+      - libdbi-perl
+      - libdbd-mysql-perl
+      - php7.0-dev
+      - libxapian-dev
+      - xapian-tools
+      - libsearch-xapian-perl
+      - libxml-rss-perl
+      - libmysqlclient-dev
+      # Need the mysql command line when setting up a database initially
+      - mysql-client-core-5.7
+
+# Using version 1.4.21 for PHP 7.0 compatibility (last version to support PHP 7.x)
 - name: Download xapian bindings source
   get_url:
-    url: https://oligarchy.co.uk/xapian/1.2.22/xapian-bindings-1.2.22.tar.xz
+    url: https://oligarchy.co.uk/xapian/1.4.21/xapian-bindings-1.4.21.tar.xz
     dest: /home/deploy
     owner: deploy
     group: deploy
-    checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
+    mode: '0644'
+    checksum: sha256:e7bf1e4982b91f841289d19214021d88371ca2a6c7304df59049d7da78b83ced
 
 - name: Unpack xapian bindings source
   unarchive:
-      src: /home/deploy/xapian-bindings-1.2.22.tar.xz
+      src: /home/deploy/xapian-bindings-1.4.21.tar.xz
       dest: /home/deploy
       remote_src: yes
       owner: deploy
       group: deploy
 
 - name: Configure xapian bindings
-  command: ./configure --with-php
+  command: ./configure --with-php7
   args:
-    chdir: /home/deploy/xapian-bindings-1.2.22
-    creates: /home/deploy/xapian-bindings-1.2.22/Makefile
+    chdir: /home/deploy/xapian-bindings-1.4.21
+    creates: /home/deploy/xapian-bindings-1.4.21/Makefile
   become_user: deploy
 
 - name: Compile xapian bindings
   command: make
   args:
-    chdir: /home/deploy/xapian-bindings-1.2.22
-    creates: /home/deploy/xapian-bindings-1.2.22/php/xapian.la
+    chdir: /home/deploy/xapian-bindings-1.4.21
+    creates: /home/deploy/xapian-bindings-1.4.21/php/xapian.la
   become_user: deploy
 
 - name: Install xapian bindings
   command: make install
   args:
-    chdir: /home/deploy/xapian-bindings-1.2.22
-    creates: /usr/lib/php/20131226/xapian.so
+    chdir: /home/deploy/xapian-bindings-1.4.21
+    creates: /usr/lib/php/20151012/xapian.so
   notify: reload apache
 
 - name: Configure php for xapian bindings
   template:
     src: xapian.ini
-    dest: /etc/php/5.6/mods-available
+    dest: /etc/php/7.0/mods-available
   notify: reload apache
 
 - name: Enable xapian for php
   file:
     state: link
-    src: /etc/php/5.6/mods-available/xapian.ini
-    dest: "/etc/php/5.6/{{ item }}/conf.d/30-xapian.ini"
+    src: /etc/php/7.0/mods-available/xapian.ini
+    dest: "/etc/php/7.0/{{ item }}/conf.d/30-xapian.ini"
   with_items:
     - apache2
     - cli
@@ -264,7 +294,7 @@
     - ssl
 
 - name: Copy across the php config
-  template: src=php.ini dest=/etc/php/5.6/{{ item }}/
+  template: src=php.ini dest=/etc/php/7.0/{{ item }}/
   notify: reload apache
   with_items:
     - apache2
@@ -441,13 +471,13 @@
 - name: Configure newrelic php monitor
   file:
     state: absent
-    path: /etc/php/5.6/mods-available/newrelic.ini
+    path: /etc/php/7.0/mods-available/newrelic.ini
   notify: reload apache
 
 - name: Enable newrelic for php
   file:
     state: absent
-    path: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
+    path: "/etc/php/7.0/{{ item }}/conf.d/30-newrelic.ini"
   with_items:
     - apache2
     - cli
