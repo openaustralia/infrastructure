@@ -89,7 +89,9 @@ ISO_CURRENCY_CODE: AUD
 # ---
 TIME_ZONE: Australia/Sydney
 
-# These feeds are displayed accordingly on the Alaveteli "blog" page:
+# These feeds are displayed accordingly on the Alaveteli "blog" page. Currently
+# WordPress is the only "officially supported" external blog feed, but other
+# feeds may work if they use the same data format.
 #
 # BLOG_FEED - String url to the blog feed (default: nil)
 #
@@ -564,19 +566,6 @@ GEOIP_DATABASE: vendor/data/GeoLite2-Country.mmdb
 # ---
 MAXMIND_LICENSE_KEY: '{{ alaveteli_maxmind_license_key }}'
 
-# In the absence of a GeoIP database (see above), Alaveteli can use Gaze,
-# mySociety's gazeteer, to determine the country from the IP address of an HTTP
-# request to the site. You shouldn't normally need to change this.
-#
-# GAZE_URL - String (default: http://gaze.mysociety.org)
-#
-# Examples:
-#
-#   GAZE_URL: http://gaze.example.org
-#
-# ---
-GAZE_URL: http://gaze.mysociety.org
-
 # The email address to which non-bounce responses to emails sent out by
 # Alaveteli should be forwarded
 #
@@ -600,25 +589,6 @@ FORWARD_NONBOUNCE_RESPONSES_TO: contact@righttoknow.org.au
 #
 # ---
 FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro@righttoknow.org.au
-
-# Path to a program that converts an HTML page in a file to PDF. Also used to
-# download a zip file of all the correspondence for a request. It should take
-# two arguments: the URL, and a path to an output file.
-#
-# A static binary of wkhtmltopdf is recommended:
-# http://code.google.com/p/wkhtmltopdf/downloads/list
-# If the command is not present, a text-only version will be rendered
-# instead.
-#
-# HTML_TO_PDF_COMMAND - String (default: nil)
-#
-# Examples:
-#
-#   HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf
-#   HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf-amd64
-#
-# ---
-HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf
 
 # Email address used for sending exception notifications.
 #
@@ -735,7 +705,7 @@ MTA_LOG_TYPE: "postfix"
 #   DONATION_URL: http://www.mysociety.org/donate
 #
 # ---
-DONATION_URL: 'https://www.oaf.org.au/donate/righttoknow/'
+DONATION_URL: 'https://donate.oaf.org.au/'
 
 # If PUBLIC_BODY_STATISTICS_PAGE is set to true, Alaveteli will make a page of
 # statistics on the performance of public bodies (which you can see at
@@ -753,7 +723,7 @@ PUBLIC_BODY_STATISTICS_PAGE: true
 # MINIMUM_REQUESTS_FOR_STATISTICS - Integer (default: 100)
 #
 # ---
-MINIMUM_REQUESTS_FOR_STATISTICS: 20
+MINIMUM_REQUESTS_FOR_STATISTICS: 50
 
 # If you would like the public body list page to include bodies that have no
 # translation in the current locale (but which do have a translation in the
@@ -835,6 +805,7 @@ SHARED_FILES_PATH: ''
 SHARED_FILES:
   - config/database.yml
   - config/general.yml
+  - config/storage.yml
   - config/rails_env.rb
   - config/newrelic.yml
   - config/httpd.conf
@@ -859,6 +830,9 @@ SHARED_DIRECTORIES:
   - files/
   - cache/
   - lib/acts_as_xapian/xapiandbs/
+  - log/
+  - storage/
+  - tmp/pids
   - vendor/bundle
   - public/assets
 
@@ -913,7 +887,7 @@ ENABLE_WIDGETS: false
 # ENABLE_TWO_FACTOR_AUTH – Boolean (default: false)
 #
 # ---
-ENABLE_TWO_FACTOR_AUTH: false
+ENABLE_TWO_FACTOR_AUTH: true
 
 # Enable referral of requests to external reviewers. This is likely to be an
 # Information Commissioner or similar.
@@ -942,6 +916,19 @@ EXTERNAL_REVIEWERS: ''
 #
 # ---
 ENABLE_ANNOTATIONS: true
+
+# Enable anti-spam measures.
+# If ENABLE_ANTI_SPAM is set to true, Alaveteli will enforce a set of extra
+# restrictions to combat spam requests, annotations and profile content. This
+# will include the ability to restrict IP addresses from some countries from
+# performing some actions (see RESTRICTED_COUNTRIES), showing a reCAPTCHA
+# on new request submission, and preventing the submission of requests,
+# annotations and profile text matching a set of spam content patterns.
+#
+# ENABLE_ANTI_SPAM – Boolean (default: false)
+#
+# ---
+ENABLE_ANTI_SPAM: true
 
 # Prevent user signups if several signup attempts from the same IP address are
 # made in quick succession.
@@ -1177,8 +1164,6 @@ POP_MAILER_PASSWORD: ''
 # ---
 POP_MAILER_ENABLE_SSL: true
 
-ENABLE_PRO_PRICING: {{ enable_pro_pricing }}
-
 # Stripe.com publishable key. Only required for Alaveteli Pro.
 #
 # STRIPE_PUBLISHABLE_KEY - String (default: '')
@@ -1253,3 +1238,53 @@ STRIPE_TAX_RATE: '0.00'
 # PRO_REFERRAL_COUPON: 'PROREFERRAL'
 # ---
 PRO_REFERRAL_COUPON: '{{ pro_referral_coupon }}'
+
+# If ENABLE_PRO_PRICING is set to true, Alaveteli let users enter their bank
+# details and subscribe to a Stripe subscription which grants them access to the
+# pro role and all the features of Alaveteli Professional.
+#
+# ENABLE_PRO_PRICING – Boolean (default: false)
+#
+# ---
+ENABLE_PRO_PRICING: {{ enable_pro_pricing }}
+
+# This option is only used when ENABLE_PRO_PRICING is set to false.
+#
+# If ENABLE_PRO_SELF_SERVE is set to true, Alaveteli will let users upgrade
+# their accounts to Pro without needing to enter payment details.
+#
+# If ENABLE_PRO_SELF_SERVE is set to false, admins will receive an account
+# request email and has to assign the role in the Alaveteli admin interface.
+#
+# ENABLE_PRO_SELF_SERVE – Boolean (default: false)
+#
+# ---
+ENABLE_PRO_SELF_SERVE: false
+
+# **WARNING** Projects is not ready for re-use.
+#
+# ENABLE_PROJECTS – Boolean (default: false)
+#
+# ---
+ENABLE_PROJECTS: false
+
+# If SURVEY_URL is present, one month after a request has been made, Alaveteli
+# will email users with a link to a survey.
+#
+# SURVEY_URL – String (default: '')
+#
+# ---
+SURVEY_URL: ''
+
+# Retains records of IP addresses used to sign in to user accounts for the
+# configured number of days. This value should be less than or equal to the
+# number of days of logs retained according to your logrotate configuration,
+# otherwise you may hold data in a way that is inconsistent with your privacy
+# policy.
+#
+# Does not record actvity when set to 0.
+#
+# USER_SIGN_IN_ACTIVITY_RETENTION_DAYS – Integer (default: 0)
+#
+# ---
+USER_SIGN_IN_ACTIVITY_RETENTION_DAYS: 30
