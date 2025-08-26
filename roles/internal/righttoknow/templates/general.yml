@@ -130,7 +130,7 @@ FACEBOOK_USERNAME: ''
 #   TWITTER_USERNAME: 'whatdotheyknow'
 #
 # ---
-TWITTER_USERNAME: 'righttoknowau'
+TWITTER_USERNAME: ''
 
 # Set the widget_id to get the Twitter sidebar on the blog page.
 # To get one https://twitter.com/settings/widgets
@@ -142,7 +142,7 @@ TWITTER_USERNAME: 'righttoknowau'
 #   TWITTER_WIDGET_ID: '833549204689320031'
 #
 # ---
-TWITTER_WIDGET_ID: '263502299333267456'
+TWITTER_WIDGET_ID: ''
 
 # The locales you want your site to support. If there is more than one, use
 # spaces betwween the entries.
@@ -668,7 +668,7 @@ MAX_REQUESTS_PER_USER_PER_DAY: 6
 #   GA_CODE: 'AB-8222142-14'
 #
 # ---
-GA_CODE: '{{ ga_code }}'
+GA_CODE: ''
 
 # If you want to override all the public body request emails with your own
 # email address so that request emails that would normally go to the public

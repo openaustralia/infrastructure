@@ -1,4 +1,4 @@
 ---
 # defaults file for righttoknow
-ruby_version_staging: 2.6.6
+ruby_version_staging: 2.7.8
 ruby_version_production: 2.6.6
