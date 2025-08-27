@@ -46,5 +46,5 @@ check-righttoknow:
 check-planningalerts:
 	.venv/bin/ansible-playbook site.yml -l planningalerts --check
 
-apply-keys:
+update-github-ssh-keys:
 	.venv/bin/ansible-playbook site.yml --tags userkeys
