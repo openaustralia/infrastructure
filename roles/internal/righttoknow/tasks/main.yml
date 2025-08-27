@@ -353,7 +353,7 @@
     - staging
   notify: nginx reload
 
-- name: Copy across the main Alaveteli config (production)
+- name: Apply Alaveteli config (production)
   template:
     src: general.yml
     dest: /srv/www/production/shared/
@@ -374,7 +374,7 @@
     pro_referral_coupon: "{{ pro_referral_coupon_production }}"
   notify: nginx restart
 
-- name: Copy across the main Alaveteli config (staging)
+- name: Apply Alaveteli config (staging)
   template:
     src: general.yml
     dest: /srv/www/staging/shared/
@@ -440,7 +440,7 @@
 # Generated public/private keypair for opendkim with:
 # opendkim-genkey -b 2048 -d righttoknow.org.au -D /etc/dkimkeys -s default -v
 
-- name: Copy across DKIM keypair
+- name: Apply DKIM keypair
   copy:
     src: "dkimkeys/{{ item }}"
     dest: /etc/dkimkeys/righttoknow.org.au
