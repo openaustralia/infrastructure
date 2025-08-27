@@ -17,6 +17,8 @@
     user: "{{ item[0] }}"
     key: https://github.com/{{ item[1] }}.keys
     comment: "{{ item[1] }}"
+  tags:
+    - userkeys
   with_nested:
     - ['deploy', 'ubuntu', 'root']
     - "{{ github_users }}"
