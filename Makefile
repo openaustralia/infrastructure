@@ -1,4 +1,4 @@
-.phony: venv roles production ALL letsencrypt check-rtk
+.PHONY: venv roles production ALL letsencrypt check-rtk
 
 ALL: venv roles .vagrant
 
