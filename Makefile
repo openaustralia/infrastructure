@@ -1,4 +1,4 @@
-.phony: venv roles production ALL letsencrypt
+.phony: venv roles production ALL letsencrypt check-rtk
 
 ALL: venv roles .vagrant
 
@@ -40,3 +40,11 @@ clean:
 	
 clean-all: clean
 	rm -rf .vagrant
+
+check-righttoknow:
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check
+check-planningalerts:
+	.venv/bin/ansible-playbook site.yml -l planningalerts --check
+
+apply-keys:
+	.venv/bin/ansible-playbook site.yml --tags userkeys
