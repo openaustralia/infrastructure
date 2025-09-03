@@ -44,7 +44,7 @@ clean-all: clean
 check-righttoknow:
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check
 check-planningalerts:
-	.venv/bin/ansible-playbook site.yml -l planningalerts --check
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
 
 update-github-ssh-keys:
 	.venv/bin/ansible-playbook site.yml --tags userkeys

@@ -37,6 +37,10 @@ au.proxy.oaf.org.au
 [metabase]
 web.metabase.oaf.org.au
 
+[planningalerts]
+ec2-3-27-58-54.ap-southeast-2.compute.amazonaws.com
+ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
+
 [plausible]
 ; See comment above
 ; web.plausible.oaf.org.au
