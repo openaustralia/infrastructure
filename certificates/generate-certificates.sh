@@ -3,12 +3,21 @@
 # Generates certificates for local development. A single certificate, that
 # is unique to you, is added to your browser
 
+set -euo pipefail
+error_report() {
+  if [ "$1" != "0" ]; then
+    echo "$0: Error $1 on line #$2" >&2
+  fi
+  exit "$1"
+}
+trap 'error_report $? $LINENO' ERR
+
 if ! [ -f certificates/generate-certificates.sh ]; then
-  echo ERROR: Must be run in project root directory!
+  echo "ERROR: Must be run in project root directory!"
   exit 1
 fi
 
-cd certificates || exec echo Failed to cd to certificates directory!
+cd certificates || exit 1
 
 # Note that we're not generating certificates for PlanningAlerts because those
 # are served from the load balancer on AWS so the server itself only needs
@@ -64,7 +73,7 @@ do
   set +x
 done
 
-echo Moving certificate into the right place ...
+echo "Moving certificate into the right place ..."
 set -x
 mkdir -p ../roles/internal/theyvoteforyou/files ../roles/internal/openaustralia/files ../roles/internal/righttoknow/files ../roles/internal/oaf/files ../roles/internal/opengovernment/files ../roles/internal/electionleaflets/files
 
@@ -81,12 +90,12 @@ set +x
 # morph provisioning is moved to this repo
 
 if [ -d ../../morph/provisioning/roles/morph-app ]; then
-  echo Moving local ssl certificate to morph ...
+  echo "Moving local ssl certificate to morph ..."
   set -x
   mkdir -p ../../morph/provisioning/roles/morph-app/files/ssl
   mv dev.morph.io.key dev.morph.io.pem ../../morph/provisioning/roles/morph-app/files/ssl
   set +x
 else
-  echo Missing ../../morph/provisioning/roles/morph-app directory: skipped copying dev.morph.io files ...
+  echo "Skipped move to morph as ../../morph/provisioning/roles/morph-app directory is missing!"
 fi
 
