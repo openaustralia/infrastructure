@@ -89,7 +89,9 @@ ISO_CURRENCY_CODE: AUD
 # ---
 TIME_ZONE: Australia/Sydney
 
-# These feeds are displayed accordingly on the Alaveteli "blog" page:
+# These feeds are displayed accordingly on the Alaveteli "blog" page. Currently
+# WordPress is the only "officially supported" external blog feed, but other
+# feeds may work if they use the same data format.
 #
 # BLOG_FEED - String url to the blog feed (default: nil)
 #
@@ -606,7 +608,7 @@ FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro@righttoknow.org.au
 # two arguments: the URL, and a path to an output file.
 #
 # A static binary of wkhtmltopdf is recommended:
-# http://code.google.com/p/wkhtmltopdf/downloads/list
+# https://github.com/wkhtmltopdf/packaging/releases
 # If the command is not present, a text-only version will be rendered
 # instead.
 #
@@ -615,7 +617,6 @@ FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro@righttoknow.org.au
 # Examples:
 #
 #   HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf
-#   HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf-amd64
 #
 # ---
 HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf
