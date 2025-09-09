@@ -1274,3 +1274,18 @@ PRO_REFERRAL_COUPON: '{{ pro_referral_coupon }}'
 #
 # ---
 ENABLE_PRO_PRICING: {{ enable_pro_pricing }}
+
+# **WARNING** Projects is not ready for re-use.
+#
+# ENABLE_PROJECTS – Boolean (default: false)
+#
+# ---
+ENABLE_PROJECTS: false
+
+# If SURVEY_URL is present, one month after a request has been made, Alaveteli
+# will email users with a link to a survey.
+#
+# SURVEY_URL – String (default: '')
+#
+# ---
+SURVEY_URL: ''
