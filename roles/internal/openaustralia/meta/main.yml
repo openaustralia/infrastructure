@@ -126,14 +126,16 @@ dependencies:
   - role: rvm.ruby
     rvm1_rubies:
       - ruby-2.7.2
-    rvm1_install_flags: '--auto-dotfiles'      # Remove --user-install from defaults
-    rvm1_user: root                            # Need root account to access system location
+      - ruby-2.7.8
+
+    rvm1_install_flags: "--auto-dotfiles" # Remove --user-install from defaults
+    rvm1_user: root # Need root account to access system location
     # Increase timeout on curl. For some reason some requests are taking too long
     rvm1_ruby_install_flags: "--max-time 20"
     # Don't want us updating rvm on every run by default
     # rvm1_rvm_check_for_updates: false
     # Use round-robin pool of gpg key servers to avoid timeout
-    rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
+    rvm1_gpg_key_server: "hkp://pool.sks-keyservers.net"
     rvm1_bundler_install: true
   - role: Stouts.backup
     backup_profiles:
