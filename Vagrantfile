@@ -90,14 +90,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ]
     }
     raw_args = []
-    if ENV['TAGS']
-      raw_args <<= ["--tags=#{ENV['TAGS']}"]
-    end
-    if ENV['START_AT_TASK']
-      sat = "*#{ENV['START_AT_TASK']}*".gsub(' ', '*')
-      raw_args <<= ["--start-at-task=#{sat}"]
-    end
-    ansible.raw_arguments  = raw_args
+      raw_args << "--tags=#{ENV['TAGS']}" if ENV["TAGS"]
+      if ENV["START_AT_TASK"]
+        sat = "*#{ENV['START_AT_TASK']}*".gsub(" ", "*")
+        raw_args << "--start-at-task=#{sat}"
+      end
+      ansible.raw_arguments = raw_args
   end
 
   config.vm.provider "virtualbox" do |v|
