@@ -34,6 +34,16 @@ server {
   root /srv/www/{{ stage }}/current/public;
   passenger_enabled on;
   passenger_ruby /home/deploy/.rbenv/shims/ruby;
+
+  # Serve maintenance page when present
+  if (-f $document_root/system/maintenance.html) {
+    return 503;
+  }
+  error_page 503 @maintenance;
+  location @maintenance {
+    rewrite  ^(.*)$  /system/maintenance.html break;
+    break;
+  }
 }
 
 # HTTPS
