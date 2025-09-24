@@ -6,6 +6,7 @@ variable "aws_access_key" {
 }
 
 variable "aws_secret_key" {
+  sensitive = true
 }
 
 variable "ec2_region" {
@@ -14,16 +15,20 @@ variable "ec2_region" {
 }
 
 variable "rds_admin_password" {
+  sensitive = true
 }
 
 variable "theyvoteforyou_db_password" {
+  sensitive = true
 }
 
 # Note that this is different than one that was previously called cloudflare_token
 variable "cloudflare_api_token" {
+  sensitive = true
 }
 
 variable "linode_api_token" {
+  sensitive = true
 }
 
 # AMI for Ubuntu 16.04 LTS, locked to a specific version so that we don't
