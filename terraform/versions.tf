@@ -12,7 +12,7 @@ terraform {
     }
     external = {
       source  = "hashicorp/external"
-      version = "~> 2.0.0"
+      version = "~> 2.3.5"
     }
     linode = {
       source = "linode/linode"

@@ -1,6 +1,6 @@
 resource "cloudflare_zone" "main" {
   account_id = var.cloudflare_account_id
-  plan       = "free"
+  plan       = "business"
   zone       = "righttoknow.org.au"
 }
 
@@ -101,4 +101,26 @@ resource "cloudflare_record" "dmarc" {
   name    = "_dmarc.righttoknow.org.au"
   type    = "TXT"
   value   = "v=DMARC1; p=quarantine; rua=mailto:re+aysyay6u9ct@dmarc.postmarkapp.com; sp=none; pct=100; aspf=r;"
+}
+
+# Staging environment DNS records
+resource "cloudflare_record" "staging" {
+  zone_id = cloudflare_zone.main.id
+  name    = "staging.righttoknow.org.au"
+  type    = "A"
+  value   = aws_eip.staging.public_ip
+}
+
+resource "cloudflare_record" "staging_test" {
+  zone_id = cloudflare_zone.main.id
+  name    = "staging-test.righttoknow.org.au"
+  type    = "CNAME"
+  value   = "staging.righttoknow.org.au"
+}
+
+resource "cloudflare_record" "www_staging_test" {
+  zone_id = cloudflare_zone.main.id
+  name    = "www.staging-test.righttoknow.org.au"
+  type    = "CNAME"
+  value   = "staging.righttoknow.org.au"
 }

@@ -55,7 +55,8 @@ module "righttoknow" {
   instance_profile              = aws_iam_instance_profile.logging
   cloudflare_account_id         = var.cloudflare_account_id
   # This has been upgraded in place to Ubuntu 18.04
-  ami = var.ubuntu_16_ami
+  ami           = var.ubuntu_16_ami
+  ubuntu_22_ami = var.ubuntu_22_ami
 }
 
 module "morph" {
