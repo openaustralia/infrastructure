@@ -62,19 +62,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.verbose = "vv"
 
     ansible.groups = {
-      "righttoknow"      => ["righttoknow.org.au.test"],
-      "planningalerts"   => ["web.planningalerts.org.au.test"],
+      "righttoknow" => ["righttoknow.org.au.test"],
+      "planningalerts" => ["web.planningalerts.org.au.test"],
       "electionleaflets" => ["electionleaflets.org.au.test"],
-      "theyvoteforyou"   => ["theyvoteforyou.org.au.test"],
-      "oaf"              => ["oaf.org.au.test"],
-      "openaustralia"    => ["openaustralia.org.au.test"],
-      "opengovernment"   => ["opengovernment.org.au.test"],
-      "proxy"            => ["au.proxy.oaf.org.au.test"],
-      "metabase"         => ["web.metabase.oaf.org.au.test"],
-      "mysql"            => ["mysql.test"],
-      "postgresql"       => ["postgresql.test"],
-      "redis"            => ["redis.test"],
-      "development"      => [
+      "theyvoteforyou" => ["theyvoteforyou.org.au.test"],
+      "oaf" => ["oaf.org.au.test"],
+      "openaustralia" => ["openaustralia.org.au.test"],
+      "opengovernment" => ["opengovernment.org.au.test"],
+      "proxy" => ["au.proxy.oaf.org.au.test"],
+      "metabase" => ["web.metabase.oaf.org.au.test"],
+      "mysql" => ["mysql.test"],
+      "postgresql" => ["postgresql.test"],
+      "redis" => ["redis.test"],
+      "development" => [
         "righttoknow.org.au.test",
         "web.planningalerts.org.au.test",
         "electionleaflets.org.au.test",
@@ -89,13 +89,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "redis.test"
       ]
     }
-    raw_args = []
-      raw_args << "--tags=#{ENV['TAGS']}" if ENV["TAGS"]
-      if ENV["START_AT_TASK"]
-        sat = "*#{ENV['START_AT_TASK']}*".gsub(" ", "*")
-        raw_args << "--start-at-task=#{sat}"
-      end
-      ansible.raw_arguments = raw_args
+    tags = ENV["TAGS"].to_s.gsub(/[^A-Z0-9_]+/i, ",").split(",").reject { |s| s.to_s == "" }
+    if tags.any?
+      puts "INFO: Only running TAGS: #{tags.inspect}"
+      ansible.tags = tags if tags.any?
+    end
+    start_at_task = "*#{ENV.fetch('START_AT_TASK', nil)}*".gsub(/[^A-Z0-9_]+/i, "*")
+    if start_at_task != "*"
+      puts "INFO: Starting at task matching: #{start_at_task}"
+      ansible.start_at_task = start_at_task
+    end
   end
 
   config.vm.provider "virtualbox" do |v|
@@ -105,20 +108,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   hosts = {
-    "righttoknow.org.au.test"         => "192.168.56.10",
-    "web.planningalerts.org.au.test"  => "192.168.56.11",
-    "electionleaflets.org.au.test"    => "192.168.56.13",
-    "theyvoteforyou.org.au.test"      => "192.168.56.14",
-    "oaf.org.au.test"                 => "192.168.56.15",
-    "openaustralia.org.au.test"       => "192.168.56.16",
-    "mysql.test"                      => "192.168.56.17",
+    "righttoknow.org.au.test" => "192.168.56.10",
+    "web.planningalerts.org.au.test" => "192.168.56.11",
+    "electionleaflets.org.au.test" => "192.168.56.13",
+    "theyvoteforyou.org.au.test" => "192.168.56.14",
+    "oaf.org.au.test" => "192.168.56.15",
+    "openaustralia.org.au.test" => "192.168.56.16",
+    "mysql.test" => "192.168.56.17",
     # TODO: Do we want to seperate out the postgres for PA and everything else
     # so they can track production versions more accurately?
-    "postgresql.test"                 => "192.168.56.18",
-    "opengovernment.org.au.test"      => "192.168.56.19",
-    "au.proxy.oaf.org.au.test"        => "192.168.56.20",
-    "web.metabase.oaf.org.au.test"    => "192.168.56.21",
-    "redis.test"                      => "192.168.56.22"
+    "postgresql.test" => "192.168.56.18",
+    "opengovernment.org.au.test" => "192.168.56.19",
+    "au.proxy.oaf.org.au.test" => "192.168.56.20",
+    "web.metabase.oaf.org.au.test" => "192.168.56.21",
+    "redis.test" => "192.168.56.22"
   }
 
   # Use this so that you don't need to give the machine name for all vagrant
