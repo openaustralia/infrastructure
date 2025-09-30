@@ -28,7 +28,7 @@ resource "aws_db_instance" "main" {
   # Put the backup retention period to its maximum until we figure out what's a
   # good overall backup scheme
   # TODO: Set this to its final value
-  backup_retention_period = 35
+  backup_retention_period = 32
 
   # We want 3-3:30am Sydney time which is 4-4:30pm GMT
   backup_window = "16:00-16:30"
@@ -79,14 +79,14 @@ resource "aws_db_instance" "postgresql" {
   # Using general purpose SSD
   storage_type   = "gp2"
   engine         = "postgres"
-  engine_version = "15.7"
+  engine_version = "15.12"
 
   instance_class          = "db.t4g.small"
   identifier              = "postgresql"
   username                = "root"
   password                = var.rds_admin_password
   publicly_accessible     = false
-  backup_retention_period = 35
+  backup_retention_period = 32
 
   # We want 3-3:30am Sydney time which is 4-4:30pm GMT
   backup_window = "16:00-16:30"

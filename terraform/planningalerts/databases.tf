@@ -35,7 +35,7 @@ resource "aws_db_instance" "main" {
   # Using general purpose SSD
   storage_type   = "gp3"
   engine         = "postgres"
-  engine_version = "15.7"
+  engine_version = "15.12"
   # We can't specify iops when creating the database
   # This is the baseline for storage less than 400 GB
   iops = 3000
@@ -47,7 +47,7 @@ resource "aws_db_instance" "main" {
   username                = "root"
   password                = var.rds_admin_password
   publicly_accessible     = false
-  backup_retention_period = 35
+  backup_retention_period = 32
 
   # We want 3-3:30am Sydney time which is 4-4:30pm GMT
   backup_window = "16:00-16:30"
