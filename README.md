@@ -230,7 +230,8 @@ Once this is done, the symlinks to .*-vault-pass inside the repo
 should point to the password files. If this doesn't work you may need to update these files yourself.
 
 ## <a name='GeneratingSSLcertificatesfordevelopment'></a>Generating SSL certificates for development
-See certificates/README.md for more information.
+
+See certificates/README.md for more information. This also generates a certificate for morph local development if present.
 
 ## <a name='Provisioning'></a>Provisioning
 
