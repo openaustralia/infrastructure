@@ -1,7 +1,7 @@
 
 resource "cloudflare_zone" "oaf_org_au" {
   account_id = var.cloudflare_account_id
-  plan       = "free"
+  plan       = "business"
   zone       = "oaf.org.au"
 }
 

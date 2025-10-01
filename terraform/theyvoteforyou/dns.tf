@@ -1,6 +1,6 @@
 resource "cloudflare_zone" "org_au" {
   account_id = var.cloudflare_account_id
-  plan       = "free"
+  plan       = "business"
   zone       = "theyvoteforyou.org.au"
 }
 

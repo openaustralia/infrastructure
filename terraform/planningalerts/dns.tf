@@ -1,6 +1,6 @@
 resource "cloudflare_zone" "main" {
   account_id = var.cloudflare_account_id
-  plan       = "free"
+  plan       = "business"
   zone       = "planningalerts.org.au"
 }
 
