@@ -100,8 +100,8 @@ a very similar approach.
 
 ## <a name='Thetools'></a>The tools
 
-To get a completely working server and service up and running requires a number
-of different tools. We use different tools for different things.
+<details><summary>To get a completely working server and service up and running requires a number
+of different tools. We use different tools for different things.</summary>
 
 * Terraform: To spin up servers, manage DNS and IP addresses and setting up any
   related AWS infrastructure
@@ -112,7 +112,9 @@ of different tools. We use different tools for different things.
   vagrant boxes are not designed for doing application development. For that
   go to the individual application repositories.
 * Capistrano: For application deployment. This is what installs the actual
-  web application and updates the database schema.
+  web application and updates the database schema.</details>
+
+Details on installing these tools is at <a href="#Prerequisites">Prerequisites</a> below.
 
 Each application has its own repository and this is where application deployment
 is done from. This repository just contains the Terraform and Ansible configuration
@@ -177,6 +179,10 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 
 ### <a name='Prerequisites'></a>Prerequisites
 
+We use <a href="https://cashapp.github.io/hermit/">Hermit</a> to simplify the processing of installing most of the tools we use. You don't need to install Hermit.
+
+After you check out this repo, run `./bin/hermit shell-hooks`. Restart your shell, cd into the directory again - you'll see a notice that `Hermit environment ....../infrastructure activated`. Now you can run `make` and tools and libraries will be installed into a nice self-container environment in `.hermit`.
+
 #### Provisioning
 _ie, building or pushing updated Ansible configs to servers_
 
@@ -187,13 +193,14 @@ _ie, building or pushing updated Ansible configs to servers_
 <details><summary>Secrets: Ansible looks at the four symlinks in the root of this repo and expects to find passphrases to unlock secrets used for production deployments. Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password).</summary> If Keybase isn't working for you, any technique you have to put the right value into the right file will be fine. You may need to update the `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location.</details>
 
 #### Terraform
-For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
+<details><summary>For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)</summary>
 - Terraform requires some extra secrets to access the S3 bucket we use to store Terraform's permanent state. You can put these in the usual place that AWS CLI tools look - `~/.aws/credentials`.
 - Terraform requires some extra secrets in addition to those used by Ansible. Ask James about secrets.auto.tfvars
   - Note that some of these secrets are the same secrets used as AWS credentials above, but they'll need to be provided again to populate the Terraform variables as well
 - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use. `gcloud auth application-default login`
 - Terraform runs `prepkey.sh` to grab your SSH public key to use as a deployer key in AWS. This script makes some simple assumptions: that `jq` is installed, and that your public key can be found at `~/.ssh/id_rsa.pub`.
 - We host DNS on Cloudflare. An API key to manage these zones is one of the secrets you'll need to provide. To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
+</details>
 
 #### Deployment
 - You'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
