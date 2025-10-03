@@ -10,11 +10,7 @@ dev: venv roles .vagrant
 venv: .venv/bin/activate
 
 .venv/bin/activate: requirements.txt
-<<<<<<< HEAD
-	test -d .venv || virtualenv .venv
-=======
-	test -d .venv || python3 -m venv .venv
->>>>>>> 25d4bf3 (Fix venv creation command)
+	test -d .venv || ./bin/python3 -m venv .venv
 	.venv/bin/pip install --upgrade pip virtualenv
 	.venv/bin/pip install -Ur requirements.txt
 	touch .venv/bin/activate
@@ -41,7 +37,8 @@ retry: venv roles site.retry
 	.venv/bin/ansible-playbook site.yml -l @site.retry
 
 clean:
-	rm -rf .venv roles/external site.retry collections 
+	rm -rf .venv roles/external site.retry collections
+	./bin/hermit clean -a
 	
 clean-all: clean
 	rm -rf .vagrant
