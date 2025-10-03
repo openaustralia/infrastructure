@@ -1,58 +1,56 @@
 .PHONY: venv production ALL dev letsencrypt check-rtk ansible
-
+SHELL=/bin/bash
 ALL: .keybase venv roles
 dev: venv roles .vagrant
-ansible: ALL
+ansible: .hermit/python/bin/ansible
 
+ACTIVATE=. bin/activate-hermit
+
+.keybase:
+	ln -sf $(shell keybase config get -d -b mountdir) .keybase
+	
 .vagrant:
 	VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant plugin install vagrant-hostsupdater
 	touch .vagrant
 
-venv: .venv/bin/activate
+.hermit/python/bin/ansible: requirements.txt
+	$(ACTIVATE); pip install --upgrade pip
+	$(ACTIVATE); pip install -Ur requirements.txt
+	touch .hermit/python/bin/ansible
 
-.venv/bin/activate: requirements.txt
-	test -d .venv || ./bin/python3 -m venv .venv
-	.venv/bin/pip install --upgrade pip virtualenv
-	.venv/bin/pip install -Ur requirements.txt
-	touch .venv/bin/activate
-
-collections:
-	.venv/bin/ansible-galaxy collection install -r roles/requirements.yml
+collections: ansible
+	$(ACTIVATE); ansible-galaxy collection install -r roles/requirements.yml
 
 roles/external: collections roles/requirements.yml
-	.venv/bin/ansible-galaxy install -r roles/requirements.yml -p roles/external
+	$(ACTIVATE); ansible-galaxy install -r roles/requirements.yml -p roles/external
 	touch roles/external
 
 roles: roles/external
 
-<<<<<<< HEAD
-production: venv roles
-=======
 production: ansible
->>>>>>> b3ef96c (Tidy makefile)
-	.venv/bin/ansible-playbook site.yml
+	$(ACTIVATE); ansible-playbook site.yml
 
 letsencrypt: ansible
-	.venv/bin/ansible-playbook update-ssl-certs.yml
+	$(ACTIVATE); ansible-playbook update-ssl-certs.yml
 
 #Just updates the SSH keys for the deploy user on all hosts.
 ssh: ansible
-	.venv/bin/ansible-playbook deploy_user.yml
+	$(ACTIVATE); ansible-playbook deploy_user.yml
 
 retry: ansible site.retry
-	.venv/bin/ansible-playbook site.yml -l @site.retry
+	$(ACTIVATE); ansible-playbook site.yml -l @site.retry
 
 clean:
-	rm -rf .venv roles/external site.retry collections .keybase
-	./bin/hermit clean -a
+	rm -rf .venv roles/external site.retry collections .keybase .hermit
+	$(ACTIVATE); hermit clean -a
 	
 clean-all: clean
 	rm -rf .vagrant
 
 check-righttoknow: ansible
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check
+	$(ACTIVATE); ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check
 check-planningalerts: ansible
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
+	$(ACTIVATE); ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
 
 update-github-ssh-keys: ansible
-	.venv/bin/ansible-playbook site.yml --tags userkeys
+	$(ACTIVATE); ansible-playbook site.yml --tags userkeys
