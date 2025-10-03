@@ -1,10 +1,11 @@
-.PHONY: venv production ALL dev letsencrypt check-rtk ansible
+.PHONY: production ALL dev letsencrypt check-rtk
 SHELL=/bin/bash
-ALL: .keybase venv roles
-dev: venv roles .vagrant
-ansible: .hermit/python/bin/ansible
-
 ACTIVATE=. bin/activate-hermit
+ANSIBLE=.hermit/python/bin/ansible
+
+ALL: .keybase $(ANSIBLE) roles
+
+dev: ALL .vagrant
 
 .keybase:
 	ln -sf $(shell keybase config get -d -b mountdir) .keybase
@@ -13,31 +14,31 @@ ACTIVATE=. bin/activate-hermit
 	VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant plugin install vagrant-hostsupdater
 	touch .vagrant
 
-.hermit/python/bin/ansible: requirements.txt
+$(ANSIBLE): requirements.txt
 	$(ACTIVATE); pip install --upgrade pip
 	$(ACTIVATE); pip install -Ur requirements.txt
-	touch .hermit/python/bin/ansible
 
-collections: ansible
+collections: $(ANSIBLE) roles/requirements.yml
 	$(ACTIVATE); ansible-galaxy collection install -r roles/requirements.yml
+	touch collections
 
-roles/external: collections roles/requirements.yml
+roles/external: $(ANSIBLE) roles/requirements.yml
 	$(ACTIVATE); ansible-galaxy install -r roles/requirements.yml -p roles/external
 	touch roles/external
 
-roles: roles/external
+roles: roles/external collections
 
-production: ansible
+production: $(ANSIBLE)
 	$(ACTIVATE); ansible-playbook site.yml
 
-letsencrypt: ansible
+letsencrypt: $(ANSIBLE)
 	$(ACTIVATE); ansible-playbook update-ssl-certs.yml
 
 #Just updates the SSH keys for the deploy user on all hosts.
 ssh: ansible
 	$(ACTIVATE); ansible-playbook deploy_user.yml
 
-retry: ansible site.retry
+retry: $(ANSIBLE) site.retry
 	$(ACTIVATE); ansible-playbook site.yml -l @site.retry
 
 clean:
@@ -47,10 +48,11 @@ clean:
 clean-all: clean
 	rm -rf .vagrant
 
-check-righttoknow: ansible
+check-righttoknow: $(ANSIBLE)
 	$(ACTIVATE); ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check
-check-planningalerts: ansible
+
+check-planningalerts: $(ANSIBLE)
 	$(ACTIVATE); ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
 
-update-github-ssh-keys: ansible
+update-github-ssh-keys: $(ANSIBLE)
 	$(ACTIVATE); ansible-playbook site.yml --tags userkeys
