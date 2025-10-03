@@ -1,6 +1,6 @@
 .PHONY: production ALL dev letsencrypt check-rtk
 SHELL=/bin/bash
-ACTIVATE=. bin/activate-hermit
+HERMIT=. bin/activate-hermit; 
 ANSIBLE=.hermit/python/bin/ansible
 
 ALL: .keybase $(ANSIBLE) roles
@@ -15,44 +15,44 @@ dev: ALL .vagrant
 	touch .vagrant
 
 $(ANSIBLE): requirements.txt
-	$(ACTIVATE); pip install --upgrade pip
-	$(ACTIVATE); pip install -Ur requirements.txt
+	$(HERMIT) pip install --upgrade pip
+	$(HERMIT) pip install -Ur requirements.txt
 
 collections: $(ANSIBLE) roles/requirements.yml
-	$(ACTIVATE); ansible-galaxy collection install -r roles/requirements.yml
+	$(HERMIT) ansible-galaxy collection install -r roles/requirements.yml
 	touch collections
 
 roles/external: $(ANSIBLE) roles/requirements.yml
-	$(ACTIVATE); ansible-galaxy install -r roles/requirements.yml -p roles/external
+	$(HERMIT) ansible-galaxy install -r roles/requirements.yml -p roles/external
 	touch roles/external
 
 roles: roles/external collections
 
 production: $(ANSIBLE)
-	$(ACTIVATE); ansible-playbook site.yml
+	$(HERMIT) ansible-playbook site.yml
 
 letsencrypt: $(ANSIBLE)
-	$(ACTIVATE); ansible-playbook update-ssl-certs.yml
+	$(HERMIT) ansible-playbook update-ssl-certs.yml
 
 #Just updates the SSH keys for the deploy user on all hosts.
 ssh: ansible
-	$(ACTIVATE); ansible-playbook deploy_user.yml
+	$(HERMIT) ansible-playbook deploy_user.yml
 
 retry: $(ANSIBLE) site.retry
-	$(ACTIVATE); ansible-playbook site.yml -l @site.retry
+	$(HERMIT) ansible-playbook site.yml -l @site.retry
 
 clean:
 	rm -rf .venv roles/external site.retry collections .keybase .hermit
-	$(ACTIVATE); hermit clean -a
+	$(HERMIT) hermit clean -a
 	
 clean-all: clean
 	rm -rf .vagrant
 
 check-righttoknow: $(ANSIBLE)
-	$(ACTIVATE); ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check
+	$(HERMIT) ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check
 
 check-planningalerts: $(ANSIBLE)
-	$(ACTIVATE); ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
+	$(HERMIT) ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
 
 update-github-ssh-keys: $(ANSIBLE)
-	$(ACTIVATE); ansible-playbook site.yml --tags userkeys
+	$(HERMIT) ansible-playbook site.yml --tags userkeys
