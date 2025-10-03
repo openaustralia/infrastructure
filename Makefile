@@ -1,6 +1,7 @@
-.PHONY: venv roles production ALL letsencrypt check-rtk
+.PHONY: venv roles production ALL dev letsencrypt check-rtk
 
-ALL: venv roles .vagrant
+ALL: venv roles
+dev: venv roles .vagrant
 
 .vagrant:
 	VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant plugin install vagrant-hostsupdater
