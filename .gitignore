@@ -18,3 +18,4 @@ certificates/*.key
 certificates/*.pem
 
 .venv/
+.hermit/
