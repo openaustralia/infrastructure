@@ -128,3 +128,16 @@ dependencies:
         source: /srv/www/shared/data/images
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/electionleaflets/{{ inventory_hostname }}/electionleaflets_images"
+  - role: nickhammond.logrotate
+    logrotate_scripts:
+    - name: production
+      path: "/srv/www/log/*_log"
+      options:
+      - daily
+      - rotate 7
+      - compress
+      - missingok
+      - copytruncate
+      - sharedscripts
+      - postrotate reload apache2 >/dev/null 2>&1 || true
+      - endscript
