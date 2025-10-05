@@ -836,6 +836,7 @@ SHARED_FILES_PATH: ''
 SHARED_FILES:
   - config/database.yml
   - config/general.yml
+  - config/user_spam_scorer.yml
   - config/rails_env.rb
   - config/newrelic.yml
   - config/httpd.conf
