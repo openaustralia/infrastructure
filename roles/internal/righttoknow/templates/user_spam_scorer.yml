@@ -18,9 +18,6 @@ user_spam_scorer:
     - shitmail.de
     - yopmail.com
     - yandex.com
-    - sharklasers.com
-    - guerrillamail.com
-    - mailinator.com
   spam_domains:
     - 7x.cz
     - allemaling.com
@@ -56,7 +53,9 @@ user_spam_scorer:
     - webgarden.cz
     - wgz.cz
     - wowmailing.com
-    
+    - sharklasers.com
+    - guerrillamail.com
+    - mailinator.comx
   suspicious_user_agents:
     - curl
   suspicious_ip_ranges:
