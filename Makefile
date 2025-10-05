@@ -56,3 +56,11 @@ check-planningalerts: $(ANSIBLE)
 
 update-github-ssh-keys: $(ANSIBLE)
 	$(HERMIT) ansible-playbook site.yml --tags userkeys
+apply-righttoknow:
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow
+apply-planningalerts:
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts
+
+update-github-ssh-keys:
+	.venv/bin/ansible-playbook site.yml --tags userkeys
+

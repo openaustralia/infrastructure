@@ -395,6 +395,17 @@
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
   notify: nginx restart
 
+- name: Apply user spam scorer config
+  template:
+    src: user_spam_scorer.yml
+    dest: "/srv/www/{{ item }}/shared/user_spam_scorer.yml"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+    - staging
+  notify: nginx restart
+
 - import_tasks: certificates.yml
 - import_tasks: cron.yml
 
