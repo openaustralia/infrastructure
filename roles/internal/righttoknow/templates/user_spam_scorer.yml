@@ -30,6 +30,7 @@ user_spam_scorer:
     - contumail.com
     - emailber.com
     - grow-mail.com
+    - guerrillamail.com
     - inemaling.com
     - inmailing.com
     - itemailing.com
@@ -40,9 +41,11 @@ user_spam_scorer:
     - kodmailing.com
     - left-mail.com
     - mabermail.com
+    - mailinator.com
     - mailphar.com
     - out-email.com
     - semi-mile.com
+    - sharklasers.com
     - sin-mailing.com
     - sinemailing.com
     - sinmailing.com
@@ -53,9 +56,6 @@ user_spam_scorer:
     - webgarden.cz
     - wgz.cz
     - wowmailing.com
-    - sharklasers.com
-    - guerrillamail.com
-    - mailinator.comx
   suspicious_user_agents:
     - curl
   suspicious_ip_ranges:
