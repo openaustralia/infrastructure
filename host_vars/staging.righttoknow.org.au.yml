@@ -1,0 +1,16 @@
+# Host-specific variables for staging.righttoknow.org.au
+# Override connection settings for fresh EC2 instance
+
+# Use ubuntu user for initial connection
+ansible_user: ubuntu
+ansible_ssh_private_key_file: "{{ playbook_dir }}/terraform.pem"
+
+# Staging-specific settings
+name: staging.righttoknow.org.au
+rails_env: staging
+domain: staging.righttoknow.org.au
+test_domain: staging-test.righttoknow.org.au
+
+# Disable cron and backups for staging
+cron_enabled: false
+backup_profiles: []

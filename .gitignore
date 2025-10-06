@@ -9,6 +9,7 @@ ec2-provisioning.retry
 terraform/.terraform
 terraform/secrets.auto.tfvars
 terraform/aws.auto.tfvars
+terraform/set-terraform-env.sh
 terraform/terraform.tfstate.*
 site.retry
 ubuntu-xenial-16.04-cloudimg-console.log
@@ -19,3 +20,10 @@ certificates/*.key
 certificates/*.pem
 
 .venv/
+
+# Vault password files (should be symlinks to user's home directory or actual files)
+# These contain sensitive passwords and should never be committed as regular files
+.vault_pass.txt
+.rtk-vault-pass
+.ec2-vault-pass
+.all-vault-pass
