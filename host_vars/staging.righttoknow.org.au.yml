@@ -7,7 +7,7 @@ ansible_ssh_private_key_file: "{{ playbook_dir }}/terraform.pem"
 
 # Staging-specific settings
 name: staging.righttoknow.org.au
-rails_env: staging
+rails_env: production
 domain: staging.righttoknow.org.au
 test_domain: staging-test.righttoknow.org.au
 

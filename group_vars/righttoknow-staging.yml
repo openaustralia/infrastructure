@@ -17,11 +17,11 @@ github_users:
 cron_enabled: false
 
 # Staging-specific settings
-rails_env: staging
-# Or if you want to test in production mode:
-# rails_env: production
+# Both staging and production environments run in Rails production mode
+rails_env: production
 
-# You might want different domains for staging
+# Domain configuration for standalone staging server
+righttoknow_domain: staging.righttoknow.org.au
 domain: staging.righttoknow.org.au
 test_domain: staging-test.righttoknow.org.au
 
