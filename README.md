@@ -211,13 +211,23 @@ Ansible Vault secrets are distributed via
 servers, you'll need to be added to the appropriate teams.
 
 You'll need to have Keybase installed on the machine where you run
-ansible. You'll need to enable "Finder integration" or the equivalent
-on your platform, under Settings -> Files.
+ansible. 
+
+If this system has a gui, you'll need to enable "Finder integration"
+or the equivalent on your platform, under Settings -> Files.
+
+If your system does *not* have a GUI - for instance, it's a WSL instance on
+windows; or a remote Ubuntu VM running headless - there's a helper script
+at `bin/headless-keybase.sh` which will help you run the Keybase services
+as user-space systemd units.
+
+The first time you run `make`, `.keybase` will be created as a symlink to the
+place where Keybase makes the files available. This is often `/keybase` on 
+linux desktops, or `/Volumes/Keybase` on MacOS. On headless systems it might
+be under `/run/user/`.
 
 Once this is done, the symlinks to .*-vault-pass inside the repo
-should point to the password files.
-
-(Note on OS X and keybase 5.3.0 the symlinks point to the wrong place. The keybase filesystem now starts at /Volumes/Keybase rather than /keybase)
+should point to the password files. If this doesn't work you may need to update these files yourself.
 
 ## <a name='GeneratingSSLcertificatesfordevelopment'></a>Generating SSL certificates for development
 See certificates/README.md for more information.

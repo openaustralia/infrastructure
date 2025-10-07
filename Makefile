@@ -2,6 +2,9 @@
 
 ALL: venv roles .vagrant
 
+.keybase:
+	ln -sf $(shell keybase config get -d -b mountdir) .keybase
+	
 .vagrant:
 	VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant plugin install vagrant-hostsupdater
 	touch .vagrant
@@ -9,7 +12,7 @@ ALL: venv roles .vagrant
 venv: .venv/bin/activate
 
 .venv/bin/activate: requirements.txt
-	test -d .venv || virtualenv .venv
+	test -d .venv || python3 -m virtualenv .venv
 	.venv/bin/pip install --upgrade pip virtualenv
 	.venv/bin/pip install -Ur requirements.txt
 	touch .venv/bin/activate
@@ -22,7 +25,7 @@ roles/external: venv collections roles/requirements.yml
 
 roles: roles/external
 
-production: venv roles
+production: .keybase venv roles
 	.venv/bin/ansible-playbook site.yml
 
 letsencrypt: venv roles
@@ -53,4 +56,3 @@ apply-planningalerts:
 
 update-github-ssh-keys:
 	.venv/bin/ansible-playbook site.yml --tags userkeys
-
