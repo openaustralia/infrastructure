@@ -86,15 +86,47 @@ server {
   location / {
 
     # Block overly aggressive bot that isn't giving a sensible user agent
-    # Block overly aggressive bot that isn't giving a sensible user agent
     deny 47.76.0.0/16;
     deny 47.242.0.0/16;
     deny 8.210.0.0/16;
     deny 8.218.0.0/16;
     deny 8.222.0.0/16;
     deny 47.82.0.0/19;
-    deny 47.82.12.0/23;
-    deny 47.82.14.0/23;
+
+    # Additional ranges 2025-09-24
+	
+	# Kingsoft Cloud
+    deny 104.250.52.0/22;
+		
+    # Meta / Facebook
+    deny 57.141.2.0/24;
+		
+    # Google Cloud & Crawlers
+    deny 34.174.0.0/17;
+    deny 66.249.68.0/24;
+		
+    # SEMrush SEO crawler
+    deny 185.191.171.0/24;
+    deny 85.208.96.0/24;
+		
+    # Huawei Cloud
+    deny 202.76.160.0/20;
+    deny 146.174.160.0/20;
+	
+    # Amazon AWS
+    deny 18.97.9.0/24;
+		
+    # Microsoft Azure / Bingbot
+    deny 52.167.144.0/24;
+    deny 40.77.167.0/24;
+    deny 20.194.157.0/24;
+    deny 20.27.94.0/24;
+	
+    # Enzu / Hosting
+    deny 108.187.240.0/24;
+    deny 107.163.177.0/24;
+    deny 23.231.224.0/24;
+    deny 192.229.67.0/24;
     
     # Pass the request on to Varnish.
     proxy_pass  http://127.0.0.1;
