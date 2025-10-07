@@ -1,1 +1,1 @@
-/keybase/team/oaforgau.sysadmin/.vault_pass.txt
+.keybase/team/oaforgau.sysadmin/.vault_pass.txt
