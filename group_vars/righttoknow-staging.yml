@@ -33,8 +33,6 @@ certbot_webserver: nginx
 certbot_webroot: /usr/share/nginx/html
 certbot_domains:
   - staging.righttoknow.org.au
-  - staging-test.righttoknow.org.au
-  - www.staging-test.righttoknow.org.au
 
 # NOTE: For staging, you'll need to add encrypted secrets here similar to production
 # You can copy from production and modify, or generate new ones:
