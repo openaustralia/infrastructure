@@ -1,6 +1,5 @@
 
 .vagrant
-.keybase
 roles/external
 collections/
 test.pem
