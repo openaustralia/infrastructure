@@ -110,3 +110,18 @@ resource "cloudflare_record" "staging" {
   type    = "A"
   value   = aws_eip.staging.public_ip
 }
+
+resource "cloudflare_record" "staging-spf" {
+  zone_id = cloudflare_zone.main.id
+  name    = "staging.righttoknow.org.au"
+  type    = "TXT"
+  value   = "v=spf1 a include:_spf.google.com ~all"
+}
+
+resource "cloudflare_record" "staging-mx" {
+  zone_id  = cloudflare_zone.main.id
+  name     = "staging.righttoknow.org.au"
+  type     = "MX"
+  priority = 1
+  value    = "smtp.google.com"
+}
