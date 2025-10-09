@@ -9,7 +9,6 @@
 name: staging.righttoknow.org.au
 rails_env: production
 domain: staging.righttoknow.org.au
-test_domain: staging-test.righttoknow.org.au
 
 # Disable cron and backups for staging
 cron_enabled: false

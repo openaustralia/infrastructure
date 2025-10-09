@@ -23,7 +23,6 @@ rails_env: production
 # Domain configuration for standalone staging server
 righttoknow_domain: staging.righttoknow.org.au
 domain: staging.righttoknow.org.au
-test_domain: staging-test.righttoknow.org.au
 
 # Disable backups for staging
 backup_profiles: []
