@@ -2,8 +2,8 @@
 # Override connection settings for fresh EC2 instance
 
 # Use ubuntu user for initial connection
-ansible_user: ubuntu
-ansible_ssh_private_key_file: "{{ playbook_dir }}/terraform.pem"
+# ansible_user: ubuntu
+# ansible_ssh_private_key_file: "{{ playbook_dir }}/terraform.pem"
 
 # Staging-specific settings
 name: staging.righttoknow.org.au

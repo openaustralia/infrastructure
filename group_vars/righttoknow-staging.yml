@@ -47,5 +47,5 @@ certbot_domains:
 # For initial testing, you might copy production values and change passwords
 
 # Ansible connection settings for staging server
-ansible_user: ubuntu
-ansible_ssh_private_key_file: "{{ playbook_dir }}/terraform.pem"
+# ansible_user: ubuntu
+# ansible_ssh_private_key_file: "{{ playbook_dir }}/terraform.pem"
