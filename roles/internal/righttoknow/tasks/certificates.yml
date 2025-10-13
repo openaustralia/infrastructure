@@ -46,7 +46,7 @@
       [
         {
           'email': 'contact@oaf.org.au',
-          'domains': [righttoknow_domain, 'www.' + righttoknow_domain]
+          'domains': [righttoknow_domain]
         }
       ],
       [
