@@ -4,8 +4,12 @@
     state: directory
     path: "/etc/letsencrypt/live/{{ item }}"
   with_items:
+    {% if not (standalone_staging | default(false)) %}
     - "{{ righttoknow_domain }}"
     - "test.{{ righttoknow_domain }}"
+    {% else %}
+    - "{{ righttoknow_domain }}"
+    {% endif %}
   when: "'development' in group_names"
 
 # We need to setup the SSL certificates before we try to configure nginx
@@ -17,8 +21,12 @@
     dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
     mode: 0644
   with_items:
+    {% if not (standalone_staging | default(false)) %}
     - "{{ righttoknow_domain }}"
     - "test.{{ righttoknow_domain }}"
+    {% else %}
+    - "{{ righttoknow_domain }}"
+    {% endif %}
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: nginx restart
@@ -29,8 +37,12 @@
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
     mode: 0640
   with_items:
+    {% if not (standalone_staging | default(false)) %}
     - "{{ righttoknow_domain }}"
     - "test.{{ righttoknow_domain }}"
+    {% else %}
+    - "{{ righttoknow_domain }}"
+    {% endif %}
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: nginx restart
@@ -49,12 +61,19 @@
     name: oaf.certbot
   vars:
     certbot_certs:
+      {% if not (standalone_staging | default(false)) %}
       - email: contact@oaf.org.au
         domains:
           - "{{ righttoknow_domain }}"
           - www."{{ righttoknow_domain }}"
+      {% endif %}
       - email: contact@oaf.org.au
         domains:
+          {% if standalone_staging | default(false) %}
+          - "{{ righttoknow_domain }}"
+          - www."{{ righttoknow_domain }}"
+          {% else %}
           - "test.{{ righttoknow_domain }}"
           - "www.test.{{ righttoknow_domain }}"
+          {% endif %}
   when: "'ec2' in group_names"

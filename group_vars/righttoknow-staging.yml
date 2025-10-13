@@ -2,6 +2,9 @@
 # Most values inherited from righttoknow.yml
 name: staging.righttoknow.org.au
 
+# Flag to indicate this is a standalone staging server (not joint prod/staging)
+standalone_staging: true
+
 # Use the same github users as production
 github_users:
   [
@@ -21,6 +24,7 @@ cron_enabled: false
 rails_env: production
 
 # Domain configuration for standalone staging server
+# Standalone staging is accessed at staging.righttoknow.org.au (NOT test.righttoknow.org.au)
 righttoknow_domain: staging.righttoknow.org.au
 domain: staging.righttoknow.org.au
 
@@ -28,10 +32,12 @@ domain: staging.righttoknow.org.au
 backup_profiles: []
 
 # Use staging SSL certificates
+# Standalone staging only needs staging.righttoknow.org.au certificates
 certbot_webserver: nginx
 certbot_webroot: /usr/share/nginx/html
 certbot_domains:
   - staging.righttoknow.org.au
+  - www.staging.righttoknow.org.au
 
 # NOTE: For staging, you'll need to add encrypted secrets here similar to production
 # You can copy from production and modify, or generate new ones:
