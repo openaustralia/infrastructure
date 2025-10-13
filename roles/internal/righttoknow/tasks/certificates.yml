@@ -3,13 +3,7 @@
   file:
     state: directory
     path: "/etc/letsencrypt/live/{{ item }}"
-  with_items:
-    {% if not (standalone_staging | default(false)) %}
-    - "{{ righttoknow_domain }}"
-    - "test.{{ righttoknow_domain }}"
-    {% else %}
-    - "{{ righttoknow_domain }}"
-    {% endif %}
+  with_items: "{{ [righttoknow_domain] + ([] if (standalone_staging | default(false)) else ['test.' + righttoknow_domain]) }}"
   when: "'development' in group_names"
 
 # We need to setup the SSL certificates before we try to configure nginx
@@ -20,13 +14,7 @@
     # We're faking it as if these are let's encrypt certs. Makes for less magic config
     dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
     mode: 0644
-  with_items:
-    {% if not (standalone_staging | default(false)) %}
-    - "{{ righttoknow_domain }}"
-    - "test.{{ righttoknow_domain }}"
-    {% else %}
-    - "{{ righttoknow_domain }}"
-    {% endif %}
+  with_items: "{{ [righttoknow_domain] + ([] if (standalone_staging | default(false)) else ['test.' + righttoknow_domain]) }}"
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: nginx restart
@@ -36,13 +24,7 @@
     src: "{{ item }}.key"
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
     mode: 0640
-  with_items:
-    {% if not (standalone_staging | default(false)) %}
-    - "{{ righttoknow_domain }}"
-    - "test.{{ righttoknow_domain }}"
-    {% else %}
-    - "{{ righttoknow_domain }}"
-    {% endif %}
+  with_items: "{{ [righttoknow_domain] + ([] if (standalone_staging | default(false)) else ['test.' + righttoknow_domain]) }}"
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: nginx restart
@@ -60,20 +42,22 @@
   include_role:
     name: oaf.certbot
   vars:
-    certbot_certs:
-      {% if not (standalone_staging | default(false)) %}
-      - email: contact@oaf.org.au
-        domains:
-          - "{{ righttoknow_domain }}"
-          - www."{{ righttoknow_domain }}"
-      {% endif %}
-      - email: contact@oaf.org.au
-        domains:
-          {% if standalone_staging | default(false) %}
-          - "{{ righttoknow_domain }}"
-          - www."{{ righttoknow_domain }}"
-          {% else %}
-          - "test.{{ righttoknow_domain }}"
-          - "www.test.{{ righttoknow_domain }}"
-          {% endif %}
+    certbot_certs: "{{ (standalone_staging | default(false)) | ternary(
+      [
+        {
+          'email': 'contact@oaf.org.au',
+          'domains': [righttoknow_domain, 'www.' + righttoknow_domain]
+        }
+      ],
+      [
+        {
+          'email': 'contact@oaf.org.au',
+          'domains': [righttoknow_domain, 'www.' + righttoknow_domain]
+        },
+        {
+          'email': 'contact@oaf.org.au',
+          'domains': ['test.' + righttoknow_domain, 'www.test.' + righttoknow_domain]
+        }
+      ]
+    ) }}"
   when: "'ec2' in group_names"
