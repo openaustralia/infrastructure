@@ -221,10 +221,12 @@ windows; or a remote Ubuntu VM running headless - there's a helper script
 at `bin/headless-keybase.sh` which will help you run the Keybase services
 as user-space systemd units.
 
-The first time you run `make`, `.keybase` will be created as a symlink to the
-place where Keybase makes the files available. This is often `/keybase` on 
-linux desktops, or `/Volumes/Keybase` on MacOS. On headless systems it might
-be under `/run/user/`.
+The first time you run `make`, it will try to create `.keybase` as a symlink to 
+the place where Keybase makes the files available. This is often `/keybase` on 
+linux desktops. On headless systems it might be under `/run/user/`.
+
+For Mac users, you may need to run `make macos-keybase`, which forces the `.keybase` 
+folder to symlink to `/Volumes/Keybase`.
 
 Once this is done, the symlinks to .*-vault-pass inside the repo
 should point to the password files. If this doesn't work you may need to update these files yourself.
