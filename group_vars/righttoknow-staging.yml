@@ -31,10 +31,11 @@ domain: staging.righttoknow.org.au
 # Disable backups for staging
 backup_profiles: []
 
-# Use staging SSL certificates
-# Standalone staging only needs staging.righttoknow.org.au certificates
+# Use real SSL certificates with standalone mode
+# Standalone staging needs real production certificates for staging.righttoknow.org.au
 certbot_webserver: nginx
-certbot_webroot: /usr/share/nginx/html
+certbot_standalone: true
+certbot_staging: false
 certbot_domains:
   - staging.righttoknow.org.au
   - www.staging.righttoknow.org.au
