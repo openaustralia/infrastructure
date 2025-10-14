@@ -1,4 +1,4 @@
-.PHONY: venv roles production ALL letsencrypt check-rtk
+.PHONY: venv roles production ALL letsencrypt
 
 ALL: venv roles .vagrant
 
@@ -44,13 +44,31 @@ clean:
 clean-all: clean
 	rm -rf .vagrant
 
-check-righttoknow:
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check
+# Configure Keybase for MacOS
+macos-keybase:
+	ln -sf /Volumes/Keybase .keybase
+
+# Terraform
+tf-init:
+	terraform -chdir=terraform init
+tf-plan:
+	terraform -chdir=terraform plan
+tf-apply:
+	terraform -chdir=terraform apply
+
+# Checks only
+check-rtk-prod:
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check --diff
+check-rtk-staging:
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow-staging --check --diff
 check-planningalerts:
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
 
-apply-righttoknow:
+# These make changes 
+apply-rtk-prod:
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow
+apply-rtk-staging:
+	.venv/bin/ansible-playbook -i site.yml -l righttoknow-staging
 apply-planningalerts:
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts
 
