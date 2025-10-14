@@ -39,7 +39,7 @@ retry: venv roles site.retry
 	.venv/bin/ansible-playbook site.yml -l @site.retry
 
 clean:
-	rm -rf .venv roles/external site.retry collections 
+	rm -rf .venv roles/external site.retry collections .keybase
 	
 clean-all: clean
 	rm -rf .vagrant
