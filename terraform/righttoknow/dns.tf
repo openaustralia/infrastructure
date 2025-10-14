@@ -111,6 +111,13 @@ resource "cloudflare_record" "staging" {
   value   = aws_eip.staging.public_ip
 }
 
+resource "cloudflare_record" "www_staging" {
+  zone_id = cloudflare_zone.main.id
+  name    = "www.staging.righttoknow.org.au"
+  type    = "CNAME"
+  value   = "staging.righttoknow.org.au"
+}
+
 resource "cloudflare_record" "staging-spf" {
   zone_id = cloudflare_zone.main.id
   name    = "staging.righttoknow.org.au"

@@ -30,4 +30,24 @@
 - name: Install certificates with certbot via webroot
   command: certbot certonly --non-interactive --agree-tos --keep --expand --webroot -w {{ certbot_webroot }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs| flatten(levels=1) }}"
-  when: certbot_webroot is defined
+  when: certbot_webroot is defined and not (certbot_standalone | default(false))
+
+- name: Stop varnish for standalone certbot
+  systemd:
+    name: varnish
+    state: stopped
+  when: certbot_standalone | default(false)
+
+- name: Install certificates with certbot standalone
+  command: >
+    certbot certonly --non-interactive --agree-tos --keep --expand --standalone
+    {% if certbot_staging | default(false) %}--staging{% endif %}
+    -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  loop: "{{ certbot_certs| flatten(levels=1) }}"
+  when: certbot_standalone | default(false)
+
+- name: Start varnish after standalone certbot
+  systemd:
+    name: varnish
+    state: started
+  when: certbot_standalone | default(false)

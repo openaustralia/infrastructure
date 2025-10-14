@@ -1,2 +1,4 @@
+{% if not (standalone_staging | default(false)) %}
 /^foi\+.*/  alaveteli
+{% endif %}
 /^foitest\+.*/  alavetelitest
