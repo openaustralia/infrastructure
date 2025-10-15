@@ -1,4 +1,4 @@
-.PHONY: ALL venv roles production letsencrypt ssh retry clean clean-all macos-keybase tf-init tf-plan tf-apply check-rtk-prod check-rtk-staging check-planningalerts apply-rtk-prod apply-rtk-staging apply-planningalerts update-github-ssh-keys
+.PHONY: ALL venv roles production letsencrypt retry clean clean-all macos-keybase tf-init tf-plan tf-apply check-rtk-prod check-rtk-staging check-planningalerts apply-rtk-prod apply-rtk-staging apply-planningalerts update-github-ssh-keys
 ALL: roles .vagrant
 PRODUCTION := .keybase roles
 
@@ -30,10 +30,6 @@ production: $(PRODUCTION)
 
 letsencrypt: $(PRODUCTION)
 	.venv/bin/ansible-playbook update-ssl-certs.yml
-
-#Just updates the SSH keys for the deploy user on all hosts.
-ssh: $(PRODUCTION)
-	.venv/bin/ansible-playbook deploy_user.yml
 
 retry: $(PRODUCTION) site.retry
 	.venv/bin/ansible-playbook site.yml -l @site.retry
