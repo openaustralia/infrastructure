@@ -1,4 +1,4 @@
-.PHONY: venv roles production ALL letsencrypt
+.PHONY: ALL venv roles production letsencrypt ssh retry clean clean-all macos-keybase tf-init tf-plan tf-apply check-rtk-prod check-rtk-staging check-planningalerts apply-rtk-prod apply-rtk-staging apply-planningalerts update-github-ssh-keys
 
 ALL: venv roles .vagrant
 
