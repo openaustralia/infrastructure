@@ -1,6 +1,6 @@
 .PHONY: ALL venv roles production letsencrypt ssh retry clean clean-all macos-keybase tf-init tf-plan tf-apply check-rtk-prod check-rtk-staging check-planningalerts apply-rtk-prod apply-rtk-staging apply-planningalerts update-github-ssh-keys
-
-ALL: venv roles .vagrant
+ALL: roles .vagrant
+PRODUCTION := .keybase roles
 
 .keybase:
 	ln -sf $(shell keybase config get -d -b mountdir) .keybase
@@ -25,17 +25,17 @@ roles/external: venv collections roles/requirements.yml
 
 roles: roles/external
 
-production: .keybase venv roles
+production: $(PRODUCTION)
 	.venv/bin/ansible-playbook site.yml
 
-letsencrypt: venv roles
+letsencrypt: $(PRODUCTION)
 	.venv/bin/ansible-playbook update-ssl-certs.yml
 
 #Just updates the SSH keys for the deploy user on all hosts.
-ssh: venv roles
+ssh: $(PRODUCTION)
 	.venv/bin/ansible-playbook deploy_user.yml
 
-retry: venv roles site.retry
+retry: $(PRODUCTION) site.retry
 	.venv/bin/ansible-playbook site.yml -l @site.retry
 
 clean:
@@ -57,20 +57,20 @@ tf-apply:
 	terraform -chdir=terraform apply
 
 # Checks only
-check-rtk-prod:
+check-rtk-prod: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check --diff
-check-rtk-staging:
+check-rtk-staging: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow-staging --check --diff
-check-planningalerts:
+check-planningalerts: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
 
 # These make changes 
-apply-rtk-prod:
+apply-rtk-prod: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow
-apply-rtk-staging:
+apply-rtk-staging: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i site.yml -l righttoknow-staging
-apply-planningalerts:
+apply-planningalerts: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts
 
-update-github-ssh-keys:
+update-github-ssh-keys: $(PRODUCTION)
 	.venv/bin/ansible-playbook site.yml --tags userkeys
