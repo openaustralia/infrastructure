@@ -76,7 +76,7 @@
     state: directory
   with_nested:
     - "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
-    - ['files', 'cache', 'bundle']
+    - ['files', 'cache', 'bundle', 'storage']
 
 - name: Ensure that deploy owns application directories
   file:
@@ -95,7 +95,7 @@
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
     - "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
-    - ['files', 'cache', 'bundle']
+    - ['files', 'cache', 'bundle', 'storage']
 
 - name: Set the ruby version for the alaveteli deploy (production)
   copy:
@@ -436,6 +436,15 @@
   notify: nginx restart
   when: not (standalone_staging | default(false))
 
+  - name: Apply Alaveteli Storage Config (production)
+  template:
+    src: storage.yml
+    dest: /srv/www/production/shared/
+    owner: deploy
+    group: deploy
+  notify: nginx restart
+  when: not (standalone_staging | default(false))
+
 - name: Apply Alaveteli config (staging)
   template:
     src: general.yml
@@ -457,6 +466,14 @@
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
+  notify: nginx restart
+
+  - name: Apply Alaveteli Storage Config (staging)
+  template:
+    src: storage.yml
+    dest: /srv/www/staging/shared/
+    owner: deploy
+    group: deploy
   notify: nginx restart
 
 - name: Apply user spam scorer config
