@@ -436,7 +436,7 @@
   notify: nginx restart
   when: not (standalone_staging | default(false))
 
-  - name: Apply Alaveteli Storage Config (production)
+- name: Apply Alaveteli Storage Config (production)
   template:
     src: storage.yml
     dest: /srv/www/production/shared/
@@ -468,7 +468,7 @@
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
   notify: nginx restart
 
-  - name: Apply Alaveteli Storage Config (staging)
+- name: Apply Alaveteli Storage Config (staging)
   template:
     src: storage.yml
     dest: /srv/www/staging/shared/
