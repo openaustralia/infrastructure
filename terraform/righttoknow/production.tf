@@ -1,12 +1,3 @@
-terraform {
-  required_providers {
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 4.4.0"
-    }
-  }
-}
-
 # New Right to Know Production Server on Ubuntu 22.04
 # This creates a parallel production environment for Right to Know 
 
