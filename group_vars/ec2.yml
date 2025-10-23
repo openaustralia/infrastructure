@@ -6,7 +6,7 @@ oaf_domain: oaf.org.au
 opengovernment_domain: opengovernment.org.au
 electionleaflets_domain: electionleaflets.org.au
 ansible_user: ubuntu
-ansible_ssh_private_key_file: 'test.pem'
+ansible_ssh_private_key_file: 'terraform.pem'
 ec2_region: 'ap-southeast-2'
 # TODO: We only need this key to have limited privileges. It currently has too many privileges.
 aws_access_key: !vault |
