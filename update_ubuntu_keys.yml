@@ -18,6 +18,6 @@
 
 - hosts: ec2
   vars:
-    ansible_user: root
+    ansible_user: ubuntu
   roles:
     - deploy-user
