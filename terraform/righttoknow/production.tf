@@ -17,8 +17,8 @@ resource "aws_instance" "production" {
     var.security_group_webserver.name,
     var.security_group_incoming_email.name,
   ]
-  
-  availability_zone       = aws_ebs_volume.data.availability_zone
+
+  availability_zone       = aws_ebs_volume.production_data.availability_zone
   iam_instance_profile    = var.instance_profile.name
 
 # Disable termination to protect production
