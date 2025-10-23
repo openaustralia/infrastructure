@@ -31,10 +31,12 @@
   become: true
   gather_facts: False
 
-  tasks:
-  - name: install python 2 (or python 3 on Ubuntu 20.04)
-    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal) || apt install -y python-is-python3
-    changed_when: False
+## Disable this for the moment as it doesn't work when deploying new servers
+
+#  tasks:
+#  - name: install python 2 (or python 3 on Ubuntu 20.04)
+#    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal) || apt install -y python-is-python3
+#    changed_when: False
 
 - hosts: ec2
   become: true
