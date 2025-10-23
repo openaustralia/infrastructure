@@ -39,12 +39,12 @@
 - hosts: ec2
   become: true
   tasks:
-    - name: Install pip
+    - name: Install python-pip
       apt:
         pkg: python-pip
       when: ansible_distribution_release != 'focal' and ansible_distribution_release != 'jammy'
 
-    - name: Install pip
+    - name: Install python3-pip
       apt:
         pkg: python3-pip
       when: ansible_distribution_release == 'focal' or ansible_distribution_release == 'jammy'
