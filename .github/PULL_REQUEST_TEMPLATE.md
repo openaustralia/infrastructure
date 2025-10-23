@@ -1,12 +1,10 @@
+
 ## Relevant issue(s)
 
 ## What does this do?
 
 ## Why was this needed?
 
-## Implementation/Deploy Steps
+## Implementation/Deploy Steps (Optional)
 
-## Screenshots
-
-## Notes to reviewer
-
+## Notes to reviewer (Optional)
