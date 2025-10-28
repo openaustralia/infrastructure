@@ -56,7 +56,7 @@ tf-apply:
 check-rtk-prod: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check --diff
 check-rtk-staging: $(PRODUCTION)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow-staging --check --diff
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_staging --check --diff
 check-planningalerts: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
 
@@ -64,7 +64,7 @@ check-planningalerts: $(PRODUCTION)
 apply-rtk-prod: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow
 apply-rtk-staging: $(PRODUCTION)
-	.venv/bin/ansible-playbook -i site.yml -l righttoknow-staging
+	.venv/bin/ansible-playbook -i site.yml -l righttoknow_staging
 apply-planningalerts: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts
 

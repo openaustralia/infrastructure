@@ -25,10 +25,10 @@ openaustralia.org.au
 righttoknow.org.au
 staging.righttoknow.org.au
 
-[righttoknow-staging]
+[righttoknow_staging]
 staging.righttoknow.org.au
 
-[righttoknow-production]
+[righttoknow_production]
 prod.righttoknow.org.au
 
 [oaf]
