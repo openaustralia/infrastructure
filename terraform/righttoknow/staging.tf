@@ -9,7 +9,7 @@ resource "aws_instance" "staging" {
   tags = {
     Name        = "righttoknow-staging"
     Environment = "staging"
-    Purpose     = "Ubuntu 22.04 migration testing"
+    Purpose     = "Ubuntu 22.04 Staging Server"
   }
   
   security_groups = [
