@@ -19,3 +19,4 @@ certificates/*.key
 certificates/*.pem
 
 .venv/
+terraform/.secrets.auto.tfvars
