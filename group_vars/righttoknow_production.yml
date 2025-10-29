@@ -16,7 +16,14 @@ github_users:
     "mlandauer",
     "simonzippy",
   ]
-cron_enabled: true
+
+# Domain configuration for standalone production server
+# Standalone production is accessed at prod.righttoknow.org.au (NOT test.righttoknow.org.au)
+righttoknow_domain: prod.righttoknow.org.au
+domain: www.righttoknow.org.au
+
+
+cron_enabled: false
 certbot_webserver: nginx
 certbot_webroot: /usr/share/nginx/html
 backup_gpg_pw: !vault |
