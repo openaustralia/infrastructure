@@ -16,19 +16,20 @@
     dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
   when: ansible_distribution_release == 'jammy'
 
-- name: Apt via https
+- name: Install apt-transport-https (Ubuntu 18.04)
   apt:
     name: apt-transport-https
     state: present
+  when: ansible_distribution_release != 'jammy'
 
-- name: Apt add passenger to list (Ubuntu 18.04)
+- name: Add passenger repository (Ubuntu 18.04)
   apt_repository:
     repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
     state: present
     update_cache: yes
   when: ansible_distribution_release == 'bionic'
 
-- name: Apt add passenger to list (Ubuntu 22.04)
+- name: Add passenger repository (Ubuntu 22.04)
   apt_repository:
     repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
     state: present
