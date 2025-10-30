@@ -29,7 +29,7 @@
     update_cache: yes
   when: ansible_distribution_release == 'bionic'
 
-- name: Add passenger repository (Ubuntu 22.04)
+- name: Add passenger apt repository (Ubuntu 22.04)
   apt_repository:
     repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
     state: present
