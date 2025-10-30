@@ -53,20 +53,25 @@ tf-apply:
 	terraform -chdir=terraform apply
 
 # Checks only
-check-rtk-prod: $(PRODUCTION)
+check-righttoknow-all: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check --diff
-check-rtk-staging: $(PRODUCTION)
+check-righttoknow-staging: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_staging --check --diff
+check-righttoknow-prod: $(PRODUCTION)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_production --check --diff
 check-planningalerts: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
 
 # These make changes 
-apply-rtk-prod: $(PRODUCTION)
+apply-righttoknow-all: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow
-apply-rtk-staging: $(PRODUCTION)
-	.venv/bin/ansible-playbook -i site.yml -l righttoknow_staging
+apply-righttoknow-staging: $(PRODUCTION)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_staging
+apply-righttoknow-prod: $(PRODUCTION)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_production
 apply-planningalerts: $(PRODUCTION)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts
 
+# Update ssh keys on all servers
 update-github-ssh-keys: $(PRODUCTION)
 	.venv/bin/ansible-playbook site.yml --tags userkeys
