@@ -18,9 +18,9 @@ github_users:
   ]
 
 # Domain configuration for standalone production server
-# Standalone production is accessed at prod.righttoknow.org.au (NOT test.righttoknow.org.au)
-righttoknow_domain: prod.righttoknow.org.au
-domain: www.righttoknow.org.au
+righttoknow_domain: righttoknow.org.au # Used in certbot and SSL
+domain: righttoknow.org.au # Used in Nginx
+server_hostname: prod.righttoknow.org.au # Used in Nginx and certbot
 
 
 cron_enabled: false

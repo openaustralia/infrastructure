@@ -58,6 +58,24 @@
           'email': 'contact@oaf.org.au',
           'domains': ['test.' + righttoknow_domain, 'www.test.' + righttoknow_domain]
         }
-      ]
+      ],
+      ('righttoknow_production' in group_names) | ternary(
+        [
+          {
+            'email': 'contact@oaf.org.au',
+            'domains': [server_hostname, righttoknow_domain, 'www.' + righttoknow_domain]
+          }
+        ],
+        [
+          {
+            'email': 'contact@oaf.org.au',
+            'domains': [righttoknow_domain, 'www.' + righttoknow_domain]
+          },
+          {
+            'email': 'contact@oaf.org.au',
+            'domains': ['test.' + righttoknow_domain, 'www.test.' + righttoknow_domain]
+          }
+        ]
+      )
     ) }}"
   when: "'ec2' in group_names"
