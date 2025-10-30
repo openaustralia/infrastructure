@@ -53,7 +53,6 @@
 
     - name: Install boto which is required for EC2 stuff (Python 2)
       pip: name=boto
-      when: ansible_distribution_release != 'focal' and ansible_distribution_release != 'jammy'
 
     - name: Install boto3 which is required for EC2 stuff (Python 3)
       pip: name=boto3
