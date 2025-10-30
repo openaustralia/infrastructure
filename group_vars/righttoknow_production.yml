@@ -25,7 +25,7 @@ server_hostname: prod.righttoknow.org.au # Used in Nginx and certbot
 # Flag to indicate this is a standalone production server (not joint prod/staging)
 standalone_production: true
 
-cron_enabled: false
+cron_enabled: false # TODO: Enable after initial setup
 certbot_webserver: nginx
 certbot_webroot: /usr/share/nginx/html
 backup_gpg_pw: !vault |
