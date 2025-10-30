@@ -22,6 +22,8 @@ righttoknow_domain: righttoknow.org.au # Used in certbot and SSL
 domain: righttoknow.org.au # Used in Nginx
 server_hostname: prod.righttoknow.org.au # Used in Nginx and certbot
 
+# Flag to indicate this is a standalone production server (not joint prod/staging)
+standalone_production: true
 
 cron_enabled: false
 certbot_webserver: nginx
