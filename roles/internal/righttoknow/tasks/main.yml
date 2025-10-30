@@ -76,7 +76,7 @@
     group: deploy
     state: directory
   with_nested:
-    - "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+    - "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
     - ['files', 'cache', 'bundle', 'storage']
 
 - name: Ensure that deploy owns application directories
@@ -86,7 +86,7 @@
     group: deploy
     path: "/srv/www/{{ item[0] }}/{{ item[1] }}"
   with_nested:
-    - "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+    - "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
     - ['', 'shared']
 
 - name: Link directories in /srv/www to /data
@@ -95,7 +95,7 @@
     src: "/data/{{ item[0] }}/{{ item[1] }}"
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
-    - "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+    - "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
     - ['files', 'cache', 'bundle', 'storage']
 
 - name: Set the ruby version for the alaveteli deploy (production)
@@ -108,12 +108,13 @@
   copy:
     content: "{{ ruby_version_staging }}"
     dest: /srv/www/staging/shared/rbenv-version
+  when: not (standalone_production | default(false))
 
 - name: Another Aleveteli config to force production environment
   template:
     src: rails_env.rb
     dest: /srv/www/{{ item }}/shared
-  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
 
 - name: Add newrelic configuration to disable agent
   template:
@@ -121,7 +122,7 @@
     dest: /srv/www/{{ item }}/shared/
   vars:
     newrelic_app_name: "Right To Know{{ (item == 'production') | ternary('', ' Staging') }}"
-  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
 
 - name: Install wrapper script for setting correct version of ruby in path
   template:
@@ -129,7 +130,7 @@
     dest: /srv/www/{{ item }}/shared
     # Make it executable
     mode: 0755
-  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 # We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
@@ -151,6 +152,7 @@
     creates: "/home/deploy/.rbenv/versions/{{ ruby_version_staging }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
   become_user: deploy
+  when: not (standalone_production | default(false))
 
 # - name: Add postgresql apt repository
 #   apt_repository:
@@ -292,7 +294,7 @@
 # This is used in cron jobs
 - name: Link run-with-lockfile.sh so it's available system-wide
   file:
-    src: "/srv/www/{{ 'staging' if (standalone_staging | default(false)) else 'production' }}/current/commonlib/bin/run-with-lockfile.sh"
+    src: "/srv/www/{{ 'staging' if (standalone_staging | default(false)) else ('production' if (standalone_production | default(false)) else 'production') }}/current/commonlib/bin/run-with-lockfile.sh"
     dest: "/usr/bin/run-with-lockfile"
     force: true
     state: link
@@ -313,7 +315,7 @@
     login_user: root
     login_password: "{{ rds_admin_password }}"
     name: "rtk-{{ item }}"
-  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
 
 - name: Create posgresql role
   postgresql_user:
@@ -325,7 +327,7 @@
     password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
     priv: ALL
     no_password_changes: true
-  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
 
 - name: Create posgresql user rtk-production-readonly for metabase
   postgresql_user:
@@ -358,7 +360,7 @@
   vars:
     - stage: "{{ item }}"
     - password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
-  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
   notify: nginx restart
 
 - name: Copy init scripts
@@ -369,7 +371,7 @@
   vars:
     - stage: "{{ item[0] }}"
   with_nested:
-    - "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+    - "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
     - ['send-notifications', 'foi-alert-tracks', 'alaveteli']
 
 - name: Generate nginx config
@@ -404,7 +406,7 @@
     domain: "{{ righttoknow_domain if (standalone_staging | default(false)) else ((item == 'staging') | ternary('test.', '') ~ righttoknow_domain) }}"
     stage: "{{ item }}"
     password_protect: "{{ item == 'staging' }}"
-  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
   notify: nginx reload
 
 - name: Enable sites
@@ -412,7 +414,7 @@
     src: /etc/nginx/sites-available/{{ item }}
     dest: /etc/nginx/sites-enabled/{{ item }}
     state: link
-  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['default', 'production', 'staging'] }}"
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['default', 'production', 'staging']) }}"
   notify: nginx reload
 
 - name: Apply Alaveteli config (production)
@@ -468,6 +470,7 @@
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
   notify: nginx restart
+  when: not (standalone_production | default(false))
 
 - name: Apply Alaveteli Storage Config (staging)
   template:
@@ -476,6 +479,7 @@
     owner: deploy
     group: deploy
   notify: nginx restart
+  when: not (standalone_production | default(false))
 
 - name: Apply user spam scorer config
   template:
@@ -483,7 +487,7 @@
     dest: "/srv/www/{{ item }}/shared/user_spam_scorer.yml"
     owner: deploy
     group: deploy
-  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
   notify: nginx restart
 
 - import_tasks: certificates.yml
