@@ -12,6 +12,11 @@ resource "aws_instance" "staging" {
     Purpose     = "Ubuntu 22.04 Staging Server"
   }
   
+  # Increase root volume size to 20GB to allow for more packages and data
+  root_block_device {
+    volume_size = 20
+  }
+  
   security_groups = [
     var.security_group_webserver.name,
     var.security_group_incoming_email.name,
