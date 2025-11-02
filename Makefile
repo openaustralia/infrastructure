@@ -1,6 +1,6 @@
 .PHONY: ALL venv roles production letsencrypt retry clean clean-all macos-keybase tf-init tf-plan tf-apply check-rtk-prod check-rtk-staging check-planningalerts apply-rtk-prod apply-rtk-staging apply-planningalerts update-github-ssh-keys
 ALL: roles .vagrant
-PRODUCTION := .keybase roles
+KEYSANDROLES := .keybase roles
 
 .keybase:
 	ln -sf $(shell keybase config get -d -b mountdir) .keybase
@@ -25,13 +25,13 @@ roles/external: venv collections roles/requirements.yml
 
 roles: roles/external
 
-production: $(PRODUCTION)
+production: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook site.yml
 
-letsencrypt: $(PRODUCTION)
+letsencrypt: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook update-ssl-certs.yml
 
-retry: $(PRODUCTION) site.retry
+retry: $(KEYSANDROLES) site.retry
 	.venv/bin/ansible-playbook site.yml -l @site.retry
 
 clean:
@@ -53,22 +53,27 @@ tf-apply:
 	terraform -chdir=terraform apply
 
 # Checks only
-check-rtk-prod: $(PRODUCTION)
+check-rtk-prod: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check --diff
-check-rtk-staging: $(PRODUCTION)
+check-rtk-staging: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow-staging --check --diff
-check-planningalerts: $(PRODUCTION)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
+check-planningalerts: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check --diff
+check-theyvoteforyou: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou --check --diff
+
 
 # These make changes 
-apply-rtk-prod: $(PRODUCTION)
+apply-rtk-prod: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow
-apply-rtk-staging: $(PRODUCTION)
+apply-rtk-staging: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i site.yml -l righttoknow-staging
-apply-planningalerts: $(PRODUCTION)
+apply-planningalerts: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts
+apply-theyvoteforyou: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou
 
-update-github-ssh-keys: $(PRODUCTION)
+update-github-ssh-keys: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook site.yml --tags userkeys
 
 install-linters: venv
