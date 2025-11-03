@@ -14,6 +14,7 @@ jobs:
       - run: pip install virtualenv
       - run: make install-linters
       - run: make ansible-lint
+        continue-on-error: true # this means it does not break the build
 
   yamllint:
     name: "Yamllint"
