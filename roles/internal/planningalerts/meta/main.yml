@@ -6,12 +6,12 @@ dependencies:
       - ruby-3.3.4
     # The stable release is almost two years old at this stage and doesn't
     # contain ruby 3.1 or 3.2. So we have to use head instead.
-    rvm1_rvm_version: 'head'
-    rvm1_install_flags: '--auto-dotfiles'      # Remove --user-install from defaults
-    rvm1_install_path: /usr/local/rvm          # Set to system location
-    rvm1_user: root                            # Need root account to access system location
+    rvm1_rvm_version: "head"
+    rvm1_install_flags: "--auto-dotfiles" # Remove --user-install from defaults
+    rvm1_install_path: /usr/local/rvm # Set to system location
+    rvm1_user: root # Need root account to access system location
     # Use round-robin pool of gpg key servers to avoid timeout
-    rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
+    rvm1_gpg_key_server: 'rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"'
   - role: nickhammond.logrotate
     logrotate_scripts:
       - name: production
