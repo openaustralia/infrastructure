@@ -25,4 +25,4 @@ jobs:
       - uses: actions/setup-python@v6
       - run: pip install virtualenv
       - run: make install-linters
-      - run: make lint
+      - run: make yaml-lint
