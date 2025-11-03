@@ -74,5 +74,10 @@ update-github-ssh-keys: $(PRODUCTION)
 install-linters: venv
 	.venv/bin/pip install --upgrade pip ansible-lint  yamllint
 
-lint: venv
-	.venv/bin/yamllint roles/*.yml site.yml && .venv/bin/ansible-lint roles/*.yml site.yml
+yaml-lint: venv
+	.venv/bin/yamllint roles/*.yml site.yml 
+
+ansible-lint: venv
+	.venv/bin/ansible-lint roles/*.yml site.yml
+
+lint: yaml-lint ansible-lint
