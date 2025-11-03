@@ -70,3 +70,9 @@ apply-planningalerts: $(PRODUCTION)
 
 update-github-ssh-keys: $(PRODUCTION)
 	.venv/bin/ansible-playbook site.yml --tags userkeys
+
+install-linters:
+	.venv/bin/pip install --upgrade pip ansible-lint  yamllint
+
+lint:
+	.venv/bin/yamllint roles/*.yml site.yml && .venv/bin/ansible-lint roles/*.yml site.yml
