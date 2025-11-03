@@ -7,16 +7,14 @@ on:
 jobs:
   ansible-lint:
     name: Ansible Lint # Naming the build is important to use it as a status check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run ansible-lint
-        uses: ansible/ansible-lint@main
-        with:
-          args: ""
-          setup_python: "true"
-          working_directory: ""
-          requirements_file: ""
+      - uses: actions/setup-python@v6
+      - run: pip install virtualenv
+      - run: make install-linters
+      - run: make ansible-lint
+
   yamllint:
     name: "Yamllint"
     runs-on: ubuntu-latest
