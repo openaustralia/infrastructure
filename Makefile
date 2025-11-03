@@ -45,28 +45,16 @@ macos-keybase:
 	ln -sf /Volumes/Keybase .keybase
 
 # Terraform
-tf-init:
-	terraform -chdir=terraform init
-tf-plan:
-	terraform -chdir=terraform plan
-tf-apply:
-	terraform -chdir=terraform apply
+tf-init tf-plan tf-apply:
+	terraform -chdir=terraform $(patsubst tf-%,%,$@)
+
 
 # Checks only
-check-rtk-prod: $(PRODUCTION)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check --diff
-check-rtk-staging: $(PRODUCTION)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow-staging --check --diff
-check-planningalerts: $(PRODUCTION)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check
+check-rtk check-righttoknow check-rtk-staging check-righttoknow-staging check-planningalerts: $(PRODUCTION)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l $(patsubst check-%,%,$(subst rtk,righttoknow,$@)) --check --diff
 
-# These make changes 
-apply-rtk-prod: $(PRODUCTION)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow
-apply-rtk-staging: $(PRODUCTION)
-	.venv/bin/ansible-playbook -i site.yml -l righttoknow-staging
-apply-planningalerts: $(PRODUCTION)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts
+apply-rtk-prod apply-righttoknow apply-rtk-staging apply-righttoknow-staging apply-planningalerts: $(PRODUCTION)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l $(patsubst check-%,%,$(subst rtk,righttoknow,$@))
 
 update-github-ssh-keys: $(PRODUCTION)
 	.venv/bin/ansible-playbook site.yml --tags userkeys
