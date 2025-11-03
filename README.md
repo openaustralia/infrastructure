@@ -1,4 +1,3 @@
-**Table of Contents**
 # Automated setup and configuration for most of OpenAustralia Foundation's servers
 
 <!-- vscode-markdown-toc -->
@@ -6,34 +5,34 @@
 * [Approach](#Approach)
 * [The tools](#Thetools)
 * [Updates](#Updates)
-	* [2025-05-27](#)
-		* [Supported Platforms](#SupportedPlatforms)
-		* [RightToKnow Dev platform](#RightToKnowDevplatform)
-		* [PlanningAlerts Production](#PlanningAlertsProduction)
-	* [2018-05-26](#-1)
+  * [2025-05-27](#)
+  * [Supported Platforms](#SupportedPlatforms)
+  *[RightToKnow Dev platform](#RightToKnowDevplatform)
+  * [PlanningAlerts Production](#PlanningAlertsProduction)
+    * [2018-05-26](#-1)
 * [Requirements](#Requirements)
-	* [Prerequisites](#Prerequisites)
-	* [Environment setup](#Environmentsetup)
-	* [Add the Ansible Vault password](#AddtheAnsibleVaultpassword)
+* [Prerequisites](#Prerequisites)
+  * [Environment setup](#Environmentsetup)
+  * [Add the Ansible Vault password](#AddtheAnsibleVaultpassword)
 * [Generating SSL certificates for development](#GeneratingSSLcertificatesfordevelopment)
 * [Provisioning](#Provisioning)
-	* [Provisioning local development servers using Vagrant](#ProvisioninglocaldevelopmentserversusingVagrant)
-	* [Provisioning production servers](#Provisioningproductionservers)
-	* [Forcibly renewing LetsEncrypt certificates on production servers](#ForciblyrenewingLetsEncryptcertificatesonproductionservers)
+  * [Provisioning local development servers using Vagrant](#ProvisioninglocaldevelopmentserversusingVagrant)
+  * [Provisioning production servers](#Provisioningproductionservers)
+  * [Forcibly renewing LetsEncrypt certificates on production servers](#ForciblyrenewingLetsEncryptcertificatesonproductionservers)
 * [Deploying](#Deploying)
-	* [Deploying Right To Know to your local development server](#DeployingRightToKnowtoyourlocaldevelopmentserver)
-	* [Deploying PlanningAlerts](#DeployingPlanningAlerts)
-		* [Deploying PlanningAlerts to your local development server](#DeployingPlanningAlertstoyourlocaldevelopmentserver)
-		* [Deploying PlanningAlerts to production](#DeployingPlanningAlertstoproduction)
-	* [Running tests locally](#Runningtestslocally)
-	* [Deploying Electionleaflets to your local development server](#DeployingElectionleafletstoyourlocaldevelopmentserver)
-		* [TODOS](#TODOS)
-	* [Deploying They Vote For You](#DeployingTheyVoteForYou)
-		* [Deploying They Vote For You to your local development server](#DeployingTheyVoteForYoutoyourlocaldevelopmentserver)
-		* [Deploying They Vote For You to production](#DeployingTheyVoteForYoutoproduction)
-	* [Deploying OpenAustralia](#DeployingOpenAustralia)
-		* [Deploying OpenAustralia to your local development server](#DeployingOpenAustraliatoyourlocaldevelopmentserver)
-		* [Deploying OpenAustralia to production](#DeployingOpenAustraliatoproduction)
+  * [Deploying Right To Know to your local development server](#DeployingRightToKnowtoyourlocaldevelopmentserver)
+  * [Deploying PlanningAlerts](#DeployingPlanningAlerts)
+    * [Deploying PlanningAlerts to your local development server](#DeployingPlanningAlertstoyourlocaldevelopmentserver)
+    * [Deploying PlanningAlerts to production](#DeployingPlanningAlertstoproduction)
+  * [Running tests locally](#Runningtestslocally)
+  * [Deploying Electionleaflets to your local development server](#DeployingElectionleafletstoyourlocaldevelopmentserver)
+    * [TODOS](#TODOS)
+  * [Deploying They Vote For You](#DeployingTheyVoteForYou)
+    * [Deploying They Vote For You to your local development server](#DeployingTheyVoteForYoutoyourlocaldevelopmentserver)
+    * [Deploying They Vote For You to production](#DeployingTheyVoteForYoutoproduction)
+  * [Deploying OpenAustralia](#DeployingOpenAustralia)
+    * [Deploying OpenAustralia to your local development server](#DeployingOpenAustraliatoyourlocaldevelopmentserver)
+    * [Deploying OpenAustralia to production](#DeployingOpenAustraliatoproduction)
 * [Backups](#Backups)
 
 <!-- vscode-markdown-toc-config
@@ -119,14 +118,18 @@ is done from. This repository just contains the Terraform and Ansible configurat
 for the servers.
 
 A little note on terminology:
+
 * "provisioning" - we use this to mean configuring the server with Ansible.
 * "deployment" - we use to mean installing or updating the web application with Capistrano.
 
-## <a name='Updates'></a>Updates 
+## <a name='Updates'></a>Updates
+
 ### <a name=''></a>2025-05-27
+
 _Umm. 7 years later, plus one day. That's weird._
 
 #### <a name='SupportedPlatforms'></a>Supported Platforms
+
 In the past, the tools in this repo were well supported across most common Linux platforms (including WSL), and OS X. However, newer versions of OSX only run on ARM chips, and older versions of OS X are increasingly unsupported by tools such as VirtualBox and Docker.
 
 As of today, the only platform that we know works is debian-based Linux systems. Other linuxes probably work, including WSL; and there are probably two releases of MacOS which still run on the last generations of Intel Macs which might work.
@@ -134,74 +137,80 @@ As of today, the only platform that we know works is debian-based Linux systems.
 We'd like to expand this in future, when we have time
 
 #### <a name='RightToKnowDevplatform'></a>RightToKnow Dev platform
+
 We've moved RTK on to upstream Alavateli, so the instructions below for a dev environment are out of date. Please refer to [openaustralia/righttoknow](https://github.com/openaustralia/righttoknow?tab=readme-ov-file#development)'s README for instructions.
 
 #### <a name='PlanningAlertsProduction'></a>PlanningAlerts Production
+
 We now have two production servers. Every day deployment is still run by Capistrano. For major upgrades (e.g., updating the Ruby version), we have the option of a blue/green deployment driven by Terraform, allowing us to update without downtime.
 
 ### <a name='-1'></a>2018-05-26
 
 This repo is being used to setup and configure servers on EC2 for:
+
 * planningalerts.org.au:
-  - planningalerts.org.au
-  - test.planningalerts.org.au
-  - A cron job that uploads planningalerts data for a commercial client
+  * planningalerts.org.au
+  * test.planningalerts.org.au
+  * A cron job that uploads planningalerts data for a commercial client
 * theyvoteforyou.org.au:
-  - theyvoteforyou.org.au
-  - test.theyvoteforyou.org.au
+  * theyvoteforyou.org.au
+  * test.theyvoteforyou.org.au
 * openaustralia.org.au:
-  - openaustralia.org.au
-  - test.openaustralia.org.au
-  - data.openaustralia.org.au
-  - software.openaustralia.org.au
+  * openaustralia.org.au
+  * test.openaustralia.org.au
+  * data.openaustralia.org.au
+  * software.openaustralia.org.au
 * righttoknow.org.au:
-  - righttoknow.org.au
-  - test.righttoknow.org.au
+  * righttoknow.org.au
+  * test.righttoknow.org.au
 * openaustraliafoundation.org.au:
-  - openaustraliafoundation.org.au
-  - CiviCRM
+  * openaustraliafoundation.org.au
+  * CiviCRM
 * opengovernment.org.au
 * electionleaflets.org.au:
-  - electionleaflets.org.au
-  - test.electionleaflets.org.au
+  * electionleaflets.org.au
+  * test.electionleaflets.org.au
 
 On Linode running as separate VMs with automated server configuration:
+
 * cuttlefish.oaf.org.au - automated server configuration using Ansible at
-  https://github.com/mlandauer/cuttlefish/tree/master/provisioning
+  <https://github.com/mlandauer/cuttlefish/tree/master/provisioning>
 * morph.io - automated server configuration using Ansible at
-  https://github.com/openaustralia/morph/tree/master/provisioning
+  <https://github.com/openaustralia/morph/tree/master/provisioning>
 
 If it makes sense we might move cuttlefish and morph.io to AWS as well.
 
 ## <a name='Requirements'></a>Requirements
 
 ### <a name='Prerequisites'></a>Prerequisites
-- For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
-- In order to run Ansible, you'll need Python < 3.12 installed
-	- 3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
-  - Secrets: Ansible looks at the four symlinks in the root of this repo and expects to find passphrases to unlock secrets used for production deployments. Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password). If Keybase isn't working for you, any technique you have to put the right value into the right file will be fine. You may need to update the `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location.
-- In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
-- For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
-- For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
-  - Terraform requires some extra secrets to access the S3 bucket we use to store Terraform's permanent state. You can put these in the usual place that AWS CLI tools look - `~/.aws/credentials`.
-  - Terraform requires some extra secrets in addition to those used by Ansible. Ask James about secrets.auto.tfvars
-    - Note that some of these secrets are the same secrets used as AWS credentials above, but they'll need to be provided again to populate the Terraform variables as well
-  - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use. `gcloud auth application-default login`
-  - Terraform runs `prepkey.sh` to grab your SSH public key to use as a deployer key in AWS. This script makes some simple assumptions: that `jq` is installed, and that your public key can be found at `~/.ssh/id_rsa.pub`.
-  - We host DNS on Cloudflare. An API key to manage these zones is one of the secrets you'll need to provide. To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
 
+* For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
+
+* In order to run Ansible, you'll need Python < 3.12 installed
+  * 3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
+  * Secrets: Ansible looks at the four symlinks in the root of this repo and expects to find passphrases to unlock secrets used for production deployments. Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password). If Keybase isn't working for you, any technique you have to put the right value into the right file will be fine. You may need to update the `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location.
+* In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
+* For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
+* For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
+  * Terraform requires some extra secrets to access the S3 bucket we use to store Terraform's permanent state. You can put these in the usual place that AWS CLI tools look - `~/.aws/credentials`.
+  * Terraform requires some extra secrets in addition to those used by Ansible. Ask James about secrets.auto.tfvars
+    * Note that some of these secrets are the same secrets used as AWS credentials above, but they'll need to be provided again to populate the Terraform variables as well
+  * Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use. `gcloud auth application-default login`
+  * Terraform runs `prepkey.sh` to grab your SSH public key to use as a deployer key in AWS. This script makes some simple assumptions: that `jq` is installed, and that your public key can be found at `~/.ssh/id_rsa.pub`.
+  * We host DNS on Cloudflare. An API key to manage these zones is one of the secrets you'll need to provide. To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
 
 ### <a name='Environmentsetup'></a>Environment setup
 
 There's a very handy `Makefile` included which will:
-- install Vagrant plugins
-- Create a python virtual environment
-- Install `ansible-galaxy` roles and collections
+
+* install Vagrant plugins
+* Create a python virtual environment
+* Install `ansible-galaxy` roles and collections
 
 Simply run
 
-```
-$ make
+```sh
+make
 ```
 
 ### <a name='AddtheAnsibleVaultpassword'></a>Add the Ansible Vault password
@@ -211,21 +220,21 @@ Ansible Vault secrets are distributed via
 servers, you'll need to be added to the appropriate teams.
 
 You'll need to have Keybase installed on the machine where you run
-ansible. 
+ansible.
 
 If this system has a gui, you'll need to enable "Finder integration"
 or the equivalent on your platform, under Settings -> Files.
 
-If your system does *not* have a GUI - for instance, it's a WSL instance on
+If your system does _not_ have a GUI - for instance, it's a WSL instance on
 windows; or a remote Ubuntu VM running headless - there's a helper script
 at `bin/headless-keybase.sh` which will help you run the Keybase services
 as user-space systemd units.
 
-The first time you run `make`, it will try to create `.keybase` as a symlink to 
-the place where Keybase makes the files available. This is often `/keybase` on 
+The first time you run `make`, it will try to create `.keybase` as a symlink to
+the place where Keybase makes the files available. This is often `/keybase` on
 linux desktops. On headless systems it might be under `/run/user/`.
 
-For Mac users, you may need to run `make macos-keybase`, which forces the `.keybase` 
+For Mac users, you may need to run `make macos-keybase`, which forces the `.keybase`
 folder to symlink to `/Volumes/Keybase`.
 
 Once this is done, the symlinks to .*-vault-pass inside the repo
@@ -252,13 +261,17 @@ If it's already up you can re-run Ansible provisioning with:
 
 Provision all running servers with:
 
+```sh
     make production
+```
 
 This will create a Python virtualenv in `venv`; install ansible inside it; and install required roles from ansible-galaxy inside `roles/external`
 
 If you just want to provision a single server:
 
+```sh
     .venv/bin/ansible-playbook -i ec2-hosts site.yml -l planningalerts
+```
 
 ### <a name='ForciblyrenewingLetsEncryptcertificatesonproductionservers'></a>Forcibly renewing LetsEncrypt certificates on production servers
 
@@ -292,7 +305,7 @@ the top of `update-ssl-certs.yaml`.
 
 ### <a name='DeployingRightToKnowtoyourlocaldevelopmentserver'></a>Deploying Right To Know to your local development server
 
-If you haven't already, check out our [Alaveteli Repo](https://github.com/openaustralia/alaveteli). 
+If you haven't already, check out our [Alaveteli Repo](https://github.com/openaustralia/alaveteli).
 
 In your checked out (`production` branch) of the Alaveteli repo add the following to `config/deploy.yml`
 
@@ -328,7 +341,8 @@ This adds an extra staging for the capistrano deploy called `development`. This 
 local development VM being managed by Vagrant.
 
 Then
-```
+
+```sh
 bundle exec cap -S stage=development deploy:setup
 bundle exec cap -S stage=development deploy:cold
 bundle exec cap -S stage=development deploy:migrate
@@ -341,13 +355,16 @@ bundle exec cap -S stage=development xapian:rebuild_index
 After provisioning, deploy from the [PlanningAlerts repository](https://github.com/openaustralia/planningalerts-app/).
 
 #### <a name='DeployingPlanningAlertstoyourlocaldevelopmentserver'></a>Deploying PlanningAlerts to your local development server
+
 The first time run:
-```
+
+```sh
 bundle exec cap development deploy:setup deploy:cold foreman:start
 ```
 
 Thereafter:
-```
+
+```sh
 bundle exec cap development deploy
 ```
 
@@ -365,14 +382,16 @@ Once you have a new image, you'll need to adjust the `_ami_name` variables in
 values in the blue/green modules in `terraform/planningalerts/main.tf` to
 adjust where traffic is going. Don't forget that you'll need to
 `terraform apply` at each stage of the change.
-```
+
+```sh
 bundle exec cap production deploy
 ```
 
 ### <a name='Runningtestslocally'></a>Running tests locally
 
-- requires a database. Use `mysql.test` from the `infrastructure` repo.
-- Create a user called `pw_test` with password `pw_test` and grant it access to a db called `pw_test`. Then, drop this in `config/database.yml`:
+* requires a database. Use `mysql.test` from the `infrastructure` repo.
+* Create a user called `pw_test` with password `pw_test` and grant it access to a db called `pw_test`. Then, drop this in `config/database.yml`:
+
 ````
 test:
   adapter: mysql2
@@ -383,16 +402,20 @@ test:
   pool: 5
   timeout: 5000
 ````
-- Intialize the DB before running tests:
+
+* Intialize the DB before running tests:
+
 ````
 RAILS_ENV=test bundle exec rakedb:create db:migrate
 ````
-- Now you can `bundle exec rake` to run tests.
+
+* Now you can `bundle exec rake` to run tests.
 
 ### <a name='DeployingElectionleafletstoyourlocaldevelopmentserver'></a>Deploying Electionleaflets to your local development server
 
 After provisioning, deploy from Electionleaflets repository
-```
+
+```sh
 bundle exec cap -S stage=development deploy
 bundle exec cap -S stage=development deploy:setup_db
 ```
@@ -408,19 +431,22 @@ After provisioning, set up and deploy from the
 using Capistrano:
 
 #### <a name='DeployingTheyVoteForYoutoyourlocaldevelopmentserver'></a>Deploying They Vote For You to your local development server
+
 If deploying for the first time:
-```
+
+```sh
 bundle exec cap development deploy app:db:seed app:searchkick:reindex:all
 ```
 
 Thereafter:
-```
+
+```sh
 bundle exec cap development deploy
 ```
 
 #### <a name='DeployingTheyVoteForYoutoproduction'></a>Deploying They Vote For You to production
 
-```
+```sh
 bundle exec cap production deploy
 ```
 
@@ -429,12 +455,15 @@ bundle exec cap production deploy
 After provisioning, set up the database and deploy from the OpenAustralia repository:
 
 #### <a name='DeployingOpenAustraliatoyourlocaldevelopmentserver'></a>Deploying OpenAustralia to your local development server
+
 If deploying for the first time:
+
 ```
 cap -S stage=development deploy deploy:setup_db
 ```
 
 Thereafter:
+
 ```
 cap -S stage=development deploy
 ```
