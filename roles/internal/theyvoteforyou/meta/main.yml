@@ -5,11 +5,11 @@ dependencies:
     # Last listed ruby here is the default one
     rvm1_rubies:
       - ruby-3.4.4
-    rvm1_install_flags: '--auto-dotfiles'      # Remove --user-install from defaults
-    rvm1_install_path: /usr/local/rvm          # Set to system location
-    rvm1_user: root                            # Need root account to access system location
+    rvm1_install_flags: "--auto-dotfiles" # Remove --user-install from defaults
+    rvm1_install_path: /usr/local/rvm # Set to system location
+    rvm1_user: root # Need root account to access system location
     # Use round-robin pool of gpg key servers to avoid timeout
-    rvm1_gpg_key_server: 'hkp://pool.sks-keyservers.net'
+    rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
   - role: nickhammond.logrotate
     logrotate_scripts:
       - name: production
