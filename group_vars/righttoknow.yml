@@ -1,7 +1,16 @@
 # TODO: Unify this with the domain. It's currently only used to name
 # things on New Relic.
 name: righttoknow.org.au
-github_users: ['mlandauer', 'henare', 'jamezpolley', 'benrfairless', 'simonzippy']
+github_users:
+  [
+    "benrfairless",
+    "br3nda",
+    "ianheggie-oaf",
+    "jamezpolley",
+    "jattree",
+    "mlandauer",
+    "simonzippy",
+  ]
 cron_enabled: true
 certbot_webserver: nginx
 certbot_webroot: /usr/share/nginx/html

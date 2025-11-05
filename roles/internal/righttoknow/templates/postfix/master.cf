@@ -126,5 +126,7 @@ mailman   unix  -       n       n       -       -       pipe
 # TODO: Figure out some better way of doing this
 alavetelitest unix  -       n       n       -       50      pipe
   flags=R user=deploy argv=/srv/www/staging/shared/run.sh /srv/www/staging/current/script/mailin
+{% if not (standalone_staging | default(false)) %}
 alaveteli     unix  -       n       n       -       50      pipe
   flags=R user=deploy argv=/srv/www/production/shared/run.sh /srv/www/production/current/script/mailin
+{% endif %}

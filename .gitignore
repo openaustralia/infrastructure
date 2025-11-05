@@ -1,5 +1,6 @@
 
 .vagrant
+.keybase
 roles/external
 collections/
 test.pem
@@ -7,6 +8,7 @@ set-aws-access-keys.sh
 ec2-provisioning.retry
 terraform/.terraform
 terraform/secrets.auto.tfvars
+terraform/aws.auto.tfvars
 terraform/terraform.tfstate.*
 site.retry
 ubuntu-xenial-16.04-cloudimg-console.log

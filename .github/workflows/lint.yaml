@@ -1,0 +1,27 @@
+# .github/workflows/ansible-lint.yml
+name: ansible-lint
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  ansible-lint:
+    name: Ansible Lint # Naming the build is important to use it as a status check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+      - run: pip install virtualenv
+      - run: make install-linters
+      - run: make ansible-lint
+        continue-on-error: true # this means it does not break the build
+
+  yamllint:
+    name: "Yamllint"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+      - run: pip install virtualenv
+      - run: make install-linters
+      - run: make yaml-lint

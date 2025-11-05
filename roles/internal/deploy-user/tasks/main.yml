@@ -1,8 +1,10 @@
 - name: Ensure we have a deploy group
+  become: true
   group:
     name: deploy
 
 - name: Ensure we have a deploy user
+  become: true
   user:
     name: deploy
     comment: "Deploy user"
@@ -13,16 +15,20 @@
 ## but it does not remove other keys. If we have a need to revoke
 ## access we'll have to do something different.
 - name: Create authorized_keys files for local accounts
+  become: true
   authorized_key:
     user: "{{ item[0] }}"
     key: https://github.com/{{ item[1] }}.keys
     comment: "{{ item[1] }}"
+  tags:
+    - userkeys
   with_nested:
     - ['deploy', 'ubuntu', 'root']
     - "{{ github_users }}"
   register: add_authorized_keys
 
 - name: Only allow ssh access with keys
+  become: true
   lineinfile:
     dest: /etc/ssh/sshd_config
     state: present

@@ -23,4 +23,13 @@ certbot_webserver: apache
 
 # Part of the default value "--quiet" appears not to be valid
 certbot_auto_renew_options: "--no-self-upgrade"
-github_users: ['mlandauer', 'henare', 'jamezpolley', 'simonzippy']
+github_users:
+  [
+    "benrfairless",
+    "br3nda",
+    "ianheggie-oaf",
+    "jamezpolley",
+    "jattree",
+    "mlandauer",
+    "simonzippy",
+  ]

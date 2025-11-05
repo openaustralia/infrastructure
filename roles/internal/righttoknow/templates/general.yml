@@ -89,7 +89,9 @@ ISO_CURRENCY_CODE: AUD
 # ---
 TIME_ZONE: Australia/Sydney
 
-# These feeds are displayed accordingly on the Alaveteli "blog" page:
+# These feeds are displayed accordingly on the Alaveteli "blog" page. Currently
+# WordPress is the only "officially supported" external blog feed, but other
+# feeds may work if they use the same data format.
 #
 # BLOG_FEED - String url to the blog feed (default: nil)
 #
@@ -130,7 +132,7 @@ FACEBOOK_USERNAME: ''
 #   TWITTER_USERNAME: 'whatdotheyknow'
 #
 # ---
-TWITTER_USERNAME: 'righttoknowau'
+TWITTER_USERNAME: ''
 
 # Set the widget_id to get the Twitter sidebar on the blog page.
 # To get one https://twitter.com/settings/widgets
@@ -142,7 +144,7 @@ TWITTER_USERNAME: 'righttoknowau'
 #   TWITTER_WIDGET_ID: '833549204689320031'
 #
 # ---
-TWITTER_WIDGET_ID: '263502299333267456'
+TWITTER_WIDGET_ID: ''
 
 # The locales you want your site to support. If there is more than one, use
 # spaces betwween the entries.
@@ -606,7 +608,7 @@ FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro@righttoknow.org.au
 # two arguments: the URL, and a path to an output file.
 #
 # A static binary of wkhtmltopdf is recommended:
-# http://code.google.com/p/wkhtmltopdf/downloads/list
+# https://github.com/wkhtmltopdf/packaging/releases
 # If the command is not present, a text-only version will be rendered
 # instead.
 #
@@ -615,7 +617,6 @@ FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro@righttoknow.org.au
 # Examples:
 #
 #   HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf
-#   HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf-amd64
 #
 # ---
 HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf
@@ -668,7 +669,7 @@ MAX_REQUESTS_PER_USER_PER_DAY: 6
 #   GA_CODE: 'AB-8222142-14'
 #
 # ---
-GA_CODE: '{{ ga_code }}'
+GA_CODE: ''
 
 # If you want to override all the public body request emails with your own
 # email address so that request emails that would normally go to the public
@@ -835,6 +836,7 @@ SHARED_FILES_PATH: ''
 SHARED_FILES:
   - config/database.yml
   - config/general.yml
+  - config/user_spam_scorer.yml
   - config/rails_env.rb
   - config/newrelic.yml
   - config/httpd.conf
@@ -942,6 +944,19 @@ EXTERNAL_REVIEWERS: ''
 #
 # ---
 ENABLE_ANNOTATIONS: true
+
+# Enable anti-spam measures.
+# If ENABLE_ANTI_SPAM is set to true, Alaveteli will enforce a set of extra
+# restrictions to combat spam requests, annotations and profile content. This
+# will include the ability to restrict IP addresses from some countries from
+# performing some actions (see RESTRICTED_COUNTRIES), showing a reCAPTCHA
+# on new request submission, and preventing the submission of requests,
+# annotations and profile text matching a set of spam content patterns.
+#
+# ENABLE_ANTI_SPAM – Boolean (default: false)
+#
+# ---
+ENABLE_ANTI_SPAM: true
 
 # Prevent user signups if several signup attempts from the same IP address are
 # made in quick succession.
@@ -1177,8 +1192,6 @@ POP_MAILER_PASSWORD: ''
 # ---
 POP_MAILER_ENABLE_SSL: true
 
-ENABLE_PRO_PRICING: {{ enable_pro_pricing }}
-
 # Stripe.com publishable key. Only required for Alaveteli Pro.
 #
 # STRIPE_PUBLISHABLE_KEY - String (default: '')
@@ -1253,3 +1266,40 @@ STRIPE_TAX_RATE: '0.00'
 # PRO_REFERRAL_COUPON: 'PROREFERRAL'
 # ---
 PRO_REFERRAL_COUPON: '{{ pro_referral_coupon }}'
+
+# If ENABLE_PRO_PRICING is set to true, Alaveteli let users enter their bank
+# details and subscribe to a Stripe subscription which grants them access to the
+# pro role and all the features of Alaveteli Professional.
+#
+# ENABLE_PRO_PRICING – Boolean (default: false)
+#
+# ---
+ENABLE_PRO_PRICING: {{ enable_pro_pricing }}
+
+# This option is only used when ENABLE_PRO_PRICING is set to false.
+#
+# If ENABLE_PRO_SELF_SERVE is set to true, Alaveteli will let users upgrade
+# their accounts to Pro without needing to enter payment details.
+#
+# If ENABLE_PRO_SELF_SERVE is set to false, admins will receive an account
+# request email and has to assign the role in the Alaveteli admin interface.
+#
+# ENABLE_PRO_SELF_SERVE – Boolean (default: false)
+#
+# ---
+ENABLE_PRO_SELF_SERVE: false
+
+# **WARNING** Projects is not ready for re-use.
+#
+# ENABLE_PROJECTS – Boolean (default: false)
+#
+# ---
+ENABLE_PROJECTS: false
+
+# If SURVEY_URL is present, one month after a request has been made, Alaveteli
+# will email users with a link to a survey.
+#
+# SURVEY_URL – String (default: '')
+#
+# ---
+SURVEY_URL: ''

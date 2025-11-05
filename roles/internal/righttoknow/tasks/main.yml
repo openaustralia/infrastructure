@@ -4,21 +4,36 @@
     name: apache2
     state: absent
 
-- name: Add key for passenger
+- name: Add key for passenger (Ubuntu 18.04)
   apt_key:
     url: http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0xAC40B2F7
     state: present
+  when: ansible_distribution_release == 'bionic'
+
+- name: Add key for passenger (Ubuntu 22.04)
+  ansible.builtin.get_url:
+    url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt
+    dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
+  when: ansible_distribution_release == 'jammy'
 
 - name: Apt via https
   apt:
     name: apt-transport-https
     state: present
 
-- name: Apt add passenger to list
+- name: Apt add passenger to list (Ubuntu 18.04)
   apt_repository:
     repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
     state: present
     update_cache: yes
+  when: ansible_distribution_release == 'bionic'
+
+- name: Apt add passenger to list (Ubuntu 22.04)
+  apt_repository:
+    repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
+    state: present
+    update_cache: yes
+  when: ansible_distribution_release == 'jammy'
 
 - name: Install nginx and passenger
   apt:
@@ -60,7 +75,7 @@
     group: deploy
     state: directory
   with_nested:
-    - ['production', 'staging']
+    - "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
     - ['files', 'cache', 'bundle']
 
 - name: Ensure that deploy owns application directories
@@ -70,7 +85,7 @@
     group: deploy
     path: "/srv/www/{{ item[0] }}/{{ item[1] }}"
   with_nested:
-    - ['production', 'staging']
+    - "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
     - ['', 'shared']
 
 - name: Link directories in /srv/www to /data
@@ -79,13 +94,14 @@
     src: "/data/{{ item[0] }}/{{ item[1] }}"
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
-    - ['production', 'staging']
+    - "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
     - ['files', 'cache', 'bundle']
 
 - name: Set the ruby version for the alaveteli deploy (production)
   copy:
     content: "{{ ruby_version_production }}"
     dest: /srv/www/production/shared/rbenv-version
+  when: not (standalone_staging | default(false))
 
 - name: Set the ruby version for the alaveteli deploy (staging)
   copy:
@@ -96,9 +112,7 @@
   template:
     src: rails_env.rb
     dest: /srv/www/{{ item }}/shared
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
 
 - name: Add newrelic configuration to disable agent
   template:
@@ -106,9 +120,7 @@
     dest: /srv/www/{{ item }}/shared/
   vars:
     newrelic_app_name: "Right To Know{{ (item == 'production') | ternary('', ' Staging') }}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
 
 - name: Install wrapper script for setting correct version of ruby in path
   template:
@@ -116,9 +128,7 @@
     dest: /srv/www/{{ item }}/shared
     # Make it executable
     mode: 0755
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 # We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
@@ -129,6 +139,7 @@
     creates: "/home/deploy/.rbenv/versions/{{ ruby_version_production }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
   become_user: deploy
+  when: not (standalone_staging | default(false))
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 # We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
@@ -164,19 +175,23 @@
 # To install pdftk-java on Bionic (18.04) we need to do a workaround
 # See https://github.com/mysociety/alaveteli/pull/5232/files#diff-254fd36aecf20b2c0e6ae10facadc345bdcc12096772ec7abe227b12d1e77f4fR79
 # We need to allow it to install pdftk-java from Cosmic (18.10)
+# On Ubuntu 22.04 (jammy), pdftk-java is available in the standard repos
 
 - name: Add cosmic repo for pdftk-java
   apt_repository:
     repo: deb http://old-releases.ubuntu.com/ubuntu/ cosmic universe
+  when: ansible_distribution_release == 'bionic'
 
 # Using /etc/apt/preferences we're deprioritising the cosmic packages
 - name: Deprioritise cosmic packages
   copy:
     src: apt_preferences
     dest: /etc/apt/preferences
+  when: ansible_distribution_release == 'bionic'
 
 # This list of packages came from https://github.com/mysociety/alaveteli/blob/0.34.0.1/config/packages.ubuntu-bionic
-- name: Install packages required by Alaveteli
+# Note: bundler and python-yaml are only available/needed on Ubuntu 18.04
+- name: Install packages required by Alaveteli (Ubuntu 18.04)
   apt:
     name:
       - build-essential
@@ -217,27 +232,79 @@
       - wv
       - xapian-tools
     state: present
+  when: ansible_distribution_release == 'bionic'
 
-# Get wkhtmltopdf from project website
-- name: Install wkhtmltopdf
+- name: Install packages required by Alaveteli (Ubuntu 22.04)
+  apt:
+    name:
+      - build-essential
+      # bundler is installed via gem, not as package
+      - catdoc
+      - elinks
+      - gettext
+      - ghostscript
+      - gnuplot-nox
+      - imagemagick
+      - libicu-dev
+      - libmagic-dev
+      - libmagickwand-dev
+      - libpq-dev
+      - libsqlite3-dev
+      - libxml2-dev
+      - libxslt-dev
+      - links
+      - lockfile-progs
+      - memcached
+      - mutt
+      - pdftk-java
+      - poppler-utils
+      - postgresql
+      - postgresql-client
+      - python3-yaml
+      - rake
+      - ruby
+      - ruby-dev
+      - sqlite3
+      - tnef
+      - fonts-liberation  # Replaces ttf-bitstream-vera
+      - unrtf
+      - unzip
+      - uuid-dev
+      - wkhtmltopdf  # Available as standard package
+      - wv
+      - xapian-tools
+    state: present
+  when: ansible_distribution_release == 'jammy'
+
+# Get wkhtmltopdf from project website (Ubuntu 18.04 only)
+# Ubuntu 22.04 has wkhtmltopdf in standard repos (installed above)
+- name: Install wkhtmltopdf (Ubuntu 18.04)
   apt:
     # We're installing a slightly out-of-date version of wkhtmltopdf here (0.12.5) because the latest version
     # right now (0.12.6) disables local file access by default. There's a command-line option to enable local
     # file access but I'm not sure it will work with the current way ALavateli calls an external command
     deb: https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+  when: ansible_distribution_release == 'bionic'
 
 # The changes of there being differences between the production and staging version
 # of this script are extremely small. So, just using the production version.
 # This is used in cron jobs
 - name: Link run-with-lockfile.sh so it's available system-wide
   file:
-    src: "/srv/www/production/current/commonlib/bin/run-with-lockfile.sh"
+    src: "/srv/www/{{ 'staging' if (standalone_staging | default(false)) else 'production' }}/current/commonlib/bin/run-with-lockfile.sh"
     dest: "/usr/bin/run-with-lockfile"
     force: true
     state: link
 
-- name: Install dependency for postgresql_db
-  apt: pkg=python-psycopg2
+- name: Install dependency for postgresql_db (Ubuntu 18.04)
+  apt: 
+    pkg: python-psycopg2
+  when: ansible_distribution_release == 'bionic'
+
+- name: Install dependency for postgresql_db (Ubuntu 22.04)
+  apt:
+    pkg: python3-psycopg2
+  when: ansible_distribution_release == 'jammy'
 
 - name: Create database
   postgresql_db:
@@ -245,9 +312,7 @@
     login_user: root
     login_password: "{{ rds_admin_password }}"
     name: "rtk-{{ item }}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
 
 - name: Create posgresql role
   postgresql_user:
@@ -259,9 +324,7 @@
     password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
     priv: ALL
     no_password_changes: true
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
 
 - name: Create posgresql user rtk-production-readonly for metabase
   postgresql_user:
@@ -272,6 +335,7 @@
     name: "rtk-production-readonly"
     password: "{{ rtk_production_readonly_postgresql_password }}"
     no_password_changes: true
+  when: not (standalone_staging | default(false))
 
 - name: Give the user rtk-production-readonly readonly access to the production righttoknow database
   postgresql_privs:
@@ -282,6 +346,7 @@
     role: "rtk-production-readonly"
     privs: SELECT
     objs: ALL_IN_SCHEMA
+  when: not (standalone_staging | default(false))
 
 - name: Copy over database configuration for application
   template:
@@ -292,9 +357,7 @@
   vars:
     - stage: "{{ item }}"
     - password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
   notify: nginx restart
 
 - name: Copy init scripts
@@ -305,7 +368,7 @@
   vars:
     - stage: "{{ item[0] }}"
   with_nested:
-    - ['production', 'staging']
+    - "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
     - ['send-notifications', 'foi-alert-tracks', 'alaveteli']
 
 - name: Generate nginx config
@@ -325,6 +388,7 @@
     group: root
     mode: 644
   notify: nginx reload
+  when: not (standalone_staging | default(false))
 
 - name: Copy nginx config for the app
   template:
@@ -334,12 +398,12 @@
     group: root
     mode: 644
   vars:
-    domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ righttoknow_domain }}"
+    # For standalone staging, use the righttoknow_domain directly (should be staging.righttoknow.org.au)
+    # For joint setup, add 'test.' prefix for staging or use domain as-is for production
+    domain: "{{ righttoknow_domain if (standalone_staging | default(false)) else ((item == 'staging') | ternary('test.', '') ~ righttoknow_domain) }}"
     stage: "{{ item }}"
     password_protect: "{{ item == 'staging' }}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
   notify: nginx reload
 
 - name: Enable sites
@@ -347,13 +411,10 @@
     src: /etc/nginx/sites-available/{{ item }}
     dest: /etc/nginx/sites-enabled/{{ item }}
     state: link
-  with_items:
-    - default
-    - production
-    - staging
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['default', 'production', 'staging'] }}"
   notify: nginx reload
 
-- name: Copy across the main Alaveteli config (production)
+- name: Apply Alaveteli config (production)
   template:
     src: general.yml
     dest: /srv/www/production/shared/
@@ -364,7 +425,6 @@
     site_name: "Right to Know"
     incoming_email_prefix: "foi+"
     staging_site: "0"
-    ga_code: "UA-3107958-10"
     override_all_public_body_request_emails: null
     stage: production
     stripe_publishable_key: "{{ stripe_publishable_key_live }}"
@@ -374,19 +434,21 @@
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_production }}"
   notify: nginx restart
+  when: not (standalone_staging | default(false))
 
-- name: Copy across the main Alaveteli config (staging)
+- name: Apply Alaveteli config (staging)
   template:
     src: general.yml
     dest: /srv/www/staging/shared/
     owner: deploy
     group: deploy
   vars:
-    domain: "test.{{ righttoknow_domain }}"
+    # For standalone staging, use righttoknow_domain directly (should be staging.righttoknow.org.au)
+    # For joint setup, prefix with 'test.'
+    domain: "{{ righttoknow_domain if (standalone_staging | default(false)) else 'test.' ~ righttoknow_domain }}"
     site_name: "Right to Know (STAGING)"
     incoming_email_prefix: "foitest+"
     staging_site: "1"
-    ga_code: ""
     override_all_public_body_request_emails: "contact@righttoknow.org.au"
     stage: staging
     stripe_publishable_key: "{{ stripe_publishable_key_test }}"
@@ -395,6 +457,15 @@
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
+  notify: nginx restart
+
+- name: Apply user spam scorer config
+  template:
+    src: user_spam_scorer.yml
+    dest: "/srv/www/{{ item }}/shared/user_spam_scorer.yml"
+    owner: deploy
+    group: deploy
+  with_items: "{{ ['staging'] if (standalone_staging | default(false)) else ['production', 'staging'] }}"
   notify: nginx restart
 
 - import_tasks: certificates.yml
@@ -433,7 +504,7 @@
 
 - name: Create directory for DKIM keypair
   file:
-    path: /etc/dkimkeys/righttoknow.org.au
+    path: /etc/dkimkeys/{{ righttoknow_domain }}
     owner: opendkim
     group: opendkim
     mode: 0700
@@ -442,10 +513,10 @@
 # Generated public/private keypair for opendkim with:
 # opendkim-genkey -b 2048 -d righttoknow.org.au -D /etc/dkimkeys -s default -v
 
-- name: Copy across DKIM keypair
+- name: Apply DKIM keypair
   copy:
     src: "dkimkeys/{{ item }}"
-    dest: /etc/dkimkeys/righttoknow.org.au
+    dest: /etc/dkimkeys/{{ righttoknow_domain }}
     owner: opendkim
     group: opendkim
     mode: "0600"

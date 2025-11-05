@@ -3,6 +3,22 @@
 # Generates certificates for local development. A single certificate, that
 # is unique to you, is added to your browser
 
+set -euo pipefail
+error_report() {
+  if [ "$1" != "0" ]; then
+    echo "$0: Error $1 on line #$2" >&2
+  fi
+  exit "$1"
+}
+trap 'error_report $? $LINENO' ERR
+
+if ! [ -f certificates/generate-certificates.sh ]; then
+  echo "ERROR: Must be run in project root directory!"
+  exit 1
+fi
+
+cd certificates || exit 1
+
 # Note that we're not generating certificates for PlanningAlerts because those
 # are served from the load balancer on AWS so the server itself only needs
 # to support http and so doesn't need a certificate
@@ -57,14 +73,29 @@ do
   set +x
 done
 
-# Move certificate into the right place
+echo "Moving certificate into the right place ..."
+set -x
+mkdir -p ../roles/internal/theyvoteforyou/files ../roles/internal/openaustralia/files ../roles/internal/righttoknow/files ../roles/internal/oaf/files ../roles/internal/opengovernment/files ../roles/internal/electionleaflets/files
+
 mv theyvoteforyou.org.au.test.key theyvoteforyou.org.au.test.pem test.theyvoteforyou.org.au.test.key test.theyvoteforyou.org.au.test.pem ../roles/internal/theyvoteforyou/files
 mv openaustralia.org.au.test.key openaustralia.org.au.test.pem test.openaustralia.org.au.test.key test.openaustralia.org.au.test.pem ../roles/internal/openaustralia/files
 mv righttoknow.org.au.test.key righttoknow.org.au.test.pem test.righttoknow.org.au.test.key test.righttoknow.org.au.test.pem ../roles/internal/righttoknow/files
 mv oaf.org.au.test.key oaf.org.au.test.pem ../roles/internal/oaf/files
 mv opengovernment.org.au.test.key opengovernment.org.au.test.pem ../roles/internal/opengovernment/files
 mv electionleaflets.org.au.test.key electionleaflets.org.au.test.pem test.electionleaflets.org.au.test.key test.electionleaflets.org.au.test.pem ../roles/internal/electionleaflets/files
-# Line below is a temporary measure to copy across a certificate generated here
-# to be used in the morph repo for provisioning. This is only temporary until the
-# morph provisioning is move to this repo
-#mv dev.morph.io.key dev.morph.io.pem ../../morph/provisioning/roles/morph-app/files/ssl
+set +x
+
+# FIXME: adjust temporary measure to copy across a certificate generated here
+# to be used in the morph repo for provisioning once
+# morph provisioning is moved to this repo
+
+if [ -d ../../morph/provisioning/roles/morph-app ]; then
+  echo "Moving local ssl certificate to morph ..."
+  set -x
+  mkdir -p ../../morph/provisioning/roles/morph-app/files/ssl
+  mv dev.morph.io.key dev.morph.io.pem ../../morph/provisioning/roles/morph-app/files/ssl
+  set +x
+else
+  echo "Skipped move to morph as ../../morph/provisioning/roles/morph-app directory is missing!"
+fi
+
