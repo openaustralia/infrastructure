@@ -25,7 +25,7 @@ set_var EASYRSA_REQ_COUNTRY    "AU"
 set_var EASYRSA_REQ_PROVINCE   "NSW"
 set_var EASYRSA_REQ_CITY       "Sydney"
 set_var EASYRSA_REQ_ORG        "OAF"
-set_var EASYRSA_REQ_EMAIL      "admin@openaustraliafoundation.org.au"
+set_var EASYRSA_REQ_EMAIL      "contact@oaf.org.au"
 set_var EASYRSA_REQ_OU         "IT"
 set_var EASYRSA_KEY_SIZE       2048
 set_var EASYRSA_CA_EXPIRE      3650
