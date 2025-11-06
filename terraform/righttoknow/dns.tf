@@ -4,15 +4,12 @@ resource "cloudflare_zone" "main" {
   zone       = "righttoknow.org.au"
 }
 
-# TODO: Update any values from "aws_eip.main" to "aws_eip.production" when we
-# are ready to move to the production environment
-
 # A records
 resource "cloudflare_record" "root" {
   zone_id = cloudflare_zone.main.id
   name    = "righttoknow.org.au"
   type    = "A"
-  value   = aws_eip.main.public_ip
+  value   = aws_eip.production.public_ip
 }
 
 resource "cloudflare_record" "production" {
