@@ -3,6 +3,7 @@ theyvoteforyou.org.au
 openaustralia.org.au
 righttoknow.org.au
 staging.righttoknow.org.au
+prod.righttoknow.org.au
 oaf.org.au
 opengovernment.org.au
 electionleaflets.org.au
@@ -23,11 +24,12 @@ openaustralia.org.au
 [righttoknow]
 righttoknow.org.au
 staging.righttoknow.org.au
+prod.righttoknow.org.au
 
-[righttoknow-staging]
+[righttoknow_staging]
 staging.righttoknow.org.au
 
-[righttoknow-production]
+[righttoknow_production]
 prod.righttoknow.org.au
 
 [oaf]
