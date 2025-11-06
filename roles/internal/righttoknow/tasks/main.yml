@@ -490,8 +490,6 @@
   with_items: "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
   notify: nginx restart
 
-- import_tasks: certificates.yml
-- import_tasks: cron.yml
 
 - name: Add deploy user to adm group so it can read mail logs
   user:
@@ -514,6 +512,9 @@
     src: varnish.service
     dest: /lib/systemd/system/varnish.service
   notify: restart varnish
+
+- import_tasks: certificates.yml
+- import_tasks: cron.yml
 
 - name: Install postfix (and opendkim) for email handling
   apt:
