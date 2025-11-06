@@ -37,27 +37,39 @@
     - nginx
   when: "'ec2' in group_names"
 
+# Staging Certbot only needs certs for the hostname
+- name: Set certificate configuration for staging
+  set_fact:
+    staging_certs:
+      - email: 'contact@oaf.org.au'
+        domains: ["{{ righttoknow_domain }}"]
+  when: standalone_staging | default(false)
+
+- name: Set certificate configuration for production
+  set_fact:
+    production_certs: "{{ production_server_certs if 'righttoknow_production' in group_names else standard_certs }}"
+  vars:
+    production_server_certs:
+      - email: 'contact@oaf.org.au'
+        domains: 
+          - "{{ righttoknow_domain }}"
+          - "www.{{ righttoknow_domain }}"
+          - "{{ server_hostname }}"
+    standard_certs:
+      - email: 'contact@oaf.org.au'
+        domains:
+          - "{{ righttoknow_domain }}"
+          - "www.{{ righttoknow_domain }}"
+      - email: 'contact@oaf.org.au'
+        domains:
+          - "test.{{ righttoknow_domain }}"
+          - "www.test.{{ righttoknow_domain }}"
+  when: not (standalone_staging | default(false))
+
 # TODO: When (if) we use a newer version of certbot add "--post-hook" to restart nginx after renew
 - name: Install certificate using certbot
   include_role:
     name: oaf.certbot
   vars:
-    certbot_certs: "{{ (standalone_staging | default(false)) | ternary(
-      [
-        {
-          'email': 'contact@oaf.org.au',
-          'domains': [righttoknow_domain]
-        }
-      ],
-      [
-        {
-          'email': 'contact@oaf.org.au',
-          'domains': [righttoknow_domain, 'www.' + righttoknow_domain]
-        },
-        {
-          'email': 'contact@oaf.org.au',
-          'domains': ['test.' + righttoknow_domain, 'www.test.' + righttoknow_domain]
-        }
-      ]
-    ) }}"
+    certbot_certs: "{{ staging_certs if (standalone_staging | default(false)) else production_certs }}"
   when: "'ec2' in group_names"

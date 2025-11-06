@@ -17,7 +17,6 @@ resource "cloudflare_record" "production" {
   name    = "prod.righttoknow.org.au"
   type    = "A"
   value   = aws_eip.production.public_ip
-  
 }
 
 
@@ -28,6 +27,14 @@ resource "cloudflare_record" "www" {
   type    = "CNAME"
   value   = "righttoknow.org.au"
 }
+
+resource "cloudflare_record" "www_production" {
+  zone_id = cloudflare_zone.main.id
+  name    = "www.prod.righttoknow.org.au"
+  type    = "CNAME"
+  value   = "prod.righttoknow.org.au"
+}
+
 
 resource "cloudflare_record" "test" {
   zone_id = cloudflare_zone.main.id

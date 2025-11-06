@@ -14,6 +14,19 @@ server {
 
 server {
   listen 8000;
+  server_name {{ server_hostname }};
+  {% if certbot_webroot is defined %}
+  location ^~ /.well-known/acme-challenge/ {
+    root {{ certbot_webroot }};
+  }
+  {% endif %}
+  location / {
+    rewrite ^/(.*) https://www.{{ domain }}/$1 permanent;
+  }
+}
+
+server {
+  listen 8000;
   server_name www.{{ domain }};
 
   {% if certbot_webroot is defined %}
