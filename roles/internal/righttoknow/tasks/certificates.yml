@@ -52,9 +52,9 @@
     production_server_certs:
       - email: 'contact@oaf.org.au'
         domains: 
-          - "{{ server_hostname }}"
           - "{{ righttoknow_domain }}"
           - "www.{{ righttoknow_domain }}"
+          - "{{ server_hostname }}"
     standard_certs:
       - email: 'contact@oaf.org.au'
         domains:
