@@ -77,7 +77,7 @@
     state: directory
   with_nested:
     - "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
-    - ['files', 'cache', 'bundle', 'storage']
+    - ['files', 'cache', 'bundle', 'storage', 'xapaindbs']
 
 - name: Ensure that deploy owns application directories
   file:
@@ -96,7 +96,7 @@
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
     - "{{ ['staging'] if (standalone_staging | default(false)) else (['production'] if (standalone_production | default(false)) else ['production', 'staging']) }}"
-    - ['files', 'cache', 'bundle', 'storage']
+    - ['files', 'cache', 'bundle', 'storage', 'xapaindbs']
 
 - name: Set the ruby version for the alaveteli deploy (production)
   copy:
