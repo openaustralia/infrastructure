@@ -1,3 +1,5 @@
 /^alavetelitest.*/ alavetelitest:
+{% if not (standalone_staging | default(false)) %}
 /^alaveteli.*/ alaveteli:
+{% endif %}
 /@{{ righttoknow_domain }}$/ smtp:

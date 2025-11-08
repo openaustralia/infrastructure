@@ -33,8 +33,14 @@
     mode: 0775
     state: directory
   with_nested:
-    - ['production', 'staging']
-    - ['images/small', 'images/medium', 'images/large', 'images/thumbnail', 'images/original']
+    - ["production", "staging"]
+    - [
+        "images/small",
+        "images/medium",
+        "images/large",
+        "images/thumbnail",
+        "images/original",
+      ]
 
 # The rest of the deploy directories get created by running "cap deploy:setup"
 - name: Ensure that directories exist
@@ -56,11 +62,11 @@
     mode: 0775
     state: directory
   with_nested:
-    - ['production','staging']
-    - - ''
-      - 'smarty_compile'
-      - 'cache'
-      - 'temp'
+    - ["production", "staging"]
+    - - ""
+      - "smarty_compile"
+      - "cache"
+      - "temp"
 
 - name: Link directories in /srv/www to /data
   file:
@@ -68,8 +74,8 @@
     src: "/data/{{ item[0] }}/{{ item[1] }}"
     dest: "/srv/www/{{ item[0] }}/shared/data/{{ item[1] }}"
   with_nested:
-    - ['production', 'staging']
-    - - 'images'
+    - ["production", "staging"]
+    - - "images"
 
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
@@ -170,7 +176,7 @@
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
   apt_repository:
-    repo: 'ppa:ondrej/php'
+    repo: "ppa:ondrej/php"
 
 - name: Install packages required by Electionleaflets
   apt: name={{ item }} state=present
@@ -203,7 +209,7 @@
     login_password: "{{ rds_admin_password }}"
     name: el-production
     password: "{{ electionleaflets_production_mysql_password }}"
-    priv: 'el-production.*:ALL'
+    priv: "el-production.*:ALL"
     host: "%"
 
 - name: Create electionleaflets user with access to the database (staging)
@@ -213,7 +219,7 @@
     login_password: "{{ rds_admin_password }}"
     name: el-staging
     password: "{{ electionleaflets_staging_mysql_password }}"
-    priv: 'el-staging.*:ALL'
+    priv: "el-staging.*:ALL"
     host: "%"
 
 - name: Copy application database configuration
@@ -275,20 +281,20 @@
     - cli
   notify: reload apache
 
-- name: Staging mail import
-  cron:
-    name: "mail import {{ item }}"
-    minute: "*/5"
-    user: deploy
-    job: "cd /srv/www/{{ item }}/current/tools && php import_mail.php"
-    state: present
-  with_items:
-    - staging
-    #- production ##Uncomment this line if we ever want to activate tihs
-  when: "'ec2' in group_names"
+# - name: Staging mail import
+#   cron:
+#     name: "mail import {{ item }}"
+#     minute: "*/5"
+#     user: deploy
+#     job: "cd /srv/www/{{ item }}/current/tools && php import_mail.php"
+#     state: present
+#   with_items:
+#     - staging
+#     #- production ##Uncomment this line if we ever want to activate tihs
+#   when: "'ec2' in group_names"
 
-- name: Cron for email alerts
-  cron: name="email alerts" minute="*/5" user=deploy job="cd /srv/www/production/current/tools && php alertomatic.php" state=absent
+# - name: Cron for email alerts
+#   cron: name="email alerts" minute="*/5" user=deploy job="cd /srv/www/production/current/tools && php alertomatic.php" state=absent
 
 - name: Autoremove unneeded packages
   apt:

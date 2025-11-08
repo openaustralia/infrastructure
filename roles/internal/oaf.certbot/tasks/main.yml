@@ -5,8 +5,8 @@
   apt_repository:
     repo: ppa:certbot/certbot
     update_cache: yes
-  # On Ubuntu 20.04 (focal) we can install certbot as a standard Ubuntu package
-  when: ansible_distribution_release != 'focal'
+  # On Ubuntu 20.04 (focal) and 22.04 (jammy) we can install certbot as a standard Ubuntu package
+  when: ansible_distribution_release not in ['focal', 'jammy']
 
 - name: Install certbot
   apt:
@@ -23,11 +23,31 @@
   when: ansible_python['version']['major'] == 3
 
 - name: Install certificates with certbot
-  command: certbot run --non-interactive --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  command: certbot run --non-interactive --agree-tos --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs| flatten(levels=1) }}"
   when: certbot_webroot is undefined
 
 - name: Install certificates with certbot via webroot
-  command: certbot certonly --non-interactive --keep --expand --webroot -w {{ certbot_webroot }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  command: certbot certonly --non-interactive --agree-tos --keep --expand --webroot -w {{ certbot_webroot }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs| flatten(levels=1) }}"
-  when: certbot_webroot is defined
+  when: certbot_webroot is defined and not (certbot_standalone | default(false))
+
+- name: Stop varnish for standalone certbot
+  systemd:
+    name: varnish
+    state: stopped
+  when: certbot_standalone | default(false)
+
+- name: Install certificates with certbot standalone
+  command: >
+    certbot certonly --non-interactive --agree-tos --keep --expand --standalone
+    {% if certbot_staging | default(false) %}--staging{% endif %}
+    -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  loop: "{{ certbot_certs| flatten(levels=1) }}"
+  when: certbot_standalone | default(false)
+
+- name: Start varnish after standalone certbot
+  systemd:
+    name: varnish
+    state: started
+  when: certbot_standalone | default(false)

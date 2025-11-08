@@ -9,8 +9,16 @@ resource "cloudflare_record" "root" {
   zone_id = cloudflare_zone.main.id
   name    = "righttoknow.org.au"
   type    = "A"
-  value   = aws_eip.main.public_ip
+  value   = aws_eip.production.public_ip
 }
+
+resource "cloudflare_record" "production" {
+  zone_id = cloudflare_zone.main.id
+  name    = "prod.righttoknow.org.au"
+  type    = "A"
+  value   = aws_eip.production.public_ip
+}
+
 
 # CNAME records
 resource "cloudflare_record" "www" {
@@ -19,6 +27,14 @@ resource "cloudflare_record" "www" {
   type    = "CNAME"
   value   = "righttoknow.org.au"
 }
+
+resource "cloudflare_record" "www_production" {
+  zone_id = cloudflare_zone.main.id
+  name    = "www.prod.righttoknow.org.au"
+  type    = "CNAME"
+  value   = "prod.righttoknow.org.au"
+}
+
 
 resource "cloudflare_record" "test" {
   zone_id = cloudflare_zone.main.id
@@ -111,16 +127,24 @@ resource "cloudflare_record" "staging" {
   value   = aws_eip.staging.public_ip
 }
 
-resource "cloudflare_record" "staging_test" {
+resource "cloudflare_record" "www_staging" {
   zone_id = cloudflare_zone.main.id
-  name    = "staging-test.righttoknow.org.au"
+  name    = "www.staging.righttoknow.org.au"
   type    = "CNAME"
   value   = "staging.righttoknow.org.au"
 }
 
-resource "cloudflare_record" "www_staging_test" {
+resource "cloudflare_record" "staging-spf" {
   zone_id = cloudflare_zone.main.id
-  name    = "www.staging-test.righttoknow.org.au"
-  type    = "CNAME"
-  value   = "staging.righttoknow.org.au"
+  name    = "staging.righttoknow.org.au"
+  type    = "TXT"
+  value   = "v=spf1 a include:_spf.google.com ~all"
+}
+
+resource "cloudflare_record" "staging-mx" {
+  zone_id  = cloudflare_zone.main.id
+  name     = "staging.righttoknow.org.au"
+  type     = "MX"
+  priority = 1
+  value    = "smtp.google.com"
 }

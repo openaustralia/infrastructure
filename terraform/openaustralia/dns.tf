@@ -1,12 +1,12 @@
 resource "cloudflare_zone" "org" {
   account_id = var.cloudflare_account_id
-  plan       = "free"
+  plan       = "business"
   zone       = "openaustralia.org"
 }
 
 resource "cloudflare_zone" "org_au" {
   account_id = var.cloudflare_account_id
-  plan       = "free"
+  plan       = "business"
   zone       = "openaustralia.org.au"
 }
 

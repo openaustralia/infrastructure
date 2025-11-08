@@ -9,7 +9,12 @@ resource "aws_instance" "staging" {
   tags = {
     Name        = "righttoknow-staging"
     Environment = "staging"
-    Purpose     = "Ubuntu 22.04 migration testing"
+    Purpose     = "Ubuntu 22.04 Staging Server"
+  }
+  
+  # Increase root volume size to 20GB to allow for more packages and data
+  root_block_device {
+    volume_size = 20
   }
   
   security_groups = [
