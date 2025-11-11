@@ -42,7 +42,9 @@
   set_fact:
     staging_certs:
       - email: 'contact@oaf.org.au'
-        domains: ["{{ righttoknow_domain }}"]
+        domains: 
+          - "{{ righttoknow_domain }}"
+          - "www.{{ righttoknow_domain }}"
   when: "'righttoknow_staging' in group_names"
 
 - name: Set certificate configuration for production
