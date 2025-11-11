@@ -55,7 +55,7 @@
     state: directory
   with_nested:
     - "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
-    - ['files', 'cache', 'bundle', 'storage', 'xapaindbs']
+    - ['files', 'cache', 'bundle', 'storage', 'xapiandbs']
 
 - name: Ensure that deploy owns application directories
   file:
@@ -74,7 +74,7 @@
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
     - "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
-    - ['files', 'cache', 'bundle', 'storage', 'xapaindbs']
+    - ['files', 'cache', 'bundle', 'storage', 'xapiandbs']
 
 - name: Set the ruby version for the alaveteli deploy (production)
   copy:
