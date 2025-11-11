@@ -4,37 +4,15 @@
     name: apache2
     state: absent
 
-- name: Add key for passenger (Ubuntu 18.04)
-  apt_key:
-    url: http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0xAC40B2F7
-    state: present
-  when: ansible_distribution_release == 'bionic'
-
-- name: Add key for passenger (Ubuntu 22.04)
+- name: Add key for passenger
   ansible.builtin.get_url:
     url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt
     dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
-  when: ansible_distribution_release == 'jammy'
-
-- name: Install apt-transport-https (Ubuntu 18.04)
-  apt:
-    name: apt-transport-https
-    state: present
-  when: ansible_distribution_release != 'jammy'
-
-- name: Add passenger repository (Ubuntu 18.04)
-  apt_repository:
-    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
-    state: present
-    update_cache: yes
-  when: ansible_distribution_release == 'bionic'
-
-- name: Add passenger apt repository (Ubuntu 22.04)
+- name: Add passenger apt repository
   apt_repository:
     repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
     state: present
     update_cache: yes
-  when: ansible_distribution_release == 'jammy'
 
 - name: Install nginx and passenger
   apt:
@@ -175,69 +153,9 @@
 #     - postgresql-client-9.4
 #     - libpq-dev
 
-# To install pdftk-java on Bionic (18.04) we need to do a workaround
-# See https://github.com/mysociety/alaveteli/pull/5232/files#diff-254fd36aecf20b2c0e6ae10facadc345bdcc12096772ec7abe227b12d1e77f4fR79
-# We need to allow it to install pdftk-java from Cosmic (18.10)
-# On Ubuntu 22.04 (jammy), pdftk-java is available in the standard repos
+## pdftk-java is available in standard repos on supported Ubuntu versions
 
-- name: Add cosmic repo for pdftk-java
-  apt_repository:
-    repo: deb http://old-releases.ubuntu.com/ubuntu/ cosmic universe
-  when: ansible_distribution_release == 'bionic'
-
-# Using /etc/apt/preferences we're deprioritising the cosmic packages
-- name: Deprioritise cosmic packages
-  copy:
-    src: apt_preferences
-    dest: /etc/apt/preferences
-  when: ansible_distribution_release == 'bionic'
-
-# This list of packages came from https://github.com/mysociety/alaveteli/blob/0.34.0.1/config/packages.ubuntu-bionic
-# Note: bundler and python-yaml are only available/needed on Ubuntu 18.04
-- name: Install packages required by Alaveteli (Ubuntu 18.04)
-  apt:
-    name:
-      - build-essential
-      - bundler
-      - catdoc
-      - elinks
-      - gettext
-      - ghostscript
-      - gnuplot-nox
-      - imagemagick
-      - libicu-dev
-      - libmagic-dev
-      - libmagickwand-dev
-      - libpq-dev
-      - libsqlite3-dev
-      - libxml2-dev
-      - libxslt-dev
-      - links
-      - lockfile-progs
-      - memcached
-      - mutt
-      - pdftk-java
-      - poppler-utils
-      - postgresql
-      - postgresql-client
-      - python-yaml
-      - rake
-      - ruby
-      - ruby-dev
-      - sqlite3
-      - tnef
-      - ttf-bitstream-vera
-      - unrtf
-      - unzip
-      - uuid-dev
-      # See separate installation below
-      # - wkhtmltopdf-static
-      - wv
-      - xapian-tools
-    state: present
-  when: ansible_distribution_release == 'bionic'
-
-- name: Install packages required by Alaveteli (Ubuntu 22.04)
+- name: Install packages required by Alaveteli
   apt:
     name:
       - build-essential
@@ -277,17 +195,8 @@
       - wv
       - xapian-tools
     state: present
-  when: ansible_distribution_release == 'jammy'
 
-# Get wkhtmltopdf from project website (Ubuntu 18.04 only)
-# Ubuntu 22.04 has wkhtmltopdf in standard repos (installed above)
-- name: Install wkhtmltopdf (Ubuntu 18.04)
-  apt:
-    # We're installing a slightly out-of-date version of wkhtmltopdf here (0.12.5) because the latest version
-    # right now (0.12.6) disables local file access by default. There's a command-line option to enable local
-    # file access but I'm not sure it will work with the current way ALavateli calls an external command
-    deb: https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
-  when: ansible_distribution_release == 'bionic'
+## wkhtmltopdf is installed from standard repos above; no special handling needed
 
 # The changes of there being differences between the production and staging version
 # of this script are extremely small. So, just using the production version.
@@ -299,15 +208,9 @@
     force: true
     state: link
 
-- name: Install dependency for postgresql_db (Ubuntu 18.04)
-  apt: 
-    pkg: python-psycopg2
-  when: ansible_distribution_release == 'bionic'
-
-- name: Install dependency for postgresql_db (Ubuntu 22.04)
+- name: Install dependency for postgresql_db
   apt:
     pkg: python3-psycopg2
-  when: ansible_distribution_release == 'jammy'
 
 - name: Create database
   postgresql_db:
