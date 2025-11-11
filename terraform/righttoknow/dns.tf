@@ -35,21 +35,6 @@ resource "cloudflare_record" "www_production" {
   value   = "prod.righttoknow.org.au"
 }
 
-
-resource "cloudflare_record" "test" {
-  zone_id = cloudflare_zone.main.id
-  name    = "test.righttoknow.org.au"
-  type    = "CNAME"
-  value   = "righttoknow.org.au"
-}
-
-resource "cloudflare_record" "www_test" {
-  zone_id = cloudflare_zone.main.id
-  name    = "www.test.righttoknow.org.au"
-  type    = "CNAME"
-  value   = "righttoknow.org.au"
-}
-
 # MX records
 
 # We can now use a single MX record for Google workspace
@@ -97,6 +82,13 @@ resource "cloudflare_record" "facebook_domain_verification" {
 resource "cloudflare_record" "default_domainkey" {
   zone_id = cloudflare_zone.main.id
   name    = "default._domainkey.righttoknow.org.au"
+  type    = "TXT"
+  value   = "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzWFLO143fpHeVU27EjmOsY4hpKtR+/PI+idJItMWiHSwjgcX21QYMbQjPcHfHFhsDbblBBQy/MtcTwynSYFp1SWkTI8EsHLS1+pp1HAI3wx7ZWLmwE6di+qRKu+3ooPFSIUbA+TvA7GJmHBfBf/ubASWff4t5ByZ9edZOA4lZ7pGdG7O0duH+/hhggH/LFMPX6a0CzyXYjsfTvtyYMJvvRsoepEs/QjtdBarZS2roR7qxZQhSRUlbZgSNAbyO0+3wJptpxvAXleSuOFoN5nHMV4LT+vuF0g+FDxIpbJu+bW08IKL1qMSH8Gtwd20Hy34h88IHPg8zx5FUoeeOS5W/wIDAQAB"
+}
+
+resource "cloudflare_record" "default_domainkey" {
+  zone_id = cloudflare_zone.main.id
+  name    = "default._domainkey.staging.righttoknow.org.au"
   type    = "TXT"
   value   = "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzWFLO143fpHeVU27EjmOsY4hpKtR+/PI+idJItMWiHSwjgcX21QYMbQjPcHfHFhsDbblBBQy/MtcTwynSYFp1SWkTI8EsHLS1+pp1HAI3wx7ZWLmwE6di+qRKu+3ooPFSIUbA+TvA7GJmHBfBf/ubASWff4t5ByZ9edZOA4lZ7pGdG7O0duH+/hhggH/LFMPX6a0CzyXYjsfTvtyYMJvvRsoepEs/QjtdBarZS2roR7qxZQhSRUlbZgSNAbyO0+3wJptpxvAXleSuOFoN5nHMV4LT+vuF0g+FDxIpbJu+bW08IKL1qMSH8Gtwd20Hy34h88IHPg8zx5FUoeeOS5W/wIDAQAB"
 }
