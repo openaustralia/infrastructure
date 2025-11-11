@@ -19,7 +19,6 @@ resource "linode_instance" "main" {
   backups_enabled  = true
   watchdog_enabled = true
   private_ip       = false
-  resize_disk      = false
   # We can't set the image below because it would force replacement
   # image            = "linode/ubuntu16.04lts"
 
