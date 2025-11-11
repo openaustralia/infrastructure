@@ -80,13 +80,13 @@
   copy:
     content: "{{ ruby_version_production }}"
     dest: /srv/www/production/shared/rbenv-version
-  when: "'righttoknow_staging' not in group_names"
+  when: "'righttoknow_production' in group_names"
 
 - name: Set the ruby version for the alaveteli deploy (staging)
   copy:
     content: "{{ ruby_version_staging }}"
     dest: /srv/www/staging/shared/rbenv-version
-  when: "'righttoknow_production' not in group_names"
+  when: "'righttoknow_staging' in group_names"
 
 - name: Another Aleveteli config to force production environment
   template:
@@ -119,7 +119,7 @@
     creates: "/home/deploy/.rbenv/versions/{{ ruby_version_production }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
   become_user: deploy
-  when: "'righttoknow_staging' not in group_names"
+  when: "'righttoknow_production' in group_names"
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 # We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
@@ -130,7 +130,7 @@
     creates: "/home/deploy/.rbenv/versions/{{ ruby_version_staging }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
   become_user: deploy
-  when: "'righttoknow_production' not in group_names"
+  when: "'righttoknow_staging' in group_names"
 
 # - name: Add postgresql apt repository
 #   apt_repository:
@@ -241,7 +241,7 @@
     name: "rtk-production-readonly"
     password: "{{ rtk_production_readonly_postgresql_password }}"
     no_password_changes: true
-  when: "'righttoknow_staging' not in group_names"
+  when: "'righttoknow_production' in group_names"
 
 - name: Give the user rtk-production-readonly readonly access to the production righttoknow database
   postgresql_privs:
@@ -252,7 +252,7 @@
     role: "rtk-production-readonly"
     privs: SELECT
     objs: ALL_IN_SCHEMA
-  when: "'righttoknow_staging' not in group_names"
+  when: "'righttoknow_production' in group_names"
 
 - name: Copy over database configuration for application
   template:
@@ -294,7 +294,7 @@
     group: root
     mode: 644
   notify: nginx reload
-  when: "'righttoknow_staging' not in group_names"
+  when: "'righttoknow_production' in group_names"
 
 - name: Copy nginx config for the app
   template:
@@ -338,7 +338,7 @@
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_production }}"
   notify: nginx restart
-  when: "'righttoknow_staging' not in group_names"
+  when: "'righttoknow_production' in group_names"
 
 - name: Apply Alaveteli Storage Config (production)
   template:
@@ -347,7 +347,7 @@
     owner: deploy
     group: deploy
   notify: nginx restart
-  when: "'righttoknow_staging' not in group_names"
+  when: "'righttoknow_production' in group_names"
 
 - name: Apply Alaveteli config (staging)
   template:
@@ -369,7 +369,7 @@
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
   notify: nginx restart
-  when: "'righttoknow_production' not in group_names"
+  when: "'righttoknow_staging' in group_names"
 
 - name: Apply Alaveteli Storage Config (staging)
   template:
@@ -378,7 +378,7 @@
     owner: deploy
     group: deploy
   notify: nginx restart
-  when: "'righttoknow_production' not in group_names"
+  when: "'righttoknow_staging' in group_names"
 
 - name: Apply user spam scorer config
   template:
