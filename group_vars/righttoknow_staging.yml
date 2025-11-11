@@ -7,9 +7,6 @@ righttoknow_domain: staging.righttoknow.org.au
 domain: staging.righttoknow.org.au
 server_hostname: staging.righttoknow.org.au
 
-# Flag to indicate this is a standalone staging server (not joint prod/staging)
-standalone_staging: true
-
 # Disable cron for staging initially
 cron_enabled: false #TODO: Enable cron when ready
 
