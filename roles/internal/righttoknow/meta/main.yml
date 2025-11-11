@@ -140,6 +140,7 @@ dependencies:
         target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/data"
         exclude:
           - "*/bundle"
+    when: ansible_distribution_release == 'bionic'
     
   - role: nickhammond.logrotate
     logrotate_scripts:
