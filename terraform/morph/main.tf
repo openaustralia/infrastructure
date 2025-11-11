@@ -16,7 +16,7 @@ resource "linode_instance" "main" {
   label            = "morph"
   group            = "morph"
   booted           = true
-  backups_enabled  = false
+  backups_enabled  = true
   watchdog_enabled = true
   private_ip       = false
   resize_disk      = false
