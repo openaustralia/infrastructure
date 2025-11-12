@@ -139,7 +139,7 @@ dependencies:
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/data"
         exclude:
-          - "*/bundle"
+          - "**/bundle"
     when: ansible_distribution_release in ['bionic', 'jammy']
     
   - role: nickhammond.logrotate
