@@ -2,58 +2,17 @@
 # Most values inherited from righttoknow.yml
 name: staging.righttoknow.org.au
 
-# Flag to indicate this is a standalone staging server (not joint prod/staging)
-standalone_staging: true
-
-# Use the same github users as production
-github_users:
-  [
-    "benrfairless",
-    "br3nda",
-    "jamezpolley",
-    "jattree",
-    "mlandauer",
-    "simonzippy",
-  ]
+# Domain configuration for standalone staging server
+righttoknow_domain: staging.righttoknow.org.au
+domain: staging.righttoknow.org.au
+server_hostname: staging.righttoknow.org.au
 
 # Disable cron for staging initially
-cron_enabled: false
+cron_enabled: false #TODO: Enable cron when ready
 
 # Staging-specific settings
 # Both staging and production environments run in Rails production mode
 rails_env: production
 
-# Domain configuration for standalone staging server
-# Standalone staging is accessed at staging.righttoknow.org.au (NOT test.righttoknow.org.au)
-righttoknow_domain: staging.righttoknow.org.au
-domain: staging.righttoknow.org.au
-server_hostname: staging.righttoknow.org.au
-
-
 # Disable backups for staging
 backup_profiles: []
-
-# Use real SSL certificates with standalone mode
-# Standalone staging needs real production certificates for staging.righttoknow.org.au
-certbot_webserver: nginx
-certbot_standalone: true
-certbot_staging: false
-certbot_domains:
-  - staging.righttoknow.org.au
-  - www.staging.righttoknow.org.au
-
-# NOTE: For staging, you'll need to add encrypted secrets here similar to production
-# You can copy from production and modify, or generate new ones:
-# - db_password_production
-# - db_password_staging  
-# - alaveteli_cookie_store_session_secret
-# - alaveteli_secret_key_base
-# - alaveteli_recaptcha_private_key
-# - alaveteli_incoming_email_secret
-# - alaveteli_admin_password
-#
-# For initial testing, you might copy production values and change passwords
-
-# Ansible connection settings for staging server
-# ansible_user: ubuntu
-# ansible_ssh_private_key_file: "{{ playbook_dir }}/terraform.pem"
