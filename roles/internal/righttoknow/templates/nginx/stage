@@ -106,9 +106,15 @@ server {
     deny 8.222.0.0/16;
     deny 47.82.0.0/19;
 
-    # Additional ranges 2025-09-24
-	
-	# Kingsoft Cloud
+    # Hetzner
+    deny 144.76.0.0/16;
+    deny 138.201.0.0/16;
+
+    # China
+    deny 42.81.0.0/16;
+    deny 154.8.240.0/21;
+    
+	  # Kingsoft Cloud
     deny 104.250.52.0/22;
 		
     # Meta / Facebook
@@ -140,6 +146,8 @@ server {
     deny 107.163.177.0/24;
     deny 23.231.224.0/24;
     deny 192.229.67.0/24;
+
+
     
     # Pass the request on to Varnish.
     proxy_pass  http://127.0.0.1;
