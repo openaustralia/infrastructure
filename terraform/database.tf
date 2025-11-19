@@ -102,6 +102,46 @@ resource "aws_db_instance" "postgresql" {
   deletion_protection    = true
 }
 
+# New maindb MySQL 8.0 instance
+resource "aws_db_instance" "maindb" {
+  allocated_storage = 50
+
+  # Using general purpose SSD
+  storage_type   = "gp2"
+  engine         = "mysql"
+  engine_version = "8.0.44"
+
+  instance_class      = "db.t3.small"
+  identifier          = "maindb"
+  username            = "admin"
+  password            = var.rds_admin_password
+  publicly_accessible = false
+
+  # db.t3.small doesn't support performance_insights.
+  performance_insights_enabled = false
+
+  # Enable enhanced monitoring
+  monitoring_role_arn = aws_iam_role.rds-monitoring-role.arn
+  monitoring_interval = 60
+
+  # Put the backup retention period to its maximum
+  backup_retention_period = 32
+
+  # We want 3-3:30am Sydney time which is 4-4:30pm GMT
+  backup_window = "16:00-16:30"
+
+  # We want Monday 4-4:30am Sydney time which is Sunday 5-5:30pm GMT.
+  maintenance_window         = "sun:17:00-sun:17:30"
+  multi_az                   = true
+  auto_minor_version_upgrade = true
+  apply_immediately          = false
+  skip_final_snapshot        = true
+  vpc_security_group_ids     = [aws_security_group.main_database.id]
+  parameter_group_name       = "default.mysql8.0"
+  deletion_protection        = false
+  copy_tags_to_snapshot      = true
+}
+
 resource "aws_db_parameter_group" "mysql_default" {
   name        = "mysql-default"
   description = "Our default for mysql 5.6"
