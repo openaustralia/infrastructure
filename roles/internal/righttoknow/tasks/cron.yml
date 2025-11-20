@@ -14,7 +14,7 @@
     user: deploy
     name: "update-xapian-index"
     minute: "0,5,10,15,20,25,30,35,40,45,50,55"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./update-xapian-index.lock \"./script/update-xapian-index verbose=true\" >> ./log/update-xapian-index.log || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./change-xapian-database.lock \"./script/update-xapian-index verbose=true\" >> ./log/update-xapian-index.log || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
@@ -63,7 +63,7 @@
     name: "compact-xapian-database"
     minute: "31"
     hour: "1"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./compact-xapian-database.lock \"./script/compact-xapian-database production alaveteli-{{ item }}\" || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./change-xapian-database.lock \"./script/compact-xapian-database production\" || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
