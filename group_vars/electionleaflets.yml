@@ -1,6 +1,6 @@
 # TODO: Unify this with the domain. It's currently only used to name
 # things on New Relic.
-name: electionleaflets.org.au
+site_name: electionleaflets.org.au
 backup_gpg_pw: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           38613838343137663461623731353661373533396530636665656437363538663031333433343536
