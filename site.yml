@@ -68,6 +68,7 @@
       register: rds_mysql5
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
+      when: "'requires_mysql' in group_names"
     
     - name: Get information about the Mysql 8 instance
       rds:
@@ -79,6 +80,8 @@
       register: rds_mysql8
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
+      when: "'requires_mysql' in group_names"
+
 
     - name: Get information about the postgresql RDS instance
       rds:
@@ -90,6 +93,7 @@
       register: rds_postgresql
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
+      when: "'requires_postgresql' in group_names"
 
     - name: Get information about the planningalerts RDS instance
       rds:
@@ -101,6 +105,7 @@
       register: rds_planningalerts
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
+      when: "'requires_postgresql' in group_names"
 
 - hosts: all
   become: true
