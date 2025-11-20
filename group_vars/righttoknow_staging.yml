@@ -1,6 +1,6 @@
 # Staging environment configuration for RightToKnow
 # Most values inherited from righttoknow.yml
-name: staging.righttoknow.org.au
+site_name: staging.righttoknow.org.au
 
 # Domain configuration for standalone staging server
 righttoknow_domain: staging.righttoknow.org.au
