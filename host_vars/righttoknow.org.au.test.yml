@@ -1,4 +1,4 @@
-name: righttoknow.org.au.test
+site_name: righttoknow.org.au.test
 db_password_production: db_password_production
 db_password_staging: db_password_staging
 alavateli_incoming_email_secret: alavateli_incoming_email_secret
