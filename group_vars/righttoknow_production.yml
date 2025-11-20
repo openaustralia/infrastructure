@@ -3,7 +3,7 @@
 
 # TODO: Unify this with the domain. It's currently only used to name
 # things on New Relic.
-name: prod.righttoknow.org.au
+site_name: prod.righttoknow.org.au
 
 # Domain configuration for standalone production server
 righttoknow_domain: righttoknow.org.au # Used in certbot and SSL
