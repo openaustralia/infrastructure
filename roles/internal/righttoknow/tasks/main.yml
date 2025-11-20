@@ -261,8 +261,8 @@
     owner: deploy
     group: deploy
   vars:
-    - stage: "{{ item }}"
-    - password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
+    stage: "{{ item }}"
+    password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
   with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
   notify: nginx restart
 
@@ -272,7 +272,7 @@
     dest: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
     mode: 0755
   vars:
-    - stage: "{{ item[0] }}"
+    stage: "{{ item[0] }}"
   with_nested:
     - "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
     - ['send-notifications', 'foi-alert-tracks', 'alaveteli']
