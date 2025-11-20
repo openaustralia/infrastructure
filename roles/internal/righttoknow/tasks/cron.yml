@@ -134,6 +134,18 @@
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
+# Once a day, early morning (added) - alert-survey
+- name: Add alaveteli crontab - alert-survey
+  cron:
+    user: deploy
+    name: "alert-survey"
+    minute: "0"
+    hour: "7"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-survey.lock ./script/alert-survey || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
 # Once a day, early morning
 # 0 8 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-not-clarified-request.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-not-clarified-request || echo "stalled?"
 - name: Add alaveteli crontab - alert-not-clarified-request
