@@ -132,29 +132,6 @@
   become_user: deploy
   when: "'righttoknow_staging' in group_names"
 
-# - name: Add postgresql apt repository
-#   apt_repository:
-#     repo: deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
-#     filename: pgdg
-#
-# - name: Import postgresql repository signing key
-#   apt_key:
-#     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-#     id: ACCC4CF8
-#
-# # We're using a slightly older postgres client so that pg_dump still
-# # works with "-i" which would cause a rails migration to fail otherwise.
-# # This will be fixed by upgrading to the latest alavetelli.
-# - name: Install postgresql-client-9.4
-#   apt:
-#     pkg: "{{ item }}"
-#     update_cache: true
-#   with_items:
-#     - postgresql-client-9.4
-#     - libpq-dev
-
-## pdftk-java is available in standard repos on supported Ubuntu versions
-
 - name: Install packages required by Alaveteli
   apt:
     name:
