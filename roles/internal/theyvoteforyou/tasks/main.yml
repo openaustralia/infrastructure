@@ -299,7 +299,7 @@
 # will hopefully stay in sync at the risk of chrome updating when not necessarily expected.
 
 - name: Get Google key for install Chrome
-  become: yes
+  become: true
   apt_key:
     url: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
     state: present
