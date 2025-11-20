@@ -318,7 +318,7 @@
 
 - name: Get latest version number for chromedriver
   uri:
-    url: "http://chromedriver.storage.googleapis.com/LATEST_RELEASE"
+    url: "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"
     return_content: yes
     headers:
       Content-Type: "text/plain"
