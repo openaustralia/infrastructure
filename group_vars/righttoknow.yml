@@ -1,6 +1,6 @@
 # TODO: Unify this with the domain. It's currently only used to name
 # things on New Relic.
-name: righttoknow.org.au
+site_name: righttoknow.org.au
 github_users:
   [
     "benrfairless",

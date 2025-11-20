@@ -1,4 +1,4 @@
-name: au.proxy.oaf.org.au
+site_name: au.proxy.oaf.org.au
 password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           63623366396435326635316537663863386665633566316532636135326161333331303362646631

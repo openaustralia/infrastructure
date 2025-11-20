@@ -1,6 +1,6 @@
 # TODO: Unify this with the domain. It's currently only used to name
 # things on New Relic.
-name: theyvoteforyou.org.au
+site_name: theyvoteforyou.org.au
 # Not using any non-alphanumeric characters in the password so that we can use
 # ansible-vault encrypt_string without having to use stdin input (which appears to
 # introduce an extra carriage return at the end)
