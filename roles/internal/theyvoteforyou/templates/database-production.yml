@@ -1,6 +1,6 @@
 production:
   adapter: mysql2
-  host: {{ mysql_host }}
+  host: {{ mysql_5_host }}
   database: tvfy-production
   username: tvfy-production
   password: "{{ theyvoteforyou_production_mysql_password }}"

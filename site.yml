@@ -58,14 +58,25 @@
       pip: name=boto3
       when: ansible_distribution_release == 'focal' or ansible_distribution_release == 'jammy'
 
-    - name: Get information about the RDS instance
+    - name: Get information about the Mysql 5 instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
         command: facts
         instance_name: main-database
         region: "{{ ec2_region }}"
-      register: rds_mysql
+      register: rds_mysql5
+      # Run this task even when running ansible-playbook with "--check"
+      check_mode: no
+    
+    - name: Get information about the Mysql 8 instance
+      rds:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        command: facts
+        instance_name: maindb
+        region: "{{ ec2_region }}"
+      register: rds_mysql8
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
 

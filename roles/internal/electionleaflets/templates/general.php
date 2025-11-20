@@ -21,7 +21,7 @@ define('CACHE_DIR', DATA_DIR . '/cache');
 
 // *******************************************************************************
 // MySQL database.
-define ("DB_HOST", "{{ mysql_host }}");
+define ("DB_HOST", "{{ mysql_5_host }}");
 define ("DB_USER", "el-{{ stage }}");
 define ("DB_PASSWORD", "{{ db_password }}");
 define ("DB_PASS", "{{ db_password }}");
