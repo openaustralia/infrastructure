@@ -41,7 +41,7 @@
         command: facts
         instance_name: main-database
         region: "{{ ec2_region }}"
-      register: rds_mysql
+      register: rds_mysql5
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
 

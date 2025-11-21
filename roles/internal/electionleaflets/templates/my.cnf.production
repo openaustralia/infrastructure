@@ -1,4 +1,4 @@
 [client]
 password="{{ electionleaflets_production_mysql_password }}"
 user="el-production"
-host="{{ mysql_host }}"
+host="{{ mysql_5_host }}"

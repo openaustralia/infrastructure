@@ -6,7 +6,7 @@
 
 - name: Add key for passenger
   apt_key:
-    url: http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0xAC40B2F7
+    url: "http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0xAC40B2F7"
     state: present
 
 - name: Apt via https
@@ -28,7 +28,9 @@
     state: present
 
 - name: Install memcached
-  apt: pkg=memcached
+  apt:
+    pkg: memcached
+    state: present
 
 - name: Install pip
   apt:
@@ -40,7 +42,7 @@
 
 - name: Create theyvoteforyou databases
   mysql_db:
-    login_host: "{{ mysql_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "tvfy-{{ item }}"
@@ -50,7 +52,7 @@
 
 - name: Create theyvoteforyou user with access to the database (production)
   mysql_user:
-    login_host: "{{ mysql_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: tvfy-production
@@ -60,7 +62,7 @@
 
 - name: Create mysql user with readonly access to the production theyvoteforyou database for metabase
   mysql_user:
-    login_host: "{{ mysql_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: tvfy-production-readonly
@@ -71,7 +73,7 @@
 
 - name: Create theyvoteforyou user with access to the database (staging)
   mysql_user:
-    login_host: "{{ mysql_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: tvfy-staging

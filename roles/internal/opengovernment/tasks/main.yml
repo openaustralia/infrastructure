@@ -6,14 +6,14 @@
 # TODO: Do we want a staging setup too?
 - name: Create database
   mysql_db:
-    login_host: "{{ mysql_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: og-production
 
 - name: Create user with access to the database
   mysql_user:
-    login_host: "{{ mysql_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: og-production
@@ -68,7 +68,7 @@
   become_user: www-data
 
 - name: configure wordpress
-  shell: "wp-cli --path='/var/www/html' core config --dbname=og-production --dbuser=og-production --dbpass={{ opengovernment_production_mysql_password }} --dbhost={{ mysql_host }}"
+  shell: "wp-cli --path='/var/www/html' core config --dbname=og-production --dbuser=og-production --dbpass={{ opengovernment_production_mysql_password }} --dbhost={{ mysql_5_host }}"
   args:
     creates: /var/www/html/wp-config.php
   become_user: www-data
