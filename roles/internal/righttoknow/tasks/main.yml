@@ -54,7 +54,7 @@
     group: deploy
     state: directory
   with_nested:
-    - "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+    - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
     - ['files', 'cache', 'bundle', 'storage', 'xapiandbs']
 
 - name: Ensure that deploy owns application directories
@@ -64,7 +64,7 @@
     group: deploy
     path: "/srv/www/{{ item[0] }}/{{ item[1] }}"
   with_nested:
-    - "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+    - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
     - ['', 'shared']
 
 - name: Link directories in /srv/www to /data
@@ -73,7 +73,7 @@
     src: "/data/{{ item[0] }}/{{ item[1] }}"
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
-    - "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+    - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
     - ['files', 'cache', 'bundle', 'storage', 'xapiandbs']
 
 - name: Set the ruby version for the alaveteli deploy (production)
@@ -92,7 +92,7 @@
   template:
     src: rails_env.rb
     dest: /srv/www/{{ item }}/shared
-  with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Add newrelic configuration to disable agent
   template:
@@ -100,7 +100,7 @@
     dest: /srv/www/{{ item }}/shared/
   vars:
     newrelic_app_name: "Right To Know{{ (item == 'production') | ternary('', ' Staging') }}"
-  with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Install wrapper script for setting correct version of ruby in path
   template:
@@ -108,7 +108,7 @@
     dest: /srv/www/{{ item }}/shared
     # Make it executable
     mode: 0755
-  with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
 # We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
@@ -131,29 +131,6 @@
   become: true
   become_user: deploy
   when: "'righttoknow_staging' in group_names"
-
-# - name: Add postgresql apt repository
-#   apt_repository:
-#     repo: deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
-#     filename: pgdg
-#
-# - name: Import postgresql repository signing key
-#   apt_key:
-#     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-#     id: ACCC4CF8
-#
-# # We're using a slightly older postgres client so that pg_dump still
-# # works with "-i" which would cause a rails migration to fail otherwise.
-# # This will be fixed by upgrading to the latest alavetelli.
-# - name: Install postgresql-client-9.4
-#   apt:
-#     pkg: "{{ item }}"
-#     update_cache: true
-#   with_items:
-#     - postgresql-client-9.4
-#     - libpq-dev
-
-## pdftk-java is available in standard repos on supported Ubuntu versions
 
 - name: Install packages required by Alaveteli
   apt:
@@ -218,7 +195,7 @@
     login_user: root
     login_password: "{{ rds_admin_password }}"
     name: "rtk-{{ item }}"
-  with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Create posgresql role
   postgresql_user:
@@ -230,7 +207,7 @@
     password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
     priv: ALL
     no_password_changes: true
-  with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Create posgresql user rtk-production-readonly for metabase
   postgresql_user:
@@ -261,9 +238,9 @@
     owner: deploy
     group: deploy
   vars:
-    stage: "{{ item }}"
-    password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
-  with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+    - stage: "{{ item }}"
+    - password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
 - name: Copy init scripts
@@ -274,7 +251,7 @@
   vars:
     stage: "{{ item[0] }}"
   with_nested:
-    - "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+    - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
     - ['send-notifications', 'foi-alert-tracks', 'alaveteli']
 
 - name: Generate nginx config
@@ -307,7 +284,7 @@
     domain: "{{ righttoknow_domain }}"
     stage: "{{ item }}"
     password_protect: "{{ item == 'staging' }}"
-  with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx reload
 
 - name: Enable sites
@@ -315,7 +292,7 @@
     src: /etc/nginx/sites-available/{{ item }}
     dest: /etc/nginx/sites-enabled/{{ item }}
     state: link
-  with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['default', 'production'] }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['default','production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx reload
 
 - name: Apply Alaveteli config (production)
@@ -371,14 +348,14 @@
   notify: nginx restart
   when: "'righttoknow_staging' in group_names"
 
-- name: Apply Alaveteli Storage Config (staging)
+- name: Apply Alaveteli Storage Config
   template:
     src: storage.yml
-    dest: /srv/www/staging/shared/
+    dest: /srv/www/{{ item }}/shared/storage.yml
     owner: deploy
     group: deploy
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
-  when: "'righttoknow_staging' in group_names"
 
 - name: Apply user spam scorer config
   template:
@@ -386,7 +363,7 @@
     dest: "/srv/www/{{ item }}/shared/user_spam_scorer.yml"
     owner: deploy
     group: deploy
-  with_items: "{{ ['staging'] if ('righttoknow_staging' in group_names) else ['production'] }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
 

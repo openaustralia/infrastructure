@@ -267,8 +267,8 @@ FRONTPAGE_PUBLICBODY_EXAMPLES: 'dibp;services_australia;ato;dpmc;afp;health;agd;
 # Examples:
 #
 #   THEME_URLS:
-#     - 'git://github.com/mysociety/alavetelitheme.git'
-#     - 'git://github.com/mysociety/whatdotheyknow-theme.git'
+#     - 'https://github.com/mysociety/alavetelitheme.git'
+#     - 'https://github.com/mysociety/whatdotheyknow-theme.git'
 #
 # ---
 THEME_URLS:
@@ -448,7 +448,7 @@ TRACK_SENDER_NAME: '{{ site_name }}'
 # ---
 RAW_EMAILS_LOCATION: 'files/raw_emails'
 
-# Rails 4.0 introduces ActiveSupport::KeyGenerator and uses this as a base from
+# Rails 4.0 introduces ActiveSupport::KeyGenerator and uses this as a base from
 # which to generate and verify signed cookies (among other things). You can
 # generate a key with `rake secret`.
 #
@@ -566,19 +566,6 @@ GEOIP_DATABASE: vendor/data/GeoLite2-Country.mmdb
 # ---
 MAXMIND_LICENSE_KEY: '{{ alaveteli_maxmind_license_key }}'
 
-# In the absence of a GeoIP database (see above), Alaveteli can use Gaze,
-# mySociety's gazeteer, to determine the country from the IP address of an HTTP
-# request to the site. You shouldn't normally need to change this.
-#
-# GAZE_URL - String (default: http://gaze.mysociety.org)
-#
-# Examples:
-#
-#   GAZE_URL: http://gaze.example.org
-#
-# ---
-GAZE_URL: http://gaze.mysociety.org
-
 # The email address to which non-bounce responses to emails sent out by
 # Alaveteli should be forwarded
 #
@@ -602,24 +589,6 @@ FORWARD_NONBOUNCE_RESPONSES_TO: contact@righttoknow.org.au
 #
 # ---
 FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro@righttoknow.org.au
-
-# Path to a program that converts an HTML page in a file to PDF. Also used to
-# download a zip file of all the correspondence for a request. It should take
-# two arguments: the URL, and a path to an output file.
-#
-# A static binary of wkhtmltopdf is recommended:
-# https://github.com/wkhtmltopdf/packaging/releases
-# If the command is not present, a text-only version will be rendered
-# instead.
-#
-# HTML_TO_PDF_COMMAND - String (default: nil)
-#
-# Examples:
-#
-#   HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf
-#
-# ---
-HTML_TO_PDF_COMMAND: /usr/local/bin/wkhtmltopdf
 
 # Email address used for sending exception notifications.
 #
@@ -688,13 +657,16 @@ GA_CODE: ''
 OVERRIDE_ALL_PUBLIC_BODY_REQUEST_EMAILS: {{ override_all_public_body_request_emails }}
 
 # Search path for external commandline utilities (such as pdftohtml, pdftk,
-# unrtf)
+# unrtf).
+# When set to an empty array the the standard environment PATH will be used to
+# search for external commandline utilities.
 #
 # UTILITY_SEARCH_PATH - Array of Strings
 #                       (default: ["/usr/bin", "/usr/local/bin"])
 #
 # Examples:
 #
+#  UTILITY_SEARCH_PATH: []
 #  UTILITY_SEARCH_PATH: ["/usr/bin"]
 #  UTILITY_SEARCH_PATH: ["/usr/local/bin", "/opt/bin"]
 #
@@ -736,7 +708,7 @@ MTA_LOG_TYPE: "postfix"
 #   DONATION_URL: http://www.mysociety.org/donate
 #
 # ---
-DONATION_URL: 'https://www.oaf.org.au/donate/righttoknow/'
+DONATION_URL: 'https://donate.oaf.org.au/'
 
 # If PUBLIC_BODY_STATISTICS_PAGE is set to true, Alaveteli will make a page of
 # statistics on the performance of public bodies (which you can see at
@@ -818,7 +790,7 @@ BUNDLE_PATH: vendor/bundle
 #   SHARED_FILES_PATH: /var/www/alaveteli/shared
 #
 # ---
-SHARED_FILES_PATH: ''
+SHARED_FILES_PATH: '/srv/www/{{ stage }}/shared'
 
 # If you have SHARED_FILES_PATH set, then these options list the files
 # that are shared; i.e. those that the deploy scripts should create symlinks to
@@ -861,17 +833,11 @@ SHARED_DIRECTORIES:
   - files/
   - cache/
   - lib/acts_as_xapian/xapiandbs/
+  - log/
+  - storage/
+  - tmp/pids
   - vendor/bundle
   - public/assets
-
-# Allow some users to make batch requests to multiple authorities. Once
-# this is set to true, you can enable batch requests for an individual
-# user via the user admin page.
-#
-# ALLOW_BATCH_REQUESTS - Boolean (default: false)
-#
-# ---
-ALLOW_BATCH_REQUESTS: true
 
 # Define the mailer delivery method to be used only in the production environment.
 # By default, use sendmail.
@@ -966,13 +932,13 @@ ENABLE_ANTI_SPAM: true
 # ---
 BLOCK_RATE_LIMITED_IPS: true
 
-# Prevent users making requests if their IP originates in one of the
-# RESTRICTED_COUNTRIES.
+# Prevent users signing up and making requests if their IP originates in one of
+# the RESTRICTED_COUNTRIES.
 #
 # BLOCK_RESTRICTED_COUNTRY_IPS - Boolean (default: false)
 #
 # ---
-BLOCK_RESTRICTED_COUNTRY_IPS: false
+BLOCK_RESTRICTED_COUNTRY_IPS: true
 
 # Prevent users submitting spam as their "About Me" profile text.
 #
@@ -1094,7 +1060,7 @@ PRO_CONTACT_EMAIL: 'pro@righttoknow.org.au'
 # PRO_CONTACT_NAME - String contact name (default: Alaveteli Professional)
 #
 # ---
-PRO_CONTACT_NAME: 'Right to Know Pro'
+PRO_CONTACT_NAME: '{{ site_name }} Pro'
 
 # Site name for Alaveteli Professional.
 # The name to use when referring to the Alaveteli Professional parts of an
@@ -1108,7 +1074,7 @@ PRO_CONTACT_NAME: 'Right to Know Pro'
 # PRO_SITE_NAME - String site name (default: Alaveteli Professional)
 #
 # ---
-PRO_SITE_NAME: 'Right to Know Pro'
+PRO_SITE_NAME: '{{ site_name }} Pro'
 
 # The total number of authorities that can be added to a Alaveteli Professional
 # batch request.
@@ -1247,7 +1213,7 @@ STRIPE_WEBHOOK_SECRET: '{{ stripe_webhook_secret }}'
 #
 # STRIPE_TAX_RATE: '0.21' # 21%
 # ---
-STRIPE_TAX_RATE: '0.00'
+STRIPE_TAX_RATE: '0.10'
 
 # A Stripe coupon code – displayed to existing Pro users on their subscriptions
 # page – that they can share with friends for their friends to receive a signup
@@ -1303,3 +1269,16 @@ ENABLE_PROJECTS: false
 #
 # ---
 SURVEY_URL: ''
+
+# Retains records of IP addresses used to sign in to user accounts for the
+# configured number of days. This value should be less than or equal to the
+# number of days of logs retained according to your logrotate configuration,
+# otherwise you may hold data in a way that is inconsistent with your privacy
+# policy.
+#
+# Does not record actvity when set to 0.
+#
+# USER_SIGN_IN_ACTIVITY_RETENTION_DAYS – Integer (default: 0)
+#
+# ---
+USER_SIGN_IN_ACTIVITY_RETENTION_DAYS: 30
