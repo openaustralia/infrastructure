@@ -194,7 +194,7 @@
 
 - name: Create electionleaflets databases
   mysql_db:
-    login_host: "{{ mysql_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "el-{{ item }}"
@@ -204,7 +204,7 @@
 
 - name: Create electionleaflets user with access to the database (production)
   mysql_user:
-    login_host: "{{ mysql_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: el-production
@@ -214,7 +214,7 @@
 
 - name: Create electionleaflets user with access to the database (staging)
   mysql_user:
-    login_host: "{{ mysql_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: el-staging
