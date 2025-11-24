@@ -5,7 +5,6 @@ staging.righttoknow.org.au
 prod.righttoknow.org.au
 oaf.org.au
 opengovernment.org.au
-electionleaflets.org.au
 au.proxy.oaf.org.au
 web.metabase.oaf.org.au
 ; We've decided to use the hosted version at plausible.io for the time
@@ -35,9 +34,6 @@ oaf.org.au
 
 [opengovernment]
 opengovernment.org.au
-
-[electionleaflets]
-electionleaflets.org.au
 
 [proxy]
 au.proxy.oaf.org.au
