@@ -130,11 +130,11 @@ dependencies:
         source: /var/www/html/wp-content/uploads
         # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
         target: "s3://s3.amazonaws.com/oaf-backups/oaf/{{ inventory_hostname }}/wordpress-uploads"
-  - role: oefenweb.postfix
-    postfix_relayhost: cuttlefish.oaf.org.au
-    postfix_relayhost_port: 2525
-    postfix_relaytls: true
-    postfix_sasl_user: civicrm_37
-    postfix_sasl_password: "{{ cuttlefish_smtp_pw }}"
-    postfix_mailname: openaustraliafoundation.org.au
-    postfix_inet_protocols: ipv4
+  # - role: oefenweb.postfix
+  #   postfix_relayhost: cuttlefish.oaf.org.au
+  #   postfix_relayhost_port: 2525
+  #   postfix_relaytls: true
+  #   postfix_sasl_user: civicrm_37
+  #   postfix_sasl_password: "{{ cuttlefish_smtp_pw }}"
+  #   postfix_mailname: openaustraliafoundation.org.au
+  #   postfix_inet_protocols: ipv4
