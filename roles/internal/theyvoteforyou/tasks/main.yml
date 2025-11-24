@@ -329,6 +329,7 @@
     src: "https://chromedriver.storage.googleapis.com/{{ latest_chromedriver.content|trim }}/chromedriver_linux64.zip"
     dest: /usr/local/bin
     remote_src: yes
+  when: not ansible_check_mode
 
 # We want this directory to exist in development too so that
 # things are as consistent as possible

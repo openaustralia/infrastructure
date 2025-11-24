@@ -137,7 +137,7 @@ dependencies:
     # Use round-robin pool of gpg key servers to avoid timeout
     rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
     rvm1_bundler_install: true
-  - role: Stouts.backup
+  - role: oaf.backup
     backup_profiles:
       - name: openaustralia_data
         schedule: 0 2 * * *

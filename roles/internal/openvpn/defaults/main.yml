@@ -1,0 +1,30 @@
+---
+# OpenVPN Server Configuration Defaults
+
+# Easy-RSA Certificate Configuration
+openvpn_country: "AU"
+openvpn_province: "NSW"
+openvpn_city: "Sydney"
+openvpn_org: "OAF"
+openvpn_email: "admin@openaustraliafoundation.org.au"
+openvpn_ou: "IT"
+openvpn_key_size: 2048
+openvpn_ca_expire: 3650
+openvpn_cert_expire: 3650
+
+# OpenVPN Network Configuration
+openvpn_server_network: "10.8.0.0"
+openvpn_server_netmask: "255.255.255.0"
+openvpn_client_network: "10.8.0.0/24"
+
+# VPC Network Configuration (AWS)
+openvpn_vpc_network: "172.31.0.0"
+openvpn_vpc_netmask: "255.255.0.0"
+openvpn_vpc_dns: "172.31.0.2"
+
+# IAM Authentication
+openvpn_iam_group: "vpn-users"
+openvpn_aws_region: "ap-southeast-2"
+
+# Server Public IP (should be set via inventory or group_vars)
+# openvpn_server_public_ip: "{{ ansible_default_ipv4.address }}"
