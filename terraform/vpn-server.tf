@@ -11,9 +11,7 @@ resource "aws_instance" "openvpn" {
   # Enable source/dest check disable for NAT functionality
   source_dest_check = false
 
-  user_data = templatefile("${path.module}/vpn-user-data.sh", {
-    vpn_iam_group = "vpn-users"
-  })
+  user_data = file("${path.module}/vpn-user-data.sh")
 
   tags = {
     Name = "openvpn-server"
