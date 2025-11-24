@@ -8,6 +8,7 @@ opengovernment.org.au
 electionleaflets.org.au
 au.proxy.oaf.org.au
 web.metabase.oaf.org.au
+vpn.oaf.org.au
 ; We've decided to use the hosted version at plausible.io for the time
 ; being because it was just a little too much work to get a decent
 ; production worthy setup going. That could of course change and we always
@@ -45,6 +46,9 @@ au.proxy.oaf.org.au
 [metabase]
 web.metabase.oaf.org.au
 
+[openvpn]
+52.64.33.12 ansible_user=ubuntu ansible_ssh_private_key_file=terraform.pem
+
 [planningalerts]
 ec2-3-27-58-54.ap-southeast-2.compute.amazonaws.com
 ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
@@ -52,3 +56,19 @@ ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 [plausible]
 ; See comment above
 ; web.plausible.oaf.org.au
+
+; Group for all sites that need information on the MySQL RDS instance
+[requires_mysql:children]
+electionleaflets
+oaf
+openaustralia
+opengovernment
+theyvoteforyou
+metabase
+
+; Group for all sites that need information on the PostgreSQL RDS instance
+[requires_postgresql:children]
+theyvoteforyou
+righttoknow
+metabase
+planningalerts

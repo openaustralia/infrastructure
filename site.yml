@@ -58,16 +58,30 @@
       pip: name=boto3
       when: ansible_distribution_release == 'focal' or ansible_distribution_release == 'jammy'
 
-    - name: Get information about the RDS instance
+    - name: Get information about the Mysql 5 instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
         command: facts
         instance_name: main-database
         region: "{{ ec2_region }}"
-      register: rds_mysql
+      register: rds_mysql5
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
+      when: "'requires_mysql' in group_names"
+    
+    - name: Get information about the Mysql 8 instance
+      rds:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        command: facts
+        instance_name: maindb
+        region: "{{ ec2_region }}"
+      register: rds_mysql8
+      # Run this task even when running ansible-playbook with "--check"
+      check_mode: no
+      when: "'requires_mysql' in group_names"
+
 
     - name: Get information about the postgresql RDS instance
       rds:
@@ -79,6 +93,7 @@
       register: rds_postgresql
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
+      when: "'requires_postgresql' in group_names"
 
     - name: Get information about the planningalerts RDS instance
       rds:
@@ -90,6 +105,7 @@
       register: rds_planningalerts
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
+      when: "'requires_postgresql' in group_names"
 
 - hosts: all
   become: true
@@ -150,6 +166,11 @@
   become: true
   roles:
     - metabase
+
+- hosts: openvpn
+  become: true
+  roles:
+    - internal/openvpn
 
 - hosts: redis
   become: true

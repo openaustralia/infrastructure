@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# OpenVPN IAM Authentication Script
+# Validates IAM credentials and checks {{ openvpn_iam_group }} group membership
+
+# Get access key from PAM username
+ACCESS_KEY_ID="$PAM_USER"
+
+# Read secret key from stdin (provided by PAM expose_authtok)
+read -r SECRET_ACCESS_KEY
+
+# Log authentication attempt (without credentials)
+logger -t openvpn-iam "Authentication attempt for access key: $ACCESS_KEY_ID"
+
+# Validate credentials using STS GetCallerIdentity
+export AWS_ACCESS_KEY_ID="$ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$SECRET_ACCESS_KEY"
+export AWS_DEFAULT_REGION={{ openvpn_aws_region }}
+
+# Try to get caller identity
+if ! IDENTITY=$(aws sts get-caller-identity 2>&1); then
+    logger -t openvpn-iam "Authentication failed: Invalid credentials - $IDENTITY"
+    exit 1
+fi
+
+# Extract username from ARN
+IAM_USERNAME=$(echo "$IDENTITY" | jq -r '.Arn' | grep -oP '(?<=user/).*')
+
+if [ -z "$IAM_USERNAME" ]; then
+    logger -t openvpn-iam "Authentication failed: Could not extract username from ARN: $IDENTITY"
+    exit 1
+fi
+
+# Check if user is in {{ openvpn_iam_group }} group (use instance role for this check)
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+
+IAM_GROUPS=$(aws iam list-groups-for-user --user-name "$IAM_USERNAME" 2>/dev/null | jq -r '.Groups[].GroupName')
+
+if ! echo "$IAM_GROUPS" | grep -q "^{{ openvpn_iam_group }}$"; then
+    logger -t openvpn-iam "Authentication failed: User $IAM_USERNAME not in {{ openvpn_iam_group }} group. Groups: $IAM_GROUPS"
+    exit 1
+fi
+
+logger -t openvpn-iam "Authentication successful: User $IAM_USERNAME"
+exit 0
