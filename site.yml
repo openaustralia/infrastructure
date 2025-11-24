@@ -167,6 +167,11 @@
   roles:
     - metabase
 
+- hosts: openvpn
+  become: true
+  roles:
+    - internal/openvpn
+
 - hosts: redis
   become: true
   tasks:
