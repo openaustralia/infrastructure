@@ -64,7 +64,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.groups = {
       "righttoknow" => ["righttoknow.org.au.test"],
       "planningalerts" => ["web.planningalerts.org.au.test"],
-      "electionleaflets" => ["electionleaflets.org.au.test"],
       "theyvoteforyou" => ["theyvoteforyou.org.au.test"],
       "oaf" => ["oaf.org.au.test"],
       "openaustralia" => ["openaustralia.org.au.test"],
@@ -77,7 +76,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "development" => [
         "righttoknow.org.au.test",
         "web.planningalerts.org.au.test",
-        "electionleaflets.org.au.test",
         "theyvoteforyou.org.au.test",
         "oaf.org.au.test",
         "openaustralia.org.au.test",
@@ -110,7 +108,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   hosts = {
     "righttoknow.org.au.test" => "192.168.56.10",
     "web.planningalerts.org.au.test" => "192.168.56.11",
-    "electionleaflets.org.au.test" => "192.168.56.13",
     "theyvoteforyou.org.au.test" => "192.168.56.14",
     "oaf.org.au.test" => "192.168.56.15",
     "openaustralia.org.au.test" => "192.168.56.16",
@@ -141,8 +138,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                     when "righttoknow.org.au.test", "oaf.org.au.test"
                       # bionic (18.04 LTS) "standard" support ends in April 2023
                       "ubuntu/bionic64"
-                    when "electionleaflets.org.au.test", "openaustralia.org.au.test",
-                         "opengovernment.org.au.test", "au.proxy.oaf.org.au.test", "mysql.test"
+                    when "opengovernment.org.au.test", "au.proxy.oaf.org.au.test", "mysql.test"
                       # xenial (16.04 LTS) "standard" support ended in April 2021!
                       "ubuntu/xenial64"
                     else

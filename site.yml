@@ -132,11 +132,6 @@
   roles:
     - planningalerts
 
-- hosts: electionleaflets
-  become: true
-  roles:
-    - electionleaflets
-
 - hosts: theyvoteforyou
   become: true
   roles:
