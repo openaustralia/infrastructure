@@ -121,7 +121,7 @@ galaxy_info:
   #- system
   #- web
 dependencies:
-  - role: Stouts.backup
+  - role: oaf.backup
     backup_profiles:
       - name: electionleaflets_images
         schedule: 0 2 * * *
