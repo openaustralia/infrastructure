@@ -131,7 +131,7 @@ dependencies:
         - version: "{{ ruby_version_production }}"
     rbenv_users:
       - deploy
-  - role: Stouts.backup
+  - role: oaf.backup
     backup_profiles:
       - name: righttoknow_data
         schedule: 0 2 * * *

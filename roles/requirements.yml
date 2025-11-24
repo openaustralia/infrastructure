@@ -15,11 +15,6 @@ roles:
     # Switch to latest version as of Jan 2019
     version: v2.1.2
 
-  - src: Stouts.backup
-    # Using version 3.4.2 because it's the first to include the fix
-    # https://github.com/Stouts/Stouts.backup/commit/17b8f624e85494da5c41acf478706e1c52428984
-    version: 3.4.2
-
   - src: MichaelRigart.aliases
     version: bfffd92efff476f5a685ebd53d265f78babb48af
 
