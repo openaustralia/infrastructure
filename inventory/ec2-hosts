@@ -52,3 +52,19 @@ ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 [plausible]
 ; See comment above
 ; web.plausible.oaf.org.au
+
+; Group for all sites that need information on the MySQL RDS instance
+[requires_mysql:children]
+electionleaflets
+oaf
+openaustralia
+opengovernment
+theyvoteforyou
+metabase
+
+; Group for all sites that need information on the PostgreSQL RDS instance
+[requires_postgresql:children]
+theyvoteforyou
+righttoknow
+metabase
+planningalerts
