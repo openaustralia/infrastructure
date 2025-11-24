@@ -63,7 +63,8 @@ check-planningalerts: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check --diff
 check-theyvoteforyou: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou --check --diff
-
+check-oaf: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l oaf --check --diff
 
 # These make changes 
 apply-righttoknow-all: $(KEYSANDROLES)
@@ -76,6 +77,8 @@ apply-planningalerts: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts
 apply-theyvoteforyou: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou
+apply-oaf: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l oaf --diff
 
 # Update ssh keys on all servers
 update-github-ssh-keys: $(KEYSANDROLES)
