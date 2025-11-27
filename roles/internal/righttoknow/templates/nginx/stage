@@ -147,6 +147,9 @@ server {
     deny 23.231.224.0/24;
     deny 192.229.67.0/24;
 
+    # Alibaba Cloud
+    deny 47.79.192.0/19;
+    
 
     
     # Pass the request on to Varnish.
