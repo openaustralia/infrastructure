@@ -95,6 +95,14 @@ resource "cloudflare_record" "facebook_domain_verification" {
   value   = "facebook-domain-verification=djdz2wywxnas3cxhrch14pfk145g93"
 }
 
+resource "cloudflare_record" "yahoo_domain_verification" {
+  zone_id = cloudflare_zone.main.id
+  name    = "planningalerts.org.au"
+  type    = "TXT"
+  value   = "yahoo-verification-key=j/JGsx5QsyhsESucFAGKelmOmW80kCYKW5lxhkxvzr4="
+}
+
+
 resource "cloudflare_record" "domainkey" {
   zone_id = cloudflare_zone.main.id
   name    = "planningalerts_3.cuttlefish._domainkey.planningalerts.org.au"
