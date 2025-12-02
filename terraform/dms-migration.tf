@@ -3,7 +3,7 @@
 
 # DMS Subnet Group
 resource "aws_dms_replication_subnet_group" "main" {
-  replication_subnet_group_id = "dms-mysql-migration"
+  replication_subnet_group_id          = "dms-mysql-migration"
   replication_subnet_group_description = "DMS subnet group for MySQL 5.7 to 8.0 migration"
 
   subnet_ids = [
@@ -19,19 +19,21 @@ resource "aws_dms_replication_subnet_group" "main" {
 
 # Security Group for DMS Replication Instance
 resource "aws_security_group" "dms_replication" {
-  name        = "dms-replication"
-  description = "Security group for DMS replication instance"
-
+  name                   = "dms-replication"
+  revoke_rules_on_delete = false
+  description            = "Security group for DMS replication instance"
+  tags = {
+    Name = "DMS Replication Instance"
+  }
+  tags_all = {
+    Name = "DMS Replication Instance"
+  }
   # Allow all outbound for DMS operations
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "DMS Replication Instance"
   }
 }
 
@@ -48,7 +50,7 @@ resource "aws_security_group_rule" "main_database_from_dms" {
 
 # DMS Replication Instance
 resource "aws_dms_replication_instance" "main" {
-  replication_instance_id   = "mysql-migration"
+  replication_instance_id    = "mysql-migration"
   replication_instance_class = "dms.t3.medium"
   allocated_storage          = 100
 
@@ -58,7 +60,7 @@ resource "aws_dms_replication_instance" "main" {
   vpc_security_group_ids      = [aws_security_group.dms_replication.id]
 
   publicly_accessible = false
-  engine_version = "3.5.4"
+  engine_version      = "3.5.4"
 
   preferred_maintenance_window = "sun:18:00-sun:19:00"
 
@@ -106,10 +108,10 @@ resource "aws_dms_endpoint" "target" {
 # DMS Replication Task
 # CDC mode with start position set to snapshot time
 resource "aws_dms_replication_task" "mysql_migration" {
-  replication_task_id       = "mysql-57-to-80-migration"
-  replication_instance_arn  = aws_dms_replication_instance.main.replication_instance_arn
-  source_endpoint_arn       = aws_dms_endpoint.source.endpoint_arn
-  target_endpoint_arn       = aws_dms_endpoint.target.endpoint_arn
+  replication_task_id      = "mysql-57-to-80-migration"
+  replication_instance_arn = aws_dms_replication_instance.main.replication_instance_arn
+  source_endpoint_arn      = aws_dms_endpoint.source.endpoint_arn
+  target_endpoint_arn      = aws_dms_endpoint.target.endpoint_arn
 
   migration_type = "cdc"
   cdc_start_time = "2025-11-18T16:07:39"
@@ -160,14 +162,14 @@ resource "aws_dms_replication_task" "mysql_migration" {
       HandleSourceTableAltered   = true
     }
     ChangeProcessingTuning = {
-      BatchApplyPreserveTransaction  = true
-      BatchApplyTimeoutMin           = 1
-      BatchApplyTimeoutMax           = 30
-      MinTransactionSize             = 1000
-      CommitTimeout                  = 1
-      MemoryLimitTotal               = 1024
-      MemoryKeepTime                 = 60
-      BatchApplyMemoryLimit          = 500
+      BatchApplyPreserveTransaction = true
+      BatchApplyTimeoutMin          = 1
+      BatchApplyTimeoutMax          = 30
+      MinTransactionSize            = 1000
+      CommitTimeout                 = 1
+      MemoryLimitTotal              = 1024
+      MemoryKeepTime                = 60
+      BatchApplyMemoryLimit         = 500
     }
   })
 
