@@ -11,7 +11,7 @@ jobs:
         - uses: actions/checkout@v4
         - run: "ls -l"
         - run: ./.github/scripts/setup-terraform.sh
-        - run: make tf-init
+        - run: terraform -chdir=terraform init -input=false 
         - run: |
             if [[ -n "$(git status --porcelain)" ]]; then
                 echo "Error: Uncommitted changes or untracked files detected."
