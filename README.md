@@ -26,8 +26,6 @@
 		* [Deploying PlanningAlerts to your local development server](#DeployingPlanningAlertstoyourlocaldevelopmentserver)
 		* [Deploying PlanningAlerts to production](#DeployingPlanningAlertstoproduction)
 	* [Running tests locally](#Runningtestslocally)
-	* [Deploying Electionleaflets to your local development server](#DeployingElectionleafletstoyourlocaldevelopmentserver)
-		* [TODOS](#TODOS)
 	* [Deploying They Vote For You](#DeployingTheyVoteForYou)
 		* [Deploying They Vote For You to your local development server](#DeployingTheyVoteForYoutoyourlocaldevelopmentserver)
 		* [Deploying They Vote For You to production](#DeployingTheyVoteForYoutoproduction)
@@ -161,9 +159,7 @@ This repo is being used to setup and configure servers on EC2 for:
   - openaustraliafoundation.org.au
   - CiviCRM
 * opengovernment.org.au
-* electionleaflets.org.au:
-  - electionleaflets.org.au
-  - test.electionleaflets.org.au
+* electionleaflets.org.au (decommissioned)
 
 On Linode running as separate VMs with automated server configuration:
 * cuttlefish.oaf.org.au - automated server configuration using Ansible at
