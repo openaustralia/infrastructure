@@ -3,14 +3,6 @@ module "cuttlefish" {
   zone_id = cloudflare_zone.oaf_org_au.id
 }
 
-module "electionleaflets" {
-  source                = "./electionleaflets"
-  security_group        = aws_security_group.webserver
-  instance_profile      = aws_iam_instance_profile.logging
-  ami                   = var.ubuntu_16_ami
-  cloudflare_account_id = var.cloudflare_account_id
-}
-
 module "planningalerts" {
   source           = "./planningalerts"
   instance_profile = aws_iam_instance_profile.logging
