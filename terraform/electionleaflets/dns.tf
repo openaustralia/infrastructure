@@ -19,6 +19,7 @@ resource "cloudflare_record" "root" {
 resource "cloudflare_record" "www" {
   zone_id = cloudflare_zone.main.id
   name    = "www.electionleaflets.org.au"
+  proxied = false
   type    = "CNAME"
   value   = "electionleaflets.org.au"
 }
