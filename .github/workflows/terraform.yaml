@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
-        #   - uses: actions/setup-python@v6
+        - run: "ls -l"
+        - run: ./.github/scripts/setup-terraform.sh
         - run: make tf-init
         - run: |
             if [[ -n "$(git status --porcelain)" ]]; then
