@@ -56,6 +56,14 @@ resource "cloudflare_record" "facebook_domain_verification" {
   value   = "facebook-domain-verification=hfy8rxjyjsmjynz68xr373fy86lg4o"
 }
 
+resource "cloudflare_record" "yahoo_domain_verification" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "oaf.org.au"
+  type    = "TXT"
+  value   = "yahoo-verification-key=b22Y3XMni7mCqo0n03D0IOvczsLEdMQZ4i+Pt1WMJ0Y="
+}
+
+
 resource "cloudflare_record" "bluesky_domain_verification" {
   zone_id = var.oaf_org_au_zone_id
   name    = "_atproto.oaf.org.au"
