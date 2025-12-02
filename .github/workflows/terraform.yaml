@@ -1,0 +1,19 @@
+name: terraform-init
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  tf-init:
+    name: Terraform Init
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+        #   - uses: actions/setup-python@v6
+        - run: make tf-init
+        - run: |
+            if [[ -n "$(git status --porcelain)" ]]; then
+                echo "Error: Uncommitted changes or untracked files detected."
+                git status
+                exit 1
+            fi
