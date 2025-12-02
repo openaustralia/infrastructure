@@ -24,12 +24,12 @@ As an example:
   certbot_certs:
     - email: contact@oaf.org.au
       domains:
-        - "{{ electionleaflets_domain }}"
-        - www."{{ electionleaflets_domain }}"
+        - "{{ theyvoteforyou_domain }}"
+        - www."{{ theyvoteforyou_domain }}"
     - email: contact@oaf.org.au
       domains:
-        - "test.{{ electionleaflets_domain }}"
-        - "www.test.{{ electionleaflets_domain }}"
+        - "test.{{ theyvoteforyou_domain }}"
+        - "www.test.{{ theyvoteforyou_domain }}"
 ````
 
 will generate two certifcates; each with two names, and install them into the appropriate Apache vhosts
@@ -41,7 +41,7 @@ Dependencies
 Example Playbook
 ----------------
 
-See the `electionleaflets` role for an example of usage.
+See the `theyvoteforyou` role for an example of usage.
 
 License
 -------
