@@ -1,9 +1,3 @@
-resource "cloudflare_zone" "main" {
-  account_id = var.cloudflare_account_id
-  plan       = "free"
-  zone       = "electionleaflets.org.au"
-}
-
 # A records
 resource "cloudflare_record" "root" {
   zone_id = cloudflare_zone.main.id
