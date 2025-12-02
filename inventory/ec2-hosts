@@ -55,7 +55,6 @@ ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 
 ; Group for all sites that need information on the MySQL RDS instance
 [requires_mysql:children]
-electionleaflets
 oaf
 openaustralia
 opengovernment
