@@ -35,6 +35,10 @@ resource "aws_security_group" "dms_replication" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  lifecycle {
+    ignore_changes = [tags, tags_all]
+  }
 }
 
 # Allow DMS to access main_database security group
@@ -85,6 +89,10 @@ resource "aws_dms_endpoint" "source" {
   tags = {
     Name = "Source main-database MySQL 5.7"
   }
+
+  lifecycle {
+    ignore_changes = [password]
+  }
 }
 
 # Target Endpoint - maindb (MySQL 8.0)
@@ -102,6 +110,10 @@ resource "aws_dms_endpoint" "target" {
 
   tags = {
     Name = "Target maindb MySQL 8.0"
+  }
+
+  lifecycle {
+    ignore_changes = [password]
   }
 }
 
@@ -178,6 +190,14 @@ resource "aws_dms_replication_task" "mysql_migration" {
 
   tags = {
     Name = "MySQL 5.7 to 8.0 CDC Replication"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      cdc_start_time,
+      start_replication_task,
+      replication_task_settings,
+    ]
   }
 
   depends_on = [
