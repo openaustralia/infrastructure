@@ -385,18 +385,6 @@ RAILS_ENV=test bundle exec rakedb:create db:migrate
 ````
 - Now you can `bundle exec rake` to run tests.
 
-### <a name='DeployingElectionleafletstoyourlocaldevelopmentserver'></a>Deploying Electionleaflets to your local development server
-
-After provisioning, deploy from Electionleaflets repository
-```
-bundle exec cap -S stage=development deploy
-bundle exec cap -S stage=development deploy:setup_db
-```
-
-#### <a name='TODOS'></a>TODOS
-
-* Django maps app (not worth doing?)
-
 ### <a name='DeployingTheyVoteForYou'></a>Deploying They Vote For You
 
 After provisioning, set up and deploy from the
