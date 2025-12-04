@@ -9,7 +9,7 @@ resource "cloudflare_record" "root" {
   zone_id = cloudflare_zone.main.id
   name    = "electionleaflets.org.au"
   comment = "Used to create Redirect Rule"
-  proxied = false
+  proxied = true
   type    = "A"
   value   = "192.0.2.1" # Cloudflare
 }
