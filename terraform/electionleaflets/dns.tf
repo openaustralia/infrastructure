@@ -11,7 +11,7 @@ resource "cloudflare_record" "root" {
   comment = "Used to create Redirect Rule"
   proxied = false
   type    = "A"
-  value   = "192.0.2.1"
+  value   = "192.0.2.1" # Cloudflare
 }
 
 # TODO: Can we extract the creation of several cnames into a simple module?
