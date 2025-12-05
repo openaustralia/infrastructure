@@ -2,15 +2,15 @@
 # This creates a parallel production environment for Right to Know 
 
 resource "aws_instance" "production" {
-  ami = var.ubuntu_22_ami
+  ami           = var.ubuntu_22_ami
   instance_type = "t3.large"
   ebs_optimized = true
   key_name      = "terraform"
 
   tags = {
-    Name = "righttoknow-production"
+    Name        = "righttoknow-production"
     Environment = "production"
-    Purpose = "Ubuntu 22.04 Production Server"
+    Purpose     = "Ubuntu 22.04 Production Server"
   }
 
   # Increase root volume size to 20GB to allow for more packages and data
@@ -18,22 +18,23 @@ resource "aws_instance" "production" {
     volume_size = 20
   }
 
-  security_groups = [
-    var.security_group_webserver.name,
-    var.security_group_incoming_email.name,
+  vpc_security_group_ids = [
+    var.security_group_webserver.id,
+    var.security_group_service.id,
+    var.security_group_incoming_email.id,
   ]
 
-  availability_zone       = aws_ebs_volume.production_data.availability_zone
-  iam_instance_profile    = var.instance_profile.name
+  availability_zone    = aws_ebs_volume.production_data.availability_zone
+  iam_instance_profile = var.instance_profile.name
 
-# Disable termination to protect production
+  # Disable termination to protect production
   disable_api_termination = true
 }
 
 resource "aws_eip" "production" {
   instance = aws_instance.production.id
   tags = {
-    Name = "righttoknow-production"
+    Name        = "righttoknow-production"
     Environment = "production"
   }
 }
@@ -44,7 +45,7 @@ resource "aws_ebs_volume" "production_data" {
   size = 240
   type = "gp3"
   tags = {
-    Name = "righttoknow_production_data"
+    Name        = "righttoknow_production_data"
     Environment = "production"
   }
 }
