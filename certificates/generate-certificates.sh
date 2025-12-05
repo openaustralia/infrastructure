@@ -28,7 +28,6 @@ domains=( "theyvoteforyou.org.au.test" "test.theyvoteforyou.org.au.test"
           "righttoknow.org.au.test"    "test.righttoknow.org.au.test"
           "oaf.org.au.test"
           "opengovernment.org.au.test"
-          "electionleaflets.org.au.test" "test.electionleaflets.org.au.test"
           "dev.morph.io")
 
 # Generates a private key with passphrase "abcd" (but only if it doesn't already exist)
@@ -82,7 +81,6 @@ mv openaustralia.org.au.test.key openaustralia.org.au.test.pem test.openaustrali
 mv righttoknow.org.au.test.key righttoknow.org.au.test.pem test.righttoknow.org.au.test.key test.righttoknow.org.au.test.pem ../roles/internal/righttoknow/files
 mv oaf.org.au.test.key oaf.org.au.test.pem ../roles/internal/oaf/files
 mv opengovernment.org.au.test.key opengovernment.org.au.test.pem ../roles/internal/opengovernment/files
-mv electionleaflets.org.au.test.key electionleaflets.org.au.test.pem test.electionleaflets.org.au.test.key test.electionleaflets.org.au.test.pem ../roles/internal/electionleaflets/files
 set +x
 
 # FIXME: adjust temporary measure to copy across a certificate generated here
