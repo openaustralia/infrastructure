@@ -2,10 +2,9 @@
 
 source "https://rubygems.org"
 
-ruby "2.7.6"
+ruby "3.4.7"
 
 group :development do
   gem "rubocop"
   #gem "rubocop-sorbet", require: false
 end
-
