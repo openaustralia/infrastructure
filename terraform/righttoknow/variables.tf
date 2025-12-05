@@ -1,4 +1,5 @@
 variable "security_group_webserver" {}
+variable "security_group_service" {}
 variable "security_group_incoming_email" {}
 variable "instance_profile" {}
 variable "ami" {}

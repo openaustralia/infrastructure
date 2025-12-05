@@ -18,7 +18,7 @@ resource "aws_instance" "main" {
   tags = {
     Name = "theyvoteforyou"
   }
-  security_groups         = [var.security_group.name]
+  vpc_security_group_ids  = [var.security_group.id, var.security_group_service.id]
   disable_api_termination = true
   iam_instance_profile    = var.instance_profile.name
   # Setting the availability zone because it needs to be the same as the disk

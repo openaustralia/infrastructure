@@ -77,3 +77,45 @@ variable "ubuntu_24_ami" {
 variable "cloudflare_account_id" {
   default = "668e6ebb9952c26ec3c17a85fb3a25a1"
 }
+
+# =============================================================================
+# Cloudflare-only restrictions
+# When enabled, adds security group rules to allow HTTP/HTTPS only from Cloudflare IPs
+# Note: You must also remove the 0.0.0.0/0 rules from the SG to enforce the restriction
+# =============================================================================
+
+variable "theyvoteforyou_cloudflare_only" {
+  description = "Add Cloudflare IP rules to theyvoteforyou security group"
+  type        = bool
+  default     = false
+}
+
+variable "righttoknow_cloudflare_only" {
+  description = "Add Cloudflare IP rules to righttoknow security group"
+  type        = bool
+  default     = false
+}
+
+variable "oaf_cloudflare_only" {
+  description = "Add Cloudflare IP rules to oaf security group"
+  type        = bool
+  default     = false
+}
+
+variable "openaustralia_cloudflare_only" {
+  description = "Add Cloudflare IP rules to openaustralia security group"
+  type        = bool
+  default     = false
+}
+
+variable "opengovernment_cloudflare_only" {
+  description = "Add Cloudflare IP rules to opengovernment security group"
+  type        = bool
+  default     = false
+}
+
+variable "planningalerts_cloudflare_only" {
+  description = "Add Cloudflare IP rules to planningalerts load balancer security group"
+  type        = bool
+  default     = false
+}
