@@ -15,7 +15,7 @@ resource "aws_instance" "main" {
   tags = {
     Name = "oaf"
   }
-  security_groups         = [var.security_group_webserver.name]
+  vpc_security_group_ids  = [var.security_group_webserver.id, var.security_group_service.id]
   disable_api_termination = true
   iam_instance_profile    = var.instance_profile.name
 }
