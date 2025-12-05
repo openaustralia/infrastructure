@@ -43,20 +43,20 @@
       apt:
         pkg: python-pip
         cache_valid_time: 300
-      when: ansible_distribution_release != 'focal' and ansible_distribution_release != 'jammy'
+      when: ansible_distribution_release not in ['focal', 'jammy']
 
     - name: Install python3-pip
       apt:
         pkg: python3-pip
         cache_valid_time: 300
-      when: ansible_distribution_release == 'focal' or ansible_distribution_release == 'jammy'
+      when: ansible_distribution_release in ['focal', 'jammy']
 
     - name: Install boto which is required for EC2 stuff (Python 2)
       pip: name=boto
 
     - name: Install boto3 which is required for EC2 stuff (Python 3)
       pip: name=boto3
-      when: ansible_distribution_release == 'focal' or ansible_distribution_release == 'jammy'
+      when: ansible_distribution_release in ['focal', 'jammy']
 
     - name: Get information about the Mysql 5 instance
       rds:
@@ -131,11 +131,6 @@
   become: true
   roles:
     - planningalerts
-
-- hosts: electionleaflets
-  become: true
-  roles:
-    - electionleaflets
 
 - hosts: theyvoteforyou
   become: true

@@ -77,6 +77,14 @@ resource "cloudflare_record" "facebook_domain_verification" {
   value   = "facebook-domain-verification=vtlcbmfm4mihp4wql58lwz3nbhc8bt"
 }
 
+resource "cloudflare_record" "yahoo_domain_verification" {
+  zone_id = cloudflare_zone.main.id
+  name    = "righttoknow.org.au"
+  type    = "TXT"
+  value   = "yahoo-verification-key=J/Bl98qV16dX75A0CTg77/jNdSKtp+ULdHN7fwQ6SHw="
+}
+
+
 # Note that this record comes from roles/internal/righttoknow/files/dkimkeys/default.txt which in turn is generated
 # by hand (as part of a keypair) using opendkim
 resource "cloudflare_record" "default_domainkey" {

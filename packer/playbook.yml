@@ -24,12 +24,12 @@
     - name: Install pip
       apt:
         pkg: python-pip
-      when: ansible_distribution_release != 'focal' and ansible_distribution_release != 'jammy'
+      when: ansible_distribution_release not in ['focal', 'jammy']
 
     - name: Install pip
       apt:
         pkg: python3-pip
-      when: ansible_distribution_release == 'focal' or ansible_distribution_release == 'jammy'
+      when: ansible_distribution_release in ['focal', 'jammy']
 
     - name: Install boto which is required for EC2 stuff
       pip: name=boto
