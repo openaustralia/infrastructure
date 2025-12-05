@@ -10,6 +10,7 @@ resource "cloudflare_record" "root" {
   name    = "opengovernment.org.au"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = false
 }
 
 # CNAME records
@@ -18,6 +19,7 @@ resource "cloudflare_record" "www" {
   name    = "www.opengovernment.org.au"
   type    = "CNAME"
   value   = "opengovernment.org.au"
+  proxied = false
 }
 
 # MX records

@@ -31,6 +31,7 @@ resource "cloudflare_record" "root" {
   name    = "planningalerts.org.au"
   type    = "CNAME"
   value   = var.load_balancer.dns_name
+  proxied = false
 }
 
 resource "cloudflare_record" "www" {
@@ -38,6 +39,7 @@ resource "cloudflare_record" "www" {
   name    = "www.planningalerts.org.au"
   type    = "CNAME"
   value   = var.load_balancer.dns_name
+  proxied = false
 }
 
 resource "cloudflare_record" "api" {
@@ -45,6 +47,7 @@ resource "cloudflare_record" "api" {
   name    = "api.planningalerts.org.au"
   type    = "CNAME"
   value   = var.load_balancer.dns_name
+  proxied = false
 }
 
 resource "cloudflare_record" "email2" {

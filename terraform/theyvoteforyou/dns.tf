@@ -24,6 +24,7 @@ resource "cloudflare_record" "root" {
   name    = "theyvoteforyou.org.au"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = false
 }
 
 # CNAME records
@@ -33,6 +34,7 @@ resource "cloudflare_record" "www" {
   name    = "www.theyvoteforyou.org.au"
   type    = "CNAME"
   value   = "theyvoteforyou.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "test" {
@@ -40,6 +42,7 @@ resource "cloudflare_record" "test" {
   name    = "test.theyvoteforyou.org.au"
   type    = "CNAME"
   value   = "theyvoteforyou.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "www_test" {
@@ -47,6 +50,7 @@ resource "cloudflare_record" "www_test" {
   name    = "www.test.theyvoteforyou.org.au"
   type    = "CNAME"
   value   = "theyvoteforyou.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "email" {
@@ -147,6 +151,7 @@ resource "cloudflare_record" "alt1_root" {
   name    = "theyvoteforyou.org"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = false
 }
 
 resource "cloudflare_record" "alt1_www" {
@@ -154,6 +159,7 @@ resource "cloudflare_record" "alt1_www" {
   name    = "www.theyvoteforyou.org"
   type    = "CNAME"
   value   = "theyvoteforyou.org"
+  proxied = false
 }
 
 # For the time being we're just using DMARC records to get some data on what's
@@ -176,6 +182,7 @@ resource "cloudflare_record" "alt2_root" {
   name    = "theyvoteforyou.com.au"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = false
 }
 
 resource "cloudflare_record" "alt2_www" {
@@ -183,6 +190,7 @@ resource "cloudflare_record" "alt2_www" {
   name    = "www.theyvoteforyou.com.au"
   type    = "CNAME"
   value   = "theyvoteforyou.com.au"
+  proxied = false
 }
 
 # For the time being we're just using DMARC records to get some data on what's

@@ -17,6 +17,7 @@ resource "cloudflare_record" "root" {
   name    = "openaustralia.org"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = false
 }
 
 # CNAME records
@@ -25,6 +26,7 @@ resource "cloudflare_record" "www" {
   name    = "www.openaustralia.org"
   type    = "CNAME"
   value   = "openaustralia.org"
+  proxied = false
 }
 
 resource "cloudflare_record" "test" {
@@ -32,6 +34,7 @@ resource "cloudflare_record" "test" {
   name    = "test.openaustralia.org"
   type    = "CNAME"
   value   = "openaustralia.org"
+  proxied = false
 }
 
 # TODO: This should point at oaf.org.au
@@ -40,6 +43,7 @@ resource "cloudflare_record" "blog" {
   name    = "blog.openaustralia.org"
   type    = "CNAME"
   value   = "openaustralia.org"
+  proxied = false
 }
 
 resource "cloudflare_record" "data" {
@@ -47,6 +51,7 @@ resource "cloudflare_record" "data" {
   name    = "data.openaustralia.org"
   type    = "CNAME"
   value   = "openaustralia.org"
+  proxied = false
 }
 
 resource "cloudflare_record" "software" {
@@ -54,6 +59,7 @@ resource "cloudflare_record" "software" {
   name    = "software.openaustralia.org"
   type    = "CNAME"
   value   = "openaustralia.org"
+  proxied = false
 }
 
 resource "cloudflare_record" "hackfest" {
@@ -125,6 +131,7 @@ resource "cloudflare_record" "alt_root" {
   name    = "openaustralia.org.au"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = false
 }
 
 # CNAME records
@@ -134,6 +141,7 @@ resource "cloudflare_record" "alt_www" {
   name    = "www.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "alt_test" {
@@ -141,6 +149,7 @@ resource "cloudflare_record" "alt_test" {
   name    = "test.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "alt_www_test" {
@@ -148,6 +157,7 @@ resource "cloudflare_record" "alt_www_test" {
   name    = "www.test.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "alt_data" {
@@ -155,6 +165,7 @@ resource "cloudflare_record" "alt_data" {
   name    = "data.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "alt_software" {
@@ -162,6 +173,7 @@ resource "cloudflare_record" "alt_software" {
   name    = "software.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
 }
 
 # MX records

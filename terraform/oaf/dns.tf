@@ -6,6 +6,7 @@ resource "cloudflare_record" "root" {
   name    = "oaf.org.au"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = false
 }
 
 # CNAME records
@@ -14,6 +15,7 @@ resource "cloudflare_record" "test" {
   name    = "test.oaf.org.au"
   type    = "CNAME"
   value   = "oaf.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "www" {
@@ -21,6 +23,7 @@ resource "cloudflare_record" "www" {
   name    = "www.oaf.org.au"
   type    = "CNAME"
   value   = "oaf.org.au"
+  proxied = false
 }
 
 # MX records
@@ -122,6 +125,7 @@ resource "cloudflare_record" "alt_root" {
   name    = "openaustraliafoundation.org.au"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = false
 }
 
 # CNAME records
@@ -130,6 +134,7 @@ resource "cloudflare_record" "alt_www" {
   name    = "www.openaustraliafoundation.org.au"
   type    = "CNAME"
   value   = "openaustraliafoundation.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "test_1" {
