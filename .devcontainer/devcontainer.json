@@ -20,6 +20,37 @@
 				"redhat.ansible",
 				"HashiCorp.terraform"
 			]
+		},
+		"codespaces": {
+			"repositories": {
+				"openaustralia/*": {
+					"permissions": {
+						"actions": "write",
+						"contents": "write"
+					}
+				}
+			}
+		}
+	},
+
+	"secrets": {
+		"ANSIBLE_VAULT_PASS": {
+			"description": "Primary Ansible vault password"
+		},
+		"ANSIBLE_EC2_VAULT_PASS": {
+			"description": "EC2-specific Ansible vault password"
+		},
+		"ANSIBLE_RTK_VAULT_PASS": {
+			"description": "Right To Know Ansible vault password"
+		},
+		"ANSIBLE_ALL_VAULT_PASS": {
+			"description": "All-access Ansible vault password"
+		},
+		"AWS_ACCESS_KEY_ID": {
+			"description": "AWS access key for Terraform and deployment"
+		},
+		"AWS_SECRET_ACCESS_KEY": {
+			"description": "AWS secret key for Terraform and deployment"
 		}
 	},
 
