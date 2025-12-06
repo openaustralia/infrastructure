@@ -132,11 +132,25 @@ resource "cloudflare_record" "alt_www" {
   value   = "openaustraliafoundation.org.au"
 }
 
-resource "cloudflare_record" "alt_test" {
+resource "cloudflare_record" "test_1" {
   zone_id = var.openaustraliafoundation_org_au_zone_id
   name    = "test.openaustraliafoundation.org.au"
+  type    = "A"
+  value   = "192.0.78.151"
+}
+
+resource "cloudflare_record" "test_2" {
+  zone_id = var.openaustraliafoundation_org_au_zone_id
+  name    = "test.openaustraliafoundation.org.au"
+  type    = "A"
+  value   = "192.0.78.202"
+}
+
+resource "cloudflare_record" "www_test_cname" {
+  zone_id = var.openaustraliafoundation_org_au_zone_id
+  name    = "www.test"
   type    = "CNAME"
-  value   = "openaustraliafoundation.org.au"
+  value   = "test.oaf.org.au"
 }
 
 # MX records
