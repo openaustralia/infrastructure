@@ -1,0 +1,32 @@
+{
+	"name": "OpenAustralia Infrastructure",
+	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	
+	"features": {
+		"ghcr.io/devcontainers/features/terraform:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/ruby:1": {
+			"version": "2.7.6"
+		},
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "3.11.13"
+		},
+		"ghcr.io/devcontainers/features/google-cloud-cli:1": {
+			"version": "latest"
+		}
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"redhat.ansible",
+				"HashiCorp.terraform"
+			]
+		}
+	},
+
+	"postCreateCommand": "bash .devcontainer/setup.sh",
+
+	"remoteUser": "codespace"
+}
