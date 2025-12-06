@@ -13,19 +13,13 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor 
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 sudo apt-get update && sudo apt-get install -y google-cloud-cli
 
-# Install Python dependencies (Ansible and related tools)
-echo "Installing Python dependencies..."
-python3 -m pip install -r requirements.txt
-
 # Install Ruby gems
 echo "Installing Ruby gems..."
 gem install bundler
 bundle install
 
-# Install Ansible Galaxy collections and roles
-echo "Installing Ansible Galaxy collections..."
-ansible-galaxy collection install -r roles/requirements.yml
-echo "Installing Ansible Galaxy roles..."
-ansible-galaxy install -r roles/requirements.yml -p roles/external
+# Use Makefile to set up venv and install Ansible roles
+echo "Setting up Python venv and Ansible roles using Makefile..."
+make roles
 
 echo "Setup complete!"
