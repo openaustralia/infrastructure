@@ -11,9 +11,6 @@
 		},
 		"ghcr.io/devcontainers/features/python:1": {
 			"version": "3.11.13"
-		},
-		"ghcr.io/devcontainers/features/google-cloud-cli:1": {
-			"version": "latest"
 		}
 	},
 
