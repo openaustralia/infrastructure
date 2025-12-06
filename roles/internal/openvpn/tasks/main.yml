@@ -8,14 +8,15 @@
       - easy-rsa
       - python3-pip
       - jq
-      - awscli
     state: present
     update_cache: yes
     cache_valid_time: 3600
 
-- name: Install boto3 for IAM authentication
+- name: Install AWS CLI and boto3 via pip
   pip:
-    name: boto3
+    name:
+      - boto3
+      - awscli
     executable: pip3
     state: present
 
@@ -143,8 +144,21 @@
     enabled: yes
     state: started
 
+- name: Read CA certificate for client config
+  slurp:
+    src: /etc/openvpn/ca.crt
+  register: ca_cert
+
+- name: Read TLS auth key for client config
+  slurp:
+    src: /etc/openvpn/ta.key
+  register: ta_key
+
 - name: Create client configuration template
   template:
     src: client-template.ovpn.j2
     dest: /root/client-template.ovpn
     mode: '0600'
+  vars:
+    ca_cert_content: "{{ ca_cert.content | b64decode }}"
+    ta_key_content: "{{ ta_key.content | b64decode }}"

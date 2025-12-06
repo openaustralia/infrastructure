@@ -60,6 +60,20 @@ resource "aws_iam_group" "vpn_users" {
   path = "/"
 }
 
+# VPN users group membership
+# These are manually created IAM users who need VPN access
+resource "aws_iam_group_membership" "vpn_users" {
+  name  = "vpn-users-membership"
+  group = aws_iam_group.vpn_users.name
+
+  users = [
+    "jon",
+    "ben",
+    "brenda",
+    "ian+oaf",
+  ]
+}
+
 output "vpn_users_group_name" {
   description = "IAM group name for VPN access"
   value       = aws_iam_group.vpn_users.name
