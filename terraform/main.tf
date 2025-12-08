@@ -108,14 +108,14 @@ module "openaustralia" {
   cloudflare_account_id    = var.cloudflare_account_id
 }
 
-module "opengovernment" {
-  source                   = "./opengovernment"
-  security_group_webserver = aws_security_group.webserver
-  security_group_service   = aws_security_group.opengovernment
-  instance_profile         = aws_iam_instance_profile.logging
-  ami                      = var.ubuntu_16_ami
-  cloudflare_account_id    = var.cloudflare_account_id
-}
+# module "opengovernment" {
+#   source                   = "./opengovernment"
+#   security_group_webserver = aws_security_group.webserver
+#   security_group_service   = aws_security_group.opengovernment
+#   instance_profile         = aws_iam_instance_profile.logging
+#   ami                      = var.ubuntu_16_ami
+#   cloudflare_account_id    = var.cloudflare_account_id
+# }
 
 module "campaign-monitor" {
   source  = "./campaign-monitor"

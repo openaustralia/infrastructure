@@ -147,11 +147,6 @@
   roles:
     - openaustralia
 
-- hosts: opengovernment
-  become: true
-  roles:
-    - opengovernment
-
 - hosts: proxy
   become: true
   roles:

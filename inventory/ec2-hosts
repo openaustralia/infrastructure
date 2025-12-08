@@ -4,7 +4,6 @@ openaustralia.org.au
 staging.righttoknow.org.au
 prod.righttoknow.org.au
 oaf.org.au
-opengovernment.org.au
 au.proxy.oaf.org.au
 web.metabase.oaf.org.au
 vpn.oaf.org.au
@@ -33,9 +32,6 @@ prod.righttoknow.org.au
 [oaf]
 oaf.org.au
 
-[opengovernment]
-opengovernment.org.au
-
 [proxy]
 au.proxy.oaf.org.au
 
@@ -57,7 +53,6 @@ ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 [requires_mysql:children]
 oaf
 openaustralia
-opengovernment
 theyvoteforyou
 metabase
 

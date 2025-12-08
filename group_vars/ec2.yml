@@ -3,7 +3,6 @@ theyvoteforyou_domain: theyvoteforyou.org.au
 openaustralia_domain: openaustralia.org.au
 righttoknow_domain: righttoknow.org.au
 oaf_domain: oaf.org.au
-opengovernment_domain: opengovernment.org.au
 ansible_user: ubuntu
 ansible_ssh_private_key_file: 'terraform.pem'
 ec2_region: 'ap-southeast-2'
