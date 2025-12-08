@@ -67,7 +67,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "theyvoteforyou" => ["theyvoteforyou.org.au.test"],
       "oaf" => ["oaf.org.au.test"],
       "openaustralia" => ["openaustralia.org.au.test"],
-      "opengovernment" => ["opengovernment.org.au.test"],
       "proxy" => ["au.proxy.oaf.org.au.test"],
       "metabase" => ["web.metabase.oaf.org.au.test"],
       "mysql" => ["mysql.test"],
@@ -79,7 +78,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "theyvoteforyou.org.au.test",
         "oaf.org.au.test",
         "openaustralia.org.au.test",
-        "opengovernment.org.au.test",
         "au.proxy.oaf.org.au.test",
         "web.metabase.oaf.org.au.test",
         "mysql.test",
@@ -115,7 +113,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # TODO: Do we want to seperate out the postgres for PA and everything else
     # so they can track production versions more accurately?
     "postgresql.test" => "192.168.56.18",
-    "opengovernment.org.au.test" => "192.168.56.19",
     "au.proxy.oaf.org.au.test" => "192.168.56.20",
     "web.metabase.oaf.org.au.test" => "192.168.56.21",
     "redis.test" => "192.168.56.22"
@@ -139,7 +136,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                       # bionic (18.04 LTS) "standard" support ends in April 2023
                       "ubuntu/bionic64"
                     when "openaustralia.org.au.test",
-                         "opengovernment.org.au.test", "au.proxy.oaf.org.au.test", "mysql.test"
+                        "au.proxy.oaf.org.au.test", "mysql.test"
                       # xenial (16.04 LTS) "standard" support ended in April 2021!
                       "ubuntu/xenial64"
                     else
