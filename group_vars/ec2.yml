@@ -22,7 +22,6 @@ aws_secret_key: !vault |
           6434643564643137640a333265323036303130353761613465313937653564303237306166643862
           63663031653636636137303266646532616635323635326365663134653539646639636465613766
           3334393761626366336464363162376430613638616235343437
-mysql_5_host: "{{ rds_mysql5.instance.endpoint }}"
 mysql_8_host: "{{ rds_mysql8.instance.endpoint }}" 
 postgresql_host: "{{ rds_postgresql.instance.endpoint }}"
 planningalerts_db_host: "{{ rds_planningalerts.instance.endpoint }}"
