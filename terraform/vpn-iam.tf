@@ -67,10 +67,11 @@ resource "aws_iam_group_membership" "vpn_users" {
   group = aws_iam_group.vpn_users.name
 
   users = [
-    "jon",
-    "ben",
-    "brenda",
-    "ian+oaf",
+    "jon.vpn",
+    "ben.vpn",
+    "brenda.vpn",
+    "ian.vpn",
+    "james.vpn",
   ]
 }
 
