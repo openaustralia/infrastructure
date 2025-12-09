@@ -65,6 +65,8 @@ check-theyvoteforyou: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou --check --diff
 check-oaf: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l oaf --check --diff
+check-metabase: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l metabase --check --diff
 
 # These make changes 
 apply-righttoknow-all: $(KEYSANDROLES)
@@ -79,6 +81,8 @@ apply-theyvoteforyou: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou
 apply-oaf: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l oaf --diff
+apply-metabase: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l metabase --diff
 
 # Update ssh keys on all servers
 update-github-ssh-keys: $(KEYSANDROLES)
