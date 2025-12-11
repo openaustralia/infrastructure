@@ -77,3 +77,23 @@ variable "ubuntu_24_ami" {
 variable "cloudflare_account_id" {
   default = "668e6ebb9952c26ec3c17a85fb3a25a1"
 }
+
+# DMS Migration settings - set to false to stop replicating a database
+# once an application has been migrated to MySQL 8
+variable "dms_replicate_openaustralia" {
+  description = "Enable DMS replication for oa-production and oa-staging databases"
+  type        = bool
+  default     = true
+}
+
+variable "dms_replicate_theyvoteforyou" {
+  description = "Enable DMS replication for tvfy-production and tvfy-staging databases"
+  type        = bool
+  default     = true
+}
+
+variable "dms_replicate_oaf" {
+  description = "Enable DMS replication for oaf-production database"
+  type        = bool
+  default     = true
+}
