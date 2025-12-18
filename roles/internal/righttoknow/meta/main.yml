@@ -140,6 +140,10 @@ dependencies:
         target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/data"
         exclude:
           - "**/bundle"
+          - "**/cache"
+        # Use /data volume for temp/cache to avoid filling root filesystem during full backups
+        temp_dir: /data/backup_tmp
+        arch_dir: /data/backup_cache
     when: ansible_distribution_release in ['bionic', 'jammy'] and 'righttoknow_production' in group_names
     
   - role: nickhammond.logrotate
