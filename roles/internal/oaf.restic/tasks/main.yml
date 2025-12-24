@@ -1,0 +1,9 @@
+---
+- include_tasks: install.yml
+  when: restic_enabled and not restic_remove
+
+- include_tasks: configure.yml
+  when: restic_enabled and not restic_remove
+
+- include_tasks: remove.yml
+  when: restic_remove
