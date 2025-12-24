@@ -121,15 +121,27 @@ galaxy_info:
   #- system
   #- web
 dependencies:
-  # We're not backing up from a /data directory because we shouldn't need another disk
-  # to hold the data. So, instead just backing it up from it's natural place.
-  - role: oaf.backup
-    backup_profiles:
+  # Duplicity backup disabled - replaced by restic (Dec 2025)
+  # Duplicity used 4.6 GiB vs restic ~140 MiB for 141 MB source
+  # - role: oaf.backup
+  #   backup_profiles:
+  #     - name: wordpress-uploads
+  #       schedule: 0 2 * * *
+  #       source: /var/www/html/wp-content/uploads
+  #       target: "s3://s3.amzonaws.com/oaf-backups/oaf/{{ inventory_hostname }}/wordpress-uploads"
+
+  - role: oaf.restic
+    restic_profiles:
       - name: wordpress-uploads
-        schedule: 0 2 * * *
+        schedule: "0 3 * * *"
         source: /var/www/html/wp-content/uploads
-        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
-        target: "s3://s3.amazonaws.com/oaf-backups/oaf/{{ inventory_hostname }}/wordpress-uploads"
+        repository: "s3:s3.amazonaws.com/oaf-backups/oaf/{{ inventory_hostname }}/restic"
+        password: "{{ restic_password }}"
+        aws_access_key_id: "{{ backup_target_user }}"
+        aws_secret_access_key: "{{ backup_target_pass }}"
+    tags:
+      - backup
+
   # - role: oefenweb.postfix
   #   postfix_relayhost: cuttlefish.oaf.org.au
   #   postfix_relayhost_port: 2525

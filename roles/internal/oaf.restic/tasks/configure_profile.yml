@@ -1,0 +1,56 @@
+---
+- name: "{{ profile.name }} - Create cache directory"
+  file:
+    path: "{{ profile.cache_dir | default(restic_cache_dir) }}"
+    state: directory
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0750"
+
+- name: "{{ profile.name }} - Create environment file"
+  template:
+    src: env.j2
+    dest: "{{ restic_config_dir }}/{{ profile.name }}.env"
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0600"
+
+- name: "{{ profile.name }} - Create password file"
+  copy:
+    content: "{{ profile.password }}"
+    dest: "{{ restic_config_dir }}/{{ profile.name }}-password"
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0600"
+
+- name: "{{ profile.name }} - Create backup script"
+  template:
+    src: backup.sh.j2
+    dest: "/usr/local/bin/restic-backup-{{ profile.name }}"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: "{{ profile.name }} - Check if repository exists"
+  shell: "source {{ restic_config_dir }}/{{ profile.name }}.env && restic snapshots --json 2>/dev/null | head -1"
+  args:
+    executable: /bin/bash
+  register: repo_check
+  changed_when: false
+  failed_when: false
+
+- name: "{{ profile.name }} - Initialize repository"
+  shell: "source {{ restic_config_dir }}/{{ profile.name }}.env && restic init"
+  args:
+    executable: /bin/bash
+  when: repo_check.rc != 0
+  register: repo_init
+
+- name: "{{ profile.name }} - Setup cron job"
+  template:
+    src: cron.j2
+    dest: "/etc/cron.d/restic-{{ profile.name }}"
+    owner: root
+    group: root
+    mode: "0644"
+  when: profile.schedule is defined

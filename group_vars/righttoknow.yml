@@ -21,6 +21,14 @@ backup_gpg_pw: !vault |
           31663863363130333030633161636231633632306434633631616666616266326538376566663334
           3533366366643466650a333231326165363431633361316234663134336262363266636337633335
           32346538656134376532613931663531643665373233363565343166636366646439
+restic_password: !vault |
+          $ANSIBLE_VAULT;1.2;AES256;rtk
+          36613666323265616162623461303738616630376366646633363764373131653231636364303132
+          6366363934656631323662653633666636343863303361340a336339366165643431646339356336
+          62643032643734386132663062653266346333313232313134343535383134633831626637393162
+          3561333261343463350a633862316130636637633161663533346338383738303864356530353535
+          32613866366331356638323430356639616133663535376636643432656639666636313664336437
+          3734373163643538353435633466356632373935396664353233
 db_password_production: !vault |
           $ANSIBLE_VAULT;1.2;AES256;rtk
           61663362333938663962396265366531336433383131383138666262306164343364613237373666
@@ -152,10 +160,15 @@ logs:
     log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%b %d %H:%M:%S"
 
-  - file_path: /var/log/duply/righttoknow_data.log
-    log_group_name: /var/log/duply/righttoknow_data.log
+  # Duplicity disabled Dec 2025 - replaced by restic
+  # - file_path: /var/log/duply/righttoknow_data.log
+  #   log_group_name: /var/log/duply/righttoknow_data.log
+  #   log_stream_name: "{{ inventory_hostname }}"
+  #   timestamp_format: "%b %d %H:%M:%S"
+
+  - file_path: /var/log/restic/righttoknow.log
+    log_group_name: /var/log/restic/righttoknow.log
     log_stream_name: "{{ inventory_hostname }}"
-    # No idea what the format should be otherwise
     timestamp_format: "%b %d %H:%M:%S"
 
   - file_path: /var/log/nginx/error.log

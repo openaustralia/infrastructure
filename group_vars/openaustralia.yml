@@ -29,6 +29,14 @@ backup_gpg_pw: !vault |
           39663261383131313338373231626530383065326230656133333865383966643536616134613663
           3130363437356231360a626632316266383136643663326239633333356631343462346435316661
           30393132663263643432643032633731336139343132326362626462373738373132
+restic_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          32323166633732633937306530613139626135613130366335613835323663323233633365376133
+          6265656532656336393361633338616637386536666363300a333561646162356535386563613537
+          66656138363332646165626437633764656335613563343433366638653865633663343731613062
+          3336323539333564320a386331383537373365303238303635373337643864653963656639336436
+          37366266623064353763323665373464653937613734323733613837353065323531633931346464
+          6635346235623634366536646462643332613436373034663032
 cron_enabled: true
 morph_api_key: !vault |
           $ANSIBLE_VAULT;1.1;AES256
@@ -51,10 +59,15 @@ logs:
      log_stream_name: "{{ inventory_hostname }}"
      timestamp_format: "%b %d %H:%M:%S"
 
-   - file_path: /var/log/duply/openaustralia_data.log
-     log_group_name: /var/log/duply/openaustralia_data.log
+   # Duplicity disabled Dec 2025 - replaced by restic
+   # - file_path: /var/log/duply/openaustralia_data.log
+   #   log_group_name: /var/log/duply/openaustralia_data.log
+   #   log_stream_name: "{{ inventory_hostname }}"
+   #   timestamp_format: "%b %d %H:%M:%S"
+
+   - file_path: /var/log/restic/openaustralia.log
+     log_group_name: /var/log/restic/openaustralia.log
      log_stream_name: "{{ inventory_hostname }}"
-     # No idea what the format should be otherwise
      timestamp_format: "%b %d %H:%M:%S"
 
    - file_path: /srv/www/production/log/error.log

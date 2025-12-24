@@ -1,0 +1,55 @@
+---
+# Restic backup role defaults
+
+restic_enabled: yes
+restic_remove: no
+
+# Restic version to install (from GitHub releases)
+restic_version: "0.18.1"
+
+# Backup user
+restic_user: root
+restic_group: "{{ restic_user }}"
+
+# Directory paths
+restic_config_dir: /etc/restic
+restic_log_dir: /var/log/restic
+restic_cache_dir: /var/cache/restic
+
+# Logging
+restic_logrotate: yes
+restic_logrotate_keep: 4
+
+# Default S3 credentials (override per-profile or globally)
+restic_aws_access_key_id: ""
+restic_aws_secret_access_key: ""
+
+# Default retention policy
+restic_keep_daily: 7
+restic_keep_weekly: 4
+restic_keep_monthly: 6
+
+# Prune schedule (day of week, 0=Sunday, 7=Sunday)
+restic_prune_day: 7
+
+# Compression (auto, off, max)
+restic_compression: auto
+
+# Backup profiles
+# Example:
+# restic_profiles:
+#   - name: myapp_data
+#     schedule: "0 3 * * *"
+#     source: /data
+#     repository: "s3:s3.amazonaws.com/bucket/path"
+#     password: "secure-password-here"
+#     aws_access_key_id: "AKIA..."
+#     aws_secret_access_key: "secret..."
+#     exclude:
+#       - "**/cache"
+#       - "**/tmp"
+#     cache_dir: /data/restic-cache  # optional, overrides restic_cache_dir
+#     keep_daily: 7      # optional, overrides default
+#     keep_weekly: 4     # optional
+#     keep_monthly: 6    # optional
+restic_profiles: []

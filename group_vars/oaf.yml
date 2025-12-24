@@ -39,6 +39,14 @@ backup_gpg_pw: !vault |
           39343833643364613532636139366361336234653535383830613332616639346131376434326466
           6265376239333462310a636430656236653031393138396636363730386263643164633738613439
           30663165306633383064643638313238303561616530626263643766396433303966
+restic_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          65643831663538383261326636383263376138313934303733323561623233386663666637393432
+          3732353365646561353136663833653965643864633334360a333139303033353731373136363435
+          34393962346164383838656330653661616334373861346635303532313361393236663036613634
+          6133623736343865360a613332666139323161656266313039346362383338343135313561376464
+          31336236333863623464376365633932633464653235366130656138616561316232396264356564
+          6133373538383638313361323937666134393230666430333265
 cuttlefish_smtp_pw: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           34383162663635393234343239356431646237663738633239656164326130373133303932323035
@@ -57,10 +65,15 @@ logs:
     log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%a %b %d %H:%M:%S.%f %Y"
 
-  - file_path: /var/log/duply/wordpress-uploads.log
-    log_group_name: /var/log/duply/wordpress-uploads.log
+  # Duplicity disabled Dec 2025 - replaced by restic
+  # - file_path: /var/log/duply/wordpress-uploads.log
+  #   log_group_name: /var/log/duply/wordpress-uploads.log
+  #   log_stream_name: "{{ inventory_hostname }}"
+  #   timestamp_format: "%b %d %H:%M:%S"
+
+  - file_path: /var/log/restic/oaf.log
+    log_group_name: /var/log/restic/oaf.log
     log_stream_name: "{{ inventory_hostname }}"
-    # No idea what the format should be otherwise
     timestamp_format: "%b %d %H:%M:%S"
 
   - file_path: /var/log/letsencrypt/letsencrypt.log
