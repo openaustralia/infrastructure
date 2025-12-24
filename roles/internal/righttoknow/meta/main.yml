@@ -160,6 +160,8 @@ dependencies:
           - "**/cache"
         cache_dir: /data/restic-cache
     when: ansible_distribution_release in ['bionic', 'jammy'] and 'righttoknow_production' in group_names
+    tags:
+      - backup
     
   - role: nickhammond.logrotate
     logrotate_scripts:

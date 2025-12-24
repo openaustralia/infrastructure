@@ -128,7 +128,7 @@ dependencies:
   #     - name: wordpress-uploads
   #       schedule: 0 2 * * *
   #       source: /var/www/html/wp-content/uploads
-  #       target: "s3://s3.amazonaws.com/oaf-backups/oaf/{{ inventory_hostname }}/wordpress-uploads"
+  #       target: "s3://s3.amzonaws.com/oaf-backups/oaf/{{ inventory_hostname }}/wordpress-uploads"
 
   - role: oaf.restic
     restic_profiles:
@@ -139,6 +139,9 @@ dependencies:
         password: "{{ restic_password }}"
         aws_access_key_id: "{{ backup_target_user }}"
         aws_secret_access_key: "{{ backup_target_pass }}"
+    tags:
+      - backup
+
   # - role: oefenweb.postfix
   #   postfix_relayhost: cuttlefish.oaf.org.au
   #   postfix_relayhost_port: 2525

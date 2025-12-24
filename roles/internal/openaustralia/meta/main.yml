@@ -157,6 +157,8 @@ dependencies:
         password: "{{ restic_password }}"
         aws_access_key_id: "{{ backup_target_user }}"
         aws_secret_access_key: "{{ backup_target_pass }}"
+    tags:
+      - backup
 
   - role: nickhammond.logrotate
     logrotate_scripts:
