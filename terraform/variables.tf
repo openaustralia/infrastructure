@@ -96,12 +96,6 @@ variable "righttoknow_cloudflare_only" {
   default     = false
 }
 
-variable "oaf_cloudflare_only" {
-  description = "Add Cloudflare IP rules to oaf security group"
-  type        = bool
-  default     = false
-}
-
 variable "openaustralia_cloudflare_only" {
   description = "Add Cloudflare IP rules to openaustralia security group"
   type        = bool
@@ -130,12 +124,6 @@ variable "dms_replicate_openaustralia" {
 
 variable "dms_replicate_theyvoteforyou" {
   description = "Enable DMS replication for tvfy-production and tvfy-staging databases"
-  type        = bool
-  default     = true
-}
-
-variable "dms_replicate_oaf" {
-  description = "Enable DMS replication for oaf-production database"
   type        = bool
   default     = true
 }
