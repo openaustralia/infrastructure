@@ -8,7 +8,6 @@
 # Databases:
 #   - oa-production, oa-staging (OpenAustralia) - var.dms_replicate_openaustralia
 #   - tvfy-production, tvfy-staging (TheyVoteForYou) - var.dms_replicate_theyvoteforyou
-#   - oaf-production (OAF WordPress) - var.dms_replicate_oaf
 
 # Build the list of databases to replicate based on variables
 locals {
@@ -30,18 +29,6 @@ locals {
         rule-name = "replicate-openaustralia-staging"
         object-locator = {
           schema-name = "oa-staging"
-          table-name  = "%"
-        }
-        rule-action = "include"
-      }
-    ] : [],
-    var.dms_replicate_oaf ? [
-      {
-        rule-type = "selection"
-        rule-id   = "5"
-        rule-name = "replicate-oaf-production"
-        object-locator = {
-          schema-name = "oaf-production"
           table-name  = "%"
         }
         rule-action = "include"

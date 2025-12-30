@@ -78,6 +78,42 @@ variable "cloudflare_account_id" {
   default = "668e6ebb9952c26ec3c17a85fb3a25a1"
 }
 
+# =============================================================================
+# Cloudflare-only restrictions
+# When enabled, adds security group rules to allow HTTP/HTTPS only from Cloudflare IPs
+# Note: You must also remove the 0.0.0.0/0 rules from the SG to enforce the restriction
+# =============================================================================
+
+variable "theyvoteforyou_cloudflare_only" {
+  description = "Add Cloudflare IP rules to theyvoteforyou security group"
+  type        = bool
+  default     = false
+}
+
+variable "righttoknow_cloudflare_only" {
+  description = "Add Cloudflare IP rules to righttoknow security group"
+  type        = bool
+  default     = false
+}
+
+variable "openaustralia_cloudflare_only" {
+  description = "Add Cloudflare IP rules to openaustralia security group"
+  type        = bool
+  default     = false
+}
+
+variable "opengovernment_cloudflare_only" {
+  description = "Add Cloudflare IP rules to opengovernment security group"
+  type        = bool
+  default     = false
+}
+
+variable "planningalerts_cloudflare_only" {
+  description = "Add Cloudflare IP rules to planningalerts load balancer security group"
+  type        = bool
+  default     = false
+}
+
 # DMS Migration settings - set to false to stop replicating a database
 # once an application has been migrated to MySQL 8
 variable "dms_replicate_openaustralia" {
@@ -88,12 +124,6 @@ variable "dms_replicate_openaustralia" {
 
 variable "dms_replicate_theyvoteforyou" {
   description = "Enable DMS replication for tvfy-production and tvfy-staging databases"
-  type        = bool
-  default     = true
-}
-
-variable "dms_replicate_oaf" {
-  description = "Enable DMS replication for oaf-production database"
   type        = bool
   default     = true
 }
