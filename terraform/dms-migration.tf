@@ -56,6 +56,18 @@ locals {
         rule-action = "include"
       }
     ] : []
+    # var.dms_replicate_oaf ? [
+    #   {
+    #     rule-type = "selection"
+    #     rule-id   = "5"
+    #     rule-name = "replicate-oaf-production"
+    #     object-locator = {
+    #       schema-name = "oaf-production"
+    #       table-name  = "%"
+    #     }
+    #     rule-action = "include"
+    #   }
+    # ] : []
   )
 }
 

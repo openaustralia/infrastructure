@@ -5,7 +5,7 @@ resource "cloudflare_record" "root_primary" {
   zone_id = var.oaf_org_au_zone_id
   name    = "oaf.org.au"
   type    = "A"
-  value   = "192.0.78.154"
+  value   = "192.0.78.154" # hosted on wordpress.com
   proxied = false
 }
 
@@ -13,7 +13,7 @@ resource "cloudflare_record" "root_secondary" {
   zone_id = var.oaf_org_au_zone_id
   name    = "oaf.org.au"
   type    = "A"
-  value   = "192.0.78.197"
+  value   = "192.0.78.197" # hosted on wordpress.com
   proxied = false
 }
 
@@ -122,7 +122,7 @@ resource "cloudflare_record" "alt_root_primary" {
   zone_id = var.openaustraliafoundation_org_au_zone_id
   name    = "openaustraliafoundation.org.au"
   type    = "A"
-  value   = "192.0.78.177"
+  value   = "192.0.78.177" # hosted on wordpress.com
   proxied = false
 }
 
@@ -130,7 +130,7 @@ resource "cloudflare_record" "alt_root_secondary" {
   zone_id = var.openaustraliafoundation_org_au_zone_id
   name    = "openaustraliafoundation.org.au"
   type    = "A"
-  value   = "192.0.78.220"
+  value   = "192.0.78.220" # hosted on wordpress.com
   proxied = false
 }
 
