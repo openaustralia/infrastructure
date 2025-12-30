@@ -137,14 +137,29 @@ dependencies:
     # Use round-robin pool of gpg key servers to avoid timeout
     rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
     rvm1_bundler_install: true
-  - role: oaf.backup
-    backup_profiles:
+  # Duplicity backup disabled - replaced by restic (Dec 2025)
+  # Duplicity used 55.6 GiB vs restic ~15.5 GiB for 16 GB source
+  # Also duplicity had been failing since Aug 2024 due to stale lockfile
+  # - role: oaf.backup
+  #   backup_profiles:
+  #     - name: openaustralia_data
+  #       schedule: 0 2 * * *
+  #       source: /data
+  #       action: backup_verify_purge --force
+  #       target: "s3://s3.amazonaws.com/oaf-backups/openaustralia/{{ inventory_hostname }}/data"
+
+  - role: oaf.restic
+    restic_profiles:
       - name: openaustralia_data
-        schedule: 0 2 * * *
+        schedule: "0 3 * * *"
         source: /data
-        action: backup_verify_purge --force
-        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
-        target: "s3://s3.amazonaws.com/oaf-backups/openaustralia/{{ inventory_hostname }}/data"
+        repository: "s3:s3.amazonaws.com/oaf-backups/openaustralia/{{ inventory_hostname }}/restic"
+        password: "{{ restic_password }}"
+        aws_access_key_id: "{{ backup_target_user }}"
+        aws_secret_access_key: "{{ backup_target_pass }}"
+    tags:
+      - backup
+
   - role: nickhammond.logrotate
     logrotate_scripts:
       - name: production

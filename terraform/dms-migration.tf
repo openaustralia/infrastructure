@@ -1,5 +1,75 @@
 # DMS Migration Setup for MySQL 5.7 -> MySQL 8.0
 # Continuous replication during application migration period
+#
+# To disable replication for a specific database after migration:
+#   Set the corresponding dms_replicate_* variable to false in terraform.tfvars
+#   Then stop and restart the DMS task to apply the new table mappings
+#
+# Databases:
+#   - oa-production, oa-staging (OpenAustralia) - var.dms_replicate_openaustralia
+#   - tvfy-production, tvfy-staging (TheyVoteForYou) - var.dms_replicate_theyvoteforyou
+
+# Build the list of databases to replicate based on variables
+locals {
+  dms_replication_rules = concat(
+    var.dms_replicate_openaustralia ? [
+      {
+        rule-type = "selection"
+        rule-id   = "1"
+        rule-name = "replicate-openaustralia-production"
+        object-locator = {
+          schema-name = "oa-production"
+          table-name  = "%"
+        }
+        rule-action = "include"
+      },
+      {
+        rule-type = "selection"
+        rule-id   = "2"
+        rule-name = "replicate-openaustralia-staging"
+        object-locator = {
+          schema-name = "oa-staging"
+          table-name  = "%"
+        }
+        rule-action = "include"
+      }
+    ] : [],
+    var.dms_replicate_theyvoteforyou ? [
+      {
+        rule-type = "selection"
+        rule-id   = "3"
+        rule-name = "replicate-theyvoteforyou-production"
+        object-locator = {
+          schema-name = "tvfy-production"
+          table-name  = "%"
+        }
+        rule-action = "include"
+      },
+      {
+        rule-type = "selection"
+        rule-id   = "4"
+        rule-name = "replicate-theyvoteforyou-staging"
+        object-locator = {
+          schema-name = "tvfy-staging"
+          table-name  = "%"
+        }
+        rule-action = "include"
+      }
+    ] : []
+    # var.dms_replicate_oaf ? [
+    #   {
+    #     rule-type = "selection"
+    #     rule-id   = "5"
+    #     rule-name = "replicate-oaf-production"
+    #     object-locator = {
+    #       schema-name = "oaf-production"
+    #       table-name  = "%"
+    #     }
+    #     rule-action = "include"
+    #   }
+    # ] : []
+  )
+}
 
 # DMS Subnet Group
 resource "aws_dms_replication_subnet_group" "main" {
@@ -129,18 +199,7 @@ resource "aws_dms_replication_task" "mysql_migration" {
   cdc_start_time = "2025-11-18T16:07:39"
 
   table_mappings = jsonencode({
-    rules = [
-      {
-        rule-type = "selection"
-        rule-id   = "1"
-        rule-name = "replicate-all-tables"
-        object-locator = {
-          schema-name = "%"
-          table-name  = "%"
-        }
-        rule-action = "include"
-      }
-    ]
+    rules = local.dms_replication_rules
   })
 
   replication_task_settings = jsonencode({

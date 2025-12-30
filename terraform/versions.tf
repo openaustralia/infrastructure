@@ -18,5 +18,9 @@ terraform {
       source = "linode/linode"
       # version = "..."
     }
+    http = {
+      source  = "hashicorp/http"
+      version = "~> 3.5.0"
+    }
   }
 }
