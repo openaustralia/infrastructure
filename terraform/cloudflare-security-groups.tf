@@ -113,54 +113,6 @@ resource "aws_security_group_rule" "righttoknow_https_cloudflare_ipv6" {
 }
 
 # =============================================================================
-# oaf - Cloudflare Rules
-# =============================================================================
-
-resource "aws_security_group_rule" "oaf_http_cloudflare_ipv4" {
-  count             = var.oaf_cloudflare_only ? length(local.cloudflare_ipv4_cidrs) : 0
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  cidr_blocks       = [local.cloudflare_ipv4_cidrs[count.index]]
-  security_group_id = aws_security_group.oaf.id
-  description       = "HTTP from Cloudflare"
-}
-
-resource "aws_security_group_rule" "oaf_https_cloudflare_ipv4" {
-  count             = var.oaf_cloudflare_only ? length(local.cloudflare_ipv4_cidrs) : 0
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  cidr_blocks       = [local.cloudflare_ipv4_cidrs[count.index]]
-  security_group_id = aws_security_group.oaf.id
-  description       = "HTTPS from Cloudflare"
-}
-
-resource "aws_security_group_rule" "oaf_http_cloudflare_ipv6" {
-  count             = var.oaf_cloudflare_only ? length(local.cloudflare_ipv6_cidrs) : 0
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  ipv6_cidr_blocks  = [local.cloudflare_ipv6_cidrs[count.index]]
-  security_group_id = aws_security_group.oaf.id
-  description       = "HTTP from Cloudflare IPv6"
-}
-
-resource "aws_security_group_rule" "oaf_https_cloudflare_ipv6" {
-  count             = var.oaf_cloudflare_only ? length(local.cloudflare_ipv6_cidrs) : 0
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  ipv6_cidr_blocks  = [local.cloudflare_ipv6_cidrs[count.index]]
-  security_group_id = aws_security_group.oaf.id
-  description       = "HTTPS from Cloudflare IPv6"
-}
-
-# =============================================================================
 # openaustralia - Cloudflare Rules
 # =============================================================================
 

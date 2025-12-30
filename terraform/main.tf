@@ -67,11 +67,6 @@ module "oaf" {
   source                                 = "./oaf"
   oaf_org_au_zone_id                     = cloudflare_zone.oaf_org_au.id
   openaustraliafoundation_org_au_zone_id = cloudflare_zone.openaustraliafoundation_org_au.id
-  security_group_webserver               = aws_security_group.webserver
-  security_group_service                 = aws_security_group.oaf
-  instance_profile                       = aws_iam_instance_profile.logging
-  # This has been upgraded in place to Ubuntu 18.04
-  ami = var.ubuntu_16_ami
 }
 
 module "metabase" {
