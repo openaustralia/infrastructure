@@ -13,28 +13,28 @@
 # Build the list of databases to replicate based on variables
 locals {
   dms_replication_rules = concat(
-    var.dms_replicate_openaustralia ? [
-      {
-        rule-type = "selection"
-        rule-id   = "1"
-        rule-name = "replicate-openaustralia-production"
-        object-locator = {
-          schema-name = "oa-production"
-          table-name  = "%"
-        }
-        rule-action = "include"
-      },
-      {
-        rule-type = "selection"
-        rule-id   = "2"
-        rule-name = "replicate-openaustralia-staging"
-        object-locator = {
-          schema-name = "oa-staging"
-          table-name  = "%"
-        }
-        rule-action = "include"
-      }
-    ] : [],
+    # var.dms_replicate_openaustralia ? [
+    #   {
+    #     rule-type = "selection"
+    #     rule-id   = "1"
+    #     rule-name = "replicate-openaustralia-production"
+    #     object-locator = {
+    #       schema-name = "oa-production"
+    #       table-name  = "%"
+    #     }
+    #     rule-action = "include"
+    #   },
+    #   {
+    #     rule-type = "selection"
+    #     rule-id   = "2"
+    #     rule-name = "replicate-openaustralia-staging"
+    #     object-locator = {
+    #       schema-name = "oa-staging"
+    #       table-name  = "%"
+    #     }
+    #     rule-action = "include"
+    #   }
+    # ] : [],
     var.dms_replicate_theyvoteforyou ? [
       {
         rule-type = "selection"
