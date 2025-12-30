@@ -56,7 +56,7 @@ locals {
         }
         rule-action = "include"
       }
-    ] : [],
+    ] : []
     # var.dms_replicate_oaf ? [
     #   {
     #     rule-type = "selection"
