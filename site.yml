@@ -137,11 +137,6 @@
   roles:
     - theyvoteforyou
 
-- hosts: oaf
-  become: true
-  roles:
-    - oaf
-
 - hosts: openaustralia
   become: true
   roles:

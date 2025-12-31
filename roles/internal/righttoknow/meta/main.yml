@@ -131,20 +131,37 @@ dependencies:
         - version: "{{ ruby_version_production }}"
     rbenv_users:
       - deploy
-  - role: oaf.backup
-    backup_profiles:
+  # Duplicity backup disabled - replaced by restic (Dec 2025)
+  # Duplicity used 311 GiB vs restic 63 GiB for same data
+  # - role: oaf.backup
+  #   backup_profiles:
+  #     - name: righttoknow_data
+  #       schedule: 0 2 * * *
+  #       source: /data
+  #       target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/data"
+  #       exclude:
+  #         - "**/bundle"
+  #         - "**/cache"
+  #       temp_dir: /data/backup_tmp
+  #       arch_dir: /data/backup_cache
+  #   when: ansible_distribution_release in ['bionic', 'jammy'] and 'righttoknow_production' in group_names
+
+  - role: oaf.restic
+    restic_profiles:
       - name: righttoknow_data
-        schedule: 0 2 * * *
+        schedule: "0 3 * * *"
         source: /data
-        # TODO: Duplicity will be very confused if two different machines from the same stage try to backup
-        target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/data"
+        repository: "s3:s3.amazonaws.com/oaf-backups/righttoknow/{{ inventory_hostname }}/restic"
+        password: "{{ restic_password }}"
+        aws_access_key_id: "{{ backup_target_user }}"
+        aws_secret_access_key: "{{ backup_target_pass }}"
         exclude:
           - "**/bundle"
           - "**/cache"
-        # Use /data volume for temp/cache to avoid filling root filesystem during full backups
-        temp_dir: /data/backup_tmp
-        arch_dir: /data/backup_cache
+        cache_dir: /data/restic-cache
     when: ansible_distribution_release in ['bionic', 'jammy'] and 'righttoknow_production' in group_names
+    tags:
+      - backup
     
   - role: nickhammond.logrotate
     logrotate_scripts:
