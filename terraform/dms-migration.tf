@@ -23,17 +23,17 @@ locals {
         }
         rule-action = "include"
       },
-      {
-        rule-type = "selection"
-        rule-id   = "2"
-        rule-name = "replicate-openaustralia-staging"
-        object-locator = {
-          schema-name = "oa-staging"
-          table-name  = "%"
-        }
-        rule-action = "include"
-      }
-    ] : []
+    #   {
+    #     rule-type = "selection"
+    #     rule-id   = "2"
+    #     rule-name = "replicate-openaustralia-staging"
+    #     object-locator = {
+    #       schema-name = "oa-staging"
+    #       table-name  = "%"
+    #     }
+    #     rule-action = "include"
+    #   }
+    # ] : []
   )
 }
 
