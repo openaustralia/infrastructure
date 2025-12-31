@@ -33,41 +33,7 @@ locals {
         }
         rule-action = "include"
       }
-    ] : [],
-    var.dms_replicate_theyvoteforyou ? [
-      {
-        rule-type = "selection"
-        rule-id   = "3"
-        rule-name = "replicate-theyvoteforyou-production"
-        object-locator = {
-          schema-name = "tvfy-production"
-          table-name  = "%"
-        }
-        rule-action = "include"
-      },
-      {
-        rule-type = "selection"
-        rule-id   = "4"
-        rule-name = "replicate-theyvoteforyou-staging"
-        object-locator = {
-          schema-name = "tvfy-staging"
-          table-name  = "%"
-        }
-        rule-action = "include"
-      }
     ] : []
-    # var.dms_replicate_oaf ? [
-    #   {
-    #     rule-type = "selection"
-    #     rule-id   = "5"
-    #     rule-name = "replicate-oaf-production"
-    #     object-locator = {
-    #       schema-name = "oaf-production"
-    #       table-name  = "%"
-    #     }
-    #     rule-action = "include"
-    #   }
-    # ] : []
   )
 }
 
