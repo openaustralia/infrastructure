@@ -70,15 +70,15 @@ check-metabase: $(KEYSANDROLES)
 
 # These make changes 
 apply-righttoknow-all: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --diff
 apply-righttoknow-staging: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_staging
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_staging --diff
 apply-righttoknow-prod: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_production
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_production --diff
 apply-planningalerts: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --diff
 apply-theyvoteforyou: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou --diff
 apply-oaf: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l oaf --diff
 apply-metabase: $(KEYSANDROLES)
