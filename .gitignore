@@ -19,3 +19,4 @@ certificates/*.key
 certificates/*.pem
 
 .venv/
+db_dumps/*.sql.gz
