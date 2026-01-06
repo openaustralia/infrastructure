@@ -98,6 +98,9 @@ server {
 
   location / {
 
+    # Deny IP Address that is attempting to perform SQL Injection
+    deny 144.31.1.0/24
+    
     # Block overly aggressive bot that isn't giving a sensible user agent
     deny 47.76.0.0/16;
     deny 47.242.0.0/16;
