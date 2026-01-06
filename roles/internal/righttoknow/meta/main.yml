@@ -178,7 +178,7 @@ dependencies:
           - compress
           - delaycompress
           - sharedscripts
-          - postrotate reload rsyslog >/dev/null 2>&1 || true
+          - postrotate systemctl restart rsyslog >/dev/null 2>&1 || true
           - endscript
       - name: production
         path: "/srv/www/production/shared/log/*.log"
