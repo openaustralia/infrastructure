@@ -22,21 +22,6 @@ resource "aws_instance" "main" {
   iam_instance_profile    = var.instance_profile.name
 }
 
-resource "aws_instance" "main2026" {
-  ami = var.ami
-
-  instance_type = "t3.small"
-  ebs_optimized = true
-  key_name      = "test"
-  tags = {
-    Name = "openaustralia"
-  }
-  vpc_security_group_ids  = [var.security_group_webserver.id, var.security_group_service.id]
-  availability_zone       = aws_ebs_volume.data.availability_zone
-  disable_api_termination = true
-  iam_instance_profile    = var.instance_profile.name
-}
-
 resource "aws_eip" "main" {
   instance = aws_instance.main.id
   tags = {
