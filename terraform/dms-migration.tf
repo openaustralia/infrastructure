@@ -1,5 +1,31 @@
 # DMS Migration Setup for MySQL 5.7 -> MySQL 8.0
 # Continuous replication during application migration period
+#
+# To disable replication for a specific database after migration:
+#   Set the corresponding dms_replicate_* variable to false in terraform.tfvars
+#   Then stop and restart the DMS task to apply the new table mappings
+#
+# Databases:
+#   - oa-production, oa-staging (OpenAustralia) - var.dms_replicate_openaustralia
+#   - tvfy-production, tvfy-staging (TheyVoteForYou) - var.dms_replicate_theyvoteforyou
+
+# Build the list of databases to replicate based on variables
+locals {
+  dms_replication_rules = concat(
+    var.dms_replicate_openaustralia ? [
+      {
+        rule-type = "selection"
+        rule-id   = "1"
+        rule-name = "replicate-openaustralia-production"
+        object-locator = {
+          schema-name = "oa-production"
+          table-name  = "%"
+        }
+        rule-action = "include"
+      },
+    ] : []
+  )
+}
 
 # DMS Subnet Group
 resource "aws_dms_replication_subnet_group" "main" {
@@ -34,6 +60,10 @@ resource "aws_security_group" "dms_replication" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  lifecycle {
+    ignore_changes = [tags, tags_all]
   }
 }
 
@@ -85,6 +115,10 @@ resource "aws_dms_endpoint" "source" {
   tags = {
     Name = "Source main-database MySQL 5.7"
   }
+
+  lifecycle {
+    ignore_changes = [password]
+  }
 }
 
 # Target Endpoint - maindb (MySQL 8.0)
@@ -103,6 +137,10 @@ resource "aws_dms_endpoint" "target" {
   tags = {
     Name = "Target maindb MySQL 8.0"
   }
+
+  lifecycle {
+    ignore_changes = [password]
+  }
 }
 
 # DMS Replication Task
@@ -117,18 +155,7 @@ resource "aws_dms_replication_task" "mysql_migration" {
   cdc_start_time = "2025-11-18T16:07:39"
 
   table_mappings = jsonencode({
-    rules = [
-      {
-        rule-type = "selection"
-        rule-id   = "1"
-        rule-name = "replicate-all-tables"
-        object-locator = {
-          schema-name = "%"
-          table-name  = "%"
-        }
-        rule-action = "include"
-      }
-    ]
+    rules = local.dms_replication_rules
   })
 
   replication_task_settings = jsonencode({
@@ -178,6 +205,14 @@ resource "aws_dms_replication_task" "mysql_migration" {
 
   tags = {
     Name = "MySQL 5.7 to 8.0 CDC Replication"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      cdc_start_time,
+      start_replication_task,
+      replication_task_settings,
+    ]
   }
 
   depends_on = [

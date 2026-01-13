@@ -42,7 +42,7 @@
 
 - name: Create theyvoteforyou databases
   mysql_db:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ mysql_8_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "tvfy-{{ item }}"
@@ -52,7 +52,7 @@
 
 - name: Create theyvoteforyou user with access to the database (production)
   mysql_user:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ mysql_8_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: tvfy-production
@@ -60,9 +60,9 @@
     priv: 'tvfy-production.*:ALL'
     host: "%"
 
-- name: Create mysql user with readonly access to the production theyvoteforyou database for metabase
+- name: Create mysql 8 user with readonly access to the production theyvoteforyou database for metabase
   mysql_user:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ mysql_8_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: tvfy-production-readonly
@@ -73,7 +73,7 @@
 
 - name: Create theyvoteforyou user with access to the database (staging)
   mysql_user:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ mysql_8_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: tvfy-staging

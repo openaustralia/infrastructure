@@ -4,10 +4,7 @@ postgresql_host: 192.168.56.18
 planningalerts_db_host: 192.168.56.18
 openaustralia_domain: openaustralia.org.au.test
 theyvoteforyou_domain: theyvoteforyou.org.au.test
-oaf_domain: oaf.org.au.test
-opengovernment_domain: opengovernment.org.au.test
 newrelic_license_key: null
-electionleaflets_domain: electionleaflets.org.au.test
 devsite: true
 rds_admin_password: 1234567890
 nrinfragent_state: absent

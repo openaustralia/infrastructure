@@ -808,6 +808,7 @@ SHARED_FILES_PATH: '/srv/www/{{ stage }}/shared'
 SHARED_FILES:
   - config/database.yml
   - config/general.yml
+  - config/storage.yml
   - config/user_spam_scorer.yml
   - config/rails_env.rb
   - config/newrelic.yml

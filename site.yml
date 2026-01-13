@@ -132,30 +132,15 @@
   roles:
     - planningalerts
 
-- hosts: electionleaflets
-  become: true
-  roles:
-    - electionleaflets
-
 - hosts: theyvoteforyou
   become: true
   roles:
     - theyvoteforyou
 
-- hosts: oaf
-  become: true
-  roles:
-    - oaf
-
 - hosts: openaustralia
   become: true
   roles:
     - openaustralia
-
-- hosts: opengovernment
-  become: true
-  roles:
-    - opengovernment
 
 - hosts: proxy
   become: true

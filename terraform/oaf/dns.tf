@@ -1,31 +1,32 @@
 
 ## oaf.org.au
 # A records
-resource "cloudflare_record" "root" {
+resource "cloudflare_record" "root_primary" {
   zone_id = var.oaf_org_au_zone_id
   name    = "oaf.org.au"
   type    = "A"
-  value   = aws_eip.main.public_ip
+  value   = "192.0.78.154" # hosted on wordpress.com
+  proxied = false
+}
+
+resource "cloudflare_record" "root_secondary" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "oaf.org.au"
+  type    = "A"
+  value   = "192.0.78.197" # hosted on wordpress.com
+  proxied = false
 }
 
 # CNAME records
-resource "cloudflare_record" "test" {
-  zone_id = var.oaf_org_au_zone_id
-  name    = "test.oaf.org.au"
-  type    = "CNAME"
-  value   = "oaf.org.au"
-}
-
 resource "cloudflare_record" "www" {
   zone_id = var.oaf_org_au_zone_id
   name    = "www.oaf.org.au"
   type    = "CNAME"
   value   = "oaf.org.au"
+  proxied = false
 }
 
 # MX records
-
-# We can now use a single MX record for Google workspace
 resource "cloudflare_record" "mx" {
   zone_id  = var.oaf_org_au_zone_id
   name     = "oaf.org.au"
@@ -117,11 +118,20 @@ resource "cloudflare_record" "dmarc" {
 
 # A records
 
-resource "cloudflare_record" "alt_root" {
+resource "cloudflare_record" "alt_root_primary" {
   zone_id = var.openaustraliafoundation_org_au_zone_id
   name    = "openaustraliafoundation.org.au"
   type    = "A"
-  value   = aws_eip.main.public_ip
+  value   = "192.0.78.177" # hosted on wordpress.com
+  proxied = false
+}
+
+resource "cloudflare_record" "alt_root_secondary" {
+  zone_id = var.openaustraliafoundation_org_au_zone_id
+  name    = "openaustraliafoundation.org.au"
+  type    = "A"
+  value   = "192.0.78.220" # hosted on wordpress.com
+  proxied = false
 }
 
 # CNAME records
@@ -130,18 +140,10 @@ resource "cloudflare_record" "alt_www" {
   name    = "www.openaustraliafoundation.org.au"
   type    = "CNAME"
   value   = "openaustraliafoundation.org.au"
-}
-
-resource "cloudflare_record" "alt_test" {
-  zone_id = var.openaustraliafoundation_org_au_zone_id
-  name    = "test.openaustraliafoundation.org.au"
-  type    = "CNAME"
-  value   = "openaustraliafoundation.org.au"
+  proxied = false
 }
 
 # MX records
-
-# We can now use a single MX record for Google workspace
 resource "cloudflare_record" "alt_mx" {
   zone_id  = var.openaustraliafoundation_org_au_zone_id
   name     = "openaustraliafoundation.org.au"

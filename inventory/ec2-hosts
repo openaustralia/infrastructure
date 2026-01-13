@@ -3,9 +3,6 @@ theyvoteforyou.org.au
 openaustralia.org.au
 staging.righttoknow.org.au
 prod.righttoknow.org.au
-oaf.org.au
-opengovernment.org.au
-electionleaflets.org.au
 au.proxy.oaf.org.au
 web.metabase.oaf.org.au
 vpn.oaf.org.au
@@ -31,15 +28,6 @@ staging.righttoknow.org.au
 [righttoknow_production]
 prod.righttoknow.org.au
 
-[oaf]
-oaf.org.au
-
-[opengovernment]
-opengovernment.org.au
-
-[electionleaflets]
-electionleaflets.org.au
-
 [proxy]
 au.proxy.oaf.org.au
 
@@ -59,10 +47,7 @@ ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 
 ; Group for all sites that need information on the MySQL RDS instance
 [requires_mysql:children]
-electionleaflets
-oaf
 openaustralia
-opengovernment
 theyvoteforyou
 metabase
 

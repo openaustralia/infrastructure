@@ -1,14 +1,8 @@
-terraform {
-  required_providers {
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 4.4.0"
-    }
-  }
-}
+# New OpenAustralia Production Server on Ubuntu 24.04
+# This creates a parallel production environment for OpenAustralia
 
-resource "aws_instance" "main" {
-  ami = var.ami
+resource "aws_instance" "production" {
+  ami = var.ubuntu_24_ami
 
   instance_type = "t3.small"
   ebs_optimized = true
@@ -16,16 +10,22 @@ resource "aws_instance" "main" {
   tags = {
     Name = "openaustralia"
   }
+
+  # Increase root volume size to 20GB to allow for more packages and data
+  root_block_device {
+    volume_size = 20
+  }
+
   vpc_security_group_ids  = [var.security_group_webserver.id, var.security_group_service.id]
   availability_zone       = aws_ebs_volume.data.availability_zone
   disable_api_termination = true
   iam_instance_profile    = var.instance_profile.name
 }
 
-resource "aws_eip" "main" {
-  instance = aws_instance.main.id
+resource "aws_eip" "production" {
+  instance = aws_instance.production.id
   tags = {
-    Name = "openaustralia"
+    Name = "openaustralia-prod"
   }
 }
 
@@ -33,7 +33,7 @@ resource "aws_eip" "main" {
 # data that can not be regenerated. e.g. parliamentary XML,
 # register of members interests scans, etc..
 
-resource "aws_ebs_volume" "data" {
+resource "aws_ebs_volume" "production_data" {
   availability_zone = "ap-southeast-2c"
 
   # 10 Gb is an educated guess based on seeing how much space is taken up
@@ -46,13 +46,8 @@ resource "aws_ebs_volume" "data" {
   }
 }
 
-resource "aws_volume_attachment" "data" {
+resource "aws_volume_attachment" "production_data" {
   device_name = "/dev/sdh"
-  volume_id   = aws_ebs_volume.data.id
-  instance_id = aws_instance.main.id
+  volume_id   = aws_ebs_volume.production_data.id
+  instance_id = aws_instance.production.id
 }
-
-# TODO: backup EBS volume by taking daily snapshots
-# This can be automated using Cloudwatch. See:
-# https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/TakeScheduledSnapshot.html
-# https://www.terraform.io/docs/providers/aws/r/cloudwatch_event_rule.html

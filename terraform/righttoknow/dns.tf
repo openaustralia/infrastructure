@@ -10,6 +10,7 @@ resource "cloudflare_record" "root" {
   name    = "righttoknow.org.au"
   type    = "A"
   value   = aws_eip.production.public_ip
+  proxied = false
 }
 
 resource "cloudflare_record" "production" {
@@ -17,6 +18,7 @@ resource "cloudflare_record" "production" {
   name    = "prod.righttoknow.org.au"
   type    = "A"
   value   = aws_eip.production.public_ip
+  proxied = false
 }
 
 
@@ -26,6 +28,7 @@ resource "cloudflare_record" "www" {
   name    = "www.righttoknow.org.au"
   type    = "CNAME"
   value   = "righttoknow.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "www_production" {
@@ -33,6 +36,7 @@ resource "cloudflare_record" "www_production" {
   name    = "www.prod.righttoknow.org.au"
   type    = "CNAME"
   value   = "prod.righttoknow.org.au"
+  proxied = false
 }
 
 # MX records
@@ -125,6 +129,7 @@ resource "cloudflare_record" "staging" {
   name    = "staging.righttoknow.org.au"
   type    = "A"
   value   = aws_eip.staging.public_ip
+  proxied = false
 }
 
 resource "cloudflare_record" "www_staging" {
@@ -132,6 +137,7 @@ resource "cloudflare_record" "www_staging" {
   name    = "www.staging.righttoknow.org.au"
   type    = "CNAME"
   value   = "staging.righttoknow.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "staging-spf" {
