@@ -173,7 +173,14 @@
       - xapian-tools
     state: present
 
-## wkhtmltopdf is installed from standard repos above; no special handling needed
+## Redis is only being deployed on staging for now while we test the upgrade
+- name: Install Redis (Staging Server)
+  apt:
+    name:
+      - redis-server
+    state: present
+  when: "'righttoknow_staging' in group_names"
+  tags: redis
 
 # The changes of there being differences between the production and staging version
 # of this script are extremely small. So, just using the production version.
