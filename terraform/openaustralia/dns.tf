@@ -20,6 +20,14 @@ resource "cloudflare_record" "root" {
   proxied = false
 }
 
+resource "cloudflare_record" "root_staging" {
+  zone_id = cloudflare_zone.org.id
+  name    = "staging.openaustralia.org"
+  type    = "A"
+  value   = aws_eip.production.public_ip
+  proxied = false
+}
+
 # CNAME records
 resource "cloudflare_record" "www" {
   zone_id = cloudflare_zone.org.id
@@ -133,6 +141,15 @@ resource "cloudflare_record" "alt_root" {
   value   = aws_eip.main.public_ip
   proxied = false
 }
+
+resource "cloudflare_record" "alt_root_staging" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "staging.openaustralia.org.au"
+  type    = "A"
+  value   = aws_eip.production.public_ip
+  proxied = false
+}
+
 
 # CNAME records
 

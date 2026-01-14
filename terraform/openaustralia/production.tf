@@ -1,6 +1,8 @@
 # New OpenAustralia Production Server on Ubuntu 24.04
 # This creates a parallel production environment for OpenAustralia
 
+# After discussion with Brenda, this new server will house both staging and production.
+
 resource "aws_instance" "production" {
   ami = var.ubuntu_24_ami
 
