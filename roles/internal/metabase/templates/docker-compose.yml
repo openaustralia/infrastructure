@@ -1,6 +1,6 @@
 services:
   metabase:
-    image: metabase/metabase:v0.57.5.x
+    image: metabase/metabase:v0.58.x
     # Using 8000 as the port on the host to be consistent with planningalerts
     ports:
       - 8000:3000
