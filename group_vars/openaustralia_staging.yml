@@ -1,0 +1,9 @@
+# Staging environment configuration for OpenAustralia
+# Most values inherited from openaustralia.yml
+site_name: staging.openaustralia.org.au
+
+# Cron enable/disable switch for staging
+cron_enabled: false
+
+# Disable backups for staging
+backup_profiles: []
