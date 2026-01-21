@@ -5,7 +5,7 @@ resource "aws_db_instance" "main" {
   # Using general purpose SSD
   storage_type   = "gp2"
   engine         = "mysql"
-  engine_version = "5.7.44"
+  engine_version = "5.7.44-rds.20250508"
 
   # We can't currently upgrade to the graviton instance type because we're on an
   # older version of mysql
