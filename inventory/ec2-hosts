@@ -17,6 +17,13 @@ theyvoteforyou.org.au
 
 [openaustralia]
 openaustralia.org.au
+staging.openaustralia.org.au
+
+[openaustralia_staging]
+staging.openaustralia.org.au
+
+[openaustralia_production]
+openaustralia.org.au
 
 [righttoknow]
 staging.righttoknow.org.au
