@@ -1,6 +1,7 @@
 [ec2]
 theyvoteforyou.org.au
 openaustralia.org.au
+staging.openaustralia.org.au
 staging.righttoknow.org.au
 prod.righttoknow.org.au
 au.proxy.oaf.org.au
