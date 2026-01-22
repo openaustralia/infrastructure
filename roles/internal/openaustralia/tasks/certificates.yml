@@ -7,7 +7,7 @@
   with_items: "{{ [openaustralia_domain] + ([] if ('openaustralia_staging' in group_names) else ['test.' + openaustralia_domain]) }}"
   when: "'development' in group_names"
 
-# We need to setup the SSL certificates before we try to configure nginx
+# We need to setup the SSL certificates before we try to configure apache
 # because otherwise Apache will try to look for non-existent certificates
 - name: Copy SSL certificates for development
   copy:
