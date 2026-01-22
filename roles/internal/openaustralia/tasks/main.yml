@@ -135,10 +135,9 @@
   import_tasks: certificates.yml
 
 # Install php5 on xenial requires a few more jumps than usual
-- name: Add repo for installing php5
+- name: Add repo for installing php5/php8
   apt_repository:
     repo: 'ppa:ondrej/php'
-  when: "'openaustralia_php5' in group_names"
 
 - name: Install required packages (Legacy - PHP 5.6)
   apt:
