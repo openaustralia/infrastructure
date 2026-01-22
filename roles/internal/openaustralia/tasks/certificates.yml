@@ -1,0 +1,63 @@
+---
+# Create fake let's encrypt directories when in development
+- name: Create fake let's encrypt directories when in development
+  file:
+    state: directory
+    path: "/etc/letsencrypt/live/{{ item }}"
+  with_items: "{{ [openaustralia_domain] + ([] if ('openaustralia_staging' in group_names) else ['test.' + openaustralia_domain]) }}"
+  when: "'development' in group_names"
+
+# We need to setup the SSL certificates before we try to configure nginx
+# because otherwise nginx will try to look for non-existent certificates
+- name: Copy SSL certificates for development
+  copy:
+    src: "{{ item }}.pem"
+    # We're faking it as if these are let's encrypt certs. Makes for less magic config
+    dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
+    mode: 0644
+  with_items: "{{ [openaustralia_domain] + ([] if ('openaustralia_staging' in group_names) else ['test.' + openaustralia_domain]) }}"
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
+  notify: reload apache
+
+- name: Copy SSL keys for development
+  copy:
+    src: "{{ item }}.key"
+    dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
+    mode: 0640
+  with_items: "{{ [openaustralia_domain] + ([] if ('openaustralia_staging' in group_names) else ['test.' + openaustralia_domain]) }}"
+  # Only run this task when this machine is the development group
+  when: "'development' in group_names"
+  notify: reload apache
+
+# Staging Certbot only needs certs for the hostname
+- name: Set certificate configuration for staging
+  set_fact:
+    staging_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - "{{ openaustralia_domain }}"
+          - "www.{{ openaustralia_domain }}"
+  when: "'openaustralia_staging' in group_names"
+
+- name: Set certificate configuration for production
+  set_fact:
+    production_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - "{{ openaustralia_domain }}"
+          - "www.{{ openaustralia_domain }}"
+          - openaustralia.org
+          - www.openaustralia.org
+      - email: contact@oaf.org.au
+        domains:
+          - "test.{{ openaustralia_domain }}"
+          - "www.test.{{ openaustralia_domain }}"
+  when: "'openaustralia_production' in group_names"
+
+- name: Install certificate using certbot
+  include_role:
+    name: oaf.certbot
+  vars:
+    certbot_certs: "{{ staging_certs if ('openaustralia_staging' in group_names) else production_certs }}"
+  when: "'ec2' in group_names"
