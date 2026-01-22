@@ -25,6 +25,12 @@ staging.openaustralia.org.au
 [openaustralia_production]
 openaustralia.org.au
 
+[openaustralia_php5]
+openaustralia.org.au
+
+[openaustralia_php8]
+staging.openaustralia.org.au
+
 [righttoknow]
 staging.righttoknow.org.au
 prod.righttoknow.org.au
