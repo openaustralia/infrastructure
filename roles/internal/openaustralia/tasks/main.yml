@@ -138,6 +138,7 @@
 - name: Add repo for installing php5
   apt_repository:
     repo: 'ppa:ondrej/php'
+  when: "'openaustralia_php5' in group_names"
 
 - name: Install required packages (Legacy - PHP 5.6)
   apt:
