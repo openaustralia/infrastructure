@@ -3,26 +3,34 @@
 **Table of Contents**
 
 - [Automated setup and configuration for most of OpenAustralia Foundation's servers](#automated-setup-and-configuration-for-most-of-openaustralia-foundations-servers)
-    - [A little history](#a-little-history)
-    - [Approach](#approach)
-    - [The tools](#the-tools)
-    - [Current state of this work (as of 26 May 2018)](#current-state-of-this-work-as-of-26-may-2018)
-    - [Requirements](#requirements)
-        - [Install Vagrant and Capistrano](#install-vagrant-and-capistrano)
-        - [Environment setup](#environment-setup)
-        - [Add the Ansible Vault password](#add-the-ansible-vault-password)
-    - [Generating SSL certificates for development](#generating-ssl-certificates-for-development)
-    - [Provisioning](#provisioning)
-        - [Provisioning local development servers using Vagrant](#provisioning-local-development-servers-using-vagrant)
-        - [Provisioning production servers](#provisioning-production-servers)
-        - [Forcibly renewing LetsEncrypt certificates on production servers](#forcibly-renewing-letsencrypt-certificates-on-production-servers)
-    - [Deploying](#deploying)
-        - [Deploying Right To Know to your local development server](#deploying-right-to-know-to-your-local-development-server)
-        - [Deploying PlanningAlerts](#deploying-planningalerts)
-            - [Deploying PlanningAlerts to your local development server](#deploying-planningalerts-to-your-local-development-server)
-            - [Deploying PlanningAlerts to production](#deploying-planningalerts-to-production)
-        - [Running tests locally](#running-tests-locally)
-    - [Backups](#backups)
+  - [A little history](#a-little-history)
+  - [Approach](#approach)
+  - [The tools](#the-tools)
+  - [Current state of this work (as of 26 May 2018)](#current-state-of-this-work-as-of-26-may-2018)
+  - [Requirements](#requirements)
+    - [Install Vagrant and Capistrano](#install-vagrant-and-capistrano)
+    - [Environment setup](#environment-setup)
+    - [Add the Ansible Vault password](#add-the-ansible-vault-password)
+  - [Generating SSL certificates for development](#generating-ssl-certificates-for-development)
+  - [Provisioning](#provisioning)
+    - [Provisioning local development servers using Vagrant](#provisioning-local-development-servers-using-vagrant)
+    - [Provisioning production servers](#provisioning-production-servers)
+    - [Forcibly renewing LetsEncrypt certificates on production servers](#forcibly-renewing-letsencrypt-certificates-on-production-servers)
+  - [Deploying](#deploying)
+    - [Deploying Right To Know to your local development server](#deploying-right-to-know-to-your-local-development-server)
+    - [Deploying PlanningAlerts](#deploying-planningalerts)
+      - [Deploying PlanningAlerts to your local development server](#deploying-planningalerts-to-your-local-development-server)
+      - [Deploying PlanningAlerts to production](#deploying-planningalerts-to-production)
+    - [Running tests locally](#running-tests-locally)
+    - [Deploying Electionleaflets to your local development server](#deploying-electionleaflets-to-your-local-development-server)
+      - [TODOS](#todos)
+    - [Deploying They Vote For You](#deploying-they-vote-for-you)
+      - [Deploying They Vote For You to your local development server](#deploying-they-vote-for-you-to-your-local-development-server)
+      - [Deploying They Vote For You to production](#deploying-they-vote-for-you-to-production)
+    - [Deploying OpenAustralia](#deploying-openaustralia)
+      - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
+      - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
+  - [Backups](#backups)
 
 <!-- markdown-toc end -->
 
@@ -172,6 +180,16 @@ on your platform, under Settings -> Files.
 
 Once this is done, the symlinks to .*-vault-pass inside the repo
 should point to the password files.
+
+> [!TIP]
+> If you're using a Linux machine without a GUI, you may have problems
+> with `/Keybase`. The `headless-keybase.sh` script will configure Keybase to
+> run as your user, on login.
+
+> [!TIP]
+> If you're using OS X or using the headless setup above, the Keybase
+> filesystem may not be available at `/Keybase`. You can use `keybase config get
+> -d -b mountdir` to find the correct place to point your
 
 (Note on OS X and keybase 5.3.0 the symlinks point to the wrong place. The keybase filesystem now starts at /Volumes/Keybase rather than /keybase)
 
