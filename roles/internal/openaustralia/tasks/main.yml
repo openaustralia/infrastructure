@@ -512,13 +512,14 @@
     pkg: newrelic-php5
     state: absent
 
-- name: Configure newrelic php monitor
+- name: Configure newrelic php monitor (PHP 5.6)
   file:
     state: absent
     path: /etc/php/5.6/mods-available/newrelic.ini
   notify: reload apache
+  when: "'openaustralia_php5' in group_names"
 
-- name: Enable newrelic for php
+- name: Enable newrelic for php (PHP 5.6)
   file:
     state: absent
     path: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
@@ -526,6 +527,24 @@
     - apache2
     - cli
   notify: reload apache
+  when: "'openaustralia_php5' in group_names"
+
+- name: Configure newrelic php monitor (PHP 8.3)
+  file:
+    state: absent
+    path: /etc/php/8.3/mods-available/newrelic.ini
+  notify: reload apache
+  when: "'openaustralia_php8' in group_names"
+
+- name: Enable newrelic for php (PHP 8.3)
+  file:
+    state: absent
+    path: "/etc/php/8.3/{{ item }}/conf.d/30-newrelic.ini"
+  with_items:
+    - apache2
+    - cli
+  notify: reload apache
+  when: "'openaustralia_php8' in group_names"
 
 # For some reason on Ubuntu 16.04 php is commented out of the mime types list
 # This causes a request to /api/key to 404. So make content negotiation work by
