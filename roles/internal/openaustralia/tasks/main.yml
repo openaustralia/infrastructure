@@ -335,6 +335,15 @@
   with_items:
     - apache2
     - cli
+  when: "'openaustralia_php5' in group_names"
+
+- name: Copy across the php config (PHP 8.3)
+  template: src=php.ini dest=/etc/php/8.3/{{ item }}/
+  notify: reload apache
+  with_items:
+    - apache2
+    - cli
+  when: "'openaustralia_php8' in group_names"
 
 - name: Copy test/test password
   copy:
@@ -358,6 +367,22 @@
     - production
     - staging
   notify: reload apache
+  when: "'openaustralia_php5' in group_names"
+
+- name: Copy across the apache configs
+  template:
+    src: apache/stage.conf
+    dest: "/etc/apache2/sites-available/{{ item }}.conf"
+  vars:
+    stage: "{{ item }}"
+    domain: "{{ (item == 'staging') | ternary('staging.', '') }}{{ openaustralia_domain }}"
+    newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
+    password_protect: "{{ item == 'staging' }}"
+  with_items:
+    - production
+    - staging
+  notify: reload apache
+  when: "'openaustralia_php8' in group_names"
 
 - name: Copy across the other apache configs
   template:
