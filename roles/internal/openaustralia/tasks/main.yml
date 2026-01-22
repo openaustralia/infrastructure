@@ -205,6 +205,7 @@
     owner: deploy
     group: deploy
     checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
+  when: "'openaustralia_php5' in group_names"
 
 - name: Unpack xapian bindings source
   unarchive:
@@ -213,6 +214,7 @@
       remote_src: yes
       owner: deploy
       group: deploy
+  when: "'openaustralia_php5' in group_names"
 
 - name: Configure xapian bindings
   command: ./configure --with-php
@@ -220,6 +222,7 @@
     chdir: /home/deploy/xapian-bindings-1.2.22
     creates: /home/deploy/xapian-bindings-1.2.22/Makefile
   become_user: deploy
+  when: "'openaustralia_php5' in group_names"
 
 - name: Compile xapian bindings
   command: make
@@ -227,6 +230,7 @@
     chdir: /home/deploy/xapian-bindings-1.2.22
     creates: /home/deploy/xapian-bindings-1.2.22/php/xapian.la
   become_user: deploy
+  when: "'openaustralia_php5' in group_names"
 
 - name: Install xapian bindings
   command: make install
@@ -234,12 +238,14 @@
     chdir: /home/deploy/xapian-bindings-1.2.22
     creates: /usr/lib/php/20131226/xapian.so
   notify: reload apache
+  when: "'openaustralia_php5' in group_names"
 
 - name: Configure php for xapian bindings
   template:
     src: xapian.ini
     dest: /etc/php/5.6/mods-available
   notify: reload apache
+  when: "'openaustralia_php5' in group_names"
 
 - name: Enable xapian for php
   file:
@@ -250,6 +256,69 @@
     - apache2
     - cli
   notify: reload apache
+  when: "'openaustralia_php5' in group_names"
+
+# PHP 8.3 Xapian bindings installation
+# Using Xapian 1.4.25 which is compatible with modern PHP versions
+- name: Download xapian bindings source (PHP 8.3)
+  get_url:
+    url: https://oligarchy.co.uk/xapian/1.4.25/xapian-bindings-1.4.25.tar.xz
+    dest: /home/deploy
+    owner: deploy
+    group: deploy
+    checksum: sha256:0d005d128b5793cc52fbd77eec07afa07d31f39a2b12ca3e946f9e4750c4c498
+  when: "'openaustralia_php8' in group_names"
+
+- name: Unpack xapian bindings source (PHP 8.3)
+  unarchive:
+      src: /home/deploy/xapian-bindings-1.4.25.tar.xz
+      dest: /home/deploy
+      remote_src: yes
+      owner: deploy
+      group: deploy
+  when: "'openaustralia_php8' in group_names"
+
+- name: Configure xapian bindings (PHP 8.3)
+  command: ./configure --with-php
+  args:
+    chdir: /home/deploy/xapian-bindings-1.4.25
+    creates: /home/deploy/xapian-bindings-1.4.25/Makefile
+  become_user: deploy
+  when: "'openaustralia_php8' in group_names"
+
+- name: Compile xapian bindings (PHP 8.3)
+  command: make
+  args:
+    chdir: /home/deploy/xapian-bindings-1.4.25
+    creates: /home/deploy/xapian-bindings-1.4.25/php/xapian.la
+  become_user: deploy
+  when: "'openaustralia_php8' in group_names"
+
+- name: Install xapian bindings (PHP 8.3)
+  command: make install
+  args:
+    chdir: /home/deploy/xapian-bindings-1.4.25
+    creates: /usr/lib/php/20230831/xapian.so
+  notify: reload apache
+  when: "'openaustralia_php8' in group_names"
+
+- name: Configure php for xapian bindings (PHP 8.3)
+  template:
+    src: xapian.ini
+    dest: /etc/php/8.3/mods-available
+  notify: reload apache
+  when: "'openaustralia_php8' in group_names"
+
+- name: Enable xapian for php (PHP 8.3)
+  file:
+    state: link
+    src: /etc/php/8.3/mods-available/xapian.ini
+    dest: "/etc/php/8.3/{{ item }}/conf.d/30-xapian.ini"
+  with_items:
+    - apache2
+    - cli
+  notify: reload apache
+  when: "'openaustralia_php8' in group_names"
 
 - name: Enable apache modules
   apache2_module: state=present name={{ item }}
