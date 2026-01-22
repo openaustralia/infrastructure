@@ -60,4 +60,10 @@
     name: oaf.certbot
   vars:
     certbot_certs: "{{ staging_certs if ('openaustralia_staging' in group_names) else production_certs }}"
+  when: "'ec2' in group_names and ('openaustralia_staging' in group_names or 'openaustralia_production' in group_names)"
+- name: Install certificate using certbot
+  include_role:
+    name: oaf.certbot
+  vars:
+    certbot_certs: "{{ staging_certs | default(production_certs | default([])) }}"
   when: "'ec2' in group_names"
