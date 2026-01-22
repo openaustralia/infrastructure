@@ -139,33 +139,63 @@
   apt_repository:
     repo: 'ppa:ondrej/php'
 
-- name: Install required packages
+- name: Install required packages (Legacy - PHP 5.6)
   apt:
     name: "{{ item }}"
     update_cache: yes
   with_items:
-    - php5.6
-    - php5.6-curl
-    - php5.6-mysql
     - apache2
-    - libapache2-mod-php5.6
+    - ghostscript
     - imagemagick
+    - libapache2-mod-php5.6
+    - libdbd-mysql-perl
+    - libdbi-perl
     - libmagickcore-dev
     - libmagickwand-dev
-    - ghostscript
-    - libxslt1-dev
+    - libmysqlclient-dev
+    - libsearch-xapian-perl
+    - libxapian-dev
+    - libxml-rss-perl
     - libxml-twig-perl
+    - libxslt1-dev
     - msmtp
+    - mysql-client-core-5.7 # Need the mysql command line when setting up a database initially
+    - php5.6
+    - php5.6-curl
+    - php5.6-dev
+    - php5.6-mysql
+    - xapian-tools
+  when: "'openaustralia_php5' in group_names"
+
+- name: Install required packages (PHP 8.3)
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - apache2
+    - ghostscript
+    - imagemagick
+    - libapache2-mod-php8.3
     - libdbi-perl
     - libdbd-mysql-perl
-    - php5.6-dev
-    - libxapian-dev
-    - xapian-tools
+    - libmagickcore-dev
+    - libmagickwand-dev
+    - libpq-dev
     - libsearch-xapian-perl
+    - libxapian-dev
     - libxml-rss-perl
-    - libmysqlclient-dev
-    # Need the mysql command line when setting up a database initially
-    - mysql-client-core-5.7
+    - libxml-twig-perl
+    - libxslt1-dev
+    - msmtp
+    - mysql-client-core-8.0 # Need the mysql command line when setting up a database initially
+    - php8.3
+    - php8.3-curl
+    - php8.3-dev
+    - php8.3-mysql
+    - xapian-tools
+  when: "'openaustralia_php8' in group_names"
+
+
 
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
