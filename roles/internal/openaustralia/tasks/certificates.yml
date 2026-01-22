@@ -8,7 +8,7 @@
   when: "'development' in group_names"
 
 # We need to setup the SSL certificates before we try to configure nginx
-# because otherwise nginx will try to look for non-existent certificates
+# because otherwise Apache will try to look for non-existent certificates
 - name: Copy SSL certificates for development
   copy:
     src: "{{ item }}.pem"
