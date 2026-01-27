@@ -93,7 +93,7 @@ resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.org.id
   name    = "openaustralia.org"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 # TODO: Remove this once the one below is up and running
@@ -209,7 +209,7 @@ resource "cloudflare_record" "alt_spf" {
   zone_id = cloudflare_zone.org_au.id
   name    = "openaustralia.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "alt_google_site_verification" {
