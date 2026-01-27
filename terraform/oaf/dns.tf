@@ -101,17 +101,16 @@ resource "cloudflare_record" "domainkey_cuttlefish" {
   value = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7fLXgEr26+qIswukULxl1OIPfz2CZ1iPcy4+LsveWZKGi1mU4jcy2vregS8FOm1B/V2nI354jBxlEi4XLxElcThq7zrFcDLXPNkrCg7yyPCF3qBnISlWDF/EwB0wOE1VF3QcwcILdR9vzRHP2yo0uTkz+stZpzVgthfM4FAOd5vDQ+cYxCwKTtXyCBUHH+/c2KUYnKiAOEXmuOUfwdo7uAPdClyg8mPAqYzjEQtPlktulD3rLQp3bom5lkGVLzklfiD77JVK1PD1a9C2OItG55KYbie3EPrXLkecGMob1ulhvz7ml/bSx3bqDUcbelnVLlT9VjeRiEUWoSYzJxXoMwIDAQAB"
 }
 
-# For the time being we're just using DMARC records to get some data on what's
-# happening with email that we're sending (and whether anyone else is impersonating
-# us).
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# DMARC record for email authentication and reporting
+# Reports are sent to both Suped (for monitoring) and Postmark (legacy weekly reports)
+# Suped provides ongoing monitoring and analysis
+# Postmark generates a weekly DMARC report which gets sent by email on Monday mornings
 # Report goes to webmaster@oaf.org.au
 resource "cloudflare_record" "dmarc" {
   zone_id = var.oaf_org_au_zone_id
   name    = "_dmarc.oaf.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; ruf=; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
 
 ## openaustraliafoundation.org.au
