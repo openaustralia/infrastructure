@@ -113,6 +113,21 @@ resource "cloudflare_record" "dmarc" {
   value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; ruf=; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
 
+# SPF include record containing all A records for OAF services
+# This is used by other domains via "include:_spf1.oaf.org.au"
+# Dynamically includes IPs from:
+# - oaf.org.au (WordPress.com hosted)
+# - openaustraliafoundation.org.au (WordPress.com hosted)
+# - openaustralia.org / openaustralia.org.au (main and production servers)
+# - righttoknow.org.au (production and staging)
+# - cuttlefish.oaf.org.au
+resource "cloudflare_record" "spf_include" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "_spf1.oaf.org.au"
+  type    = "TXT"
+  value   = "v=spf1 ip4:192.0.78.154 ip4:192.0.78.197 ip4:192.0.78.177 ip4:192.0.78.220 ip4:${var.openaustralia_main_ip} ip4:${var.openaustralia_production_ip} ip4:${var.righttoknow_production_ip} ip4:${var.righttoknow_staging_ip} ip4:${var.cuttlefish_ip} -all"
+}
+
 ## openaustraliafoundation.org.au
 
 # A records
