@@ -64,7 +64,7 @@ resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.main.id
   name    = "righttoknow.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "google_site_verification" {
@@ -146,7 +146,7 @@ resource "cloudflare_record" "staging-spf" {
   zone_id = cloudflare_zone.main.id
   name    = "staging.righttoknow.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "staging-mx" {
