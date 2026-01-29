@@ -80,12 +80,13 @@ variable "cloudflare_account_id" {
 
 # =============================================================================
 # Cloudflare-only restrictions
-# When enabled, adds security group rules to allow HTTP/HTTPS only from Cloudflare IPs
-# Note: You must also remove the 0.0.0.0/0 rules from the SG to enforce the restriction
+# When enabled:
+#   1. Removes public HTTP/HTTPS access (0.0.0.0/0 rules disabled via count)
+#   2. Adds security group rules allowing HTTP/HTTPS only from Cloudflare IPs
 # =============================================================================
 
 variable "theyvoteforyou_cloudflare_only" {
-  description = "Add Cloudflare IP rules to theyvoteforyou security group"
+  description = "Restrict HTTP/HTTPS traffic to Cloudflare IPs only (removes public access)"
   type        = bool
   default     = true
 }
