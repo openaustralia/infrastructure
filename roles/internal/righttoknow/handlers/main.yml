@@ -26,3 +26,9 @@
   service:
     name: opendkim
     state: restarted
+
+- name: restart sidekiq
+  systemd:
+    name: sidekiq
+    daemon_reload: yes
+    state: restarted

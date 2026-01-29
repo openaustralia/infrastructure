@@ -64,7 +64,7 @@ resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.main.id
   name    = "righttoknow.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "google_site_verification" {
@@ -113,14 +113,16 @@ resource "cloudflare_record" "google_domainkey" {
 }
 
 ## 2024-09-02 - Set DMARC to quarantine emails that don't meet the DMARC requirements.
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# DMARC record for email authentication and reporting
+# Reports are sent to both Suped (for monitoring) and Postmark (legacy weekly reports)
+# Suped provides ongoing monitoring and analysis
+# Postmark generates a weekly DMARC report which gets sent by email on Monday mornings
 # Report goes to webmaster@righttoknow.org.au
 resource "cloudflare_record" "dmarc" {
   zone_id = cloudflare_zone.main.id
   name    = "_dmarc.righttoknow.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=quarantine; rua=mailto:re+aysyay6u9ct@dmarc.postmarkapp.com; sp=none; pct=100; aspf=r;"
+  value   = "v=DMARC1; p=quarantine; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+aysyay6u9ct@dmarc.postmarkapp.com; ruf=; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
 
 # Staging environment DNS records
@@ -144,7 +146,7 @@ resource "cloudflare_record" "staging-spf" {
   zone_id = cloudflare_zone.main.id
   name    = "staging.righttoknow.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "staging-mx" {
