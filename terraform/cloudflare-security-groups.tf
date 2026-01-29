@@ -1,6 +1,7 @@
 # =============================================================================
 # Cloudflare IP Restrictions for Security Groups
-# IPs are fetched dynamically from Cloudflare's official endpoints
+# IPs are fetched dynamically from Cloudflare's official endpoints.
+# The Ansible oaf.cloudflare role uses the same endpoints for nginx real_ip config.
 # =============================================================================
 
 data "http" "cloudflare_ipv4" {
