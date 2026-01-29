@@ -87,7 +87,7 @@ variable "cloudflare_account_id" {
 variable "theyvoteforyou_cloudflare_only" {
   description = "Add Cloudflare IP rules to theyvoteforyou security group"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "righttoknow_cloudflare_only" {
