@@ -125,7 +125,7 @@ dependencies:
     rbenv:
       env: user
       version: v1.1.2
-      default_ruby: "{{ ruby_version_production }}"
+      default_ruby: "{{ ruby_version_staging if 'righttoknow_staging' in group_names else ruby_version_production }}"
       rubies:
         - version: "{{ ruby_version_staging }}"
         - version: "{{ ruby_version_production }}"
