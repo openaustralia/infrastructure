@@ -3,6 +3,7 @@
 		"run_as_user": "root"
 	},
 	"logs": {
+		"system.name": "{{ name }}",
 		"logs_collected": {
 			"files": {
 				"collect_list": {{ logs | to_nice_json }}
