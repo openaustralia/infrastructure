@@ -40,7 +40,7 @@ resource "cloudflare_record" "spf" {
   zone_id = var.oaf_org_au_zone_id
   name    = "oaf.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "google_site_verification" {
@@ -101,17 +101,31 @@ resource "cloudflare_record" "domainkey_cuttlefish" {
   value = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7fLXgEr26+qIswukULxl1OIPfz2CZ1iPcy4+LsveWZKGi1mU4jcy2vregS8FOm1B/V2nI354jBxlEi4XLxElcThq7zrFcDLXPNkrCg7yyPCF3qBnISlWDF/EwB0wOE1VF3QcwcILdR9vzRHP2yo0uTkz+stZpzVgthfM4FAOd5vDQ+cYxCwKTtXyCBUHH+/c2KUYnKiAOEXmuOUfwdo7uAPdClyg8mPAqYzjEQtPlktulD3rLQp3bom5lkGVLzklfiD77JVK1PD1a9C2OItG55KYbie3EPrXLkecGMob1ulhvz7ml/bSx3bqDUcbelnVLlT9VjeRiEUWoSYzJxXoMwIDAQAB"
 }
 
-# For the time being we're just using DMARC records to get some data on what's
-# happening with email that we're sending (and whether anyone else is impersonating
-# us).
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# DMARC record for email authentication and reporting
+# Reports are sent to both Suped (for monitoring) and Postmark (legacy weekly reports)
+# Suped provides ongoing monitoring and analysis
+# Postmark generates a weekly DMARC report which gets sent by email on Monday mornings
 # Report goes to webmaster@oaf.org.au
 resource "cloudflare_record" "dmarc" {
   zone_id = var.oaf_org_au_zone_id
   name    = "_dmarc.oaf.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; ruf=; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+}
+
+# SPF include record containing all A records for OAF services
+# This is used by other domains via "include:_spf1.oaf.org.au"
+# Dynamically includes IPs from:
+# - oaf.org.au (WordPress.com hosted)
+# - openaustraliafoundation.org.au (WordPress.com hosted)
+# - openaustralia.org / openaustralia.org.au (main and production servers)
+# - righttoknow.org.au (production and staging)
+# - cuttlefish.oaf.org.au
+resource "cloudflare_record" "spf_include" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "_spf1.oaf.org.au"
+  type    = "TXT"
+  value   = "v=spf1 ip4:192.0.78.154 ip4:192.0.78.197 ip4:192.0.78.177 ip4:192.0.78.220 ip4:${var.openaustralia_main_ip} ip4:${var.openaustralia_production_ip} ip4:${var.righttoknow_production_ip} ip4:${var.righttoknow_staging_ip} ip4:${var.cuttlefish_ip} -all"
 }
 
 ## openaustraliafoundation.org.au
@@ -157,7 +171,7 @@ resource "cloudflare_record" "alt_spf" {
   zone_id = var.openaustraliafoundation_org_au_zone_id
   name    = "openaustraliafoundation.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "alt_google_site_verification" {

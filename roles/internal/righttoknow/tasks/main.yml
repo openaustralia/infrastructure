@@ -182,6 +182,28 @@
   when: "'righttoknow_staging' in group_names"
   tags: redis
 
+- name: Install sidekiq systemd unit (staging)
+  template:
+    src: sidekiq.service
+    dest: /etc/systemd/system/sidekiq.service
+    mode: "0644"
+  vars:
+    sidekiq_daemon_name: "sidekiq (staging)"
+    sidekiq_user: deploy
+    sidekiq_vhost_dir: /srv/www
+    sidekiq_vcspath: staging/current
+    sidekiq_rails_env: production
+  when: "'righttoknow_staging' in group_names"
+  notify: restart sidekiq
+
+- name: Enable and start sidekiq (staging)
+  systemd:
+    name: sidekiq
+    enabled: yes
+    state: started
+    daemon_reload: yes
+  when: "'righttoknow_staging' in group_names"
+
 # The changes of there being differences between the production and staging version
 # of this script are extremely small. So, just using the production version.
 # This is used in cron jobs

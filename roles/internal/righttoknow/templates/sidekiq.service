@@ -1,0 +1,21 @@
+[Unit]
+Description={{ sidekiq_daemon_name }}
+After=syslog.target network.target
+
+[Service]
+Type=notify
+WatchdogSec=10
+
+User={{ sidekiq_user }}
+Group={{ sidekiq_user }}
+UMask=0002
+
+WorkingDirectory={{ sidekiq_vhost_dir }}/{{ sidekiq_vcspath }}
+
+ExecStart=/bin/bash -lc 'bundle exec sidekiq -e {{ sidekiq_rails_env }}'
+
+RestartSec=1
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
