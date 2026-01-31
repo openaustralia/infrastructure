@@ -10,7 +10,7 @@ resource "aws_instance" "production" {
   ebs_optimized = true
   key_name      = "test"
   tags = {
-    Name = "openaustralia"
+    Name = "openaustralia-prod"
   }
 
   # Increase root volume size to 20GB to allow for more packages and data
@@ -44,7 +44,7 @@ resource "aws_ebs_volume" "production_data" {
   size = 20
   type = "gp3"
   tags = {
-    Name = "openaustralia_data"
+    Name = "openaustralia-prod-data"
   }
 }
 
