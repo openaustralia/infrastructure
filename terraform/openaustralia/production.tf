@@ -9,7 +9,7 @@ resource "aws_instance" "production" {
 
   instance_type = "t3.small"
   ebs_optimized = true
-  key_name      = "test"
+  key_name      = "terraform"
   tags = {
     Name = "openaustralia-prod"
   }
