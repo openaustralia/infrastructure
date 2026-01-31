@@ -1,10 +1,11 @@
-# New OpenAustralia Production Server on Ubuntu 24.04
+# New OpenAustralia Production Server on Ubuntu 22.04
 # This creates a parallel production environment for OpenAustralia
 
 # After discussion with Brenda, this new server will house both staging and production.
+# Note: Using Ubuntu 22.04 due to Ansible 2.10 compatibility issues with Ubuntu 24.04
 
 resource "aws_instance" "production" {
-  ami = var.ubuntu_24_ami
+  ami = var.ubuntu_22_ami
 
   instance_type = "t3.small"
   ebs_optimized = true
