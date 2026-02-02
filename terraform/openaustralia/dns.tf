@@ -242,5 +242,5 @@ resource "cloudflare_record" "alt_dmarc" {
   zone_id = cloudflare_zone.org_au.id
   name    = "_dmarc.openaustralia.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+no6xy3wrymr@dmarc.postmarkapp.com; ruf=; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+no6xy3wrymr@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }

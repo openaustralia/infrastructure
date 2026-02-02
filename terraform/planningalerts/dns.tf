@@ -129,5 +129,5 @@ resource "cloudflare_record" "dmarc" {
   zone_id = cloudflare_zone.main.id
   name    = "_dmarc.planningalerts.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+b1g0fn6boqu@dmarc.postmarkapp.com; ruf=; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+b1g0fn6boqu@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
