@@ -141,7 +141,7 @@ resource "cloudflare_record" "tvfy_dmarc" {
   zone_id = cloudflare_zone.org_au.id
   name    = "_dmarc.theyvoteforyou.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ldnqce6nisu@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ldnqce6nisu@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
 
 ## theyvoteforyou.org
@@ -172,7 +172,7 @@ resource "cloudflare_record" "tvfy_alt1_dmarc" {
   zone_id = cloudflare_zone.org.id
   name    = "_dmarc.theyvoteforyou.org"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+qbce7gaoklg@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+qbce7gaoklg@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
 
 ## theyvoteforyou.com.au
@@ -203,5 +203,5 @@ resource "cloudflare_record" "tvfy_alt2_dmarc" {
   zone_id = cloudflare_zone.com_au.id
   name    = "_dmarc.theyvoteforyou.com.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ffljniarmuh@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ffljniarmuh@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
