@@ -79,7 +79,7 @@ resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.main.id
   name    = "morph.io"
   type    = "TXT"
-  value   = "v=spf1 include:_spf.google.com -all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com -all"
 }
 
 resource "cloudflare_record" "google_site_verification" {

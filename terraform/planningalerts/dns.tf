@@ -81,7 +81,7 @@ resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.main.id
   name    = "planningalerts.org.au"
   type    = "TXT"
-  value   = "v=spf1 include:_spf.google.com a:cuttlefish.oaf.org.au  -all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com a:cuttlefish.oaf.org.au -all"
 }
 
 resource "cloudflare_record" "google_site_verification" {
