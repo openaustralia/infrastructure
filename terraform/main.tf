@@ -94,6 +94,7 @@ module "openaustralia" {
   security_group_service   = aws_security_group.openaustralia
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_16_ami
+  ubuntu_22_ami            = var.ubuntu_22_ami
   ubuntu_24_ami            = var.ubuntu_24_ami
   cloudflare_account_id    = var.cloudflare_account_id
 }
