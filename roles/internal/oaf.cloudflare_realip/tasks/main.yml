@@ -1,0 +1,83 @@
+---
+# tasks file for oaf.cloudflare_realip
+#
+# This role configures nginx or apache to restore real client IP addresses
+# when traffic is proxied through Cloudflare. It dynamically fetches the
+# current Cloudflare IP ranges and generates the appropriate config.
+
+- name: Fetch Cloudflare IPv4 ranges
+  uri:
+    url: "{{ cloudflare_ipv4_url }}"
+    return_content: yes
+  register: cloudflare_ipv4_response
+  delegate_to: localhost
+  become: no
+  run_once: true
+
+- name: Fetch Cloudflare IPv6 ranges
+  uri:
+    url: "{{ cloudflare_ipv6_url }}"
+    return_content: yes
+  register: cloudflare_ipv6_response
+  delegate_to: localhost
+  become: no
+  run_once: true
+  when: cloudflare_include_ipv6
+
+- name: Parse Cloudflare IP ranges
+  set_fact:
+    cloudflare_ipv4_cidrs: "{{ cloudflare_ipv4_response.content | trim | split('\n') | select }}"
+    cloudflare_ipv6_cidrs: "{{ (cloudflare_ipv6_response.content | default('') | trim | split('\n') | select) if cloudflare_include_ipv6 else [] }}"
+
+# =============================================================================
+# nginx configuration
+# =============================================================================
+
+- name: Ensure nginx conf.d directory exists
+  file:
+    path: "{{ cloudflare_nginx_config_path | dirname }}"
+    state: directory
+    mode: '0755'
+  when: cloudflare_webserver == 'nginx'
+
+- name: Deploy Cloudflare real IP config for nginx
+  template:
+    src: cloudflare-realip.conf.j2
+    dest: "{{ cloudflare_nginx_config_path }}"
+    mode: '0644'
+  notify: reload nginx
+  when: cloudflare_webserver == 'nginx'
+
+# =============================================================================
+# apache configuration
+# =============================================================================
+
+- name: Enable apache remoteip module
+  apache2_module:
+    name: remoteip
+    state: present
+  notify: reload apache
+  when: cloudflare_webserver == 'apache'
+
+- name: Deploy Cloudflare real IP config for apache
+  template:
+    src: cloudflare-remoteip.conf.j2
+    dest: "{{ cloudflare_apache_config_path }}"
+    mode: '0644'
+  notify: reload apache
+  when: cloudflare_webserver == 'apache'
+
+- name: Enable apache Cloudflare config
+  command: a2enconf cloudflare-remoteip
+  args:
+    creates: /etc/apache2/conf-enabled/cloudflare-remoteip.conf
+  notify: reload apache
+  when: cloudflare_webserver == 'apache'
+
+# =============================================================================
+# Summary
+# =============================================================================
+
+- name: Display Cloudflare IP count
+  debug:
+    msg: "Configured {{ cloudflare_ipv4_cidrs | length }} IPv4 and {{ cloudflare_ipv6_cidrs | length }} IPv6 Cloudflare ranges for {{ cloudflare_webserver }}"

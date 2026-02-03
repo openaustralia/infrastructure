@@ -1,0 +1,21 @@
+---
+# defaults file for oaf.cloudflare_realip
+
+# Web server type: nginx or apache
+# This determines which config template and path to use
+cloudflare_webserver: nginx
+
+# Config paths (auto-selected based on webserver, but can be overridden)
+cloudflare_nginx_config_path: /etc/nginx/conf.d/cloudflare-realip.conf
+cloudflare_apache_config_path: /etc/apache2/conf-available/cloudflare-remoteip.conf
+
+# Header that Cloudflare uses to pass the real client IP
+# Options: CF-Connecting-IP (recommended), X-Forwarded-For
+cloudflare_real_ip_header: CF-Connecting-IP
+
+# URLs for Cloudflare IP ranges (official endpoints)
+cloudflare_ipv4_url: https://www.cloudflare.com/ips-v4
+cloudflare_ipv6_url: https://www.cloudflare.com/ips-v6
+
+# Whether to include IPv6 ranges
+cloudflare_include_ipv6: true
