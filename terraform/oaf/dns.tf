@@ -26,6 +26,47 @@ resource "cloudflare_record" "www" {
   proxied = false
 }
 
+# Google Workspace custom URLs
+resource "cloudflare_record" "calendar" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "calendar.oaf.org.au"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+  proxied = false
+}
+
+resource "cloudflare_record" "drive" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "drive.oaf.org.au"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+  proxied = false
+}
+
+resource "cloudflare_record" "mail" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "mail.oaf.org.au"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+  proxied = false
+}
+
+resource "cloudflare_record" "groups" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "groups.oaf.org.au"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+  proxied = false
+}
+
+resource "cloudflare_record" "sites" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "sites.oaf.org.au"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+  proxied = false
+}
+
 # MX records
 resource "cloudflare_record" "mx" {
   zone_id  = var.oaf_org_au_zone_id
