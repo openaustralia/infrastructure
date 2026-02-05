@@ -151,7 +151,7 @@ resource "cloudflare_record" "dmarc" {
   zone_id = var.oaf_org_au_zone_id
   name    = "_dmarc.oaf.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; ruf=; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
 
 # SPF include record containing all A records for OAF services

@@ -79,7 +79,7 @@ resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.main.id
   name    = "morph.io"
   type    = "TXT"
-  value   = "v=spf1 include:_spf.google.com -all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com -all"
 }
 
 resource "cloudflare_record" "google_site_verification" {
@@ -120,7 +120,7 @@ resource "cloudflare_record" "dmarc" {
   zone_id = cloudflare_zone.main.id
   name    = "_dmarc.morph.io"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+yuyhziqptlw@dmarc.postmarkapp.com; ruf=; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+yuyhziqptlw@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
 
 # CAA records
