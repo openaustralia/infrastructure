@@ -30,7 +30,7 @@ resource "aws_db_instance" "main" {
   # TODO: Less space should be needed in production
   # TODO: Enable storage autoscaling
   # TODO: Set maximum storage threshold to 200GB? 
-  allocated_storage = 50
+  allocated_storage = 90
 
   # Using general purpose SSD
   storage_type   = "gp3"
