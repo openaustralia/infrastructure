@@ -1,0 +1,46 @@
+---
+# Fetch Cloudflare IP ranges for nginx real_ip configuration
+# Include this role as a dependency when your application sits behind Cloudflare
+# and needs to extract the original client IP from CF-Connecting-IP header.
+# These are the same URLs used by Terraform in cloudflare-security-groups.tf
+# Sets facts: cloudflare_ipv4_cidrs, cloudflare_ipv6_cidrs
+
+- name: Fetch Cloudflare IPv4 ranges
+  uri:
+    url: "https://www.cloudflare.com/ips-v4"
+    return_content: yes
+    timeout: 30
+    status_code: 200
+  register: cloudflare_ipv4_response
+  delegate_to: localhost
+  become: no
+  run_once: true
+  retries: 3
+  delay: 5
+
+- name: Fetch Cloudflare IPv6 ranges
+  uri:
+    url: "https://www.cloudflare.com/ips-v6"
+    return_content: yes
+    timeout: 30
+    status_code: 200
+  register: cloudflare_ipv6_response
+  delegate_to: localhost
+  become: no
+  run_once: true
+  retries: 3
+  delay: 5
+
+- name: Parse Cloudflare IP ranges
+  set_fact:
+    cloudflare_ipv4_cidrs: "{{ cloudflare_ipv4_response.content.split('\n') | reject('equalto', '') | list }}"
+    cloudflare_ipv6_cidrs: "{{ cloudflare_ipv6_response.content.split('\n') | reject('equalto', '') | list }}"
+  run_once: true
+
+- name: Validate Cloudflare IP ranges were fetched
+  assert:
+    that:
+      - cloudflare_ipv4_cidrs | length > 0
+      - cloudflare_ipv6_cidrs | length > 0
+    fail_msg: "Failed to fetch valid Cloudflare IP ranges"
+  run_once: true
