@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: your name
-  description:
+  description: ""
   company: your company (optional)
   # Some suggested licenses:
   # - BSD (default)
@@ -11,7 +11,7 @@ galaxy_info:
   # - Apache
   # - CC-BY
   license: license (GPLv2, CC-BY, etc)
-  min_ansible_version: 1.2
+  min_ansible_version: "1.2"
   #
   # Below are all platforms currently available. Just uncomment
   # the ones that apply to your role. If you don't see your
@@ -124,7 +124,7 @@ dependencies:
 
   # Ancient ruby for production
   - role: rvm.ruby
-    when: inventory_hostname == 'openaustralia'
+    when: "'openaustralia' in group_names"
     rvm1_rubies:
       - ruby-2.7.2
       - ruby-2.7.8
@@ -140,13 +140,14 @@ dependencies:
 
   # Modern ruby on the new host
   - role: zzet.rbenv
-    when: inventory_hostname == 'openaustralia_php8'
+    when: "'openaustralia_php8' in group_names"
     rbenv:
       env: user
       version: v1.1.2
       default_ruby: "{{ ruby_version }}"
       rubies:
         - version: "{{ ruby_version }}"
+        - version: ruby-2.7.8
     rbenv_users:
       - deploy
 
