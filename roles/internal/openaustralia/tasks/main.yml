@@ -66,19 +66,23 @@
     - staging
 
 - name: Install dependency for ansible mysql_db module
+  # TODO: work out if we need this on the new machine
+  when: "'openaustralia_php5' in group_names"
   apt: pkg=python-mysqldb
 
 - name: Create openaustralia databases
+  when: "'openaustralia_php8' in group_names"
   mysql_db:
     login_host: "{{ mysql_8_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "oa-{{ item }}"
   with_items:
-    - production
+    # - production
     - staging
 
 - name: Create openaustralia user with access to the database (production)
+  when: "'openaustralia_php8' in group_names"
   mysql_user:
     login_host: "{{ mysql_8_host }}"
     login_user: admin
@@ -89,6 +93,7 @@
     host: "%"
 
 - name: Create mysql user with readonly access to the production openaustralia database for metabase
+  when: "'openaustralia_php8' in group_names"
   mysql_user:
     login_host: "{{ mysql_8_host }}"
     login_user: admin
@@ -100,6 +105,7 @@
   run_once: true
 
 - name: Create openaustralia user with access to the database (staging)
+  when: "'openaustralia_php8' in group_names"
   mysql_user:
     login_host: "{{ mysql_8_host }}"
     login_user: admin
@@ -124,8 +130,6 @@
     stage: "{{ item }}"
   with_items:
     - production
-
-
 
 - name: Install apache now (for the benefit of certbot)
   apt: pkg=apache2
