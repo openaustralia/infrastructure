@@ -70,21 +70,23 @@
   when: "'openaustralia_php5' in group_names"
   apt: pkg=python-mysqldb
 
+# TODO: Add the php8/mysql8 versions of these
+
 - name: Create openaustralia databases
-  when: "'openaustralia_php8' in group_names"
+  when: "'openaustralia_php5' in group_names"
   mysql_db:
-    login_host: "{{ mysql_8_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "oa-{{ item }}"
   with_items:
-    # - production
+    - production
     - staging
 
 - name: Create openaustralia user with access to the database (production)
-  when: "'openaustralia_php8' in group_names"
+  when: "'openaustralia_php5' in group_names"
   mysql_user:
-    login_host: "{{ mysql_8_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: oa-production
@@ -93,9 +95,9 @@
     host: "%"
 
 - name: Create mysql user with readonly access to the production openaustralia database for metabase
-  when: "'openaustralia_php8' in group_names"
+  when: "'openaustralia_php5' in group_names"
   mysql_user:
-    login_host: "{{ mysql_8_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: oa-production-readonly
@@ -104,16 +106,16 @@
     host: "%"
   run_once: true
 
-- name: Create openaustralia user with access to the database (staging)
-  when: "'openaustralia_php8' in group_names"
-  mysql_user:
-    login_host: "{{ mysql_8_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: oa-staging
-    password: "{{ openaustralia_staging_mysql_password }}"
-    priv: 'oa-staging.*:ALL'
-    host: "%"
+# - name: Create openaustralia user with access to the database (staging)
+#   when: "'openaustralia_php5' in group_names"
+#   mysql_user:
+#     login_host: "{{ mysql_5_host }}"
+#     login_user: admin
+#     login_password: "{{ rds_admin_password }}"
+#     name: oa-staging
+#     password: "{{ openaustralia_staging_mysql_password }}"
+#     priv: 'oa-staging.*:ALL'
+#     host: "%"
 
 #This file will always point at the production db
 # Which seems like that's what we want, in development
