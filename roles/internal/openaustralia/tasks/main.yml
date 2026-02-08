@@ -144,6 +144,7 @@
     repo: 'ppa:ondrej/php'
 
 - name: Install required packages (Legacy - PHP 5.6)
+  when: "'openaustralia_php5' in group_names"
   apt:
     name: "{{ item }}"
     update_cache: yes
@@ -169,9 +170,9 @@
     - php5.6-dev
     - php5.6-mysql
     - xapian-tools
-  when: "'openaustralia_php5' in group_names"
 
 - name: Install required packages (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   apt:
     name: "{{ item }}"
     update_cache: yes
@@ -201,61 +202,61 @@
     - php8.3-mbstring
     - php8.3-zip
     - xapian-tools
-  when: "'openaustralia_php8' in group_names"
 
 
 
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
+  when: "'openaustralia_php5' in group_names"
   get_url:
     url: https://oligarchy.co.uk/xapian/1.2.22/xapian-bindings-1.2.22.tar.xz
     dest: /home/deploy
     owner: deploy
     group: deploy
     checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
-  when: "'openaustralia_php5' in group_names"
 
 - name: Unpack xapian bindings source
+  when: "'openaustralia_php5' in group_names"
   unarchive:
       src: /home/deploy/xapian-bindings-1.2.22.tar.xz
       dest: /home/deploy
       remote_src: yes
       owner: deploy
       group: deploy
-  when: "'openaustralia_php5' in group_names"
 
 - name: Configure xapian bindings
+  when: "'openaustralia_php5' in group_names"
   command: ./configure --with-php
   args:
     chdir: /home/deploy/xapian-bindings-1.2.22
     creates: /home/deploy/xapian-bindings-1.2.22/Makefile
   become_user: deploy
-  when: "'openaustralia_php5' in group_names"
 
 - name: Compile xapian bindings
+  when: "'openaustralia_php5' in group_names"
   command: make
   args:
     chdir: /home/deploy/xapian-bindings-1.2.22
     creates: /home/deploy/xapian-bindings-1.2.22/php/xapian.la
   become_user: deploy
-  when: "'openaustralia_php5' in group_names"
 
 - name: Install xapian bindings
+  when: "'openaustralia_php5' in group_names"
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-1.2.22
     creates: /usr/lib/php/20131226/xapian.so
   notify: reload apache
-  when: "'openaustralia_php5' in group_names"
 
 - name: Configure php for xapian bindings
+  when: "'openaustralia_php5' in group_names"
   template:
     src: xapian.ini
     dest: /etc/php/5.6/mods-available
   notify: reload apache
-  when: "'openaustralia_php5' in group_names"
 
 - name: Enable xapian for php
+  when: "'openaustralia_php5' in group_names"
   file:
     state: link
     src: /etc/php/5.6/mods-available/xapian.ini
@@ -264,60 +265,60 @@
     - apache2
     - cli
   notify: reload apache
-  when: "'openaustralia_php5' in group_names"
 
 # PHP 8.3 Xapian bindings installation
 # Using Xapian 1.4.25 which is compatible with modern PHP versions
 - name: Download xapian bindings source (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   get_url:
     url: https://oligarchy.co.uk/xapian/1.4.25/xapian-bindings-1.4.25.tar.xz
     dest: /home/deploy
     owner: deploy
     group: deploy
     checksum: sha256:0d005d128b5793cc52fbd77eec07afa07d31f39a2b12ca3e946f9e4750c4c498
-  when: "'openaustralia_php8' in group_names"
 
 - name: Unpack xapian bindings source (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   unarchive:
       src: /home/deploy/xapian-bindings-1.4.25.tar.xz
       dest: /home/deploy
       remote_src: yes
       owner: deploy
       group: deploy
-  when: "'openaustralia_php8' in group_names"
 
 - name: Configure xapian bindings (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   command: ./configure --with-php
   args:
     chdir: /home/deploy/xapian-bindings-1.4.25
     creates: /home/deploy/xapian-bindings-1.4.25/Makefile
   become_user: deploy
-  when: "'openaustralia_php8' in group_names"
 
 - name: Compile xapian bindings (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   command: make
   args:
     chdir: /home/deploy/xapian-bindings-1.4.25
     creates: /home/deploy/xapian-bindings-1.4.25/php/xapian.la
   become_user: deploy
-  when: "'openaustralia_php8' in group_names"
 
 - name: Install xapian bindings (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-1.4.25
     creates: /usr/lib/php/20230831/xapian.so
   notify: reload apache
-  when: "'openaustralia_php8' in group_names"
 
 - name: Configure php for xapian bindings (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   template:
     src: xapian.ini
     dest: /etc/php/8.3/mods-available
   notify: reload apache
-  when: "'openaustralia_php8' in group_names"
 
 - name: Enable xapian for php (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   file:
     state: link
     src: /etc/php/8.3/mods-available/xapian.ini
@@ -326,7 +327,6 @@
     - apache2
     - cli
   notify: reload apache
-  when: "'openaustralia_php8' in group_names"
 
 - name: Enable apache modules
   apache2_module: state=present name={{ item }}
@@ -337,20 +337,20 @@
     - ssl
 
 - name: Copy across the php config
+  when: "'openaustralia_php5' in group_names"
   template: src=php.ini dest=/etc/php/5.6/{{ item }}/
   notify: reload apache
   with_items:
     - apache2
     - cli
-  when: "'openaustralia_php5' in group_names"
 
 - name: Copy across the php config (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   template: src=php.ini dest=/etc/php/8.3/{{ item }}/
   notify: reload apache
   with_items:
     - apache2
     - cli
-  when: "'openaustralia_php8' in group_names"
 
 - name: Copy test/test password
   copy:
@@ -362,6 +362,7 @@
   notify: reload apache
 
 - name: Copy across the apache configs
+  when: "'openaustralia_php5' in group_names"
   template:
     src: apache/stage.conf
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
@@ -374,9 +375,9 @@
     - production
     - staging
   notify: reload apache
-  when: "'openaustralia_php5' in group_names"
 
 - name: Copy across the apache configs
+  when: "'openaustralia_php8' in group_names"
   template:
     src: apache/stage.conf
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
@@ -389,7 +390,6 @@
     - production
     - staging
   notify: reload apache
-  when: "'openaustralia_php8' in group_names"
 
 - name: Copy across the other apache configs
   template:
@@ -520,13 +520,14 @@
     state: absent
 
 - name: Configure newrelic php monitor (PHP 5.6)
+  when: "'openaustralia_php5' in group_names"
   file:
     state: absent
     path: /etc/php/5.6/mods-available/newrelic.ini
   notify: reload apache
-  when: "'openaustralia_php5' in group_names"
 
 - name: Enable newrelic for php (PHP 5.6)
+  when: "'openaustralia_php5' in group_names"
   file:
     state: absent
     path: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
@@ -534,16 +535,16 @@
     - apache2
     - cli
   notify: reload apache
-  when: "'openaustralia_php5' in group_names"
 
 - name: Configure newrelic php monitor (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   file:
     state: absent
     path: /etc/php/8.3/mods-available/newrelic.ini
   notify: reload apache
-  when: "'openaustralia_php8' in group_names"
 
 - name: Enable newrelic for php (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
   file:
     state: absent
     path: "/etc/php/8.3/{{ item }}/conf.d/30-newrelic.ini"
@@ -551,7 +552,6 @@
     - apache2
     - cli
   notify: reload apache
-  when: "'openaustralia_php8' in group_names"
 
 # For some reason on Ubuntu 16.04 php is commented out of the mime types list
 # This causes a request to /api/key to 404. So make content negotiation work by
