@@ -124,7 +124,7 @@ dependencies:
 
   # Ancient ruby for production
   - role: rvm.ruby
-    when: "'openaustralia' in group_names"
+    when: "'openaustralia_php5' in group_names"
     rvm1_rubies:
       - ruby-2.7.2
       - ruby-2.7.8
