@@ -37,7 +37,6 @@
       - email: contact@oaf.org.au
         domains:
           - "{{ openaustralia_domain }}"
-          - "www.{{ openaustralia_domain }}"
   when: "'openaustralia_staging' in group_names"
 
 - name: Set certificate configuration for production
