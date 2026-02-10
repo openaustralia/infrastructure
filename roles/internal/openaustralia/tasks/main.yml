@@ -205,8 +205,6 @@
     - php8.3-zip
     - xapian-tools
 
-
-
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
   when: "'openaustralia_php5' in group_names"
