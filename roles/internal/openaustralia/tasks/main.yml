@@ -275,7 +275,8 @@
     dest: /home/deploy
     owner: deploy
     group: deploy
-    checksum: sha256:0d005d128b5793cc52fbd77eec07afa07d31f39a2b12ca3e946f9e4750c4c498
+    mode: '0666'
+    checksum: sha256:068314fca3f54524701492df432fa54c485fd4e39613ca2cd275e136964e81a9
 
 - name: Unpack xapian bindings source (PHP 8.3)
   when: "'openaustralia_php8' in group_names"
