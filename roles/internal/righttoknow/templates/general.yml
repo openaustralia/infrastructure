@@ -1284,7 +1284,6 @@ SURVEY_URL: ''
 # ---
 USER_SIGN_IN_ACTIVITY_RETENTION_DAYS: 30
 
-{% if 'righttoknow_staging' in group_names %}
 # Background jobs are processed by Rails' ActiveJob using Sidekiq. There are
 # various ways to run Sidekiq depending to server resources and technical
 # knowledge in order to run and maintain a Redis server.
@@ -1300,4 +1299,3 @@ USER_SIGN_IN_ACTIVITY_RETENTION_DAYS: 30
 #
 # ---
 BACKGROUND_JOBS: 'server'
-{% endif %}
