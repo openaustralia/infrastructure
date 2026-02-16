@@ -66,11 +66,16 @@
     - staging
 
 - name: Install dependency for ansible mysql_db module
+  # TODO: work out if we need this on the new machine
+  when: "'openaustralia_php5' in group_names"
   apt: pkg=python-mysqldb
 
+# TODO: Add the php8/mysql8 versions of these
+
 - name: Create openaustralia databases
+  when: "'openaustralia_php5' in group_names"
   mysql_db:
-    login_host: "{{ mysql_8_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "oa-{{ item }}"
@@ -79,8 +84,9 @@
     - staging
 
 - name: Create openaustralia user with access to the database (production)
+  when: "'openaustralia_php5' in group_names"
   mysql_user:
-    login_host: "{{ mysql_8_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: oa-production
@@ -89,8 +95,9 @@
     host: "%"
 
 - name: Create mysql user with readonly access to the production openaustralia database for metabase
+  when: "'openaustralia_php5' in group_names"
   mysql_user:
-    login_host: "{{ mysql_8_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: oa-production-readonly
@@ -99,15 +106,16 @@
     host: "%"
   run_once: true
 
-- name: Create openaustralia user with access to the database (staging)
-  mysql_user:
-    login_host: "{{ mysql_8_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: oa-staging
-    password: "{{ openaustralia_staging_mysql_password }}"
-    priv: 'oa-staging.*:ALL'
-    host: "%"
+# - name: Create openaustralia user with access to the database (staging)
+#   when: "'openaustralia_php5' in group_names"
+#   mysql_user:
+#     login_host: "{{ mysql_5_host }}"
+#     login_user: admin
+#     login_password: "{{ rds_admin_password }}"
+#     name: oa-staging
+#     password: "{{ openaustralia_staging_mysql_password }}"
+#     priv: 'oa-staging.*:ALL'
+#     host: "%"
 
 #This file will always point at the production db
 # Which seems like that's what we want, in development
@@ -125,84 +133,81 @@
   with_items:
     - production
 
-
-
-# Create fake let's encrypt directories when in development
-- name: Create fake let's encrypt directories when in development
-  file:
-    state: directory
-    path: "/etc/letsencrypt/live/{{ item }}"
-  with_items:
-    - "{{ openaustralia_domain }}"
-    - "test.{{ openaustralia_domain }}"
-  when: "'development' in group_names"
-
-# We need to setup the SSL certificates before we try to configure nginx
-# because otherwise nginx will try to look for non-existent certificates
-- name: Copy SSL certificates for development
-  copy:
-    src: "{{ item }}.pem"
-    # We're faking it as if these are let's encrypt certs. Makes for less magic config
-    dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
-    mode: 0644
-  with_items:
-    - "{{ openaustralia_domain }}"
-    - "test.{{ openaustralia_domain }}"
-  # Only run this task when this machine is the development group
-  when: "'development' in group_names"
-  notify: reload apache
-
-- name: Copy SSL keys for development
-  copy:
-    src: "{{ item }}.key"
-    dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
-    mode: 0640
-  with_items:
-    - "{{ openaustralia_domain }}"
-    - "test.{{ openaustralia_domain }}"
-  # Only run this task when this machine is the development group
-  when: "'development' in group_names"
-  notify: reload apache
-
 - name: Install apache now (for the benefit of certbot)
   apt: pkg=apache2
   when: "'ec2' in group_names"
 
+- name: Setup SSL certificates
+  import_tasks: certificates.yml
+
 # Install php5 on xenial requires a few more jumps than usual
-- name: Add repo for installing php5
+- name: Add repo for installing php5/php8
   apt_repository:
     repo: 'ppa:ondrej/php'
 
-- name: Install required packages
+- name: Install required packages (Legacy - PHP 5.6)
+  when: "'openaustralia_php5' in group_names"
   apt:
     name: "{{ item }}"
     update_cache: yes
   with_items:
-    - php5.6
-    - php5.6-curl
-    - php5.6-mysql
     - apache2
-    - libapache2-mod-php5.6
+    - ghostscript
     - imagemagick
+    - libapache2-mod-php5.6
+    - libdbd-mysql-perl
+    - libdbi-perl
     - libmagickcore-dev
     - libmagickwand-dev
-    - ghostscript
-    - libxslt1-dev
+    - libmysqlclient-dev
+    - libsearch-xapian-perl
+    - libxapian-dev
+    - libxml-rss-perl
     - libxml-twig-perl
+    - libxslt1-dev
     - msmtp
+    - mysql-client-core-5.7 # Need the mysql command line when setting up a database initially
+    - php5.6
+    - php5.6-curl
+    - php5.6-dev
+    - php5.6-mysql
+    - xapian-tools
+
+- name: Install required packages (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - apache2
+    - ghostscript
+    - imagemagick
+    - libapache2-mod-php8.3
     - libdbi-perl
     - libdbd-mysql-perl
-    - php5.6-dev
-    - libxapian-dev
-    - xapian-tools
+    - libmagickcore-dev
+    - libmagickwand-dev
+    - libpq-dev
     - libsearch-xapian-perl
+    - libxapian-dev
     - libxml-rss-perl
-    - libmysqlclient-dev
-    # Need the mysql command line when setting up a database initially
-    - mysql-client-core-5.7
+    - libxml-twig-perl
+    - libxslt1-dev
+    - msmtp
+    - mysql-client-core-8.0 # Need the mysql command line when setting up a database initially
+    - php8.3
+    - php8.3-curl
+    - php8.3-dev
+    - php8.3-mysql
+    - php8.3-xml
+    - php8.3-curl
+    - php8.3-mbstring
+    - php8.3-zip
+    - xapian-tools
 
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
+  when: "'openaustralia_php5' in group_names"
   get_url:
     url: https://oligarchy.co.uk/xapian/1.2.22/xapian-bindings-1.2.22.tar.xz
     dest: /home/deploy
@@ -211,6 +216,7 @@
     checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
 
 - name: Unpack xapian bindings source
+  when: "'openaustralia_php5' in group_names"
   unarchive:
       src: /home/deploy/xapian-bindings-1.2.22.tar.xz
       dest: /home/deploy
@@ -219,6 +225,7 @@
       group: deploy
 
 - name: Configure xapian bindings
+  when: "'openaustralia_php5' in group_names"
   command: ./configure --with-php
   args:
     chdir: /home/deploy/xapian-bindings-1.2.22
@@ -226,6 +233,7 @@
   become_user: deploy
 
 - name: Compile xapian bindings
+  when: "'openaustralia_php5' in group_names"
   command: make
   args:
     chdir: /home/deploy/xapian-bindings-1.2.22
@@ -233,6 +241,7 @@
   become_user: deploy
 
 - name: Install xapian bindings
+  when: "'openaustralia_php5' in group_names"
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-1.2.22
@@ -240,16 +249,81 @@
   notify: reload apache
 
 - name: Configure php for xapian bindings
+  when: "'openaustralia_php5' in group_names"
   template:
     src: xapian.ini
     dest: /etc/php/5.6/mods-available
   notify: reload apache
 
 - name: Enable xapian for php
+  when: "'openaustralia_php5' in group_names"
   file:
     state: link
     src: /etc/php/5.6/mods-available/xapian.ini
     dest: "/etc/php/5.6/{{ item }}/conf.d/30-xapian.ini"
+  with_items:
+    - apache2
+    - cli
+  notify: reload apache
+
+# PHP 8.3 Xapian bindings installation
+# Using Xapian 1.4.25 which is compatible with modern PHP versions
+- name: Download xapian bindings source (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  get_url:
+    url: https://oligarchy.co.uk/xapian/1.4.25/xapian-bindings-1.4.25.tar.xz
+    dest: /home/deploy
+    owner: deploy
+    group: deploy
+    mode: '0666'
+    checksum: sha256:068314fca3f54524701492df432fa54c485fd4e39613ca2cd275e136964e81a9
+
+- name: Unpack xapian bindings source (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  unarchive:
+      src: /home/deploy/xapian-bindings-1.4.25.tar.xz
+      dest: /home/deploy
+      remote_src: yes
+      owner: deploy
+      group: deploy
+
+- name: Configure xapian bindings (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  command: ./configure --with-php
+  args:
+    chdir: /home/deploy/xapian-bindings-1.4.25
+    creates: /home/deploy/xapian-bindings-1.4.25/Makefile
+  become_user: deploy
+
+- name: Compile xapian bindings (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  command: make
+  args:
+    chdir: /home/deploy/xapian-bindings-1.4.25
+    creates: /home/deploy/xapian-bindings-1.4.25/php/xapian.la
+  become_user: deploy
+
+- name: Install xapian bindings (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  command: make install
+  args:
+    chdir: /home/deploy/xapian-bindings-1.4.25
+    creates: /usr/lib/php/20230831/xapian.so
+  notify: reload apache
+
+- name: Configure php for xapian bindings (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  template:
+    src: xapian.ini
+    dest: /etc/php/8.3/mods-available
+  notify: reload apache
+
+- name: Enable xapian for php (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  file:
+    state: link
+    src: /etc/php/8.3/mods-available/xapian.ini
+    dest: "/etc/php/8.3/{{ item }}/conf.d/30-xapian.ini"
   with_items:
     - apache2
     - cli
@@ -264,7 +338,16 @@
     - ssl
 
 - name: Copy across the php config
+  when: "'openaustralia_php5' in group_names"
   template: src=php.ini dest=/etc/php/5.6/{{ item }}/
+  notify: reload apache
+  with_items:
+    - apache2
+    - cli
+
+- name: Copy across the php config (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  template: src=php.ini dest=/etc/php/8.3/{{ item }}/
   notify: reload apache
   with_items:
     - apache2
@@ -280,12 +363,28 @@
   notify: reload apache
 
 - name: Copy across the apache configs
+  when: "'openaustralia_php5' in group_names"
   template:
     src: apache/stage.conf
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
   vars:
     stage: "{{ item }}"
     domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ openaustralia_domain }}"
+    newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
+    password_protect: "{{ item == 'staging' }}"
+  with_items:
+    - production
+    - staging
+  notify: reload apache
+
+- name: Copy across the apache configs
+  when: "'openaustralia_php8' in group_names"
+  template:
+    src: apache/stage.conf
+    dest: "/etc/apache2/sites-available/{{ item }}.conf"
+  vars:
+    stage: "{{ item }}"
+    domain: "{{ (item == 'staging') | ternary('staging.', '') }}{{ openaustralia_domain }}"
     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
     password_protect: "{{ item == 'staging' }}"
   with_items:
@@ -303,23 +402,6 @@
     - software
     - blog
   notify: reload apache
-
-- name: Install certificate using certbot
-  include_role:
-    name: oaf.certbot
-  vars:
-    certbot_certs:
-      - email: contact@oaf.org.au
-        domains:
-          - "{{ openaustralia_domain }}"
-          - www."{{ openaustralia_domain }}"
-          - openaustralia.org
-          - www.openaustralia.org
-      - email: contact@oaf.org.au
-        domains:
-          - "test.{{ openaustralia_domain }}"
-          - "www.test.{{ openaustralia_domain }}"
-  when: "'ec2' in group_names"
 
 - name: Copy across the application config
   template:
@@ -438,16 +520,35 @@
     pkg: newrelic-php5
     state: absent
 
-- name: Configure newrelic php monitor
+- name: Configure newrelic php monitor (PHP 5.6)
+  when: "'openaustralia_php5' in group_names"
   file:
     state: absent
     path: /etc/php/5.6/mods-available/newrelic.ini
   notify: reload apache
 
-- name: Enable newrelic for php
+- name: Enable newrelic for php (PHP 5.6)
+  when: "'openaustralia_php5' in group_names"
   file:
     state: absent
     path: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
+  with_items:
+    - apache2
+    - cli
+  notify: reload apache
+
+- name: Configure newrelic php monitor (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  file:
+    state: absent
+    path: /etc/php/8.3/mods-available/newrelic.ini
+  notify: reload apache
+
+- name: Enable newrelic for php (PHP 8.3)
+  when: "'openaustralia_php8' in group_names"
+  file:
+    state: absent
+    path: "/etc/php/8.3/{{ item }}/conf.d/30-newrelic.ini"
   with_items:
     - apache2
     - cli
