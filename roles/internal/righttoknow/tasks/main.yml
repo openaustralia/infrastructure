@@ -162,6 +162,7 @@
       - rake
       - ruby
       - ruby-dev
+      - redis-server
       - sqlite3
       - tnef
       - fonts-liberation  # Replaces ttf-bitstream-vera
@@ -172,15 +173,6 @@
       - wv
       - xapian-tools
     state: present
-
-## Redis is only being deployed on staging for now while we test the upgrade
-- name: Install Redis (Staging Server)
-  apt:
-    name:
-      - redis-server
-    state: present
-  when: "'righttoknow_staging' in group_names"
-  tags: redis
 
 - name: Install sidekiq systemd unit (staging)
   template:
