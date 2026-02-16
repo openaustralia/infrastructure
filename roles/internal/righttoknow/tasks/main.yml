@@ -196,9 +196,28 @@
     daemon_reload: yes
   when: "'righttoknow_staging' in group_names"
 
-# The changes of there being differences between the production and staging version
-# of this script are extremely small. So, just using the production version.
-# This is used in cron jobs
+- name: Install sidekiq systemd unit (Production)
+  template:
+    src: sidekiq.service
+    dest: /etc/systemd/system/sidekiq.service
+    mode: "0644"
+  vars:
+    sidekiq_daemon_name: "sidekiq (production)"
+    sidekiq_user: deploy
+    sidekiq_vhost_dir: /srv/www
+    sidekiq_vcspath: production/current
+    sidekiq_rails_env: production
+  when: "'righttoknow_production' in group_names"
+  notify: restart sidekiq
+
+- name: Enable and start sidekiq (production)
+  systemd:
+    name: sidekiq
+    enabled: yes
+    state: started
+    daemon_reload: yes
+  when: "'righttoknow_production' in group_names"
+
 - name: Link run-with-lockfile.sh so it's available system-wide
   file:
     src: "/srv/www/{{ 'staging' if ('righttoknow_staging' in group_names) else 'production' }}/current/commonlib/bin/run-with-lockfile.sh"
