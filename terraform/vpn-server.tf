@@ -2,7 +2,7 @@
 # Users must be in the 'vpn-users' IAM group to connect
 
 resource "aws_instance" "openvpn" {
-  ami                    = data.aws_ami.ubuntu_jammy.id
+  ami                    = var.ubuntu_22_openvpn_ami
   instance_type          = "t3.small"
   key_name               = "terraform"
   vpc_security_group_ids = [aws_security_group.openvpn.id]
@@ -22,22 +22,6 @@ resource "aws_instance" "openvpn" {
     volume_type = "gp3"
     volume_size = 20
     encrypted   = true
-  }
-}
-
-# Use latest Ubuntu 22.04 LTS
-data "aws_ami" "ubuntu_jammy" {
-  most_recent = true
-  owners      = ["099720109477"] # Canonical
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
   }
 }
 
