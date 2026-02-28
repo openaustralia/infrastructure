@@ -369,11 +369,11 @@
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
   vars:
     stage: "{{ item }}"
-    domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ openaustralia_domain }}"
+    domain: "{{ (item == 'staging') | 'staging.' }}{{ openaustralia_domain }}"
     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
     password_protect: "{{ item == 'staging' }}"
   with_items:
-    - production
+    # - production 
     - staging
   notify: reload apache
 
@@ -384,7 +384,7 @@
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
   vars:
     stage: "{{ item }}"
-    domain: "{{ (item == 'staging') | ternary('staging.', '') }}{{ openaustralia_domain }}"
+    domain: "{{ (item == 'production') | ternary('www.', '') }}{{ openaustralia_domain }}"
     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
     password_protect: "{{ item == 'staging' }}"
   with_items:
@@ -399,8 +399,8 @@
   with_items:
     - 000-default
     - data
-    - software
-    - blog
+    # - software
+    # - blog
   notify: reload apache
 
 - name: Copy across the application config
@@ -444,131 +444,131 @@
     - blog
   notify: reload apache
 
-- name: Copy msmtp configuration
-  template: src=msmtprc dest=/etc/
+# - name: Copy msmtp configuration
+#   template: src=msmtprc dest=/etc/
 
-# daily update at night for MP data (regmem, data from Public Whip etc.)
-- name: Set up cron job for daily update
-  cron:
-    name: "dailyupdate {{ item }}"
-    user: deploy
-    hour: 1
-    minute: 37
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./dailyupdate"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+# # daily update at night for MP data (regmem, data from Public Whip etc.)
+# - name: Set up cron job for daily update
+#   cron:
+#     name: "dailyupdate {{ item }}"
+#     user: deploy
+#     hour: "1"
+#     minute: "37"
+#     job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./dailyupdate"
+#     state: "{{ cron_enabled | ternary('present', 'absent')}}"
+#   with_items:
+#     - production
+#     - staging
 
-# every week early Sunday grab weekly range of data
-- name: Set up cron job for weekly update
-  cron:
-    name: "weeklyupdate {{ item }}"
-    user: deploy
-    hour: 4
-    minute: 23
-    weekday: 0
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./weeklyupdate"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+# # every week early Sunday grab weekly range of data
+# - name: Set up cron job for weekly update
+#   cron:
+#     name: "weeklyupdate {{ item }}"
+#     user: deploy
+#     hour: "4"
+#     minute: "23"
+#     weekday: "0"
+#     job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./weeklyupdate"
+#     state: "{{ cron_enabled | ternary('present', 'absent')}}"
+#   with_items:
+#     - production
+#     - staging
 
-# Email updates (Going at 10am to give me time to fix things if necessary)
-- name: Set up cron job for email alerts
-  cron:
-    name: "alertmailer {{ item }}"
-    user: deploy
-    hour: 10
-    minute: 0
-    weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && php -q alertmailer.php"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+# # Email updates (Going at 10am to give me time to fix things if necessary)
+# - name: Set up cron job for email alerts
+#   cron:
+#     name: "alertmailer {{ item }}"
+#     user: deploy
+#     hour: 10
+#     minute: 0
+#     weekday: "1-5"
+#     job: "cd /srv/www/{{ item }}/current/twfy/scripts && php -q alertmailer.php"
+#     state: "{{ cron_enabled | ternary('present', 'absent')}}"
+#   with_items:
+#     - production
+#     - staging
 
-# Morning update (Australian Hansard is supposed to be up by 9am the next working day)
-- name: Set up cron job for morning updates
-  cron:
-    name: "morningupdate {{ item }}"
-    user: deploy
-    hour: 9
-    minute: 5
-    weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true ./morningupdate"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+# # Morning update (Australian Hansard is supposed to be up by 9am the next working day)
+# - name: Set up cron job for morning updates
+#   cron:
+#     name: "morningupdate {{ item }}"
+#     user: deploy
+#     hour: 9
+#     minute: 5
+#     weekday: "1-5"
+#     job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true ./morningupdate"
+#     state: "{{ cron_enabled | ternary('present', 'absent')}}"
+#   with_items:
+#     - production
+#     - staging
 
-- name: Install postfix so we can mail out from cron jobs
-  apt:
-    pkg: postfix
+# - name: Install postfix so we can mail out from cron jobs
+#   apt:
+#     pkg: postfix
 
-# For local development (under vagrant we don't want the cron jobs generating email)
-- cronvar:
-    name: MAILTO
-    user: deploy
-    value: web-administrators@openaustralia.org,z4e3a8v8r4p0f9z1@oaf.slack.com
-  when: "'ec2' in group_names"
+# # For local development (under vagrant we don't want the cron jobs generating email)
+# - cronvar:
+#     name: MAILTO
+#     user: deploy
+#     value: web-administrators@openaustralia.org,z4e3a8v8r4p0f9z1@oaf.slack.com
+#   when: "'ec2' in group_names"
 
-# TODO: I have faint memory of rsync service for data.openaustralia.org.au
+# # TODO: I have faint memory of rsync service for data.openaustralia.org.au
 
-- name: Uninstall newrelic php monitor
-  apt:
-    pkg: newrelic-php5
-    state: absent
+# - name: Uninstall newrelic php monitor
+#   apt:
+#     pkg: newrelic-php5
+#     state: absent
 
-- name: Configure newrelic php monitor (PHP 5.6)
-  when: "'openaustralia_php5' in group_names"
-  file:
-    state: absent
-    path: /etc/php/5.6/mods-available/newrelic.ini
-  notify: reload apache
+# - name: Configure newrelic php monitor (PHP 5.6)
+#   when: "'openaustralia_php5' in group_names"
+#   file:
+#     state: absent
+#     path: /etc/php/5.6/mods-available/newrelic.ini
+#   notify: reload apache
 
-- name: Enable newrelic for php (PHP 5.6)
-  when: "'openaustralia_php5' in group_names"
-  file:
-    state: absent
-    path: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
-  with_items:
-    - apache2
-    - cli
-  notify: reload apache
+# - name: Enable newrelic for php (PHP 5.6)
+#   when: "'openaustralia_php5' in group_names"
+#   file:
+#     state: absent
+#     path: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
+#   with_items:
+#     - apache2
+#     - cli
+#   notify: reload apache
 
-- name: Configure newrelic php monitor (PHP 8.3)
-  when: "'openaustralia_php8' in group_names"
-  file:
-    state: absent
-    path: /etc/php/8.3/mods-available/newrelic.ini
-  notify: reload apache
+# - name: Configure newrelic php monitor (PHP 8.3)
+#   when: "'openaustralia_php8' in group_names"
+#   file:
+#     state: absent
+#     path: /etc/php/8.3/mods-available/newrelic.ini
+#   notify: reload apache
 
-- name: Enable newrelic for php (PHP 8.3)
-  when: "'openaustralia_php8' in group_names"
-  file:
-    state: absent
-    path: "/etc/php/8.3/{{ item }}/conf.d/30-newrelic.ini"
-  with_items:
-    - apache2
-    - cli
-  notify: reload apache
+# - name: Enable newrelic for php (PHP 8.3)
+#   when: "'openaustralia_php8' in group_names"
+#   file:
+#     state: absent
+#     path: "/etc/php/8.3/{{ item }}/conf.d/30-newrelic.ini"
+#   with_items:
+#     - apache2
+#     - cli
+#   notify: reload apache
 
-# For some reason on Ubuntu 16.04 php is commented out of the mime types list
-# This causes a request to /api/key to 404. So make content negotiation work by
-# adding it back in
-- name: Make content negotiation work again for php
-  lineinfile:
-    path: /etc/mime.types
-    line: 'application/x-httpd-php phtml pht php'
+# # For some reason on Ubuntu 16.04 php is commented out of the mime types list
+# # This causes a request to /api/key to 404. So make content negotiation work by
+# # adding it back in
+# - name: Make content negotiation work again for php
+#   lineinfile:
+#     path: /etc/mime.types
+#     line: 'application/x-httpd-php phtml pht php'
 
 - name: Autoremove unneeded packages
   apt:
     autoremove: yes
 
-# We allow the capistrano deploys to restart apache
-- name: Allow deploy user to restart apache
-  copy:
-    src: deploy_can_restart_apache
-    dest: /etc/sudoers.d/
-    validate: visudo -cf %s
+# # We allow the capistrano deploys to restart apache
+# - name: Allow deploy user to restart apache
+#   copy:
+#     src: deploy_can_restart_apache
+#     dest: /etc/sudoers.d/
+#     validate: visudo -cf %s
