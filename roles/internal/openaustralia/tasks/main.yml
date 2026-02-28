@@ -373,10 +373,11 @@
     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
     password_protect: "{{ item == 'staging' }}"
   with_items:
-    # - production 
-    - staging
+    - production 
+    # - staging
   notify: reload apache
 
+# delete this below and use the one above 
 - name: Copy across the apache configs
   when: "'openaustralia_php8' in group_names"
   template:
@@ -388,7 +389,7 @@
     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
     password_protect: "{{ item == 'staging' }}"
   with_items:
-    - production
+    # - production
     - staging
   notify: reload apache
 
