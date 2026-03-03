@@ -195,8 +195,10 @@ For each service, complete these steps:
 ### Pre-Migration
 
 - [ ] Apply `cloudflare_realip` role to the service's playbook
-- [ ] Verify role creates `/etc/nginx/conf.d/cloudflare-realip.conf`
-- [ ] Test that nginx reloads successfully
+- [ ] Verify role creates the appropriate config file:
+  - nginx: `/etc/nginx/conf.d/cloudflare-realip.conf`
+  - apache: `/etc/apache2/conf-available/cloudflare-remoteip.conf`
+- [ ] Test that the web server reloads successfully
 
 ### Enable Proxy
 
