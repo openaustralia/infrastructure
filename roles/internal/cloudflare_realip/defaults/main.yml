@@ -1,5 +1,5 @@
 ---
-# defaults file for oaf.cloudflare_realip
+# defaults file for cloudflare_realip
 
 # Web server type: nginx or apache
 # This determines which config template and path to use

@@ -3,7 +3,7 @@ galaxy_info:
   author: OpenAustralia Foundation
   description: Configure nginx or apache to restore real client IPs when behind Cloudflare proxy
   license: MIT
-  min_ansible_version: "2.9"
+  min_ansible_version: "2.10"
   platforms:
     - name: Ubuntu
       versions:
