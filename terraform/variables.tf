@@ -74,6 +74,15 @@ variable "ubuntu_24_ami" {
   default = "ami-001f2488b35ca8aad"
 }
 
+# AMI for Ubuntu 22.04 LTS (used by OpenVPN server), locked to a specific version 
+# so that we don't keep re-provisioning the servers when the AMI gets updated
+variable "ubuntu_22_openvpn_ami" {
+  # Created by: Canonical
+  # Virtualization type: hvm
+  # 64-bit x86
+  default = "ami-0c73bd9145b5546f5"
+}
+
 variable "cloudflare_account_id" {
   default = "668e6ebb9952c26ec3c17a85fb3a25a1"
 }
