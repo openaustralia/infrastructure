@@ -13,6 +13,7 @@
   delegate_to: localhost
   become: false
   run_once: true
+  check_mode: false
 
 - name: Fetch Cloudflare IPv6 ranges
   uri:
@@ -22,6 +23,7 @@
   delegate_to: localhost
   become: false
   run_once: true
+  check_mode: false
   when: cloudflare_include_ipv6
 
 - name: Parse Cloudflare IP ranges
