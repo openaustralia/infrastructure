@@ -163,6 +163,9 @@ dependencies:
     tags:
       - backup
     
+  - role: cloudflare_realip
+    cloudflare_webserver: nginx
+
   - role: nickhammond.logrotate
     logrotate_scripts:
       # This is the log rotation scheme required by Alaveteli
