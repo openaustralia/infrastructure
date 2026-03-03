@@ -34,19 +34,19 @@ Setting these to `true` creates AWS security group rules that only allow HTTP/HT
 
 ### Ansible (New Role)
 
-The `oaf.cloudflare_realip` role configures nginx or apache to restore real client IPs:
+The `cloudflare_realip` role configures nginx or apache to restore real client IPs:
 
 ```yaml
 # For nginx services
 - hosts: webservers
   roles:
-    - role: oaf.cloudflare_realip
+    - role: cloudflare_realip
       cloudflare_webserver: nginx
 
 # For apache services
 - hosts: webservers
   roles:
-    - role: oaf.cloudflare_realip
+    - role: cloudflare_realip
       cloudflare_webserver: apache
 ```
 
@@ -56,7 +56,7 @@ This role:
 3. Configures the web server to trust `CF-Connecting-IP` header from Cloudflare IPs
 
 **Files:**
-- [roles/internal/oaf.cloudflare_realip/](../roles/internal/oaf.cloudflare_realip/)
+- [roles/internal/cloudflare_realip/](../roles/internal/cloudflare_realip/)
 
 ## IP Blocklist Migration
 
@@ -79,7 +79,7 @@ These block:
 
 #### Option 1: Keep in nginx (Recommended Initially)
 
-**How it works:** With the `oaf.cloudflare_realip` role configured, nginx's `$remote_addr` variable is restored to the real client IP via the `CF-Connecting-IP` header. Existing `deny` directives continue to work.
+**How it works:** With the `cloudflare_realip` role configured, nginx's `$remote_addr` variable is restored to the real client IP via the `CF-Connecting-IP` header. Existing `deny` directives continue to work.
 
 **Pros:**
 - No changes to existing blocklists
@@ -90,7 +90,7 @@ These block:
 - Blocked requests still reach origin (use bandwidth)
 - No visibility into blocked requests in Cloudflare dashboard
 
-**Implementation:** Include `oaf.cloudflare_realip` role before the service role. No changes to existing deny rules needed.
+**Implementation:** Include `cloudflare_realip` role before the service role. No changes to existing deny rules needed.
 
 #### Option 2: Cloudflare Firewall Rules
 
@@ -194,7 +194,7 @@ For each service, complete these steps:
 
 ### Pre-Migration
 
-- [ ] Apply `oaf.cloudflare_realip` role to the service's playbook
+- [ ] Apply `cloudflare_realip` role to the service's playbook
 - [ ] Verify role creates `/etc/nginx/conf.d/cloudflare-realip.conf`
 - [ ] Test that nginx reloads successfully
 
@@ -223,7 +223,7 @@ Current Cloudflare IP ranges (as of configuration time):
 
 These are dynamically fetched by both:
 - Terraform (`data.http.cloudflare_ipv4/ipv6`)
-- Ansible (`oaf.cloudflare_realip` role)
+- Ansible (`cloudflare_realip` role)
 
 Cloudflare occasionally adds new ranges. Re-run Terraform and Ansible when this happens.
 

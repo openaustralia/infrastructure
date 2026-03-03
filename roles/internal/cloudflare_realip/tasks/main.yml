@@ -1,5 +1,5 @@
 ---
-# tasks file for oaf.cloudflare_realip
+# tasks file for cloudflare_realip
 #
 # This role configures nginx or apache to restore real client IP addresses
 # when traffic is proxied through Cloudflare. It dynamically fetches the
