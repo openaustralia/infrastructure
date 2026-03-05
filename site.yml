@@ -58,7 +58,7 @@
       pip: name=boto3
       when: ansible_distribution_release in ['focal', 'jammy']
 
-    - name: Get information about the Mysql 5 instance
+    - name: Get information about the DEPRECATED Mysql 5 instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
@@ -68,7 +68,7 @@
       register: rds_mysql5
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
-      when: "'requires_mysql' in group_names"
+      when: "'requires_mysql_5' in group_names"
     
     - name: Get information about the Mysql 8 instance
       rds:
