@@ -10,7 +10,7 @@ resource "cloudflare_record" "root" {
   name    = "righttoknow.org.au"
   type    = "A"
   value   = aws_eip.production.public_ip
-  proxied = false
+  proxied = true
 }
 
 resource "cloudflare_record" "production" {
@@ -28,7 +28,7 @@ resource "cloudflare_record" "www" {
   name    = "www.righttoknow.org.au"
   type    = "CNAME"
   value   = "righttoknow.org.au"
-  proxied = false
+  proxied = true
 }
 
 resource "cloudflare_record" "www_production" {
