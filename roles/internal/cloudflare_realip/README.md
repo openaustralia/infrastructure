@@ -1,4 +1,4 @@
-# oaf.cloudflare_realip
+# cloudflare_realip
 
 Configure nginx or apache to restore real client IP addresses when traffic is proxied through Cloudflare.
 
@@ -34,7 +34,7 @@ When Cloudflare proxies requests to your origin server, the client IP address is
 ```yaml
 - hosts: webservers
   roles:
-    - role: oaf.cloudflare_realip
+    - role: cloudflare_realip
       cloudflare_webserver: nginx
 ```
 
@@ -43,7 +43,7 @@ When Cloudflare proxies requests to your origin server, the client IP address is
 ```yaml
 - hosts: webservers
   roles:
-    - role: oaf.cloudflare_realip
+    - role: cloudflare_realip
       cloudflare_webserver: apache
 ```
 
@@ -53,7 +53,7 @@ When Cloudflare proxies requests to your origin server, the client IP address is
 # In your service role's tasks/main.yml
 - name: Configure Cloudflare real IP
   include_role:
-    name: oaf.cloudflare_realip
+    name: cloudflare_realip
   vars:
     cloudflare_webserver: nginx  # or apache
   when: cloudflare_proxy_enabled | default(false)

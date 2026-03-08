@@ -1,5 +1,5 @@
 ---
-# tasks file for oaf.cloudflare_realip
+# tasks file for cloudflare_realip
 #
 # This role configures nginx or apache to restore real client IP addresses
 # when traffic is proxied through Cloudflare. It dynamically fetches the
@@ -8,26 +8,26 @@
 - name: Fetch Cloudflare IPv4 ranges
   uri:
     url: "{{ cloudflare_ipv4_url }}"
-    return_content: yes
+    return_content: true
   register: cloudflare_ipv4_response
   delegate_to: localhost
-  become: no
+  become: false
   run_once: true
 
 - name: Fetch Cloudflare IPv6 ranges
   uri:
     url: "{{ cloudflare_ipv6_url }}"
-    return_content: yes
+    return_content: true
   register: cloudflare_ipv6_response
   delegate_to: localhost
-  become: no
+  become: false
   run_once: true
   when: cloudflare_include_ipv6
 
 - name: Parse Cloudflare IP ranges
   set_fact:
-    cloudflare_ipv4_cidrs: "{{ cloudflare_ipv4_response.content | trim | split('\n') | select }}"
-    cloudflare_ipv6_cidrs: "{{ (cloudflare_ipv6_response.content | default('') | trim | split('\n') | select) if cloudflare_include_ipv6 else [] }}"
+    cloudflare_ipv4_cidrs: "{{ cloudflare_ipv4_response.content.splitlines() | select }}"
+    cloudflare_ipv6_cidrs: "{{ (cloudflare_ipv6_response.content | default('')).splitlines() | select if cloudflare_include_ipv6 else [] }}"
 
 # =============================================================================
 # nginx configuration
@@ -68,9 +68,9 @@
   when: cloudflare_webserver == 'apache'
 
 - name: Enable apache Cloudflare config
-  command: a2enconf cloudflare-remoteip
+  command: "a2enconf {{ cloudflare_apache_config_path | basename | regex_replace('\\.conf$', '') }}"
   args:
-    creates: /etc/apache2/conf-enabled/cloudflare-remoteip.conf
+    creates: "/etc/apache2/conf-enabled/{{ cloudflare_apache_config_path | basename }}"
   notify: reload apache
   when: cloudflare_webserver == 'apache'
 
