@@ -10,6 +10,8 @@
     comment: "Deploy user"
     shell: /bin/bash
     group: deploy
+    groups: rvm
+    append: yes
 
 ## This will ensure that the listed keys are present
 ## but it does not remove other keys. If we have a need to revoke
