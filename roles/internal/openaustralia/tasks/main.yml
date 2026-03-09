@@ -573,3 +573,8 @@
 #     src: deploy_can_restart_apache
 #     dest: /etc/sudoers.d/
 #     validate: visudo -cf %s
+
+- name: Install MySQL client dev headers
+  apt:
+    name: libmysqlclient-dev
+    state: present
