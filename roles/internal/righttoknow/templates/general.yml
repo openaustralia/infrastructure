@@ -1277,7 +1277,7 @@ SURVEY_URL: ''
 # otherwise you may hold data in a way that is inconsistent with your privacy
 # policy.
 #
-# Does not record actvity when set to 0.
+# Does not record activity when set to 0.
 #
 # USER_SIGN_IN_ACTIVITY_RETENTION_DAYS – Integer (default: 0)
 #
