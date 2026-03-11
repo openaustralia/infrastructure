@@ -1618,8 +1618,8 @@ eval ${TARGET_SPLIT_URL}
 [ -n "$(echo ${TARGET_URL_PROT} | grep -i -e '^ftps://$')" ] && \
   [ -z "$(which lftp 2>/dev/null)" ] && error_path "Protocol 'ftps' needs lftp. Installed und available in path?"
 
-# fetch commmand from parameters ########################################################
-# Hint: cmds is also used to check if authentification info sufficient in the next step
+# fetch command from parameters ########################################################
+# Hint: cmds is also used to check if authentication info sufficient in the next step
 cmds="$2"; shift 2
 
 # translate backup to batch command
@@ -1869,7 +1869,7 @@ echo $@ $DUPL_PARAMS | grep -q -e '--asynchronous-upload' && FACTOR=2 || FACTOR=
 
 # TODO: check for enough (async= upload space and WARN only
 #       use function tmp_space
-echo TODO: reimplent tmp space check
+echo TODO: reimplement tmp space check
 
 
 # test - GPG SANITY #####################################################################

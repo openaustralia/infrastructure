@@ -224,7 +224,7 @@ If this system has a gui, you'll need to enable "Finder integration"
 or the equivalent on your platform, under Settings -> Files.
 
 If your system does _not_ have a GUI - for instance, it's a WSL instance on
-windows; or a remote Ubuntu VM running headless - there's a helper script
+Windows; or a remote Ubuntu VM running headless - there's a helper script
 at `bin/headless-keybase.sh` which will help you run the Keybase services
 as user-space systemd units.
 
@@ -397,7 +397,7 @@ test:
   timeout: 5000
 ````
 
-- Intialize the DB before running tests:
+- Initialize the DB before running tests:
 
 ````
 RAILS_ENV=test bundle exec rakedb:create db:migrate
