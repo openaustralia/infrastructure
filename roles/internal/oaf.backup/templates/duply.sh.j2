@@ -878,7 +878,7 @@ function error_print {
 }
 
 function error {
-  error_print "\nSorry. A fatal ERROR occured:\n\n$@\n"
+  error_print "\nSorry. A fatal ERROR occurred:\n\n$@\n"
   exit -1
 }
 
@@ -1436,7 +1436,7 @@ function gpg_param_passwd {
   fi
 }
 
-# select the earlist defined and create an "echo <value> |" string
+# select the earliest defined and create an "echo <value> |" string
 function gpg_pass_pipein {
   var_isset GPG_USEAGENT && exit 1
 
@@ -1948,7 +1948,7 @@ CMD_ERR=$?
 if [ "$CMD_ERR" = "0" ]; then
   cleanup_gpgtest
 else
-  error_gpg_test "Comparision failed.${CMD_OUT:+\n$CMD_OUT}"
+  error_gpg_test "Comparison failed.${CMD_OUT:+\n$CMD_OUT}"
 fi
 
 fi # end disabled

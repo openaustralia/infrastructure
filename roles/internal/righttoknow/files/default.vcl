@@ -88,7 +88,7 @@ sub vcl_recv {
          return (synth(405, "Not allowed."));
       }
 
-      # For an explanation of the followng roundabout way of defining
+      # For an explanation of the following roundabout way of defining
       # ban lists, see
       # http://kristianlyng.wordpress.com/2010/07/28/smart-bans-with-varnish/
 
