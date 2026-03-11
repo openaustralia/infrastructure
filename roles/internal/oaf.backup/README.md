@@ -54,7 +54,7 @@ backup_profiles: []           # Setup backup profiles
                               #         source: postgresql://db_name
                               #         target: s3://my.bucket/postgresql
 
-# Default values (overide them in backup profiles bellow) 
+# Default values (override them in backup profiles bellow) 
 # =======================================================
 # (every value can be replaced in jobs individually)
 
