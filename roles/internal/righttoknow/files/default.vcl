@@ -68,6 +68,12 @@ sub vcl_recv {
         return (pass);
     }
 
+    # Pass /sidekiq/ admin requests directly to backend - session cookies must be
+    # preserved for AdminConstraint to work, and these responses must not be cached.
+    if (req.url ~ "^/sidekiq(/|$)") {
+        return (pass);
+    }
+
     # Ignore Cookies on images...
     if (req.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico)(\?.*|)$") {
         unset req.http.Cookie;
