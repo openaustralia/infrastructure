@@ -26,10 +26,10 @@ backup_duplicity_pkg: duplicity
 backup_duplicity_version:       # Set duplicity version
 
 # Logging
-backup_logdir: /var/log/duply   # Place where logs will be keepped
+backup_logdir: /var/log/duply   # Place where logs will be kept
 backup_logrotate: yes           # Setup logs rotation
 
-# Posgresql
+# PostgreSQL
 backup_postgres_user: postgres
 backup_postgres_host: ""
 
@@ -54,7 +54,7 @@ backup_profiles: []           # Setup backup profiles
                               #         source: postgresql://db_name
                               #         target: s3://my.bucket/postgresql
 
-# Default values (overide them in backup profiles bellow) 
+# Default values (override them in backup profiles bellow) 
 # =======================================================
 # (every value can be replaced in jobs individually)
 
@@ -87,7 +87,7 @@ backup_target_user:
 backup_target_pass:
 
 # Time frame for old backups to keep, Used for the "purge" command.  
-# see duplicity man page, chapter TIME_FORMATS)
+# see duplicity man page, chapter TIME_FORMATS
 backup_max_age: 1M
 
 # Number of full backups to keep. Used for the "purge-full" command. 
@@ -103,7 +103,7 @@ backup_volsize: 50
 # verbosity of output (error 0, warning 1-2, notice 3-4, info 5-8, debug 9)
 backup_verbosity: 3
 
-backup_exclude: [] # List of filemasks to exlude
+backup_exclude: [] # List of filemasks to exclude
 ```
 
 ## Usage
@@ -133,7 +133,7 @@ Example:
     # Backup postgresql database
     - name: postgresql
         schedule: 0 4 * * *                       # At 4am every day
-        source: postgresql://project              # Backup prefixes: postgresql://, maysql://, mongo://
+        source: postgresql://project              # Backup prefixes: postgresql://, mysql://, mongo://
         target: s3://s3-eu-west-1.amazonaws.com/backup.backet/{{inventory_hostname}}/postgresql
         user: postgres
 
