@@ -53,3 +53,36 @@ resource "aws_security_group_rule" "planningalerts_ssh_from_vpn" {
   security_group_id = aws_security_group.planningalerts.id
   description       = "SSH from VPN clients only"
 }
+
+# Update theyvoteforyou security group to allow SSH only from VPN
+resource "aws_security_group_rule" "theyvoteforyou_ssh_from_vpn" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = [local.vpn_subnet]
+  security_group_id = aws_security_group.theyvoteforyou.id
+  description       = "SSH from VPN clients only"
+}
+
+# Update righttoknow security group to allow SSH only from VPN
+resource "aws_security_group_rule" "righttoknow_ssh_from_vpn" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = [local.vpn_subnet]
+  security_group_id = aws_security_group.righttoknow.id
+  description       = "SSH from VPN clients only"
+}
+
+# Update openaustralia security group to allow SSH only from VPN
+resource "aws_security_group_rule" "openaustralia_ssh_from_vpn" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = [local.vpn_subnet]
+  security_group_id = aws_security_group.openaustralia.id
+  description       = "SSH from VPN clients only"
+}
