@@ -16,7 +16,7 @@ resource "aws_instance" "main" {
   tags = {
     Name = "openaustralia"
   }
-  vpc_security_group_ids  = [var.security_group_webserver.id, var.security_group_service.id]
+  vpc_security_group_ids  = [var.security_group_service.id]
   availability_zone       = aws_ebs_volume.data.availability_zone
   disable_api_termination = true
   iam_instance_profile    = var.instance_profile.name
