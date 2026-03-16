@@ -40,7 +40,6 @@ module "theyvoteforyou" {
   source                 = "./theyvoteforyou"
   ami                    = var.ubuntu_20_ami
   deployer_key           = aws_key_pair.deployer
-  security_group         = aws_security_group.webserver
   security_group_service = aws_security_group.theyvoteforyou
   instance_profile       = aws_iam_instance_profile.logging
   cloudflare_account_id  = var.cloudflare_account_id
@@ -48,7 +47,6 @@ module "theyvoteforyou" {
 
 module "righttoknow" {
   source                        = "./righttoknow"
-  security_group_webserver      = aws_security_group.webserver
   security_group_service        = aws_security_group.righttoknow
   security_group_incoming_email = aws_security_group.incoming_email
   instance_profile              = aws_iam_instance_profile.logging
@@ -90,7 +88,6 @@ module "metabase" {
 
 module "openaustralia" {
   source                   = "./openaustralia"
-  security_group_webserver = aws_security_group.webserver
   security_group_service   = aws_security_group.openaustralia
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_16_ami
