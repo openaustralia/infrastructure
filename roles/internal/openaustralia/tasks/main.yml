@@ -70,6 +70,53 @@
   when: "'openaustralia_php5' in group_names"
   apt: pkg=python-mysqldb
 
+- name: Install MySQL client dev headers
+  apt:
+    name: libmysqlclient-dev
+    state: present
+
+- name: Install OpenSSL
+  apt:
+    name: libssl-dev
+    state: present
+
+# Install mise for modern Ruby version management
+- name: Install mise
+  shell: curl https://mise.jdx.dev/install.sh | sh
+  args:
+    creates: /root/.local/bin/mise
+  become: true
+
+- name: Add mise to PATH in bash profile
+  lineinfile:
+    path: /root/.bashrc
+    line: 'export PATH="$HOME/.local/bin:$PATH"'
+    state: present
+  become: true
+
+- name: Install Ruby 2.7.8 using mise
+  shell: |
+    export PATH="$HOME/.local/bin:$PATH"
+    /root/.local/bin/mise install ruby@2.7.8
+  args:
+    creates: /root/.local/share/mise/installs/ruby/2.7.8/bin/ruby
+  become: true
+
+# - name: Set Ruby 2.7.8 as global version
+#   shell: |
+#     export PATH="$HOME/.local/bin:$PATH"
+#     /root/.local/bin/mise use -g ruby@2.7.8
+#   become: true
+
+- name: Install bundler gem
+  shell: |
+    export PATH="$HOME/.local/bin:$PATH"
+    eval "$(mise activate bash)"
+    gem install bundler
+  args:
+    executable: /bin/bash
+  become: true
+
 # TODO: Add the php8/mysql8 versions of these
 
 - name: Create openaustralia databases
@@ -574,7 +621,3 @@
 #     dest: /etc/sudoers.d/
 #     validate: visudo -cf %s
 
-- name: Install MySQL client dev headers
-  apt:
-    name: libmysqlclient-dev
-    state: present
