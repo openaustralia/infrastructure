@@ -4,7 +4,7 @@ xml_data_base_url: http://data.openaustralia.org.au/
 # Enable smarter searching with elasticsearch?
 elasticsearch: true
 
-# Name of project to display thoughout the application
+# Name of project to display throughout the application
 project_name: They Vote For You
 project_twitter: TheyVote4You
 contact_email: contact@theyvoteforyou.org.au

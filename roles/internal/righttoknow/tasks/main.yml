@@ -406,6 +406,14 @@
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
+- name: Apply sidekiq config
+  copy:
+    src: sidekiq.yml
+    dest: "/srv/www/{{ item }}/shared/sidekiq.yml"
+    owner: deploy
+    group: deploy
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+  notify: restart sidekiq
 
 - name: Add deploy user to adm group so it can read mail logs
   user:

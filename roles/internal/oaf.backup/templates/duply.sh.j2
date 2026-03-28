@@ -878,7 +878,7 @@ function error_print {
 }
 
 function error {
-  error_print "\nSorry. A fatal ERROR occured:\n\n$@\n"
+  error_print "\nSorry. A fatal ERROR occurred:\n\n$@\n"
   exit -1
 }
 
@@ -1436,7 +1436,7 @@ function gpg_param_passwd {
   fi
 }
 
-# select the earlist defined and create an "echo <value> |" string
+# select the earliest defined and create an "echo <value> |" string
 function gpg_pass_pipein {
   var_isset GPG_USEAGENT && exit 1
 
@@ -1618,8 +1618,8 @@ eval ${TARGET_SPLIT_URL}
 [ -n "$(echo ${TARGET_URL_PROT} | grep -i -e '^ftps://$')" ] && \
   [ -z "$(which lftp 2>/dev/null)" ] && error_path "Protocol 'ftps' needs lftp. Installed und available in path?"
 
-# fetch commmand from parameters ########################################################
-# Hint: cmds is also used to check if authentification info sufficient in the next step
+# fetch command from parameters ########################################################
+# Hint: cmds is also used to check if authentication info sufficient in the next step
 cmds="$2"; shift 2
 
 # translate backup to batch command
@@ -1869,7 +1869,7 @@ echo $@ $DUPL_PARAMS | grep -q -e '--asynchronous-upload' && FACTOR=2 || FACTOR=
 
 # TODO: check for enough (async= upload space and WARN only
 #       use function tmp_space
-echo TODO: reimplent tmp space check
+echo TODO: reimplement tmp space check
 
 
 # test - GPG SANITY #####################################################################
@@ -1948,7 +1948,7 @@ CMD_ERR=$?
 if [ "$CMD_ERR" = "0" ]; then
   cleanup_gpgtest
 else
-  error_gpg_test "Comparision failed.${CMD_OUT:+\n$CMD_OUT}"
+  error_gpg_test "Comparison failed.${CMD_OUT:+\n$CMD_OUT}"
 fi
 
 fi # end disabled
