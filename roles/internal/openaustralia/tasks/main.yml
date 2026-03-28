@@ -94,19 +94,21 @@
     state: present
   become: true
 
-- name: Install Ruby 2.7.8 using mise
+- name: Set Ruby 2.7.8 as global version
+  when: "'openaustralia_php8' in group_names"
   shell: |
     export PATH="$HOME/.local/bin:$PATH"
-    /root/.local/bin/mise install ruby@2.7.8
-  args:
-    creates: /root/.local/share/mise/installs/ruby/2.7.8/bin/ruby
+    /root/.local/bin/mise use -g ruby@2.7.8
   become: true
 
-# - name: Set Ruby 2.7.8 as global version
-#   shell: |
-#     export PATH="$HOME/.local/bin:$PATH"
-#     /root/.local/bin/mise use -g ruby@2.7.8
-#   become: true
+- name: Install Ruby 3.4.9 using mise
+  when: "'openaustralia_php8' in group_names"
+  shell: |
+    export PATH="$HOME/.local/bin:$PATH"
+    /root/.local/bin/mise install ruby@3.4.
+  args:
+    creates: /root/.local/share/mise/installs/ruby/3.4.9/bin/ruby
+  become: true
 
 - name: Install bundler gem
   shell: |
