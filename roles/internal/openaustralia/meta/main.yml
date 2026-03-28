@@ -128,6 +128,8 @@ dependencies:
     rvm1_rubies:
       - ruby-2.7.2
       - ruby-2.7.8
+    tags:
+      - ruby
     rvm1_install_flags: "--auto-dotfiles" # Remove --user-install from defaults
     rvm1_user: root # Need root account to access system location
     # Increase timeout on curl. For some reason some requests are taking too long
@@ -138,9 +140,22 @@ dependencies:
     rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
     rvm1_bundler_install: true
 
+  - role: remove_rvm
+    tags:
+      - cleanup
+      - ruby
+    when: "'openaustralia_php5' not in group_names"
+
+  - role: remove_mise
+    tags:
+      - cleanup
+      - ruby
+
   # Modern ruby on the new host
   - role: zzet.rbenv
     when: "'openaustralia_php8' in group_names"
+    tags:
+      - ruby
     rbenv:
       env: user
       version: v1.1.2
@@ -175,6 +190,8 @@ dependencies:
       - backup
 
   - role: nickhammond.logrotate
+    tags:
+      - logrotate
     logrotate_scripts:
       - name: production
         path: "/srv/www/production/log/*_log"
