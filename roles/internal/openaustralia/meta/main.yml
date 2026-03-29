@@ -122,9 +122,22 @@ galaxy_info:
   #- web
 dependencies:
 
+  - role: remove_rvm
+    tags:
+      - cleanup
+      - ruby
+    when: "'openaustralia_php5' not in group_names"
+
+  - role: remove_mise
+    tags:
+      - cleanup
+      - ruby
+
   # Modern ruby on the new host
   - role: zzet.rbenv
     when: "'openaustralia_new' in group_names"
+    tags:
+      - ruby
     rbenv:
       env: user
       version: v1.1.2
@@ -159,6 +172,8 @@ dependencies:
       - backup
 
   - role: nickhammond.logrotate
+    tags:
+      - logrotate
     logrotate_scripts:
       - name: production
         path: "/srv/www/production/log/*_log"
