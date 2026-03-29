@@ -1,6 +1,31 @@
-.PHONY: ALL venv roles production letsencrypt retry clean clean-all macos-keybase tf-init tf-plan tf-apply check-rtk-prod check-rtk-staging check-planningalerts apply-rtk-prod apply-rtk-staging apply-planningalerts update-github-ssh-keys
+.PHONY: ALL venv roles production letsencrypt retry clean clean-all macos-keybase tf-init tf-plan tf-apply check-rtk-prod check-rtk-staging check-planningalerts apply-rtk-prod apply-rtk-staging apply-planningalerts update-github-ssh-keys stage_required
 ALL: roles .vagrant
 KEYSANDROLES := .keybase roles
+
+_STAGE := $(if $(STAGE),_$(STAGE),)
+
+ANSIBLE_TAGS := $(shell echo "$(TAGS)" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//' | sed 's/,$$//')
+ANSIBLE_SKIP_TAGS := $(shell echo "$(SKIP_TAGS)" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//' | sed 's/,$$//')
+ANSIBLE_START_TASK := $(if $(START_AT_TASK),*$(shell echo "$(START_AT_TASK)" | sed 's/[^A-Z0-9_]\+/*/gi')*,)
+
+# Build ansible-playbook options just like Vagrantfile
+ANSIBLE_OPTS :=
+ifdef ANSIBLE_TAGS
+ANSIBLE_OPTS += --tags "$(ANSIBLE_TAGS)"
+$(info INFO: Only running TAGS: $(ANSIBLE_TAGS))
+endif
+ifdef ANSIBLE_SKIP_TAGS
+ANSIBLE_OPTS += --skip-tags "$(ANSIBLE_SKIP_TAGS)"
+$(info INFO: Skipping TAGS: $(ANSIBLE_SKIP_TAGS))
+endif
+ifdef ANSIBLE_VERBOSE
+ANSIBLE_OPTS += -$(ANSIBLE_VERBOSE)
+$(info INFO: Setting verbose: -$(ANSIBLE_VERBOSE))
+endif
+ifdef ANSIBLE_START_TASK
+ANSIBLE_OPTS += --start-at-task "$(ANSIBLE_START_TASK)"
+$(info INFO: Starting at task matching: $(ANSIBLE_START_TASK))
+endif
 
 .keybase:
 	ln -sf $(shell keybase config get -d -b mountdir) .keybase
@@ -25,7 +50,7 @@ roles/external: venv collections roles/requirements.yml
 
 roles: roles/external
 
-production: $(KEYSANDROLES)
+everything: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook site.yml
 
 letsencrypt: $(KEYSANDROLES)
@@ -52,45 +77,36 @@ tf-plan:
 tf-apply:
 	terraform -chdir=terraform apply
 
+stage_required:
+	$(if $(STAGE),,$(error STAGE is required, for example: STAGE=staging or STAGE=production))
+
 # Checks only
-check-righttoknow-all: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --check --diff
-check-righttoknow-staging: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_staging --check --diff
-check-righttoknow-prod: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_production --check --diff
+check-righttoknow: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --check --diff
 check-planningalerts: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --check --diff
 check-theyvoteforyou: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --check --diff
 check-oaf: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l oaf --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --check --diff
 check-openaustralia: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia_new --check --diff
-check-openaustralia-new: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --check --diff
 check-metabase: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l metabase --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --check --diff
 
 # These make changes 
-apply-righttoknow-all: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow --diff
-apply-righttoknow-staging: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_staging --diff
-apply-righttoknow-prod: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l righttoknow_production --diff
+apply-righttoknow: stage_required $(KEYSANDROLES)
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --diff
 apply-planningalerts: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l planningalerts --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --diff
 apply-theyvoteforyou: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --diff
 apply-oaf: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l oaf --diff
-apply-openaustralia: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia --diff
-apply-openaustralia-new: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia_new --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --diff
+apply-openaustralia: stage_required $(KEYSANDROLES)
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --diff
 apply-metabase: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l metabase --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
 
 # Update ssh keys on all servers
 update-github-ssh-keys: $(KEYSANDROLES)
