@@ -150,9 +150,9 @@ resource "cloudflare_record" "alt_root_staging" {
   proxied = false
 }
 
-resource "cloudflare_record" "alt_root_preprod" {
+resource "cloudflare_record" "alt_root_newprod" {
   zone_id = cloudflare_zone.org_au.id
-  name    = "preprod.openaustralia.org.au"
+  name    = "newprod.openaustralia.org.au"
   type    = "A"
   value   = aws_eip.production.public_ip
   proxied = false
