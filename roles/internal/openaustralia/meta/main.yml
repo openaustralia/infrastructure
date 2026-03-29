@@ -124,7 +124,7 @@ dependencies:
 
   # Modern ruby on the new host
   - role: zzet.rbenv
-    when: "'openaustralia_php8' in group_names"
+    when: "'openaustralia_new' in group_names"
     rbenv:
       env: user
       version: v1.1.2

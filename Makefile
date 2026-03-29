@@ -66,7 +66,7 @@ check-theyvoteforyou: $(KEYSANDROLES)
 check-oaf: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l oaf --check --diff
 check-openaustralia: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia_php8 --check --diff
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia_new --check --diff
 check-openaustralia-new: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia --check --diff
 check-metabase: $(KEYSANDROLES)
@@ -88,7 +88,7 @@ apply-oaf: $(KEYSANDROLES)
 apply-openaustralia: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia --diff
 apply-openaustralia-new: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia_php8 --diff
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia_new --diff
 apply-metabase: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l metabase --diff
 
