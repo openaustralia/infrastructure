@@ -26,10 +26,10 @@ staging.openaustralia.org.au
 [openaustralia_production]
 openaustralia.org.au
 
-[openaustralia_php5]
+[openaustralia_old]
 openaustralia.org.au
 
-[openaustralia_php8]
+[openaustralia_new]
 staging.openaustralia.org.au
 
 [righttoknow]
@@ -61,13 +61,13 @@ ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 
 ; Group for all sites that need information on the MySQL RDS instance
 [requires_mysql:children]
-openaustralia_php8
+openaustralia_new
 theyvoteforyou
 metabase
 
 ; Group for all sites that need information on the MySQL RDS instance
 [requires_mysql_5:children]
-openaustralia_php5
+openaustralia_old
 
 ; Group for all sites that need information on the PostgreSQL RDS instance
 [requires_postgresql:children]
