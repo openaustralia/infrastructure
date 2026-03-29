@@ -80,47 +80,47 @@
     name: libssl-dev
     state: present
 
-# Install mise for modern Ruby version management
-- name: Install mise
-  when: "'openaustralia_new' in group_names"
-  shell: curl https://mise.jdx.dev/install.sh | sh
-  args:
-    creates: /root/.local/bin/mise
-  become: true
+# # Install mise for modern Ruby version management
+# - name: Install mise
+#   when: "'openaustralia_new' in group_names"
+#   shell: curl https://mise.jdx.dev/install.sh | sh
+#   args:
+#     creates: /root/.local/bin/mise
+#   become: true
 
-- name: Add mise to PATH in bash profile
-  when: "'openaustralia_new' in group_names"
-  lineinfile:
-    path: /root/.bashrc
-    line: 'export PATH="$HOME/.local/bin:$PATH"'
-    state: present
-  become: true
+# - name: Add mise to PATH in bash profile
+#   when: "'openaustralia_new' in group_names"
+#   lineinfile:
+#     path: /root/.bashrc
+#     line: 'export PATH="$HOME/.local/bin:$PATH"'
+#     state: present
+#   become: true
 
-- name: Set Ruby 2.7.8 as global version
-  when: "'openaustralia_old' in group_names"
-  shell: |
-    export PATH="$HOME/.local/bin:$PATH"
-    /root/.local/bin/mise use -g ruby@2.7.8
-  become: true
+# - name: Set Ruby 2.7.8 as global version
+#   when: "'openaustralia_old' in group_names"
+#   shell: |
+#     export PATH="$HOME/.local/bin:$PATH"
+#     /root/.local/bin/mise use -g ruby@2.7.8
+#   become: true
 
-- name: Install Ruby 3.4.9 using mise
-  when: "'openaustralia_new' in group_names"
-  shell: |
-    export PATH="$HOME/.local/bin:$PATH"
-    /root/.local/bin/mise install ruby@3.4.
-  args:
-    creates: /root/.local/share/mise/installs/ruby/3.4.9/bin/ruby
-  become: true
+# - name: Install Ruby 3.4.9 using mise
+#   when: "'openaustralia_new' in group_names"
+#   shell: |
+#     export PATH="$HOME/.local/bin:$PATH"
+#     /root/.local/bin/mise install ruby@3.4.
+#   args:
+#     creates: /root/.local/share/mise/installs/ruby/3.4.9/bin/ruby
+#   become: true
 
-- name: Install bundler gem
-  shell: |
-    when: "'openaustralia_new' in group_names"
-    export PATH="$HOME/.local/bin:$PATH"
-    eval "$(mise activate bash)"
-    gem install bundler
-  args:
-    executable: /bin/bash
-  become: true
+# - name: Install bundler gem
+#   shell: |
+#     when: "'openaustralia_new' in group_names"
+#     export PATH="$HOME/.local/bin:$PATH"
+#     eval "$(mise activate bash)"
+#     gem install bundler
+#   args:
+#     executable: /bin/bash
+#   become: true
 
 # TODO: Add the php8/mysql8 versions of these
 
