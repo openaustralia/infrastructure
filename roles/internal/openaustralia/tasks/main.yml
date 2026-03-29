@@ -198,9 +198,6 @@
   apt: pkg=apache2
   when: "'ec2' in group_names"
 
-- name: Setup SSL certificates
-  import_tasks: certificates.yml
-
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5/php8
   apt_repository:
