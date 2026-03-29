@@ -1,7 +1,7 @@
 # Staging environment configuration for OpenAustralia
 # Most values inherited from openaustralia.yml
-site_name: staging.openaustralia.org.au
-openaustralia_domain: staging.openaustralia.org.au
+site_name: newprod.openaustralia.org.au
+openaustralia_domain: newprod.openaustralia.org.au
 
 # Cron enable/disable switch for staging
 cron_enabled: false
