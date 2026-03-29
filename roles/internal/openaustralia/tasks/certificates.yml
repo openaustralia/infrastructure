@@ -31,15 +31,15 @@
   notify: reload apache
 
 # Staging Certbot only needs certs for the hostname
-- name: Set certificate configuration for staging
-  set_fact:
-    staging_certs:
-      - email: contact@oaf.org.au
-        domains:
-          - "{{ openaustralia_domain }}"
-  when: "'openaustralia_staging' in group_names"
+# - name: Set certificate configuration for staging
+#   set_fact:
+#     staging_certs:
+#       - email: contact@oaf.org.au
+#         domains:
+#           - "{{ openaustralia_domain }}"
+#   when: "'openaustralia_staging' in group_names"
 
-- name: Set certificate configuration for production
+- name: Set certificate configuration for old production
   set_fact:
     production_certs:
       - email: contact@oaf.org.au
@@ -52,7 +52,16 @@
         domains:
           - "test.{{ openaustralia_domain }}"
           - "www.test.{{ openaustralia_domain }}"
-  when: "'openaustralia_production' in group_names"
+  when: "'openaustralia_old' in group_names"
+
+- name: Set certificate configuration for new production
+  set_fact:
+    production_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - "staging.{{ openaustralia_domain }}"
+          - "newprod.{{ openaustralia_domain }}"
+  when: "'openaustralia_new' in group_names"
 
 # - name: Install certificate using certbot
 #   include_role:
