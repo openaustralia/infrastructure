@@ -813,10 +813,8 @@ SHARED_FILES:
   - config/user_spam_scorer.yml
   - config/rails_env.rb
   - config/newrelic.yml
-  - config/httpd.conf
   - public/foi-live-creation.png
   - public/foi-user-use.png
-  - config/aliases
 
 # If you have SHARED_FILES_PATH set, then these options list the directories
 # that are shared; i.e. those that the deploy scripts should create symlinks to
