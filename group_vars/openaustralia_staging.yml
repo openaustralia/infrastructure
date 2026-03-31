@@ -8,3 +8,7 @@ cron_enabled: false
 
 # Disable backups for staging
 backup_profiles: []
+domains_for_certbot:
+  - email: contact@oaf.org.au
+    domains:
+      - "{{ openaustralia_domain }}"
