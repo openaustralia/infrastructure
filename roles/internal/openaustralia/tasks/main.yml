@@ -447,7 +447,6 @@
     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
     password_protect: "{{ item == 'staging' }}"
   with_items:
-    - production
     - staging
   notify: reload apache
 
