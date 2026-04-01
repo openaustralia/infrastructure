@@ -447,7 +447,6 @@
     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
     password_protect: "{{ item == 'staging' }}"
   with_items:
-    - production
     - staging
   notify: reload apache
 
@@ -466,18 +465,7 @@
   include_role:
     name: oaf.certbot
   vars:
-    certbot_certs:
-      - email: contact@oaf.org.au
-        domains:
-          - "{{ openaustralia_domain }}"
-          - www."{{ openaustralia_domain }}"
-          - openaustralia.org
-          - www.openaustralia.org
-      - email: contact@oaf.org.au
-        domains:
-          - test.{{ openaustralia_domain }}
-          - staging.{{ openaustralia_domain }}
-          - www.test.{{ openaustralia_domain }}
+    certbot_certs: "{{ domains_for_certbot }}"
   when: "'ec2' in group_names"
 
 
@@ -650,5 +638,3 @@
     src: deploy_can_restart_apache
     dest: /etc/sudoers.d/
     validate: visudo -cf %s
-
-
