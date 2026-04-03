@@ -435,7 +435,7 @@
     # - staging
   notify: reload apache
 
-# delete this below and use the one above 
+# This has the "www" prepend logic removed. Add it back once we are live... or delete this below and use the one above 
 - name: Copy across the apache configs
   when: "'openaustralia_new' in group_names"
   template:
@@ -443,11 +443,12 @@
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
   vars:
     stage: "{{ item }}"
-    domain: "{{ (item == 'production') | ternary('www.', '') }}{{ openaustralia_domain }}"
+    domain: "{{ openaustralia_domain }}"
     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
     password_protect: "{{ item == 'staging' }}"
   with_items:
     - staging
+    - production
   notify: reload apache
 
 - name: Copy across the other apache configs
