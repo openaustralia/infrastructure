@@ -420,20 +420,20 @@
     - staging
   notify: reload apache
 
-- name: Copy across the apache configs
-  when: "'openaustralia_old' in group_names"
-  template:
-    src: apache/stage.conf
-    dest: "/etc/apache2/sites-available/{{ item }}.conf"
-  vars:
-    stage: "{{ item }}"
-    domain: "{{ (item == 'staging') | 'staging.' }}{{ openaustralia_domain }}"
-    newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
-    password_protect: "{{ item == 'staging' }}"
-  with_items:
-    - production 
-    # - staging
-  notify: reload apache
+# - name: Copy across the apache configs
+#   when: "'openaustralia_old' in group_names"
+#   template:
+#     src: apache/stage.conf
+#     dest: "/etc/apache2/sites-available/{{ item }}.conf"
+#   vars:
+#     stage: "{{ item }}"
+#     domain: "{{ (item == 'staging') | 'staging.' }}{{ openaustralia_domain }}"
+#     newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
+#     password_protect: "{{ item == 'staging' }}"
+#   with_items:
+#     - production 
+#     # - staging
+#   notify: reload apache
 
 # This has the "www" prepend logic removed. Add it back once we are live... or delete this below and use the one above 
 - name: Copy across the apache configs
