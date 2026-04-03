@@ -451,23 +451,23 @@
     - production
   notify: reload apache
 
-- name: Copy across the other apache configs
-  template:
-    src: "apache/{{ item }}.conf"
-    dest: /etc/apache2/sites-available/
-  with_items:
-    - 000-default
-    - data
-    # - software
-    # - blog
-  notify: reload apache
+# - name: Copy across the other apache configs
+#   template:
+#     src: "apache/{{ item }}.conf"
+#     dest: /etc/apache2/sites-available/
+#   with_items:
+#     - 000-default
+#     - data
+#     # - software
+#     # - blog
+#   notify: reload apache
 
-- name: Install certificate using certbot
-  include_role:
-    name: oaf.certbot
-  vars:
-    certbot_certs: "{{ domains_for_certbot }}"
-  when: "'ec2' in group_names"
+# - name: Install certificate using certbot
+#   include_role:
+#     name: oaf.certbot
+#   vars:
+#     certbot_certs: "{{ domains_for_certbot }}"
+#   when: "'ec2' in group_names"
 
 
 - name: Copy across the application config
