@@ -103,8 +103,15 @@ apply-theyvoteforyou: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --diff
 apply-oaf: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --diff
-apply-openaustralia: stage_required $(KEYSANDROLES)
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --diff
+
+# TODO: remove this when we're ready to switch over to the new OpenAustralia server
+# Note: these are Not stage, this is a whole replacement
+apply-openaustralia-old:
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l openaustralia --diff
+apply-openaustralia-new:
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l openaustralia_new --diff
+
+
 apply-metabase: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
 
