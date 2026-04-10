@@ -73,7 +73,10 @@ show-vars: check-host
 	.venv/bin/ansible -i ./inventory/ec2-hosts $(host) -m debug -a "var=hostvars[inventory_hostname]"
 
 show-facts: check-host
-	.venv/bin/ansible -i ./inventory/ec2-hosts $(host) -m setup;
+	.venv/bin/ansible -i ./inventory/ec2-hosts $(host) -m setup
+
+show-rds-facts: check-host
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml --limit $(host) --tags facts -e "show_rds_debug=true"
 
 clean:
 	rm -rf .venv roles/external site.retry collections .keybase
