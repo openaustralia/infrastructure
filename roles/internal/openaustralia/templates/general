@@ -1,14 +1,10 @@
 <?php
-// This file general-example is a template config file.
-// Edit this, and copy it to a file called general.
+// This maintain from the Ansible
+// see https://github.com/openaustralia/infrastructure/blob/main/roles/internal/openaustralia/templates/general
 
 // *******************************************************************************
 // MySQL database.
-{% if stage == "staging" %}
 define ("DB_HOST", "{{ mysql_8_host }}");
-{% else %}
-define ("DB_HOST", "{{ mysql_5_host }}");
-{% endif %}
 define ("DB_USER", "oa-{{ stage }}");
 define ("DB_PASSWORD", "{{ db_password }}");
 define ("DB_NAME", "oa-{{ stage }}");

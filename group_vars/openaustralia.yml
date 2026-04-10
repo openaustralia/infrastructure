@@ -84,3 +84,15 @@ logs:
      log_group_name: /var/log/unattended-upgrades/unattended-upgrades.log
      log_stream_name: "{{ inventory_hostname }}"
      timestamp_format: "%Y-%m-%d %H:%M:%S"
+domains_for_certbot:
+  - email: contact@oaf.org.au
+    domains:
+      - "{{ openaustralia_domain }}"
+      - www."{{ openaustralia_domain }}"
+      - openaustralia.org
+      - www.openaustralia.org
+  - email: contact@oaf.org.au
+    domains:
+      - test.{{ openaustralia_domain }}
+      - staging.{{ openaustralia_domain }}
+      - www.test.{{ openaustralia_domain }}
