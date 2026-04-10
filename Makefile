@@ -34,6 +34,22 @@ letsencrypt: $(KEYSANDROLES)
 retry: $(KEYSANDROLES) site.retry
 	.venv/bin/ansible-playbook site.yml -l @site.retry
 
+check-host:
+ifndef host
+	@echo "ERROR: host is not set! Add host=<value> using a host from inventory:\n"
+	@$(MAKE) show-inventory
+	@exit 1
+endif
+
+show-inventory:
+	.venv/bin/ansible-inventory -i ./inventory/ec2-hosts --graph
+
+show-vars: check-host
+	.venv/bin/ansible -i ./inventory/ec2-hosts $(host) -m debug -a "var=hostvars[inventory_hostname]"
+
+show-facts: check-host
+	.venv/bin/ansible -i ./inventory/ec2-hosts $(host) -m setup;
+
 clean:
 	rm -rf .venv roles/external site.retry collections .keybase
 	
