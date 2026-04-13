@@ -139,11 +139,13 @@
   roles:
     - base-server
 
+# vagrant equivalent of AWS rds_instance
 - hosts: mysql
   become: true
   roles:
     - mysql
 
+# vagrant equivalent of AWS rds_instance
 - hosts: postgresql
   become: true
   roles:
@@ -184,6 +186,7 @@
   roles:
     - internal/openvpn
 
+# vagrant equivalent of AWS redis service
 - hosts: redis
   become: true
   tasks:
