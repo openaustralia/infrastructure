@@ -34,13 +34,14 @@
     - name: Install boto which is required for EC2 stuff
       pip: name=boto
 
-    - name: Get information about the RDS instance
+    - name: Get information about the DEPRECATED Mysql 5 instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
         command: facts
         instance_name: main-database
         region: "{{ ec2_region }}"
+      when: requires_mysql_5 in group_names
       register: rds_mysql5
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
