@@ -4,7 +4,7 @@
 
 // *******************************************************************************
 // MySQL database.
-{% if stage == "staging" %}
+{% if 'openaustralia_new' in group_names %}
 define ("DB_HOST", "{{ mysql_8_host }}");
 {% else %}
 define ("DB_HOST", "{{ mysql_5_host }}");
