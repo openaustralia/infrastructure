@@ -4,4 +4,6 @@ pip~=20.0
 ansible~=2.10.7
 boto3
 botocore
+PyMySQL
+psycopg2-binary
 virtualenv~=20.34.0
