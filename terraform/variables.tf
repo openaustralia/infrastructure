@@ -130,9 +130,3 @@ variable "dms_replicate_openaustralia" {
   type        = bool
   default     = true
 }
-
-variable "dms_replicate_theyvoteforyou" {
-  description = "Enable DMS replication for tvfy-production and tvfy-staging databases"
-  type        = bool
-  default     = true
-}
