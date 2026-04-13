@@ -308,7 +308,7 @@ the top of `update-ssl-certs.yaml`.
 
 You can also set:
 
-* STAGE: to a group suffix eg `STAGE=staging make apply-openaustralia` would apply changes only to openaustralia_staging
+* STAGE: to a group suffix eg `STAGE=new make apply-openaustralia` would apply changes only to `openaustralia_new`
   group in `inventory/ec2-hosts` which only contains `staging.openaustralia.org.au`
 * ANSIBLE_TAGS - limits to tasks / roles that have one of the comma-separated roles
 * ANSIBLE_SKIP_TAGS - skips tasks / roles that have one of the comma-separated roles
