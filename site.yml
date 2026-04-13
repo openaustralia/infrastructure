@@ -66,9 +66,16 @@
         instance_name: main-database
         region: "{{ ec2_region }}"
       register: rds_mysql5
+      tags: facts
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
       when: "'requires_mysql' in group_names"
+
+    - name: Display information about the DEPRECATED Mysql 5 instance
+      debug:
+        var: "rds_mysql5"
+      tags: facts
+      when: "(show_rds_debug | default(false) | bool) and ('requires_mysql' in group_names)"
     
     - name: Get information about the Mysql 8 instance
       rds:
@@ -78,10 +85,16 @@
         instance_name: maindb
         region: "{{ ec2_region }}"
       register: rds_mysql8
+      tags: facts
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
       when: "'requires_mysql' in group_names"
 
+    - name: Display information about the Mysql 8 instance
+      debug:
+        var: "rds_mysql8"
+      tags: facts
+      when: "(show_rds_debug | default(false) | bool) and ('requires_mysql' in group_names)"
 
     - name: Get information about the postgresql RDS instance
       rds:
@@ -91,9 +104,16 @@
         instance_name: postgresql
         region: "{{ ec2_region }}"
       register: rds_postgresql
+      tags: facts
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
       when: "'requires_postgresql' in group_names"
+
+    - name: Display information about the postgresql RDS instance
+      debug:
+        var: "rds_postgresql"
+      tags: facts
+      when: "(show_rds_debug | default(false) | bool) and ('requires_postgresql' in group_names)"
 
     - name: Get information about the planningalerts RDS instance
       rds:
@@ -103,9 +123,16 @@
         instance_name: planningalerts
         region: "{{ ec2_region }}"
       register: rds_planningalerts
+      tags: facts
       # Run this task even when running ansible-playbook with "--check"
       check_mode: no
       when: "'requires_postgresql' in group_names"
+
+    - name: Displays information about the planningalerts RDS instance
+      debug:
+        var: "rds_planningalerts"
+      tags: facts
+      when: "(show_rds_debug | default(false) | bool) and ('requires_postgresql' in group_names)"
 
 - hosts: all
   become: true

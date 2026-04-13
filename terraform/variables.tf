@@ -74,6 +74,15 @@ variable "ubuntu_24_ami" {
   default = "ami-001f2488b35ca8aad"
 }
 
+# AMI for Ubuntu 22.04 LTS (used by OpenVPN server), locked to a specific version 
+# so that we don't keep re-provisioning the servers when the AMI gets updated
+variable "ubuntu_22_openvpn_ami" {
+  # Created by: Canonical
+  # Virtualization type: hvm
+  # 64-bit x86
+  default = "ami-0c73bd9145b5546f5"
+}
+
 variable "cloudflare_account_id" {
   default = "668e6ebb9952c26ec3c17a85fb3a25a1"
 }
@@ -118,12 +127,6 @@ variable "planningalerts_cloudflare_only" {
 # once an application has been migrated to MySQL 8
 variable "dms_replicate_openaustralia" {
   description = "Enable DMS replication for oa-production and oa-staging databases"
-  type        = bool
-  default     = true
-}
-
-variable "dms_replicate_theyvoteforyou" {
-  description = "Enable DMS replication for tvfy-production and tvfy-staging databases"
   type        = bool
   default     = true
 }

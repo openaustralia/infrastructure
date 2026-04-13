@@ -47,7 +47,7 @@ DOMAIN: 'www.{{ domain }}'
 # ---
 FORCE_SSL: true
 
-# ISO country code of country currrently deployed in
+# ISO country code of country currently deployed in
 # (http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
 #
 # ISO_COUNTRY_CODE - String country code (default: GB)
@@ -122,7 +122,7 @@ BLOG_TIMEOUT: 60
 # ---
 FACEBOOK_USERNAME: ''
 
-# If you want a twitter feed displayed on the "blog" page, provide the
+# If you want a Twitter feed displayed on the "blog" page, provide the
 # widget ID and username.
 #
 # TWITTER_USERNAME - String Twitter username (default: nil)
@@ -147,7 +147,7 @@ TWITTER_USERNAME: ''
 TWITTER_WIDGET_ID: ''
 
 # The locales you want your site to support. If there is more than one, use
-# spaces betwween the entries.
+# spaces between the entries.
 #
 # AVAILABLE_LOCALES – String of space-separated locales (default: nil)
 #
@@ -658,7 +658,7 @@ OVERRIDE_ALL_PUBLIC_BODY_REQUEST_EMAILS: {{ override_all_public_body_request_ema
 
 # Search path for external commandline utilities (such as pdftohtml, pdftk,
 # unrtf).
-# When set to an empty array the the standard environment PATH will be used to
+# When set to an empty array the standard environment PATH will be used to
 # search for external commandline utilities.
 #
 # UTILITY_SEARCH_PATH - Array of Strings
@@ -808,14 +808,13 @@ SHARED_FILES_PATH: '/srv/www/{{ stage }}/shared'
 SHARED_FILES:
   - config/database.yml
   - config/general.yml
+  - config/sidekiq.yml
   - config/storage.yml
   - config/user_spam_scorer.yml
   - config/rails_env.rb
   - config/newrelic.yml
-  - config/httpd.conf
   - public/foi-live-creation.png
   - public/foi-user-use.png
-  - config/aliases
 
 # If you have SHARED_FILES_PATH set, then these options list the directories
 # that are shared; i.e. those that the deploy scripts should create symlinks to
@@ -1077,7 +1076,7 @@ PRO_CONTACT_NAME: '{{ site_name }} Pro'
 # ---
 PRO_SITE_NAME: '{{ site_name }} Pro'
 
-# The total number of authorities that can be added to a Alaveteli Professional
+# The total number of authorities that can be added to an Alaveteli Professional
 # batch request.
 #
 # PRO_BATCH_AUTHORITY_LIMIT - Integer (default: 500)
@@ -1277,14 +1276,13 @@ SURVEY_URL: ''
 # otherwise you may hold data in a way that is inconsistent with your privacy
 # policy.
 #
-# Does not record actvity when set to 0.
+# Does not record activity when set to 0.
 #
 # USER_SIGN_IN_ACTIVITY_RETENTION_DAYS – Integer (default: 0)
 #
 # ---
 USER_SIGN_IN_ACTIVITY_RETENTION_DAYS: 30
 
-{% if 'righttoknow_staging' in group_names %}
 # Background jobs are processed by Rails' ActiveJob using Sidekiq. There are
 # various ways to run Sidekiq depending to server resources and technical
 # knowledge in order to run and maintain a Redis server.
@@ -1300,4 +1298,3 @@ USER_SIGN_IN_ACTIVITY_RETENTION_DAYS: 30
 #
 # ---
 BACKGROUND_JOBS: 'server'
-{% endif %}

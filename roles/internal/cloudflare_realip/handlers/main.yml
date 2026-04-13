@@ -1,5 +1,5 @@
 ---
-# handlers file for oaf.cloudflare_realip
+# handlers file for cloudflare_realip
 
 - name: reload nginx
   systemd:
