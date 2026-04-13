@@ -123,6 +123,14 @@ galaxy_info:
 dependencies:
   # rvm actually has some trouble now. I think it's old certs on this version of the OS
   # which is really not great.
+
+  # # - RVM Ruby (New Server)
+  # - role: rvm.ruby
+  #   rvm1_rubies:
+  #     - ruby-3.4.9
+  #   when: "'openaustralia_new' in group_names"
+
+# - RVM Ruby (Old Server)
   - role: rvm.ruby
     rvm1_rubies:
       - ruby-2.7.2
