@@ -66,11 +66,13 @@
     - staging
 
 - name: Install dependency for ansible mysql_db module
+  when: "'openaustralia_old' in group_names"
   apt: pkg=python-mysqldb
 
 - name: Create openaustralia databases
+  when: "'openaustralia_old' in group_names"
   mysql_db:
-    login_host: "{{ mysql_8_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "oa-{{ item }}"
@@ -79,8 +81,9 @@
     - staging
 
 - name: Create openaustralia user with access to the database (production)
+  when: "'openaustralia_old' in group_names"
   mysql_user:
-    login_host: "{{ mysql_8_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: oa-production
@@ -89,8 +92,9 @@
     host: "%"
 
 - name: Create mysql user with readonly access to the production openaustralia database for metabase
+  when: "'openaustralia_old' in group_names"
   mysql_user:
-    login_host: "{{ mysql_8_host }}"
+    login_host: "{{ mysql_5_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: oa-production-readonly
@@ -99,15 +103,17 @@
     host: "%"
   run_once: true
 
-- name: Create openaustralia user with access to the database (staging)
-  mysql_user:
-    login_host: "{{ mysql_8_host }}"
-    login_user: admin
-    login_password: "{{ rds_admin_password }}"
-    name: oa-staging
-    password: "{{ openaustralia_staging_mysql_password }}"
-    priv: 'oa-staging.*:ALL'
-    host: "%"
+# Removed from mysql5 host
+# - name: Create openaustralia user with access to the database (staging)
+#   when: "'openaustralia_old' in group_names"
+#   mysql_user:
+#     login_host: "{{ mysql_5_host }}"
+#     login_user: admin
+#     login_password: "{{ rds_admin_password }}"
+#     name: oa-staging
+#     password: "{{ openaustralia_staging_mysql_password }}"
+#     priv: 'oa-staging.*:ALL'
+#     host: "%"
 
 #This file will always point at the production db
 # Which seems like that's what we want, in development
@@ -173,7 +179,8 @@
   apt_repository:
     repo: 'ppa:ondrej/php'
 
-- name: Install required packages
+- name: Install required packages (Legacy - PHP 5.6)
+  when: "'openaustralia_old' in group_names"
   apt:
     name: "{{ item }}"
     update_cache: yes
@@ -190,19 +197,41 @@
     - libxslt1-dev
     - libxml-twig-perl
     - msmtp
+- name: Install required packages (PHP 8.3)
+  when: "'openaustralia_new' in group_names"
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - apache2
+    - ghostscript
+    - imagemagick
+    - libapache2-mod-php8.3
     - libdbi-perl
     - libdbd-mysql-perl
-    - php5.6-dev
-    - libxapian-dev
-    - xapian-tools
+    - libmagickcore-dev
+    - libmagickwand-dev
+    - libpq-dev
     - libsearch-xapian-perl
+    - libxapian-dev
     - libxml-rss-perl
-    - libmysqlclient-dev
-    # Need the mysql command line when setting up a database initially
-    - mysql-client-core-5.7
+    - libxml-twig-perl
+    - libxslt1-dev
+    - msmtp
+    - mysql-client-core-8.0 # Need the mysql command line when setting up a database initially
+    - php8.3
+    - php8.3-curl
+    - php8.3-dev
+    - php8.3-mysql
+    - php8.3-xml
+    - php8.3-curl
+    - php8.3-mbstring
+    - php8.3-zip
+    - xapian-tools
 
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
+  when: "'openaustralia_old' in group_names"
   get_url:
     url: https://oligarchy.co.uk/xapian/1.2.22/xapian-bindings-1.2.22.tar.xz
     dest: /home/deploy
@@ -211,6 +240,7 @@
     checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
 
 - name: Unpack xapian bindings source
+  when: "'openaustralia_old' in group_names"
   unarchive:
       src: /home/deploy/xapian-bindings-1.2.22.tar.xz
       dest: /home/deploy
@@ -219,6 +249,7 @@
       group: deploy
 
 - name: Configure xapian bindings
+  when: "'openaustralia_old' in group_names"
   command: ./configure --with-php
   args:
     chdir: /home/deploy/xapian-bindings-1.2.22
@@ -226,6 +257,7 @@
   become_user: deploy
 
 - name: Compile xapian bindings
+  when: "'openaustralia_old' in group_names"
   command: make
   args:
     chdir: /home/deploy/xapian-bindings-1.2.22
@@ -233,6 +265,7 @@
   become_user: deploy
 
 - name: Install xapian bindings
+  when: "'openaustralia_old' in group_names"
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-1.2.22
@@ -240,12 +273,14 @@
   notify: reload apache
 
 - name: Configure php for xapian bindings
+  when: "'openaustralia_old' in group_names"
   template:
     src: xapian.ini
     dest: /etc/php/5.6/mods-available
   notify: reload apache
 
 - name: Enable xapian for php
+  when: "'openaustralia_old' in group_names"
   file:
     state: link
     src: /etc/php/5.6/mods-available/xapian.ini
@@ -264,7 +299,16 @@
     - ssl
 
 - name: Copy across the php config
+  when: "'openaustralia_old' in group_names"
   template: src=php.ini dest=/etc/php/5.6/{{ item }}/
+  notify: reload apache
+  with_items:
+    - apache2
+    - cli
+
+- name: Copy across the php config (PHP 8.3)
+  when: "'openaustralia_new' in group_names"
+  template: src=php.ini dest=/etc/php/8.3/{{ item }}/
   notify: reload apache
   with_items:
     - apache2
@@ -280,6 +324,7 @@
   notify: reload apache
 
 - name: Copy across the apache configs
+  when: "'openaustralia_old' in group_names"
   template:
     src: apache/stage.conf
     dest: "/etc/apache2/sites-available/{{ item }}.conf"
@@ -294,6 +339,7 @@
   notify: reload apache
 
 - name: Copy across the other apache configs
+  when: "'openaustralia_old' in group_names"
   template:
     src: "apache/{{ item }}.conf"
     dest: /etc/apache2/sites-available/
@@ -305,6 +351,7 @@
   notify: reload apache
 
 - name: Install certificate using certbot
+  when: "'openaustralia_old' in group_names"
   include_role:
     name: oaf.certbot
   vars:
