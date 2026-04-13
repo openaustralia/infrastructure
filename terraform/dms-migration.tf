@@ -6,8 +6,7 @@
 #   Then stop and restart the DMS task to apply the new table mappings
 #
 # Databases:
-#   - oa-production, oa-staging (OpenAustralia) - var.dms_replicate_openaustralia
-#   - tvfy-production, tvfy-staging (TheyVoteForYou) - var.dms_replicate_theyvoteforyou
+#   - oa-production (OpenAustralia) - var.dms_replicate_openaustralia
 
 # Build the list of databases to replicate based on variables
 locals {
