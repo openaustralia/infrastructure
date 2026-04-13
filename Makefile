@@ -104,8 +104,10 @@ apply-theyvoteforyou: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l theyvoteforyou --diff
 apply-oaf: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l oaf --diff
-apply-openaustralia: $(KEYSANDROLES)
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia --diff
+apply-openaustralia-old: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia_old --diff
+apply-openaustralia-new: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia_new --diff
 apply-metabase: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l metabase --diff
 
