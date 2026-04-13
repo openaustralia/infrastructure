@@ -309,7 +309,7 @@
     - rewrite
     - ssl
 
-- name: Copy across the php config
+- name: Copy across the php config (PHP 5)
   when: "'openaustralia_old' in group_names"
   template: src=php.ini dest=/etc/php/5.6/{{ item }}/
   notify: reload apache
