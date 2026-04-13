@@ -131,52 +131,39 @@
 #     executable: /bin/bash
 #   become: true
 
-# TODO: Add the php8/mysql8 versions of these
+# NOTE - This works for both mysql 5 AND 8
 
 - name: Create openaustralia databases
   when: "'openaustralia_old' in group_names"
   mysql_db:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ item.0 }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: "oa-{{ item }}"
-  with_items:
-    - production
-    - staging
+    name: "oa-{{ item.1 }}"
+  loop: "{{ ansible_play_hosts | map('extract', hostvars, 'mysql_host') | unique | list | product(environments) | list }}"
 
 - name: Create openaustralia user with access to the database (production)
-  when: "'openaustralia_old' in group_names"
   mysql_user:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ item }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: oa-production
     password: "{{ openaustralia_production_mysql_password }}"
     priv: 'oa-production.*:ALL'
     host: "%"
+  loop: "{{ ansible_play_hosts | map('extract', hostvars, 'mysql_host') | unique | list }}"
 
 - name: Create mysql user with readonly access to the production openaustralia database for metabase
-  when: "'openaustralia_old' in group_names"
   mysql_user:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ item }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: oa-production-readonly
     password: "{{ mysql_production_password_readonly }}"
     priv: 'oa-production.*:SELECT'
     host: "%"
-  run_once: true
+  loop: "{{ ansible_play_hosts | map('extract', hostvars, 'mysql_host') | unique | list }}"
 
-# FIXME: mysql_8_was removed and a commented out mysql_5 left which makes no sense to me!
-#- name: Create openaustralia user with access to the database (staging)
-#  mysql_user:
-#    login_host: "{{ mysql_8_host }}"
-#    login_user: admin
-#    login_password: "{{ rds_admin_password }}"
-#    name: oa-staging
-#    password: "{{ openaustralia_staging_mysql_password }}"
-#    priv: 'oa-staging.*:ALL'
-#    host: "%"
 
 #This file will always point at the production db
 # Which seems like that's what we want, in development
