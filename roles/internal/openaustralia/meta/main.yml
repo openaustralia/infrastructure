@@ -145,6 +145,8 @@ dependencies:
     # Use round-robin pool of gpg key servers to avoid timeout
     rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
     rvm1_bundler_install: true
+
+  
   # Duplicity backup disabled - replaced by restic (Dec 2025)
   # Duplicity used 55.6 GiB vs restic ~15.5 GiB for 16 GB source
   # Also duplicity had been failing since Aug 2024 due to stale lockfile
