@@ -97,40 +97,41 @@ tf-apply:
 	terraform -chdir=terraform apply
 
 stage_required:
-	$(if $(STAGE),,$(error STAGE is required, for example: STAGE=staging or STAGE=production))
+ifndef STAGE
+	$(error STAGE is required, for example: STAGE=staging or STAGE=production or STAGE= for both)
+endif
 
 # Checks only
-check-righttoknow: $(KEYSANDROLES)
+check-righttoknow: $(KEYSANDROLES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --check --diff
-check-planningalerts: $(KEYSANDROLES)
+check-planningalerts: $(KEYSANDROLES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --check --diff
-check-theyvoteforyou: $(KEYSANDROLES)
+check-theyvoteforyou: $(KEYSANDROLES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --check --diff
-check-oaf: $(KEYSANDROLES)
+check-oaf: $(KEYSANDROLES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --check --diff
-check-openaustralia: $(KEYSANDROLES)
+check-openaustralia: $(KEYSANDROLES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --check --diff
-check-metabase: $(KEYSANDROLES)
+check-metabase: $(KEYSANDROLES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --check --diff
 
 # These make changes 
-apply-righttoknow: stage_required $(KEYSANDROLES)
+apply-righttoknow: stage_required $(KEYSANDROLES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --diff
-apply-planningalerts: $(KEYSANDROLES)
+apply-planningalerts: $(KEYSANDROLES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --diff
-apply-theyvoteforyou: $(KEYSANDROLES)
+apply-theyvoteforyou: $(KEYSANDROLES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --diff
-apply-oaf: $(KEYSANDROLES)
+apply-oaf: $(KEYSANDROLES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --diff
-
-# TODO: remove this when we're ready to switch over to the new OpenAustralia server
-# Note: these are Not stage, this is a whole replacement
-apply-openaustralia-old:
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l openaustralia --diff
-apply-openaustralia-new:
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l openaustralia_new --diff
+apply-openaustralia:
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --diff
 
 
+apply-openaustralia-old: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia_old --diff
+apply-openaustralia-new: $(KEYSANDROLES)
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml -l openaustralia_new --diff
 apply-metabase: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS)  -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
 

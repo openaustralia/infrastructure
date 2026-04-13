@@ -66,9 +66,9 @@
     - staging
 
 - name: Install dependency for ansible mysql_db module
+  apt: pkg=python-mysqldb
   # TODO: work out if we need this on the new machine
   when: "'openaustralia_old' in group_names"
-  apt: pkg=python-mysqldb
 
 - name: Install MySQL client dev headers
   apt:
@@ -167,16 +167,16 @@
     host: "%"
   run_once: true
 
-# - name: Create openaustralia user with access to the database (staging)
-#   when: "'openaustralia_old' in group_names"
-#   mysql_user:
-#     login_host: "{{ mysql_5_host }}"
-#     login_user: admin
-#     login_password: "{{ rds_admin_password }}"
-#     name: oa-staging
-#     password: "{{ openaustralia_staging_mysql_password }}"
-#     priv: 'oa-staging.*:ALL'
-#     host: "%"
+# FIXME: mysql_8_was removed and a commented out mysql_5 left which makes no sense to me!
+#- name: Create openaustralia user with access to the database (staging)
+#  mysql_user:
+#    login_host: "{{ mysql_8_host }}"
+#    login_user: admin
+#    login_password: "{{ rds_admin_password }}"
+#    name: oa-staging
+#    password: "{{ openaustralia_staging_mysql_password }}"
+#    priv: 'oa-staging.*:ALL'
+#    host: "%"
 
 #This file will always point at the production db
 # Which seems like that's what we want, in development
@@ -229,6 +229,38 @@
     - php5.6-curl
     - php5.6-dev
     - php5.6-mysql
+    - xapian-tools
+
+- name: Install required packages (PHP 8.3)
+  when: "'openaustralia_new' in group_names"
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - apache2
+    - ghostscript
+    - imagemagick
+    - libapache2-mod-php8.3
+    - libdbi-perl
+    - libdbd-mysql-perl
+    - libmagickcore-dev
+    - libmagickwand-dev
+    - libpq-dev
+    - libsearch-xapian-perl
+    - libxapian-dev
+    - libxml-rss-perl
+    - libxml-twig-perl
+    - libxslt1-dev
+    - msmtp
+    - mysql-client-core-8.0 # Need the mysql command line when setting up a database initially
+    - php8.3
+    - php8.3-curl
+    - php8.3-dev
+    - php8.3-mysql
+    - php8.3-xml
+    - php8.3-curl
+    - php8.3-mbstring
+    - php8.3-zip
     - xapian-tools
 
 - name: Install required packages (PHP 8.3)
@@ -451,24 +483,35 @@
     - production
   notify: reload apache
 
-# - name: Copy across the other apache configs
-#   template:
-#     src: "apache/{{ item }}.conf"
-#     dest: /etc/apache2/sites-available/
-#   with_items:
-#     - 000-default
-#     - data
-#     # - software
-#     # - blog
-#   notify: reload apache
+- name: Copy across the other apache configs
+  when: "'openaustralia_old' in group_names"
+  template:
+    src: "apache/{{ item }}.conf"
+    dest: /etc/apache2/sites-available/
+  with_items:
+    - 000-default
+    - data
+    - software
+    - blog
+  notify: reload apache
 
-# - name: Install certificate using certbot
-#   include_role:
-#     name: oaf.certbot
-#   vars:
-#     certbot_certs: "{{ domains_for_certbot }}"
-#   when: "'ec2' in group_names"
-
+- name: Install certificate using certbot
+  when: "'openaustralia_old' in group_names"
+  include_role:
+    name: oaf.certbot
+  vars:
+    certbot_certs:
+      - email: contact@oaf.org.au
+        domains:
+          - "{{ openaustralia_domain }}"
+          - www."{{ openaustralia_domain }}"
+          - openaustralia.org
+          - www.openaustralia.org
+      - email: contact@oaf.org.au
+        domains:
+          - "test.{{ openaustralia_domain }}"
+          - "www.test.{{ openaustralia_domain }}"
+  when: "'ec2' in group_names"
 
 - name: Copy across the application config
   template:
