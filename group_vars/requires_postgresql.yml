@@ -1,0 +1,7 @@
+# File: requires_postgresql.yml
+---
+
+# attributes are discovered dynamically in site.yml
+# use `make show-rds-vars host=<postgres-using-host>` to show them
+
+# ec2 group sets the relevant variables

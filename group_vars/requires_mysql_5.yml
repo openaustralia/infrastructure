@@ -1,0 +1,6 @@
+# File: group_vars/requires_mysql_5.yml
+---
+# OLD MySql 5.7 version (that we are migrating off to MySql 8.x)
+
+# attributes are discovered dynamically in site.yml
+mysql_host: "{{ rds_mysql5.instance.endpoint }}"
