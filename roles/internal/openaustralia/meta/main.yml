@@ -123,6 +123,14 @@ galaxy_info:
 dependencies:
   # rvm actually has some trouble now. I think it's old certs on this version of the OS
   # which is really not great.
+
+  # # - RVM Ruby (New Server)
+  # - role: rvm.ruby
+  #   rvm1_rubies:
+  #     - ruby-3.4.9
+  #   when: "'openaustralia_new' in group_names"
+
+# - RVM Ruby (Old Server)
   - role: rvm.ruby
     rvm1_rubies:
       - ruby-2.7.2
@@ -137,6 +145,8 @@ dependencies:
     # Use round-robin pool of gpg key servers to avoid timeout
     rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
     rvm1_bundler_install: true
+
+  
   # Duplicity backup disabled - replaced by restic (Dec 2025)
   # Duplicity used 55.6 GiB vs restic ~15.5 GiB for 16 GB source
   # Also duplicity had been failing since Aug 2024 due to stale lockfile
