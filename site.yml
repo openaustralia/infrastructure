@@ -76,7 +76,7 @@
         var: "rds_mysql5"
       tags: facts
       when: "(show_rds_debug | default(false) | bool) and ('requires_mysql_5' in group_names)"
-    
+
     - name: Get information about the Mysql 8 instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
