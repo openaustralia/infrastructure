@@ -6,8 +6,13 @@
 #
 # Other inventory files:
 
-[development]
 # KEEP EMPTY - see development-hosts
+[development]
+
+# KEEP EMPTY - see Vagrantfile
+[mysql]
+[postgresql]
+[redis]
 
 # INVENTORY IN alphabetical order by group name
 
