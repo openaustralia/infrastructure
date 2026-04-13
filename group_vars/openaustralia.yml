@@ -84,6 +84,9 @@ logs:
      log_group_name: /var/log/unattended-upgrades/unattended-upgrades.log
      log_stream_name: "{{ inventory_hostname }}"
      timestamp_format: "%Y-%m-%d %H:%M:%S"
+environments:
+  - production
+  - staging
 domains_for_certbot:
   - email: contact@oaf.org.au
     domains:
