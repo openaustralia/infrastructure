@@ -157,24 +157,24 @@
     #      tags:
     #        - cleanup
     #        - ruby
-    #      when: ruby_manager != 'rbenv'
+    #      when: "(ruby_manager | default('')) != 'rbenv'"
 
     - role: internal/remove_rvm
       tags:
         - cleanup
         - ruby
-      when: ruby_manager != 'rvm'
+      when: "(ruby_manager | default('')) != 'rvm'"
 
     - role: internal/remove_mise
       tags:
         - cleanup
         - ruby
-      when: ruby_manager != 'mise'
+      when: "(ruby_manager | default('')) != 'mise'"
 
     - role: external/zzet.rbenv
       tags:
         - ruby
-      when: ruby_manager == 'rbenv'
+      when: "(ruby_manager | default('')) == 'rbenv'"
       rbenv:
         env: user
         version: v1.1.2
@@ -186,7 +186,7 @@
     - role: external/rvm.ruby
       tags:
         - ruby
-      when: ruby_manager == 'rvm'
+      when: "(ruby_manager | default('')) == 'rvm'"
       rvm1_rubies: "{{ ruby_versions }}"
       rvm1_install_flags: "--auto-dotfiles"
       rvm1_install_path: /usr/local/rvm
@@ -199,7 +199,7 @@
 #    - role: install_mise
 #      tags:
 #        - ruby
-#      when: ruby_manager == 'mise'
+#      when: "(ruby_manager | default('')) == 'mise'"
 #      mise_ruby_versions: "{{ ruby_versions }}"
 
 # vagrant equivalent of AWS rds_instance
