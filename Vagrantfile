@@ -62,16 +62,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.verbose = "vv"
 
     ansible.groups = {
-      "righttoknow" => ["righttoknow.org.au.test"],
-      "planningalerts" => ["web.planningalerts.org.au.test"],
-      "theyvoteforyou" => ["theyvoteforyou.org.au.test"],
-      "oaf" => ["oaf.org.au.test"],
-      "openaustralia" => ["openaustralia.org.au.test"],
-      "proxy" => ["au.proxy.oaf.org.au.test"],
-      "metabase" => ["web.metabase.oaf.org.au.test"],
-      "mysql" => ["mysql.test"],
-      "postgresql" => ["postgresql.test"],
-      "redis" => ["redis.test"],
       "development" => [
         "righttoknow.org.au.test",
         "web.planningalerts.org.au.test",
@@ -83,7 +73,29 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "mysql.test",
         "postgresql.test",
         "redis.test"
-      ]
+      ],
+      "metabase" => ["web.metabase.oaf.org.au.test"],
+      "mysql" => ["mysql.test"],
+      "oaf" => ["oaf.org.au.test"],
+      "openaustralia" => ["openaustralia.org.au.test"],
+      "planningalerts" => ["web.planningalerts.org.au.test"],
+      "postgresql" => ["postgresql.test"],
+      "proxy" => ["au.proxy.oaf.org.au.test"],
+      "redis" => ["redis.test"],
+      "righttoknow" => ["righttoknow.org.au.test"],
+      "theyvoteforyou" => ["theyvoteforyou.org.au.test"],
+
+      # Server groups that are not used
+      "ec2" => [],
+      "openaustralia_new" => [],
+      "openaustralia_old" => [],
+      "openvpn" => [],
+      "plausible" => [],
+      "requires_mysql" => [],
+      "requires_mysql_5" => [],
+      "requires_postgresql" => [],
+      "righttoknow_production" => [],
+      "righttoknow_staging" => [],
     }
     tags = ENV["TAGS"].to_s.gsub(/[^A-Z0-9_]+/i, ",").split(",").reject { |s| s.to_s == "" }
     if tags.any?
