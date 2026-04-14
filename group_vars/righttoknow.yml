@@ -200,3 +200,7 @@ logs:
     log_group_name: /srv/www/production/shared/log/foi-purge-varnish.log
     log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
+
+environments:
+  - production
+  - staging

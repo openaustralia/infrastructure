@@ -362,7 +362,7 @@
     group: deploy
     state: directory
   with_nested:
-    - ['production', 'staging']
+    - "{{ environments }}"
     - ['public', 'public/cards']
 
 - name: Link directories in /srv/www to /data
@@ -371,5 +371,5 @@
     src: "/data/{{ item[0] }}/{{ item[1] }}"
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
-    - ['production', 'staging']
+    - "{{ environments }}"
     - ['public/cards']
