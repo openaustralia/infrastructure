@@ -96,3 +96,7 @@ domains_for_certbot:
       - test.{{ openaustralia_domain }}
       - staging.{{ openaustralia_domain }}
       - www.test.{{ openaustralia_domain }}
+
+ruby_manager: rbenv
+ruby_versions:
+  - ruby-3.4.9

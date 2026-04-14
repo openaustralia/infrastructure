@@ -148,6 +148,60 @@
   roles:
     - base-server
 
+# Change to expecting a variable ruby_versions, which will have the ruby versions to install (set elsewhere)
+
+- hosts: all
+  become: true
+  roles:
+    #    - role: internal/remove_rbenv
+    #      tags:
+    #        - cleanup
+    #        - ruby
+    #      when: ruby_manager != 'rbenv'
+
+    - role: internal/remove_rvm
+      tags:
+        - cleanup
+        - ruby
+      when: ruby_manager != 'rvm'
+
+    - role: internal/remove_mise
+      tags:
+        - cleanup
+        - ruby
+      when: ruby_manager != 'mise'
+
+    - role: external/zzet.rbenv
+      tags:
+        - ruby
+      when: ruby_manager == 'rbenv'
+      rbenv:
+        env: user
+        version: v1.1.2
+        default_ruby: "{{ ruby_versions | first }}"
+        rubies: "{{ ruby_versions | map('community.general.dict_kv', 'version') | list }}"
+      rbenv_users:
+        - deploy
+
+    - role: external/rvm.ruby
+      tags:
+        - ruby
+      when: ruby_manager == 'rvm'
+      rvm1_rubies: "{{ ruby_versions }}"
+      rvm1_install_flags: "--auto-dotfiles"
+      rvm1_install_path: /usr/local/rvm
+      rvm1_user: root
+      rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
+      # may need this for planningalerts
+      # rvm1_rvm_version: "head"
+      # rvm1_gpg_key_server: 'rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"'
+
+#    - role: install_mise
+#      tags:
+#        - ruby
+#      when: ruby_manager == 'mise'
+#      mise_ruby_versions: "{{ ruby_versions }}"
+
 # vagrant equivalent of AWS rds_instance
 - hosts: mysql
   become: true
