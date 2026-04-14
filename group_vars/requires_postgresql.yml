@@ -5,3 +5,8 @@
 # use `make show-rds-vars host=<postgres-using-host>` to show them
 
 # ec2 group sets the relevant variables
+
+db_name: postgresql
+
+# TODO: discover why this is in this group rather than planningalerts (based on what was in site.yml)
+planningalerts_db_name: planningalerts
