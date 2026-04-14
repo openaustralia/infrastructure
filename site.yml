@@ -36,25 +36,15 @@
       raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python-is-python3) || test -e /usr/bin/python || apt install -y python-minimal
       changed_when: False
 
-#- name: Validate group membership
-#  hosts: all
-#  gather_facts: false
-#  tasks:
-#    - name: Ensure host is in at most one of group_a, group_b, group_c
-#      assert:
-#        that:
-#          - "(['group_a', 'group_b', 'group_c'] | select('in', group_names) | list | length) <= 1"
-#        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql_5', 'requires_mysql', 'requires_postgresql'] | select('in', group_names) | list }}"
-
-#- name: Validate group membership
-#  hosts: all
-#  gather_facts: false
-#  tasks:
-#    - name: Ensure host is in at most one of group_a, group_b, group_c
-#      assert:
-#        that:
-#          - "(['group_a', 'group_b', 'group_c'] | select('in', group_names) | list | length) <= 1"
-#        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql_5', 'requires_mysql', 'requires_postgresql'] | select('in', group_names) | list }}"
+- name: Validate not in multiple requires_ groups
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Ensure host is in at most one of group_a, group_b, group_c
+      assert:
+        that:
+          - "(['group_a', 'group_b', 'group_c'] | select('in', group_names) | list | length) <= 1"
+        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql_5', 'requires_mysql', 'requires_postgresql'] | select('in', group_names) | list }}"
 
 - hosts: ec2
   become: true
