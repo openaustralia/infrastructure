@@ -68,3 +68,7 @@ logs:
     log_group_name: /srv/www/production/shared/log/production.log
     log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
+
+ruby_manager: rvm
+ruby_versions:
+   - ruby-3.4.4

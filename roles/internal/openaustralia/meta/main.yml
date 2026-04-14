@@ -122,31 +122,7 @@ galaxy_info:
   #- web
 dependencies:
 
-  - role: remove_rvm
-    tags:
-      - cleanup
-      - ruby
-    when: "'openaustralia_php5' not in group_names"
 
-  - role: remove_mise
-    tags:
-      - cleanup
-      - ruby
-
-  # Modern ruby on the new host
-  - role: zzet.rbenv
-    when: "'openaustralia_new' in group_names"
-    tags:
-      - ruby
-    rbenv:
-      env: user
-      version: v1.1.2
-      default_ruby: "{{ ruby_version }}"
-      rubies:
-        - version: "{{ ruby_version }}"
-        - version: ruby-2.7.8
-    rbenv_users:
-      - deploy
 
   # Duplicity backup disabled - replaced by restic (Dec 2025)
   # Duplicity used 55.6 GiB vs restic ~15.5 GiB for 16 GB source
