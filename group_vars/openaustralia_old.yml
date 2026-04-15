@@ -2,3 +2,6 @@
 ---
 
 # TODO: Move default values here to make sure they don't change
+
+ruby_manager: rvm
+

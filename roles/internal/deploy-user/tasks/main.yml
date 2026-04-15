@@ -11,6 +11,14 @@
     shell: /bin/bash
     group: deploy
 
+- name: Add deploy user to rvm group
+  become: true
+  user:
+    name: deploy
+    groups: rvm
+    append: yes
+  when: ruby_manager == 'rvm'
+
 ## This will ensure that the listed keys are present
 ## but it does not remove other keys. If we have a need to revoke
 ## access we'll have to do something different.
