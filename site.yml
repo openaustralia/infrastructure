@@ -1,5 +1,8 @@
-## FIRST: edit the `vault_identity_list` in ``ansible.cfg``
-# and make sure  you have all the password files you need.
+# FIRST: check the `vault_identity_list` in `ansible.cfg` using
+# `ls -ld .*pass*`
+# and make sure you have all the password files you need.
+# If you are missing some, then you can override the list using a `.envrc` entry, eg:
+# export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"
 
 ## THEN
 
