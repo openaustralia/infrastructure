@@ -153,11 +153,11 @@
 - hosts: all
   become: true
   roles:
-    #    - role: internal/remove_rbenv
-    #      tags:
-    #        - cleanup
-    #        - ruby
-    #      when: "(ruby_manager | default('')) != 'rbenv'"
+    - role: internal/remove_rbenv
+      tags:
+        - cleanup
+        - ruby
+      when: "(ruby_manager | default('')) != 'rbenv'"
 
     - role: internal/remove_rvm
       tags:
