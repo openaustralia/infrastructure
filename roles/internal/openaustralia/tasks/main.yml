@@ -389,7 +389,7 @@
     - production
     - staging
 
-- name: Enable virtual hosts # noqa: ignore-errors
+- name: Enable virtual hosts
   file:
     src: /etc/apache2/sites-available/{{ item }}.conf
     dest: /etc/apache2/sites-enabled/{{ item }}.conf
@@ -402,8 +402,6 @@
     - software
     - blog
   notify: reload apache
-  # FIXME: set up correct vhosts so we don't "src file does not exist" errors and remove the noqa and the line below
-  ignore_errors: "{{ lookup('env', 'IGNORE_VHOST_ERRORS') != '' }}"
 
 - name: Copy msmtp configuration
   template: src=msmtprc dest=/etc/
