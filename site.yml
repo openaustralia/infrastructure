@@ -88,7 +88,7 @@
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
         command: facts
-        instance_name: "{{ db_name }}""
+        instance_name: "{{ db_name }}"
         region: "{{ ec2_region }}"
       register: rds_database
       tags: facts
