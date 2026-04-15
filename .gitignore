@@ -37,7 +37,7 @@ db_dumps/*.sql.gz
 *.rej
 
 # Ignore all logfiles
-log/*.log
+log/*
 
 # Ignore Byebug command history file.
 .byebug_history
