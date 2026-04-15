@@ -46,9 +46,9 @@
     group: deploy
 
 - name: Allow deploy user to control services
-  copy:
+  template:
     src: deploy_service_control
-    dest: /etc/sudoers.d/
+    dest: /etc/sudoers.d/deploy_service_control
     validate: visudo -cf %s
 
 - name: Install postfix to handle incoming email
