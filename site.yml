@@ -154,6 +154,8 @@
   become: true
   roles:
     - role: internal/remove_rbenv
+      rbenv_users:
+        - deploy
       tags:
         - cleanup
         - ruby
