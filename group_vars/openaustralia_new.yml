@@ -1,4 +1,4 @@
-# new product/staging environment configuration for OpenAustralia
+# new server (with production and staging environments) configuration for OpenAustralia
 # Most values inherited from openaustralia.yml
 site_name: newprod.openaustralia.org.au
 

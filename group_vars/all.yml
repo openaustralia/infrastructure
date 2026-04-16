@@ -1,3 +1,5 @@
+# File: group_vars/all.yml
+---
 rds_admin_password: !vault |
           $ANSIBLE_VAULT;1.2;AES256;all
           30383165353964666234363861623736333762643130633934366361623739393636343933303962
@@ -5,6 +7,7 @@ rds_admin_password: !vault |
           31316635366264623564383635313830643534653963363737396232356332323434326631346566
           3164663763363639350a323138383038383933653336353461366532623066343964666536333464
           61326363303662316234306133626365366564373031323239623762373633353862
+
 # This is an access key belonging to the IAM user oaf-backups
 backup_target_user: AKIAJBCNWWPWJUFEL7ZQ
 backup_target_pass: !vault |
@@ -19,10 +22,11 @@ backup_target_pass: !vault |
 backup_max_age: 6M
 backup_max_full_backups: 6
 backup_full_max_age: 1M
-certbot_webserver: apache
 
+certbot_webserver: apache
 # Part of the default value "--quiet" appears not to be valid
 certbot_auto_renew_options: "--no-self-upgrade"
+
 github_users:
   [
     "benrfairless",
