@@ -34,3 +34,4 @@ export PATH="$HOME/.local/bin:$PATH"
 - hosts: somehost
   roles:
     - role: remove_mise
+```
