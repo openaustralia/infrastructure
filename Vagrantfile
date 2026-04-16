@@ -62,28 +62,51 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.verbose = "vv"
 
     ansible.groups = {
-      "righttoknow" => ["righttoknow.org.au.test"],
-      "planningalerts" => ["web.planningalerts.org.au.test"],
-      "theyvoteforyou" => ["theyvoteforyou.org.au.test"],
-      "oaf" => ["oaf.org.au.test"],
-      "openaustralia" => ["openaustralia.org.au.test"],
-      "proxy" => ["au.proxy.oaf.org.au.test"],
-      "metabase" => ["web.metabase.oaf.org.au.test"],
-      "mysql" => ["mysql.test"],
-      "postgresql" => ["postgresql.test"],
-      "redis" => ["redis.test"],
       "development" => [
-        "righttoknow.org.au.test",
-        "web.planningalerts.org.au.test",
-        "theyvoteforyou.org.au.test",
+        "web.metabase.oaf.org.au.test",
+        "newprod.openaustralia.org.au.test",
         "oaf.org.au.test",
         "openaustralia.org.au.test",
-        "au.proxy.oaf.org.au.test",
-        "web.metabase.oaf.org.au.test",
+        "web.planningalerts.org.au.test",
+
         "mysql.test",
         "postgresql.test",
-        "redis.test"
-      ]
+        "au.proxy.oaf.org.au.test",
+        "redis.test",
+
+        "righttoknow.org.au.test",
+        "theyvoteforyou.org.au.test",
+
+      ],
+      # Services required by the servers 192.168.56.1x
+      "mysql" => ["mysql.test"],
+      "postgresql" => ["postgresql.test"],
+      "proxy" => ["au.proxy.oaf.org.au.test"],
+      "redis" => ["redis.test"],
+
+      # Servers 192.168.56.2x
+      "metabase" => ["web.metabase.oaf.org.au.test"],
+      "oaf" => ["oaf.org.au.test"],
+      "openaustralia" => ["openaustralia.org.au.test", "newprod.openaustralia.org.au.test"],
+      "openaustralia_old" => ["openaustralia.org.au.test"],
+      "openaustralia_new" => ["newprod.openaustralia.org.au.test"],
+      "planningalerts" => ["web.planningalerts.org.au.test"],
+      "righttoknow" => ["righttoknow.org.au.test"],
+      "righttoknow_production" => [],
+      "righttoknow_staging" => ["righttoknow.org.au.test"],
+      "theyvoteforyou" => ["theyvoteforyou.org.au.test"],
+
+      # Requirements
+      "requires_mysql" => ["newprod.openaustralia.org.au.test", "theyvoteforyou.org.au.test", "web.metabase.oaf.org.au.test"],
+      "requires_mysql_5" => ["openaustralia.org.au.test"],
+      "requires_postgresql" => ["theyvoteforyou.org.au.test", "righttoknow.org.au.test", "web.metabase.oaf.org.au.test", "web.planningalerts.org.au.test"],
+
+      # Empty list just so ansible doesn't complain it doesn't know about these cloud servers
+      "ec2" => [],
+
+      # TODO: Consider adding hosts for these Server groups (that are used)
+      "openvpn" => [],
+      "plausible" => [],
     }
     tags = ENV["TAGS"].to_s.gsub(/[^A-Z0-9_]+/i, ",").split(",").reject { |s| s.to_s == "" }
     if tags.any?
@@ -104,18 +127,22 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   hosts = {
-    "righttoknow.org.au.test" => "192.168.56.10",
-    "web.planningalerts.org.au.test" => "192.168.56.11",
-    "theyvoteforyou.org.au.test" => "192.168.56.14",
-    "oaf.org.au.test" => "192.168.56.15",
-    "openaustralia.org.au.test" => "192.168.56.16",
-    "mysql.test" => "192.168.56.17",
-    # TODO: Do we want to seperate out the postgres for PA and everything else
+    # Services required by the servers
+    "mysql.test" => "192.168.56.10",
+    "postgresql.test" => "192.168.56.11",
+    "au.proxy.oaf.org.au.test" => "192.168.56.12",
+    "redis.test" => "192.168.56.13",
+
+    # Servers
+    "web.metabase.oaf.org.au.test" => "192.168.56.20",
+    "oaf.org.au.test" => "192.168.56.21",
+    "openaustralia.org.au.test" => "192.168.56.22",
+    "newprod.openaustralia.org.au.test" => "192.168.56.23",
+    "web.planningalerts.org.au.test" => "192.168.56.24",
+    "righttoknow.org.au.test" => "192.168.56.25",
     # so they can track production versions more accurately?
-    "postgresql.test" => "192.168.56.18",
-    "au.proxy.oaf.org.au.test" => "192.168.56.20",
-    "web.metabase.oaf.org.au.test" => "192.168.56.21",
-    "redis.test" => "192.168.56.22"
+    "theyvoteforyou.org.au.test" => "192.168.56.26",
+    # TODO: Do we want to seperate out the postgres for PA and everything else
   }
 
   # Use this so that you don't need to give the machine name for all vagrant
@@ -126,7 +153,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.box = case hostname
                     # Only a few services so far are using a more recent version of Ubuntu
-                    when "web.metabase.oaf.org.au.test", "redis.test", "web.planningalerts.org.au.test", "postgresql.test"
+                    when "web.metabase.oaf.org.au.test", "redis.test", "web.planningalerts.org.au.test", "postgresql.test", "newprod.openaustralia.org.au.test"
                       # jammy (22.04 LTS) "standard" support ends in April 2027
                       "ubuntu/jammy64"
                     when "theyvoteforyou.org.au.test"
@@ -140,7 +167,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                       # xenial (16.04 LTS) "standard" support ended in April 2021!
                       "ubuntu/xenial64"
                     else
-                      raise "Couldn't figure out version of ubuntu"
+                      raise "Couldn't figure out version of ubuntu for #{hostname}"
                     end
       host.vm.network :private_network, ip: ip
       host.vm.hostname = hostname
