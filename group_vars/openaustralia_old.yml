@@ -1,0 +1,4 @@
+# File: group_vars/openaustralia_old.yml
+---
+
+# TODO: Move default values here to make sure they don't change

@@ -238,6 +238,14 @@ folder to symlink to `/Volumes/Keybase`.
 Once this is done, the symlinks to .*-vault-pass inside the repo
 should point to the password files. If this doesn't work you may need to update these files yourself.
 
+#### Access to everything except right to know
+
+If the `.rtk-vault-pass` symlink is broken, then use `.envrc` (and `direnv` package) to set the following whenever you cd to this dir:
+```bash
+export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"
+```
+This will allow you to work on everything except right to know.
+
 ## <a name='GeneratingSSLcertificatesfordevelopment'></a>Generating SSL certificates for development
 
 See certificates/README.md for more information. This also generates a certificate for morph local development if present.
@@ -294,6 +302,17 @@ config.
 
 If you want to forcibly renew just one service, instructions are in
 the top of `update-ssl-certs.yaml`.
+
+#### Filtering hosts and/or tasks performed
+
+You can also set:
+
+* STAGE: to a group suffix eg `STAGE=new make apply-openaustralia` would apply changes only to `openaustralia_new`
+  group in `inventory/ec2-hosts` which only contains `staging.openaustralia.org.au`
+* ANSIBLE_TAGS - limits to tasks / roles that have one of the comma-separated roles
+* ANSIBLE_SKIP_TAGS - skips tasks / roles that have one of the comma-separated roles
+* ANSIBLE_VERBOSE - set to one to four 'v's eg 'ANSIBLE_VERBOSE=vvv make apply-openaustralia' will show a lot of diagnostic information from ansible
+* ANSIBLE_START_TASK - set to part of the task description to have ansible skip to that task, which allows you to quickly debug after a failure
 
 ## <a name='Deploying'></a>Deploying
 
