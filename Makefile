@@ -182,7 +182,6 @@ update-github-ssh-keys: $(KEYSANDROLES)
 	.venv/bin/ansible-playbook site.yml --tags userkeys
 
 install-linters: venv
-	.venv/bin/pip install --upgrade pip ansible-lint  yamllint
 
 yaml-lint: venv
 	.venv/bin/yamllint roles/*.yml site.yml 
