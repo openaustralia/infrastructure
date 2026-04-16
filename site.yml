@@ -25,38 +25,47 @@
 
 # Use terraform (see terraform directory) to actually provision ec2 infrastructure
 
-# Ubuntu 16.04 LTS doesn't come with python pre-installed. We need that for
-# Ansible to work (for the gather facts). So install python first
+# Ensure python3 is available for Ansible (required before gather_facts), with fallback to python2
+# If it does fall back, set ansible_python_interpreter to /usr/bin/python in that old group
 - hosts: all
   become: true
   gather_facts: False
 
   tasks:
-  - name: install python 2 (or python 3 on Ubuntu 20.04)
-    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal) || apt install -y python-is-python3
-    changed_when: False
+    - name: Install python3 for Ansible if available, otherwise fallback to python2
+      raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python-is-python3) || test -e /usr/bin/python || apt install -y python-minimal
+      changed_when: False
 
 - hosts: ec2
   become: true
   tasks:
-    - name: Install python-pip
+    - name: Install python packages
       apt:
-        pkg: python-pip
+        pkg:  "{{ item }}"
         cache_valid_time: 300
-      when: ansible_distribution_release not in ['focal', 'jammy']
-
-    - name: Install python3-pip
-      apt:
-        pkg: python3-pip
-        cache_valid_time: 300
-      when: ansible_distribution_release in ['focal', 'jammy']
+      loop:
+        - python-pip
+        - python-pymysql
+        - python-psycopg2
+      when: ansible_python_version is version('3', '<')
 
     - name: Install boto which is required for EC2 stuff (Python 2)
       pip: name=boto
+      when: ansible_python_version is version('3', '<')
+
+    - name: Install python packages
+      apt:
+        pkg: "{{ item }}"
+        cache_valid_time: 300
+      loop:
+        - python3-pip
+        - python3-pymysql
+        - python3-psycopg2
+      when: ansible_python_version is version('3', '>=')
 
     - name: Install boto3 which is required for EC2 stuff (Python 3)
       pip: name=boto3
-      when: ansible_distribution_release in ['focal', 'jammy']
+      when: ansible_python_version is version('3', '>=')
 
     - name: Get information about the DEPRECATED Mysql 5 instance
       rds:
@@ -75,7 +84,7 @@
       debug:
         var: "rds_mysql5"
       tags: facts
-      when: "(show_rds_debug | default(false) | bool) and ('requires_mysql' in group_names)"
+      when: "(show_rds_debug | default(false) | bool) and ('requires_mysql_5' in group_names)"
     
     - name: Get information about the Mysql 8 instance
       rds:
@@ -139,11 +148,13 @@
   roles:
     - base-server
 
+# vagrant equivalent of AWS rds_instance
 - hosts: mysql
   become: true
   roles:
     - mysql
 
+# vagrant equivalent of AWS rds_instance
 - hosts: postgresql
   become: true
   roles:
@@ -184,6 +195,7 @@
   roles:
     - internal/openvpn
 
+# vagrant equivalent of AWS redis service
 - hosts: redis
   become: true
   tasks:

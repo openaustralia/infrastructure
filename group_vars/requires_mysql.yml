@@ -1,0 +1,5 @@
+# File: group_vars/requires_mysql.yml
+---
+# Current Mysql 8.x version (NOT 5.7!)
+
+# attributes are discovered dynamically in site.yml
