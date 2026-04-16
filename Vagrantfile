@@ -101,8 +101,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "requires_mysql_5" => ["openaustralia.org.au.test"],
       "requires_postgresql" => ["theyvoteforyou.org.au.test", "righttoknow.org.au.test", "web.metabase.oaf.org.au.test", "web.planningalerts.org.au.test"],
 
-      # Server groups that are not used / tested
+      # Empty list just so ansible doesn't complain it doesn't know about these cloud servers
       "ec2" => [],
+
+      # TODO: Consider adding hosts for these Server groups (that are used)
       "openvpn" => [],
       "plausible" => [],
     }
