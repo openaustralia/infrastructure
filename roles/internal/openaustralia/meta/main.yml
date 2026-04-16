@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: your name
-  description:
+  description: ""
   company: your company (optional)
   # Some suggested licenses:
   # - BSD (default)
@@ -11,7 +11,7 @@ galaxy_info:
   # - Apache
   # - CC-BY
   license: license (GPLv2, CC-BY, etc)
-  min_ansible_version: 1.2
+  min_ansible_version: "1.2"
   #
   # Below are all platforms currently available. Just uncomment
   # the ones that apply to your role. If you don't see your
@@ -121,32 +121,33 @@ galaxy_info:
   #- system
   #- web
 dependencies:
-  # rvm actually has some trouble now. I think it's old certs on this version of the OS
-  # which is really not great.
 
-  # # - RVM Ruby (New Server)
-  # - role: rvm.ruby
-  #   rvm1_rubies:
-  #     - ruby-3.4.9
-  #   when: "'openaustralia_new' in group_names"
+  - role: remove_rvm
+    tags:
+      - cleanup
+      - ruby
+    when: "'openaustralia_php5' not in group_names"
 
-# - RVM Ruby (Old Server)
-  - role: rvm.ruby
-    rvm1_rubies:
-      - ruby-2.7.2
-      - ruby-2.7.8
+  - role: remove_mise
+    tags:
+      - cleanup
+      - ruby
 
-    rvm1_install_flags: "--auto-dotfiles" # Remove --user-install from defaults
-    rvm1_user: root # Need root account to access system location
-    # Increase timeout on curl. For some reason some requests are taking too long
-    rvm1_ruby_install_flags: "--max-time 20"
-    # Don't want us updating rvm on every run by default
-    # rvm1_rvm_check_for_updates: false
-    # Use round-robin pool of gpg key servers to avoid timeout
-    rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
-    rvm1_bundler_install: true
+  # Modern ruby on the new host
+  - role: zzet.rbenv
+    when: "'openaustralia_new' in group_names"
+    tags:
+      - ruby
+    rbenv:
+      env: user
+      version: v1.1.2
+      default_ruby: "{{ ruby_version }}"
+      rubies:
+        - version: "{{ ruby_version }}"
+        - version: ruby-2.7.8
+    rbenv_users:
+      - deploy
 
-  
   # Duplicity backup disabled - replaced by restic (Dec 2025)
   # Duplicity used 55.6 GiB vs restic ~15.5 GiB for 16 GB source
   # Also duplicity had been failing since Aug 2024 due to stale lockfile
@@ -171,6 +172,8 @@ dependencies:
       - backup
 
   - role: nickhammond.logrotate
+    tags:
+      - logrotate
     logrotate_scripts:
       - name: production
         path: "/srv/www/production/log/*_log"
@@ -188,3 +191,4 @@ dependencies:
           - compress
           - missingok
           - copytruncate
+
