@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -75,7 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "redis.test",
 
         "righttoknow.org.au.test",
-        "theyvoteforyou.org.au.test",
+        "theyvoteforyou.org.au.test"
 
       ],
       # Services required by the servers 192.168.56.1x
@@ -97,16 +99,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "theyvoteforyou" => ["theyvoteforyou.org.au.test"],
 
       # Requirements
-      "requires_mysql" => ["newprod.openaustralia.org.au.test", "theyvoteforyou.org.au.test", "web.metabase.oaf.org.au.test"],
+      "requires_mysql" => ["newprod.openaustralia.org.au.test", "theyvoteforyou.org.au.test",
+                           "web.metabase.oaf.org.au.test"],
       "requires_mysql_5" => ["openaustralia.org.au.test"],
-      "requires_postgresql" => ["theyvoteforyou.org.au.test", "righttoknow.org.au.test", "web.metabase.oaf.org.au.test", "web.planningalerts.org.au.test"],
+      "requires_postgresql" => ["theyvoteforyou.org.au.test", "righttoknow.org.au.test",
+                                "web.metabase.oaf.org.au.test", "web.planningalerts.org.au.test"],
 
       # Empty list just so ansible doesn't complain it doesn't know about these cloud servers
       "ec2" => [],
 
       # TODO: Consider adding hosts for these Server groups (that are used)
       "openvpn" => [],
-      "plausible" => [],
+      "plausible" => []
     }
     tags = ENV["TAGS"].to_s.gsub(/[^A-Z0-9_]+/i, ",").split(",").reject { |s| s.to_s == "" }
     if tags.any?
@@ -141,7 +145,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "web.planningalerts.org.au.test" => "192.168.56.24",
     "righttoknow.org.au.test" => "192.168.56.25",
     # so they can track production versions more accurately?
-    "theyvoteforyou.org.au.test" => "192.168.56.26",
+    "theyvoteforyou.org.au.test" => "192.168.56.26"
     # TODO: Do we want to seperate out the postgres for PA and everything else
   }
 
@@ -153,7 +157,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define hostname, primary: (hostname == primary_host) do |host|
       host.vm.box = case hostname
                     # Only a few services so far are using a more recent version of Ubuntu
-                    when "web.metabase.oaf.org.au.test", "redis.test", "web.planningalerts.org.au.test", "postgresql.test", "newprod.openaustralia.org.au.test"
+                    when "web.metabase.oaf.org.au.test", "redis.test", "web.planningalerts.org.au.test",
+                         "postgresql.test", "newprod.openaustralia.org.au.test"
                       # jammy (22.04 LTS) "standard" support ends in April 2027
                       "ubuntu/jammy64"
                     when "theyvoteforyou.org.au.test"
