@@ -366,6 +366,18 @@
   notify: nginx restart
   when: "'righttoknow_production' in group_names"
 
+- name: Copy application skylight.io configuration (production)
+  template:
+    src: skylight.yml
+    dest: "/srv/www/{{ item }}/shared/"
+    owner: deploy
+    group: deploy
+  with_items:
+    - production
+  notify: nginx reload
+  when: "'righttoknow_production' in group_names"
+
+
 - name: Apply Alaveteli config (staging)
   template:
     src: general.yml
