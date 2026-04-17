@@ -173,28 +173,28 @@ check-righttoknow: $(ANSIBLE_DEPENDENCIES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --check --diff
 check-planningalerts: $(ANSIBLE_DEPENDENCIES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --check --diff
-check-theyvoteforyou: $(ANSIBLE_DEPENDENCIES) stage_required
+check-theyvoteforyou: $(ANSIBLE_DEPENDENCIES) # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --check --diff
-check-oaf: $(ANSIBLE_DEPENDENCIES) stage_required
+check-oaf: $(ANSIBLE_DEPENDENCIES) # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --check --diff
 check-openaustralia: $(ANSIBLE_DEPENDENCIES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --check --diff
-check-metabase: $(ANSIBLE_DEPENDENCIES) stage_required
+check-metabase: $(ANSIBLE_DEPENDENCIES) # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --check --diff
 
 # These make changes 
 apply-righttoknow: $(ANSIBLE_DEPENDENCIES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --diff
-apply-planningalerts: $(ANSIBLE_DEPENDENCIES) stage_required
+apply-planningalerts: $(ANSIBLE_DEPENDENCIES) # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --diff
-apply-theyvoteforyou: $(ANSIBLE_DEPENDENCIES) stage_required
+apply-theyvoteforyou: $(ANSIBLE_DEPENDENCIES) # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --diff
-apply-oaf: $(ANSIBLE_DEPENDENCIES) stage_required
+apply-oaf: $(ANSIBLE_DEPENDENCIES) # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --diff
 apply-openaustralia: $(ANSIBLE_DEPENDENCIES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --diff
 
-apply-metabase: $(ANSIBLE_DEPENDENCIES) stage_required
+apply-metabase: $(ANSIBLE_DEPENDENCIES) # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
 
 # Update ssh keys on all servers
