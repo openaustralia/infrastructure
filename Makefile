@@ -2,13 +2,13 @@
         apply-planningalerts apply-righttoknow apply-rtk-prod apply-rtk-staging apply-theyvoteforyou \
         check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
         check-rtk-prod check-rtk-staging check-theyvoteforyou \
-        clean clobber collections help install-linters keybase letsencrypt lint production retry roles \
+        clean clobber help install-linters keybase letsencrypt lint production retry roles \
         show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-init tf-plan \
         update-github-ssh-keys vagrant venv yaml-lint
 
-ANSIBLE_DEPENDENCIES := .keybase roles venv
+ANSIBLE_DEPENDENCIES := .keybase .make/roles venv
 
-_STAGE := $(if $(STAGE),_$(STAGE),)
+_STAGE := $(if $(filter-out all,$(STAGE)),_$(STAGE),)
 
 ANSIBLE_TAGS := $(shell echo "$(TAGS)" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//' | sed 's/,$$//')
 ANSIBLE_SKIP_TAGS := $(shell echo "$(SKIP_TAGS)" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//' | sed 's/,$$//')
@@ -57,19 +57,19 @@ help:
 	@echo "  clean                               Remove virtualenv, external roles, retry file, collections, keybase symlink"
 	@echo "  clobber                             clobber everything make all created (clean + removes .vagrant and log)"
 	@echo ""
-	@echo "  check-righttoknow STAGE=<stage>     Dry-run Ansible for righttoknow hosts"
-	@echo "  check-planningalerts STAGE=<stage>  Dry-run Ansible for planningalerts hosts"
-	@echo "  check-theyvoteforyou STAGE=<stage>  Dry-run Ansible for theyvoteforyou hosts"
-	@echo "  check-oaf STAGE=<stage>             Dry-run Ansible for oaf hosts"
-	@echo "  check-openaustralia STAGE=<stage>   Dry-run Ansible for openaustralia hosts"
-	@echo "  check-metabase STAGE=<stage>        Dry-run Ansible for metabase hosts"
+	@echo "  check-righttoknow STAGE=<stage>     Dry-run Ansible for righttoknow production/staging/all host/s"
+	@echo "  check-planningalerts                Dry-run Ansible for planningalerts hosts"
+	@echo "  check-theyvoteforyou                Dry-run Ansible for theyvoteforyou host"
+	@echo "  check-oaf                           Dry-run Ansible for oaf host"
+	@echo "  check-openaustralia STAGE=<stage>   Dry-run Ansible for openaustralia new/old/all host/s"
+	@echo "  check-metabase                      Dry-run Ansible for metabase host"
 	@echo ""
-	@echo "  apply-righttoknow STAGE=<stage>     Apply Ansible changes to righttoknow hosts"
-	@echo "  apply-planningalerts STAGE=<stage>  Apply Ansible changes to planningalerts hosts"
-	@echo "  apply-theyvoteforyou STAGE=<stage>  Apply Ansible changes to theyvoteforyou hosts"
-	@echo "  apply-oaf STAGE=<stage>             Apply Ansible changes to oaf hosts"
-	@echo "  apply-openaustralia                 Apply Ansible changes to openaustralia hosts"
-	@echo "  apply-metabase                      Apply Ansible changes to metabase hosts"
+	@echo "  apply-righttoknow STAGE=<stage>     Apply Ansible changes to righttoknow production/staging/all host/s"
+	@echo "  apply-planningalerts                Apply Ansible changes to planningalerts hosts"
+	@echo "  apply-theyvoteforyou                Apply Ansible changes to theyvoteforyou host"
+	@echo "  apply-oaf                           Apply Ansible changes to oaf host"
+	@echo "  apply-openaustralia STAGE=<stage>   Apply Ansible changes to openaustralia new/old/all host/s"
+	@echo "  apply-metabase                      Apply Ansible changes to metabase host"
 	@echo ""
 	@echo "Extra vars:"
 	@echo "  STAGE          Target stage, e.g. STAGE=new or old or staging or '' (required by check-*/apply-* targets)"
@@ -109,13 +109,18 @@ venv: .venv/bin/activate
 	.venv/bin/pip install -Ur requirements.txt
 	touch .venv/bin/activate
 
-collections: venv roles/requirements.yml
+.make:
+	mkdir -p .make
+
+.make/collections: .venv/bin/activate roles/requirements.yml | .make
 	.venv/bin/ansible-galaxy collection install -r roles/requirements.yml
+	touch .make/collections
 
-roles/external: venv collections roles/requirements.yml
+.make/roles: .make/collections .venv/bin/activate roles/requirements.yml | .make
 	.venv/bin/ansible-galaxy install -r roles/requirements.yml -p roles/external
+	touch .make/roles
 
-roles: roles/external
+roles: .make/roles
 
 all: $(ANSIBLE_DEPENDENCIES)
 	.venv/bin/ansible-playbook site.yml
@@ -147,7 +152,7 @@ show-rds-facts: check-host $(ANSIBLE_DEPENDENCIES)
 
 # Delete all files that are normally created by running make goals
 clean:
-	rm -rf .venv roles/external site.retry collections .keybase
+	rm -rf .venv roles/external site.retry collections .keybase .make
 	rm -rf terraform/.terraform
 
 clobber: clean
@@ -165,13 +170,13 @@ tf-apply:
 
 stage_required:
 ifndef STAGE
-	$(error STAGE is required, for example: STAGE=staging or STAGE=production or STAGE= for both)
+	$(error STAGE is required, for example: STAGE=staging or production,new,old or STAGE=all for everything)
 endif
 
 # Checks only
 check-righttoknow: $(ANSIBLE_DEPENDENCIES) stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --check --diff
-check-planningalerts: $(ANSIBLE_DEPENDENCIES) stage_required
+check-planningalerts: $(ANSIBLE_DEPENDENCIES) # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --check --diff
 check-theyvoteforyou: $(ANSIBLE_DEPENDENCIES) # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --check --diff
