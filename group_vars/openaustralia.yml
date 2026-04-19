@@ -100,3 +100,5 @@ domains_for_certbot:
 ruby_manager: rbenv
 ruby_versions:
   - ruby-3.4.9
+rbenv_extra_depends:
+  - libyaml-dev
