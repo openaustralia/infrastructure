@@ -201,6 +201,12 @@
       # rvm1_rvm_version: "head"
       # rvm1_gpg_key_server: 'rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"'
 
+    # Add deploy user to group rvm
+    - role: internal/rvm.group
+      tags:
+        - ruby
+      when: "(ruby_manager | default('')) == 'rvm'"
+
 #    - role: install_mise
 #      tags:
 #        - ruby

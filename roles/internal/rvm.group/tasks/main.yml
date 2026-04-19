@@ -1,0 +1,9 @@
+# File: internal/rvm.group/tasks/main.yml
+---
+
+- name: Add deploy user to rvm group
+  become: true
+  user:
+    name: deploy
+    groups: rvm
+    append: yes
