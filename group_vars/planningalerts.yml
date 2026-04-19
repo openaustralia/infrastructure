@@ -67,5 +67,5 @@ logs:
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
 
 ruby_manager: 'rvm'
-rub_versions:
+ruby_versions:
     - ruby-3.3.4
