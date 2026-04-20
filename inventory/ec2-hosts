@@ -60,19 +60,17 @@ ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 [proxy]
 au.proxy.oaf.org.au
 
-# Group for all sites that need information on the MySQL 8.x RDS instance
+# Group for all sites that use and thus need information on the MySQL 8.x RDS instance
 [requires_mysql:children]
 openaustralia_new
 theyvoteforyou
-metabase
 
-# Group for all sites that need information on the MySQL 5.7 RDS instance
+# Group for all sites that use and need information on the MySQL 5.7 RDS instance
 [requires_mysql_5:children]
 openaustralia_old
 
-# Group for all sites that need information on the PostgreSQL RDS instance
+# Group for all sites that use and need information on the PostgreSQL RDS instance
 [requires_postgresql:children]
-theyvoteforyou
 righttoknow
 metabase
 planningalerts
