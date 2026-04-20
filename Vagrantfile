@@ -88,7 +88,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Servers
     "web.metabase.oaf" => { node: 20,
                             box: "ubuntu/jammy64",
-                            groups: ["metabase", "requires_mysql", "requires_postgresql"] },
+                            groups: ["metabase", "requires_postgresql"] },
     "oaf" => { node: 21,
                box: "ubuntu/bionic64",
                groups: ["oaf"] },
@@ -113,7 +113,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "theyvoteforyou" => { node: 26,
                           box: "ubuntu/focal64",
                           aliases: STANDARD_ALIASES,
-                          groups: ["theyvoteforyou", "requires_mysql", "requires_postgresql"] },
+                          groups: ["theyvoteforyou", "requires_mysql"] },
     # FIXME: Has not been constructed, and is not in any (extra) group
     # "vpn.oaf" => { node: 27,
     #                       box: "ubuntu/jammy64",
