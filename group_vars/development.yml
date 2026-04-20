@@ -6,5 +6,5 @@ planningalerts_db_host: 192.168.56.11
 
 newrelic_license_key: null
 devsite: true
-rds_admin_password: 1234567890
+rds_admin_password: "test_password"
 nrinfragent_state: absent
