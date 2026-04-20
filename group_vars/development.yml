@@ -10,3 +10,5 @@ newrelic_license_key: null
 devsite: true
 rds_admin_password: "test_password"
 nrinfragent_state: absent
+
+db_host: "{{ postgresql_host if 'requires_postgresql' in group_names else mysql_host }}"
