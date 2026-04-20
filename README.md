@@ -210,7 +210,7 @@ There's a very handy `Makefile` included which will:
 Simply run
 
 ```
-make
+make roles vagrant
 ```
 
 ### <a name='AddtheAnsibleVaultpassword'></a>Add the Ansible Vault password
@@ -230,12 +230,11 @@ Windows; or a remote Ubuntu VM running headless - there's a helper script
 at `bin/headless-keybase.sh` which will help you run the Keybase services
 as user-space systemd units.
 
-The first time you run `make`, it will try to create `.keybase` as a symlink to
-the place where Keybase makes the files available. This is often `/keybase` on
-linux desktops. On headless systems it might be under `/run/user/`.
+The first time you run `make` on a command that uses ansible, it will try to create the `.keybase`, symlinking it from the first
+common location for keybase that exists (on MacOS and Linux). It will fall back to actually asking keybase for its mountdir
+which requires keybase to be running. 
 
-For Mac users, you may need to run `make macos-keybase`, which forces the `.keybase`
-folder to symlink to `/Volumes/Keybase`.
+Use `make keybase` to check you have the required permissions.
 
 Once this is done, the symlinks to .*-vault-pass inside the repo
 should point to the password files. If this doesn't work you may need to update these files yourself.
@@ -267,15 +266,21 @@ If it's already up you can re-run Ansible provisioning with:
 
 ### <a name='Provisioningproductionservers'></a>Provisioning production servers
 
-Provision all running servers with:
+Provision all running servers (production and staging) with:
 
-    make production
+    make all
 
 This will create a Python virtualenv in `venv`; install ansible inside it; and install required roles from ansible-galaxy inside `roles/external`
 
 If you just want to provision a single server:
 
-    .venv/bin/ansible-playbook -i ec2-hosts site.yml -l planningalerts
+    make apply-planningalerts
+
+or where there are multiple servers, specify which one you want to provision:
+
+     STAGE=old make apply-openaustralia
+
+To provision all stages, just specify `STAGE=`
 
 ### <a name='ForciblyrenewingLetsEncryptcertificatesonproductionservers'></a>Forcibly renewing LetsEncrypt certificates on production servers
 
