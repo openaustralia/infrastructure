@@ -47,7 +47,6 @@ help:
 	@echo "  show-facts host=<host>              Show all Ansible facts for a host"
 	@echo "  show-rds-facts host=<host>          Show RDS debug facts for a host"
 	@echo "  lint                                Run yamllint and ansible-lint on roles and site.yml"
-	@echo "  install-linters                     Install yamllint and ansible-lint into the virtualenv"
 	@echo "  tf-init                             Run terraform init in the terraform directory"
 	@echo "  tf-plan                             Run terraform plan in the terraform directory"
 	@echo "  tf-apply                            Run terraform apply in the terraform directory"
@@ -206,8 +205,6 @@ apply-metabase: $(ANSIBLE_DEPENDENCIES) # stage_required
 update-github-ssh-keys: $(ANSIBLE_DEPENDENCIES)
 	.venv/bin/ansible-playbook site.yml --tags userkeys
 
-install-linters: venv
-	.venv/bin/pip install --upgrade pip ansible-lint yamllint
 
 yaml-lint: venv
 	.venv/bin/yamllint roles/*.yml site.yml

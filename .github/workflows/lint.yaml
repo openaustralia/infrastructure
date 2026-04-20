@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v6
       - run: pip install virtualenv
-      - run: make install-linters
+      - run: make venv
       - run: make ansible-lint
         continue-on-error: true # this means it does not break the build
 
@@ -23,5 +23,5 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v6
       - run: pip install virtualenv
-      - run: make install-linters
+      - run: make venv
       - run: make yaml-lint
