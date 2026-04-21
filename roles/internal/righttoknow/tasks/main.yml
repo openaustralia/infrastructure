@@ -12,7 +12,7 @@
   apt_repository:
     repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
-    update_cache: yes
+    update_cache: true
 
 - name: Install nginx and passenger
   apt:
@@ -191,9 +191,9 @@
 - name: Enable and start sidekiq (staging)
   systemd:
     name: sidekiq
-    enabled: yes
+    enabled: true
     state: started
-    daemon_reload: yes
+    daemon_reload: true
   when: "'righttoknow_staging' in group_names"
 
 - name: Install sidekiq systemd unit (Production)
@@ -213,9 +213,9 @@
 - name: Enable and start sidekiq (production)
   systemd:
     name: sidekiq
-    enabled: yes
+    enabled: true
     state: started
-    daemon_reload: yes
+    daemon_reload: true
   when: "'righttoknow_production' in group_names"
 
 - name: Link run-with-lockfile.sh so it's available system-wide
@@ -309,7 +309,7 @@
     dest: /etc/nginx/sites-available
     owner: root
     group: root
-    mode: 644
+    mode: "0644"
   notify: nginx reload
   when: "'righttoknow_production' in group_names"
 
@@ -319,7 +319,7 @@
     dest: /etc/nginx/sites-available/{{ item }}
     owner: root
     group: root
-    mode: 644
+    mode: "0644"
   vars:
     domain: "{{ righttoknow_domain }}"
     stage: "{{ item }}"
@@ -419,7 +419,7 @@
   user:
     name: deploy
     groups: adm
-    append: yes
+    append: true
 
 - name: Install varnish
   apt:

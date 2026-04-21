@@ -18,7 +18,7 @@
   apt_repository:
     repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
-    update_cache: yes
+    update_cache: true
 
 - name: Install nginx and passenger
   apt:
@@ -259,7 +259,7 @@
   cron:
     user: deploy
     name: PATH
-    env: yes
+    env: true
     job: /usr/local/bin:/usr/bin:/bin
 
 - name: Set up daily load cron job
@@ -308,9 +308,9 @@
   apt_repository:
     repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     state: present
-    update_cache: yes
+    update_cache: true
 
-- name: Install latest Chrome
+- name: Install latest Chrome # noqa: package-latest
   apt:
     pkg: google-chrome-stable
     # We want to make sure we're always running the latest version
@@ -319,7 +319,7 @@
 - name: Get latest version number for chromedriver
   uri:
     url: "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"
-    return_content: yes
+    return_content: true
     headers:
       Content-Type: "text/plain"
   register: latest_chromedriver
@@ -328,7 +328,7 @@
   unarchive:
     src: "https://chromedriver.storage.googleapis.com/{{ latest_chromedriver.content|trim }}/chromedriver_linux64.zip"
     dest: /usr/local/bin
-    remote_src: yes
+    remote_src: true
   when: not ansible_check_mode
 
 # We want this directory to exist in development too so that

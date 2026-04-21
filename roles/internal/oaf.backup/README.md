@@ -12,7 +12,7 @@ Ansible role which manage backups. Support file backups, postgresql, mysql, mong
 The role variables and default values.
 
 ```yaml
-backup_enabled: yes             # Enable the role
+backup_enabled: true             # Enable the role
 backup_remove: no               # Set yes for uninstall the role from target system
 
 backup_user: root               # Run backups as user
@@ -27,7 +27,7 @@ backup_duplicity_version:       # Set duplicity version
 
 # Logging
 backup_logdir: /var/log/duply   # Place where logs will be kept
-backup_logrotate: yes           # Setup logs rotation
+backup_logrotate: true           # Setup logs rotation
 
 # PostgreSQL
 backup_postgres_user: postgres
