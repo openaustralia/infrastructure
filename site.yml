@@ -1,5 +1,8 @@
-## FIRST: edit the `vault_identity_list` in ``ansible.cfg``
-# and make sure  you have all the password files you need.
+# FIRST: check the `vault_identity_list` in `ansible.cfg` using
+# `ls -ld .*pass*`
+# and make sure you have all the password files you need.
+# If you are missing some, then you can override the list using a `.envrc` entry, e.g.:
+# export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"
 
 ## THEN
 
@@ -29,19 +32,27 @@
 # If it does fall back, set ansible_python_interpreter to /usr/bin/python in that old group
 - hosts: all
   become: true
-  gather_facts: False
-
+  gather_facts: false
+  tags: python
   tasks:
     - name: Install python3 for Ansible if available, otherwise fallback to python2
-      raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python-is-python3) || test -e /usr/bin/python || apt install -y python-minimal
-      changed_when: False
+      raw: >-
+        test -e /usr/bin/python3 ||
+        (apt -y update && apt install -y python-is-python3) ||
+        test -e /usr/bin/python ||
+        apt install -y python-minimal
+      changed_when: false
 
 - hosts: ec2
+  name: "Install python2 requirements"
+  tags:
+    - python
+    - python2
   become: true
   tasks:
     - name: Install python packages
       apt:
-        pkg:  "{{ item }}"
+        pkg: "{{ item }}"
         cache_valid_time: 300
       loop:
         - python-pip
@@ -53,6 +64,13 @@
       pip: name=boto
       when: ansible_python_version is version('3', '<')
 
+- hosts: ec2
+  name: "Install python3 requirements"
+  tags:
+    - python
+    - python3
+  become: true
+  tasks:
     - name: Install python packages
       apt:
         pkg: "{{ item }}"
@@ -67,6 +85,12 @@
       pip: name=boto3
       when: ansible_python_version is version('3', '>=')
 
+- hosts: ec2
+  name: "Gather RDS facts"
+  tags:
+    - rds
+    - facts
+  tasks:
     - name: Get information about the DEPRECATED Mysql 5 instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
@@ -75,17 +99,15 @@
         instance_name: main-database
         region: "{{ ec2_region }}"
       register: rds_mysql5
-      tags: facts
       # Run this task even when running ansible-playbook with "--check"
-      check_mode: no
+      check_mode: false
       when: "'requires_mysql_5' in group_names"
 
     - name: Display information about the DEPRECATED Mysql 5 instance
       debug:
         var: "rds_mysql5"
-      tags: facts
       when: "(show_rds_debug | default(false) | bool) and ('requires_mysql_5' in group_names)"
-    
+
     - name: Get information about the Mysql 8 instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
@@ -94,15 +116,13 @@
         instance_name: maindb
         region: "{{ ec2_region }}"
       register: rds_mysql8
-      tags: facts
       # Run this task even when running ansible-playbook with "--check"
-      check_mode: no
+      check_mode: false
       when: "'requires_mysql' in group_names"
 
     - name: Display information about the Mysql 8 instance
       debug:
         var: "rds_mysql8"
-      tags: facts
       when: "(show_rds_debug | default(false) | bool) and ('requires_mysql' in group_names)"
 
     - name: Get information about the postgresql RDS instance
@@ -113,15 +133,13 @@
         instance_name: postgresql
         region: "{{ ec2_region }}"
       register: rds_postgresql
-      tags: facts
       # Run this task even when running ansible-playbook with "--check"
-      check_mode: no
+      check_mode: false
       when: "'requires_postgresql' in group_names"
 
     - name: Display information about the postgresql RDS instance
       debug:
         var: "rds_postgresql"
-      tags: facts
       when: "(show_rds_debug | default(false) | bool) and ('requires_postgresql' in group_names)"
 
     - name: Get information about the planningalerts RDS instance
@@ -132,71 +150,151 @@
         instance_name: planningalerts
         region: "{{ ec2_region }}"
       register: rds_planningalerts
-      tags: facts
       # Run this task even when running ansible-playbook with "--check"
-      check_mode: no
+      check_mode: false
       when: "'requires_postgresql' in group_names"
 
     - name: Displays information about the planningalerts RDS instance
       debug:
         var: "rds_planningalerts"
-      tags: facts
       when: "(show_rds_debug | default(false) | bool) and ('requires_postgresql' in group_names)"
 
 - hosts: all
   become: true
+  tags: base-server
+  name: "Install base server packages"
   roles:
-    - base-server
+    - internal/base-server
+
+# Change to expecting a variable ruby_versions, which will have the ruby versions to install (set elsewhere)
+
+- hosts: all
+  name: "Setup ruby managers and install versions"
+  become: true
+  roles:
+    - role: internal/remove_rbenv
+      rbenv_users:
+        - deploy
+      tags:
+        - cleanup
+        - ruby
+        - rbenv
+      when: "ruby_manager != 'rbenv'"
+
+    - role: internal/remove_rvm
+      tags:
+        - cleanup
+        - ruby
+        - rvm
+      when: "ruby_manager != 'rvm'"
+
+    - role: internal/remove_mise
+      tags:
+        - cleanup
+        - ruby
+        - mise
+      when: "ruby_manager != 'mise'"
+
+    - role: external/zzet.rbenv
+      tags:
+        - ruby
+        - rbenv
+      when: "ruby_manager == 'rbenv'"
+      rbenv:
+        env: user
+        version: v1.1.2
+        default_ruby: "{{ ruby_versions | first }}"
+        rubies: "{{ ruby_versions | map('community.general.dict_kv', 'version') | list }}"
+      rbenv_users:
+        - deploy
+
+    - role: external/rvm.ruby
+      tags:
+        - ruby
+        - rvm
+      when: "ruby_manager == 'rvm'"
+      rvm1_rubies: "{{ ruby_versions }}"
+      rvm1_install_flags: "--auto-dotfiles"
+      rvm1_install_path: /usr/local/rvm
+      rvm1_user: root
+      rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
+      # may need this for planningalerts
+      # rvm1_rvm_version: "head"
+      # rvm1_gpg_key_server: 'rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"'
+
+    # Add deploy user to group rvm
+    - role: internal/rvm.group
+      tags:
+        - ruby
+        - rvm
+      when: "ruby_manager == 'rvm'"
+
+#    - role: install_mise
+#      tags:
+#        - ruby
+#      when: "ruby_manager == 'mise'"
+#      mise_ruby_versions: "{{ ruby_versions }}"
 
 # vagrant equivalent of AWS rds_instance
 - hosts: mysql
+  tags: mysql
   become: true
   roles:
     - mysql
 
 # vagrant equivalent of AWS rds_instance
 - hosts: postgresql
+  tags: postgresql
   become: true
   roles:
     - postgresql
 
 - hosts: righttoknow
+  tags: righttoknow
   become: true
   roles:
     - righttoknow
 
 - hosts: planningalerts
+  tags: planningalerts
   become: true
   roles:
     - planningalerts
 
 - hosts: theyvoteforyou
+  tags: theyvoteforyou
   become: true
   roles:
     - theyvoteforyou
 
 - hosts: openaustralia
+  tags: openaustralia
   become: true
   roles:
     - openaustralia
 
 - hosts: proxy
+  tags: proxy
   become: true
   roles:
     - proxy
 
 - hosts: metabase
+  tags: metabase
   become: true
   roles:
     - metabase
 
 - hosts: openvpn
+  tags: openvpn
   become: true
   roles:
     - internal/openvpn
 
 # vagrant equivalent of AWS redis service
 - hosts: redis
+  name: "Install redis"
+  tags: redis
   become: true
   tasks:
     - name: Install redis

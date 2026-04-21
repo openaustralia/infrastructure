@@ -5,7 +5,7 @@
 - name: Install mysql 5.7 server
   apt:
     pkg: mysql-server
-    update_cache: yes
+    update_cache: true
 
 - name: Install dependency for following command
   apt: pkg=python-mysqldb
@@ -14,6 +14,7 @@
   copy:
     src: mysqld.cnf
     dest: /etc/mysql/mysql.conf.d
+    mode: '0644'
   notify: mysql restart
 
 - name: Create admin user

@@ -38,5 +38,15 @@ github_users:
     "simonzippy",
   ]
 
-# User python3
+
+# Use python3
 ansible_python_interpreter: /usr/bin/python3
+
+ruby_manager_bundle_path:
+  rvm:   "/usr/local/rvm/wrappers/default/bundle"
+  rbenv: "/home/deploy/.rbenv/shims/bundle"
+  mise:  "/home/deploy/.local/bin/mise exec -- bundle"
+
+bundle_path: "{{ ruby_manager_bundle_path[ruby_manager] }}"
+
+ruby_manager: none

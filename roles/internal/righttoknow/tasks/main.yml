@@ -10,9 +10,9 @@
     dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
 - name: Add passenger apt repository
   apt_repository:
-    repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
+    repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
-    update_cache: yes
+    update_cache: true
 
 - name: Install nginx and passenger
   apt:
@@ -125,7 +125,7 @@
 # We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
 # we use a later version of bundler it will complain and not deploy
 - name: Install bundler gem (staging)
-  command: bash -lc "rbenv shell {{ ruby_version_staging}}; gem install bundler --version 1.14.6"
+  command: bash -lc "rbenv shell {{ ruby_version_staging }}; gem install bundler --version 1.14.6"
   args:
     creates: "/home/deploy/.rbenv/versions/{{ ruby_version_staging }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
@@ -191,9 +191,9 @@
 - name: Enable and start sidekiq (staging)
   systemd:
     name: sidekiq
-    enabled: yes
+    enabled: true
     state: started
-    daemon_reload: yes
+    daemon_reload: true
   when: "'righttoknow_staging' in group_names"
 
 - name: Install sidekiq systemd unit (Production)
@@ -213,9 +213,9 @@
 - name: Enable and start sidekiq (production)
   systemd:
     name: sidekiq
-    enabled: yes
+    enabled: true
     state: started
-    daemon_reload: yes
+    daemon_reload: true
   when: "'righttoknow_production' in group_names"
 
 - name: Link run-with-lockfile.sh so it's available system-wide
@@ -278,8 +278,8 @@
     owner: deploy
     group: deploy
   vars:
-    - stage: "{{ item }}"
-    - password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
+    stage: "{{ item }}"
+    password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
@@ -309,7 +309,7 @@
     dest: /etc/nginx/sites-available
     owner: root
     group: root
-    mode: 644
+    mode: "0644"
   notify: nginx reload
   when: "'righttoknow_production' in group_names"
 
@@ -319,7 +319,7 @@
     dest: /etc/nginx/sites-available/{{ item }}
     owner: root
     group: root
-    mode: 644
+    mode: "0644"
   vars:
     domain: "{{ righttoknow_domain }}"
     stage: "{{ item }}"
@@ -359,7 +359,7 @@
 
 - name: Apply Alaveteli Storage Config (production)
   template:
-    src: storage.yml
+    src: storage.yml.j2
     dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
@@ -419,7 +419,7 @@
   user:
     name: deploy
     groups: adm
-    append: yes
+    append: true
 
 - name: Install varnish
   apt:

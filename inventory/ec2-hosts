@@ -6,10 +6,10 @@
 #
 # Other inventory files:
 
-# KEEP EMPTY - see development-hosts
+# KEEP EMPTY - see `Vagrantfile` for development inventory
 [development]
 
-# KEEP EMPTY - see Vagrantfile
+# KEEP EMPTY - used by `Vagrantfile` to set up rds equivalents
 [mysql]
 [postgresql]
 [redis]
@@ -88,6 +88,4 @@ staging.righttoknow.org.au
 
 [theyvoteforyou]
 theyvoteforyou.org.au
-
-
 

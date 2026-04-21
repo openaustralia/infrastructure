@@ -15,14 +15,14 @@
   get_url:
     url: https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
     dest: "{{ awscwa.path }}"
-  when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
+  when: "'ec2' in group_names and not cloudwatch_installed.stat.exists"
 
 - name: Install CloudWatch agent
-  shell: "dpkg -i -E ./amazon-cloudwatch-agent.deb"
+  command: "dpkg -i -E ./amazon-cloudwatch-agent.deb"
   args:
     chdir: "{{ awscwa.path }}"
     creates: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
-  when: "'ec2' in group_names and cloudwatch_installed.stat.exists == False"
+  when: "'ec2' in group_names and not cloudwatch_installed.stat.exists"
 
 - name: Configure CloudWatch
   template:
@@ -35,6 +35,6 @@
 - name: Configure CloudWatch service
   service:
     name: amazon-cloudwatch-agent
-    enabled: yes
+    enabled: true
     state: started
   when: "'ec2' in group_names"
