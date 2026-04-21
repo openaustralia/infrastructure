@@ -1,5 +1,6 @@
 # For local development (under vagrant we don't want the cron jobs generating email)
-- cronvar:
+- name: "Set cron variables"
+  cronvar:
     name: MAILTO
     # Also sends to #righttoknow-log slack channel
     value: web-administrators@openaustralia.org,k6g2t1e7e6u1p0f2@oaf.slack.com

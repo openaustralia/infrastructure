@@ -18,7 +18,7 @@
     state: directory
     owner: deploy
     group: deploy
-    path: "{{item}}"
+    path: "{{ item }}"
   with_items:
     - /srv/www/production
     - /srv/www/production/shared
@@ -46,9 +46,9 @@
     group: deploy
 
 - name: Allow deploy user to control services
-  copy:
+  template:
     src: deploy_service_control
-    dest: /etc/sudoers.d/
+    dest: /etc/sudoers.d/deploy_service_control
     validate: visudo -cf %s
 
 - name: Install postfix to handle incoming email
@@ -74,14 +74,14 @@
 # Crude way of running postconf below. Will always change things and not
 # restart postfix when needed
 
-- name: Set postfix pipe handler
+- name: Set postfix pipe handler  # noqa: no-changed-when
   command: postconf -M -e "planningalerts/unix=planningalerts unix - n n - 50 pipe flags=R user=deploy directory=/srv/www/production/current argv=/usr/local/bin/incoming-email.sh"
 
-- name: Set postfix virtual alias
+- name: Set postfix virtual alias  # noqa: no-changed-when
   command:  postconf -e "virtual_alias_maps=regexp:/etc/postfix/virtual_alias"
 
-- name: Set postfix transport maps
+- name: Set postfix transport maps  # noqa: no-changed-when
   command: postconf -e "transport_maps=regexp:/etc/postfix/transport"
 
-- name: Set postfix destination
+- name: Set postfix destination  # noqa: no-changed-when
   command: postconf -e "mydestination=planningalerts.org.au"
