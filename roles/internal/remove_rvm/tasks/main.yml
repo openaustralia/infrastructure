@@ -31,4 +31,3 @@
   file:
     state: absent
     path: /etc/profile.d/rvm.sh
-
