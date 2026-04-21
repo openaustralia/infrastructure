@@ -17,7 +17,6 @@ jobs:
         #continue-on-error: true # this means it does not break the build
         env:
           ANSIBLE_CONFIG: ".github/ansible.cfg"
-          ANSIBLE_ROLES_PATH: "roles:roles/internal:roles/external"
 
   yamllint:
     name: "Yamllint"
