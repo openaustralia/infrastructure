@@ -15,6 +15,9 @@ jobs:
       - run: make venv
       - run: make ansible-lint
         continue-on-error: true # this means it does not break the build
+        env:
+          ANSIBLE_VAULT_IDENTITY_LIST: ""
+          ANSIBLE_ROLES_PATH: "roles:roles/internal:roles/external"
 
   yamllint:
     name: "Yamllint"
