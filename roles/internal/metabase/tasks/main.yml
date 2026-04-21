@@ -2,6 +2,7 @@
 - name: Install dependency for postgresql_db
   apt:
     pkg: python3-psycopg2
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Ensure that we have the Docker repository key
   apt_key:
@@ -13,6 +14,7 @@
 
 - name: Install docker
   apt:
+    lock_timeout: "{{ apt_lock_timeout }}"
     name:
       - docker-ce 
       - docker-ce-cli
@@ -20,10 +22,12 @@
 
 - name: Install dependency for ansible mysql_db module
   apt:
+    lock_timeout: "{{ apt_lock_timeout }}"
     pkg: python3-mysqldb
 
 - name: Install pip
   apt:
+    lock_timeout: "{{ apt_lock_timeout }}"
     pkg: python3-pip
 
 - name: Install docker-compose python library

@@ -11,6 +11,7 @@
     state: present
     update_cache: yes
     cache_valid_time: 3600
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Install AWS CLI and boto3 via pip
   pip:
@@ -133,6 +134,7 @@
   apt:
     name: iptables-persistent
     state: present
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Save iptables rules
   shell: iptables-save > /etc/iptables/rules.v4

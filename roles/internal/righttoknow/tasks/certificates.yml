@@ -32,6 +32,7 @@
 - name: Install varnish and nginx now (for the benefit of certbot)
   apt:
     pkg: "{{ item }}"
+    lock_timeout: "{{ apt_lock_timeout }}"
   with_items:
     - varnish
     - nginx

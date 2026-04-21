@@ -67,7 +67,7 @@
 
 - name: Install dependency for ansible mysql_db module
   when: "'openaustralia_old' in group_names"
-  apt: pkg=python-mysqldb
+  apt: pkg=python-mysqldb lock_timeout="{{ apt_lock_timeout }}"
 
 - name: Create openaustralia databases
   when: "'openaustralia_old' in group_names"
@@ -171,7 +171,7 @@
   notify: reload apache
 
 - name: Install apache now (for the benefit of certbot)
-  apt: pkg=apache2
+  apt: pkg=apache2 lock_timeout="{{ apt_lock_timeout }}"
   when: "'ec2' in group_names"
 
 # Install php5 on xenial requires a few more jumps than usual
@@ -184,6 +184,7 @@
   apt:
     name: "{{ item }}"
     update_cache: yes
+    lock_timeout: "{{ apt_lock_timeout }}"
   with_items:
     - php5.6
     - php5.6-curl
@@ -213,6 +214,7 @@
   apt:
     name: "{{ item }}"
     update_cache: yes
+    lock_timeout: "{{ apt_lock_timeout }}"
   with_items:
     - apache2
     - ghostscript
@@ -481,6 +483,7 @@
 - name: Install postfix so we can mail out from cron jobs
   apt:
     pkg: postfix
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 # For local development (under vagrant we don't want the cron jobs generating email)
 - cronvar:
@@ -495,6 +498,7 @@
   apt:
     pkg: newrelic-php5
     state: absent
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Configure newrelic php monitor
   file:
@@ -522,6 +526,7 @@
 - name: Autoremove unneeded packages
   apt:
     autoremove: yes
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 # We allow the capistrano deploys to restart apache
 - name: Allow deploy user to restart apache

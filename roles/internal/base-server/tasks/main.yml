@@ -3,14 +3,15 @@
 - name: Ensure git is installed
   apt:
     pkg: git
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 # Setup timezone stuff
 
 - name: Install tzdata package
-  apt: pkg=tzdata state=present
+  apt: pkg=tzdata state=present lock_timeout="{{ apt_lock_timeout }}"
 
 - name: Install ACL (required for Ansible to work)
-  apt: pkg=acl state=present
+  apt: pkg=acl state=present lock_timeout="{{ apt_lock_timeout }}"
 
 # We have to do it like this for Ubuntu 16.04
 # See https://bugs.launchpad.net/ubuntu/+source/tzdata/+bug/1554806

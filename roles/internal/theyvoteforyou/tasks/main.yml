@@ -3,6 +3,7 @@
   apt:
     name: apache2
     state: absent
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Add key for passenger
   apt_key:
@@ -13,6 +14,7 @@
   apt:
     name: apt-transport-https
     state: present
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Apt add passenger to list
   apt_repository:
@@ -26,15 +28,18 @@
       - libnginx-mod-http-passenger
       - nginx
     state: present
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Install memcached
   apt:
     pkg: memcached
     state: present
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Install pip
   apt:
     pkg: python3-pip
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Install dependency for following command
   pip:
@@ -158,6 +163,7 @@
 - name: Ensure package to build gem native extensions are installed
   apt:
     pkg: libmysqlclient-dev
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
@@ -284,6 +290,7 @@
 - name: Install postfix so we can mail out from cron jobs
   apt:
     pkg: postfix
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 # TODO: Make this mail to different addresses for development/production
 - name: Mail output of cron
@@ -315,6 +322,7 @@
     pkg: google-chrome-stable
     # We want to make sure we're always running the latest version
     state: latest
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Get latest version number for chromedriver
   uri:

@@ -2,6 +2,7 @@
 - name: Install compiler
   apt:
     pkg: build-essential
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Download tinyproxy source code
   get_url:
