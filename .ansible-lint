@@ -1,2 +1,7 @@
 exclude_paths:
   - roles/external
+# We are not publishing to Galaxy, so these don't matter
+skip_list:
+  - meta-incorrect
+  - meta-no-info
+  - role-name
