@@ -207,9 +207,9 @@ update-github-ssh-keys: $(ANSIBLE_DEPENDENCIES)
 
 
 yaml-lint: venv
-	.venv/bin/yamllint roles/internal/**/*.yml roles/*.yml site.yml
+	.venv/bin/yamllint roles/internal/**/*.yml roles/*.yml site.yml && echo "PASSED yamllint!"
 
 ansible-lint: venv
-	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/**/*.yml roles/*.yml site.yml
+	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/**/*.yml roles/*.yml site.yml && echo "PASSED ansible-lint!"
 
 lint: yaml-lint ansible-lint
