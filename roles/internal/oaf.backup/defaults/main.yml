@@ -4,7 +4,7 @@ backup_enabled: yes             # Enable the role
 backup_remove: no               # Set yes for uninstall the role from target system
 
 backup_user: root               # Run backups as user
-backup_group: "{{backup_user}}"
+backup_group: "{{ backup_user }}"
 
 backup_home: /etc/duply         # Backup configuration directory
 backup_work: /var/duply         # Working directory
