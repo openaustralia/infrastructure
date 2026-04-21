@@ -10,7 +10,7 @@
     dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
 - name: Add passenger apt repository
   apt_repository:
-    repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
+    repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
     update_cache: yes
 
@@ -125,7 +125,7 @@
 # We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
 # we use a later version of bundler it will complain and not deploy
 - name: Install bundler gem (staging)
-  command: bash -lc "rbenv shell {{ ruby_version_staging}}; gem install bundler --version 1.14.6"
+  command: bash -lc "rbenv shell {{ ruby_version_staging }}; gem install bundler --version 1.14.6"
   args:
     creates: "/home/deploy/.rbenv/versions/{{ ruby_version_staging }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
@@ -359,7 +359,7 @@
 
 - name: Apply Alaveteli Storage Config (production)
   template:
-    src: storage.yml
+    src: storage.yml.j2
     dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
