@@ -28,6 +28,17 @@
 
 # Use terraform (see terraform directory) to actually provision ec2 infrastructure
 
+- name: Validate not in multiple requires_ groups
+  hosts: all
+  gather_facts: false
+  tags: facts
+  tasks:
+    - name: Ensure host is not in multiple requires_* groups
+      assert:
+        that:
+          - "(['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
+        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list }}"
+
 # Ensure python3 is available for Ansible (required before gather_facts), with fallback to python2
 # If it does fall back, set ansible_python_interpreter to /usr/bin/python in that old group
 - hosts: all
@@ -61,7 +72,7 @@
     - python2
   become: true
   tasks:
-    - name: Install python packages
+    - name: Install python2 packages
       tags: python
       apt:
         pkg: "{{ item }}"
@@ -100,24 +111,12 @@
       pip: name=boto3
       when: ansible_python_version is version('3', '>=')
 
-- hosts: all
-  name: "Check inventory group membership"
-  tags:
-    - rds
-    - facts
-  become: true
-  tasks:
-    - name: Ensure host is not in multiple requires_* groups
-      assert:
-        that:
-          - "(['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
-        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list }}"
-
 - hosts: ec2
   name: "Gather RDS facts"
   tags:
     - rds
     - facts
+  become: true
   tasks:
     - name: Get information about the RDS instance
       rds:
