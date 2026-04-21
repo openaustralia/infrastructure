@@ -278,8 +278,8 @@
     owner: deploy
     group: deploy
   vars:
-    - stage: "{{ item }}"
-    - password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
+    stage: "{{ item }}"
+    password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
