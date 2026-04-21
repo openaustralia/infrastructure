@@ -166,74 +166,78 @@
   roles:
     - internal/base-server
 
-# Change to expecting a variable ruby_versions, which will have the ruby versions to install (set elsewhere)
+- hosts: all
+  name: "Remove unused ruby managers"
+  become: true
+  tags: 
+    - cleanup
+    - ruby
+  tasks:
+    - name: Remove rbenv
+      tags:
+        - rbenv
+      import_role:
+        name: internal/remove_rbenv
+      vars:
+        rbenv_users:
+          - deploy
+      when: "ruby_manager != 'rbenv'"
+    - name: Remove rvm
+      import_role:
+        name: internal/remove_rvm
+      tags: 
+        - rvm
+      when: "ruby_manager != 'rvm'"
+    - name: Remove mise
+      import_role:
+        name: internal/remove_mise
+      tags: 
+        - mise
+      when: "ruby_manager != 'mise'"
 
 - hosts: all
   name: "Setup ruby managers and install versions"
   become: true
-  roles:
-    - role: internal/remove_rbenv
-      rbenv_users:
-        - deploy
-      tags:
-        - cleanup
-        - ruby
-        - rbenv
-      when: "ruby_manager != 'rbenv'"
-
-    - role: internal/remove_rvm
-      tags:
-        - cleanup
-        - ruby
-        - rvm
-      when: "ruby_manager != 'rvm'"
-
-    - role: internal/remove_mise
-      tags:
-        - cleanup
-        - ruby
-        - mise
-      when: "ruby_manager != 'mise'"
-
-    - role: external/zzet.rbenv
-      tags:
-        - ruby
-        - rbenv
+  tags: 
+    - ruby
+  tasks:
+    - name: Install rbenv
+      import_role:
+        name: external/zzet.rbenv
+      vars:
+        rbenv:
+          env: user
+          version: v1.1.2
+          default_ruby: "{{ ruby_versions | first }}"
+          rubies: "{{ ruby_versions | map('community.general.dict_kv', 'version') | list }}"
+        rbenv_users:
+          - deploy
       when: "ruby_manager == 'rbenv'"
-      rbenv:
-        env: user
-        version: v1.1.2
-        default_ruby: "{{ ruby_versions | first }}"
-        rubies: "{{ ruby_versions | map('community.general.dict_kv', 'version') | list }}"
-      rbenv_users:
-        - deploy
-
-    - role: external/rvm.ruby
-      tags:
-        - ruby
-        - rvm
+    - name: Install rvm
+      import_role:
+        name: external/rvm.ruby
+      vars:
+        rvm1_rubies: "{{ ruby_versions }}"
+        rvm1_install_flags: "--auto-dotfiles"
+        rvm1_install_path: /usr/local/rvm
+        rvm1_user: root
+        rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
       when: "ruby_manager == 'rvm'"
-      rvm1_rubies: "{{ ruby_versions }}"
-      rvm1_install_flags: "--auto-dotfiles"
-      rvm1_install_path: /usr/local/rvm
-      rvm1_user: root
-      rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
       # may need this for planningalerts
       # rvm1_rvm_version: "head"
       # rvm1_gpg_key_server: 'rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"'
 
     # Add deploy user to group rvm
-    - role: internal/rvm.group
-      tags:
-        - ruby
-        - rvm
+    - name: Add deploy user to rvm group
+      import_role:
+        name: internal/rvm.group
       when: "ruby_manager == 'rvm'"
 
 #    - role: install_mise
-#      tags:
-#        - ruby
+#    - name: Install mise
+#      import_role:
+#        name: internal/mise
 #      when: "ruby_manager == 'mise'"
-#      mise_ruby_versions: "{{ ruby_versions }}"
 
 # vagrant equivalent of AWS rds_instance
 - hosts: mysql
