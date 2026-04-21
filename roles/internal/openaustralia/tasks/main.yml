@@ -70,9 +70,8 @@
   apt: pkg=python-mysqldb
 
 - name: Create openaustralia databases
-  when: "'openaustralia_old' in group_names"
   mysql_db:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "oa-{{ item }}"
@@ -81,9 +80,8 @@
     - staging
 
 - name: Create openaustralia user with access to the database (production)
-  when: "'openaustralia_old' in group_names"
   mysql_user:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: oa-production
@@ -92,32 +90,16 @@
     host: "%"
 
 - name: Create mysql user with readonly access to the production openaustralia database for metabase
-  when: "'openaustralia_old' in group_names"
   mysql_user:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: oa-production-readonly
     password: "{{ mysql_production_password_readonly }}"
     priv: 'oa-production.*:SELECT'
     host: "%"
-  run_once: true
 
-# Removed from mysql5 host
-# - name: Create openaustralia user with access to the database (staging)
-#   when: "'openaustralia_old' in group_names"
-#   mysql_user:
-#     login_host: "{{ mysql_5_host }}"
-#     login_user: admin
-#     login_password: "{{ rds_admin_password }}"
-#     name: oa-staging
-#     password: "{{ openaustralia_staging_mysql_password }}"
-#     priv: 'oa-staging.*:ALL'
-#     host: "%"
-
-#This file will always point at the production db
-# Which seems like that's what we want, in development
-- name: Create .my.cnf in development
+- name: Create .my.cnf in development with password for both production and staging
   template:
     src: mysql
     dest: /root/.my.cnf
@@ -125,13 +107,6 @@
     group: root
     mode: "0600"
   when: "'development' in group_names"
-  vars:
-    db_password: "{{ (item == 'production') | ternary(openaustralia_production_mysql_password, openaustralia_staging_mysql_password) }}"
-    stage: "{{ item }}"
-  with_items:
-    - production
-
-
 
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development

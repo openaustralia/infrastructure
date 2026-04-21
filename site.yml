@@ -43,7 +43,7 @@
         apt install -y python-minimal
       changed_when: false
 
-- hosts: ec2
+- hosts: all
   name: "Install python2 requirements"
   tags:
     - python
@@ -64,7 +64,7 @@
       pip: name=boto
       when: ansible_python_version is version('3', '<')
 
-- hosts: ec2
+- hosts: all
   name: "Install python3 requirements"
   tags:
     - python
@@ -85,79 +85,60 @@
       pip: name=boto3
       when: ansible_python_version is version('3', '>=')
 
+- hosts: all
+  name: "Check inventory group membership"
+  tags:
+    - rds
+    - facts
+  become: true
+  tasks:
+    - name: Ensure host is not in multiple requires_* groups
+      assert:
+        that:
+          - "(['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
+        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list }}"
+
 - hosts: ec2
   name: "Gather RDS facts"
   tags:
     - rds
     - facts
   tasks:
-    - name: Get information about the DEPRECATED Mysql 5 instance
+    - name: Get information about the RDS instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
         command: facts
-        instance_name: main-database
+        instance_name: "{{ db_name }}"
         region: "{{ ec2_region }}"
-      register: rds_mysql5
+      register: rds_database
       # Run this task even when running ansible-playbook with "--check"
       check_mode: false
-      when: "'requires_mysql_5' in group_names"
+      when: "db_name is defined"
 
-    - name: Display information about the DEPRECATED Mysql 5 instance
+    - name: Display information about the RDS database
       debug:
-        var: "rds_mysql5"
-      when: "(show_rds_debug | default(false) | bool) and ('requires_mysql_5' in group_names)"
-
-    - name: Get information about the Mysql 8 instance
-      rds:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        command: facts
-        instance_name: maindb
-        region: "{{ ec2_region }}"
-      register: rds_mysql8
-      # Run this task even when running ansible-playbook with "--check"
-      check_mode: false
-      when: "'requires_mysql' in group_names"
-
-    - name: Display information about the Mysql 8 instance
-      debug:
-        var: "rds_mysql8"
-      when: "(show_rds_debug | default(false) | bool) and ('requires_mysql' in group_names)"
-
-    - name: Get information about the postgresql RDS instance
-      rds:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        command: facts
-        instance_name: postgresql
-        region: "{{ ec2_region }}"
-      register: rds_postgresql
-      # Run this task even when running ansible-playbook with "--check"
-      check_mode: false
-      when: "'requires_postgresql' in group_names"
-
-    - name: Display information about the postgresql RDS instance
-      debug:
-        var: "rds_postgresql"
-      when: "(show_rds_debug | default(false) | bool) and ('requires_postgresql' in group_names)"
+        var: "rds_database"
+      tags: facts
+      when: "(show_rds_debug | default(false) | bool) and (db_name is defined)"
 
     - name: Get information about the planningalerts RDS instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
         command: facts
-        instance_name: planningalerts
+        instance_name: "{{ planningalerts_db_name }}"
         region: "{{ ec2_region }}"
       register: rds_planningalerts
       # Run this task even when running ansible-playbook with "--check"
       check_mode: false
-      when: "'requires_postgresql' in group_names"
+      when: "planningalerts_db_name is defined"
 
     - name: Displays information about the planningalerts RDS instance
       debug:
         var: "rds_planningalerts"
-      when: "(show_rds_debug | default(false) | bool) and ('requires_postgresql' in group_names)"
+      tags: facts
+      when: "(show_rds_debug | default(false) | bool) and (planningalerts_db_name is defined)"
 
 - hosts: all
   become: true
