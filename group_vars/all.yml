@@ -48,3 +48,5 @@ ruby_manager_bundle_path:
   mise:  "/home/deploy/.local/bin/mise exec -- bundle"
 
 bundle_path: "{{ ruby_manager_bundle_path[ruby_manager] }}"
+
+ruby_manager: none
