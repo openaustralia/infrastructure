@@ -17,6 +17,7 @@
 # INVENTORY IN alphabetical order by group name
 
 [ec2]
+# NOTE: The planning alerts servers are NOT in ec2!
 theyvoteforyou.org.au
 openaustralia.org.au
 newprod.openaustralia.org.au
