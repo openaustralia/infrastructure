@@ -3,6 +3,7 @@
 - name: Install dependency for postgresql_db
   apt:
     pkg: python3-psycopg2
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: "Create planningalerts database on postgres"
   postgresql_db:

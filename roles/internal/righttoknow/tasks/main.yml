@@ -3,6 +3,7 @@
   apt:
     name: apache2
     state: absent
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Add key for passenger
   ansible.builtin.get_url:
@@ -20,6 +21,7 @@
       - libnginx-mod-http-passenger
       - nginx
     state: present
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 # We want this directory to exist in development too so that
 # things are as consistent as possible
@@ -173,6 +175,7 @@
       - wv
       - xapian-tools
     state: present
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Install sidekiq systemd unit (staging)
   template:
@@ -228,6 +231,7 @@
 - name: Install dependency for postgresql_db
   apt:
     pkg: python3-psycopg2
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Create database
   postgresql_db:
@@ -424,6 +428,7 @@
 - name: Install varnish
   apt:
     pkg: varnish
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Update varnish config
   copy:
@@ -448,6 +453,7 @@
       # Only needed to run opendkim-genkey
       # TODO: Probably don't need opendkim-tools in production
       - opendkim-tools
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Create directory for DKIM keypair
   file:
@@ -518,3 +524,4 @@
 - name: Install memcached
   apt:
     pkg: memcached
+    lock_timeout: "{{ apt_lock_timeout }}"

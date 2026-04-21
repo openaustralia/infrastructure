@@ -10,6 +10,7 @@ addons:
   apt:
     packages:
     - python-pip
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 install:
   # Install ansible

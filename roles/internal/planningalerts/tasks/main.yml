@@ -2,6 +2,7 @@
 - name: Install memcached
   apt:
     pkg: memcached
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Make memcached listen to the outside world
   lineinfile:
@@ -37,6 +38,7 @@
       # Needed for rgeo geos support. See https://github.com/rgeo/rgeo/issues/227#issuecomment-1145169888
       - libgeos++-dev
       - libgeos-dev
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Copy rails master key for production
   template:
@@ -54,6 +56,7 @@
 - name: Install postfix to handle incoming email
   apt:
     pkg: postfix
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Update postfix configuration
   template:

@@ -10,15 +10,18 @@
 
 - name: Install certbot
   apt:
+    lock_timeout: "{{ apt_lock_timeout }}"
     pkg: certbot
 
 - name: Install certbot plugin (python != 3)
   apt:
+    lock_timeout: "{{ apt_lock_timeout }}"
     pkg: "python-certbot-{{ certbot_webserver }}"
   when: ansible_python['version']['major'] != 3
 
 - name: Install certbot plugin (python == 3)
   apt:
+    lock_timeout: "{{ apt_lock_timeout }}"
     pkg: "python3-certbot-{{ certbot_webserver }}"
   when: ansible_python['version']['major'] == 3
 

@@ -43,6 +43,7 @@
       apt:
         pkg:  "{{ item }}"
         cache_valid_time: 300
+        lock_timeout: "{{ apt_lock_timeout }}"
       loop:
         - python-pip
         - python-pymysql
@@ -57,6 +58,7 @@
       apt:
         pkg: "{{ item }}"
         cache_valid_time: 300
+        lock_timeout: "{{ apt_lock_timeout }}"
       loop:
         - python3-pip
         - python3-pymysql
@@ -202,6 +204,7 @@
     - name: Install redis
       apt:
         name: redis
+        lock_timeout: "{{ apt_lock_timeout }}"
     - name: Make redis listen on 0.0.0.0
       lineinfile:
         path: /etc/redis/redis.conf

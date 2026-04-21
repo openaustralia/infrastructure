@@ -6,9 +6,10 @@
   apt:
     pkg: mysql-server
     update_cache: yes
+    lock_timeout: "{{ apt_lock_timeout }}"
 
 - name: Install dependency for following command
-  apt: pkg=python-mysqldb
+  apt: pkg=python-mysqldb lock_timeout="{{ apt_lock_timeout }}"
 
 - name: Update mysql config to bind to public ip
   copy:
