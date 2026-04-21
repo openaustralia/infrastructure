@@ -65,4 +65,7 @@ logs:
     log_group_name: /srv/www/production/shared/log/puma.log
     log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
-  
+
+ruby_manager: 'rvm'
+ruby_versions:
+    - ruby-3.3.4
