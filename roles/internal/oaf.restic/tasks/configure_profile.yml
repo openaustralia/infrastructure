@@ -31,7 +31,7 @@
     group: root
     mode: "0755"
 
-- name: "{{ profile.name }} - Check if repository exists"
+- name: "{{ profile.name }} - Check if repository exists" # noqa: risky-shell-pipe
   shell: "source {{ restic_config_dir }}/{{ profile.name }}.env && restic snapshots --json 2>/dev/null | head -1"
   args:
     executable: /bin/bash

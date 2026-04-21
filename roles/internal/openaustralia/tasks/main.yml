@@ -60,7 +60,7 @@
     src: "/data/{{ item }}/alerts-lastsent"
     dest: "/srv/www/{{ item }}/shared/alerts-lastsent"
     # Doing this because the src file might not yet exist and that's okay
-    force: yes
+    force: true
   with_items:
     - production
     - staging
@@ -183,7 +183,7 @@
   when: "'openaustralia_old' in group_names"
   apt:
     name: "{{ item }}"
-    update_cache: yes
+    update_cache: true
   with_items:
     - php5.6
     - php5.6-curl
@@ -212,7 +212,7 @@
   when: "'openaustralia_new' in group_names"
   apt:
     name: "{{ item }}"
-    update_cache: yes
+    update_cache: true
   with_items:
     - apache2
     - ghostscript
@@ -255,7 +255,7 @@
   unarchive:
       src: /home/deploy/xapian-bindings-1.2.22.tar.xz
       dest: /home/deploy
-      remote_src: yes
+      remote_src: true
       owner: deploy
       group: deploy
 
@@ -521,7 +521,7 @@
 
 - name: Autoremove unneeded packages
   apt:
-    autoremove: yes
+    autoremove: true
 
 # We allow the capistrano deploys to restart apache
 - name: Allow deploy user to restart apache
