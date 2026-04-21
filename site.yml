@@ -1,7 +1,7 @@
 # FIRST: check the `vault_identity_list` in `ansible.cfg` using
 # `ls -ld .*pass*`
 # and make sure you have all the password files you need.
-# If you are missing some, then you can override the list using a `.envrc` entry, eg:
+# If you are missing some, then you can override the list using a `.envrc` entry, e.g.:
 # export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"
 
 ## THEN
@@ -32,12 +32,16 @@
 # If it does fall back, set ansible_python_interpreter to /usr/bin/python in that old group
 - hosts: all
   become: true
-  gather_facts: False
+  gather_facts: false
   tags: python
   tasks:
     - name: Install python3 for Ansible if available, otherwise fallback to python2
-      raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python-is-python3) || test -e /usr/bin/python || apt install -y python-minimal
-      changed_when: False
+      raw: >-
+        test -e /usr/bin/python3 ||
+        (apt -y update && apt install -y python-is-python3) ||
+        test -e /usr/bin/python ||
+        apt install -y python-minimal
+      changed_when: false
 
 - hosts: ec2
   name: "Install python2 requirements"
@@ -48,7 +52,7 @@
   tasks:
     - name: Install python packages
       apt:
-        pkg:  "{{ item }}"
+        pkg: "{{ item }}"
         cache_valid_time: 300
       loop:
         - python-pip
@@ -96,14 +100,14 @@
         region: "{{ ec2_region }}"
       register: rds_mysql5
       # Run this task even when running ansible-playbook with "--check"
-      check_mode: no
+      check_mode: false
       when: "'requires_mysql_5' in group_names"
 
     - name: Display information about the DEPRECATED Mysql 5 instance
       debug:
         var: "rds_mysql5"
       when: "(show_rds_debug | default(false) | bool) and ('requires_mysql_5' in group_names)"
-    
+
     - name: Get information about the Mysql 8 instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
@@ -113,7 +117,7 @@
         region: "{{ ec2_region }}"
       register: rds_mysql8
       # Run this task even when running ansible-playbook with "--check"
-      check_mode: no
+      check_mode: false
       when: "'requires_mysql' in group_names"
 
     - name: Display information about the Mysql 8 instance
@@ -130,7 +134,7 @@
         region: "{{ ec2_region }}"
       register: rds_postgresql
       # Run this task even when running ansible-playbook with "--check"
-      check_mode: no
+      check_mode: false
       when: "'requires_postgresql' in group_names"
 
     - name: Display information about the postgresql RDS instance
@@ -147,7 +151,7 @@
         region: "{{ ec2_region }}"
       register: rds_planningalerts
       # Run this task even when running ansible-playbook with "--check"
-      check_mode: no
+      check_mode: false
       when: "'requires_postgresql' in group_names"
 
     - name: Displays information about the planningalerts RDS instance
