@@ -16,7 +16,7 @@
 
 - name: Apt add passenger to list
   apt_repository:
-    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
+    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
     update_cache: yes
 
@@ -86,7 +86,7 @@
     state: directory
     owner: deploy
     group: deploy
-    path: '{{item}}'
+    path: '{{ item }}'
   with_items:
     - /srv/www
     - /srv/www/production
