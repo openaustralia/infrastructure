@@ -210,6 +210,6 @@ yaml-lint: venv
 	.venv/bin/yamllint roles/*.yml site.yml
 
 ansible-lint: venv
-	.venv/bin/ansible-lint roles/*.yml site.yml
+	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/*.yml site.yml
 
 lint: yaml-lint ansible-lint
