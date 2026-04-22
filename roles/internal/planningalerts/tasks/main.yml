@@ -84,4 +84,5 @@
   command: postconf -e "transport_maps=regexp:/etc/postfix/transport"
 
 - name: Set postfix destination  # noqa: no-changed-when
-  command: postconf -e "mydestination=planningalerts.org.au"
+  command: postconf -e "mydestination=planningalerts.{{ base_domain }}"
+

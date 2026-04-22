@@ -388,7 +388,7 @@
     site_name: "Right to Know (STAGING)"
     incoming_email_prefix: "foitest+"
     staging_site: "1"
-    override_all_public_body_request_emails: "contact@righttoknow.org.au"
+    override_all_public_body_request_emails: "contact@righttoknow.{{ base_domain }}"
     stage: staging
     stripe_publishable_key: "{{ stripe_publishable_key_test }}"
     stripe_secret_key: "{{ stripe_secret_key_test }}"
