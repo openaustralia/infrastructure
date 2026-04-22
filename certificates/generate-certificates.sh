@@ -29,10 +29,9 @@ cd certificates || exit 1
 domains=( "theyvoteforyou.${BASE_DOMAIN}" "test.theyvoteforyou.${BASE_DOMAIN}"
           "openaustralia.${BASE_DOMAIN}"  "test.openaustralia.${BASE_DOMAIN}"
           "righttoknow.${BASE_DOMAIN}"    "test.righttoknow.${BASE_DOMAIN}"
-          "oaf.${BASE_DOMAIN}"
           "morph.${BASE_DOMAIN}")
 
-# Don't generate self signed certificate for a public domain: "dev.morph.io"
+# "oaf.${BASE_DOMAIN}"
 
 # Generates a private key with passphrase "abcd" (but only if it doesn't already exist)
 if [ ! -f myCA.key ]; then
@@ -83,7 +82,7 @@ mkdir -p ../roles/internal/theyvoteforyou/files ../roles/internal/openaustralia/
 mv theyvoteforyou.${BASE_DOMAIN}.key theyvoteforyou.${BASE_DOMAIN}.pem test.theyvoteforyou.${BASE_DOMAIN}.key test.theyvoteforyou.${BASE_DOMAIN}.pem ../roles/internal/theyvoteforyou/files
 mv openaustralia.${BASE_DOMAIN}.key openaustralia.${BASE_DOMAIN}.pem test.openaustralia.${BASE_DOMAIN}.key test.openaustralia.${BASE_DOMAIN}.pem ../roles/internal/openaustralia/files
 mv righttoknow.${BASE_DOMAIN}.key righttoknow.${BASE_DOMAIN}.pem test.righttoknow.${BASE_DOMAIN}.key test.righttoknow.${BASE_DOMAIN}.pem ../roles/internal/righttoknow/files
-mv oaf.${BASE_DOMAIN}.key oaf.${BASE_DOMAIN}.pem ../roles/internal/oaf/files
+#mv oaf.${BASE_DOMAIN}.key oaf.${BASE_DOMAIN}.pem ../roles/internal/oaf/files
 set +x
 
 # FIXME: adjust temporary measure to copy across a certificate generated here
