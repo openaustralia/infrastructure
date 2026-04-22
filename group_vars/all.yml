@@ -1,5 +1,9 @@
 # File: group_vars/all.yml
 ---
+theyvoteforyou_domain: "theyvoteforyou.{{ base_domain }}"
+openaustralia_domain: "openaustralia.{{ base_domain }}"
+righttoknow_domain: "righttoknow.{{ base_domain }}"
+
 rds_admin_password: !vault |
           $ANSIBLE_VAULT;1.2;AES256;all
           30383165353964666234363861623736333762643130633934366361623739393636343933303962
