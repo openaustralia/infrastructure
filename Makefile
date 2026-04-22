@@ -1,12 +1,10 @@
-.PHONY: all ansible-lint apply-metabase apply-oaf apply-openaustralia \
+.PHONY: all ansible-lint apply-metabase apply-oaf requirements apply-openaustralia \
         apply-planningalerts apply-righttoknow apply-rtk-prod apply-rtk-staging apply-theyvoteforyou \
         check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
         check-rtk-prod check-rtk-staging check-theyvoteforyou \
         clean clobber help install-linters keybase letsencrypt lint production retry roles \
         show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-init tf-plan \
         update-github-ssh-keys vagrant venv yaml-lint
-
-ANSIBLE_DEPENDENCIES := .keybase .make/roles venv
 
 _STAGE := $(if $(filter-out all,$(STAGE)),_$(STAGE),)
 
@@ -36,9 +34,11 @@ endif
 help:
 	@echo "Available targets"
 	@echo "  help                                Output this help text"
-	@echo "  venv                                Create Python virtualenv and install requirements"
-	@echo "  roles                               Install Ansible Galaxy external roles and collections"
 	@echo "  all                                 Run full site.yml playbook against all hosts"
+	@echo "  requirements                        Install requirements: venv, roles, collections and keybase symlink"
+	@echo "  keybase                             Set up Keybase symlink for MacOS or Linux and check perms"
+	@echo "  roles                               Install Ansible Galaxy external roles and collections"
+	@echo "  venv                                Create Python virtualenv and install requirements"
 	@echo "Independent targets (not required by all):"
 	@echo "  letsencrypt                         Renew/update SSL certificates"
 	@echo "  retry                               Re-run site.yml limited to hosts from last failed run"
@@ -52,7 +52,6 @@ help:
 	@echo "  tf-apply                            Run terraform apply in the terraform directory"
 	@echo "  update-github-ssh-keys              Update SSH keys on all servers from GitHub"
 	@echo "  vagrant                             Install vagrant plugins"
-	@echo "  keybase                             Set up Keybase symlink for MacOS or Linux and check perms"
 	@echo "  clean                               Remove virtualenv, external roles, retry file, collections, keybase symlink"
 	@echo "  clobber                             clobber everything make all created (clean + removes .vagrant and log)"
 	@echo ""
@@ -77,6 +76,8 @@ help:
 	@echo "  ANSIBLE_VERBOSE  Ansible verbosity flag, e.g. ANSIBLE_VERBOSE=vvv"
 	@echo "  START_AT_TASK  Start playbook at first task matching this string (fuzzy, * wildcards added)"
 
+requirements: .keybase .make/roles venv
+
 # Configure .keybase for MacOS or Linux
 .keybase:
 	@for p in /Volumes/Keybase /keybase /run/keybase /var/lib/keybase "$$(keybase config get -d -b mountdir 2>/dev/null)"; do \
@@ -93,12 +94,12 @@ keybase: .keybase
 	done; \
 	[ $$broken -eq 0 ]
 
-vagrant: log/vagrant-plugin.log
+vagrant: .make/vagrant-plugins
 
-log/vagrant-plugin.log: Makefile
+.make/vagrant-plugins: Makefile | .make
 	mkdir -p log
 	VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant plugin install vagrant-hostsupdater
-	vagrant plugin list > log/vagrant-plugin.log
+	touch .make/vagrant-plugins
 
 venv: .venv/bin/activate
 
@@ -121,13 +122,13 @@ venv: .venv/bin/activate
 
 roles: .make/roles
 
-all: $(ANSIBLE_DEPENDENCIES)
+all: requirements
 	.venv/bin/ansible-playbook site.yml
 
-letsencrypt: $(ANSIBLE_DEPENDENCIES)
+letsencrypt: requirements
 	.venv/bin/ansible-playbook update-ssl-certs.yml
 
-retry: $(ANSIBLE_DEPENDENCIES) site.retry
+retry: requirements site.retry
 	.venv/bin/ansible-playbook site.yml -l @site.retry
 
 check-host:
@@ -137,16 +138,16 @@ ifndef host
 	@exit 1
 endif
 
-show-inventory: $(ANSIBLE_DEPENDENCIES)
+show-inventory: requirements
 	.venv/bin/ansible-inventory -i ./inventory/ec2-hosts --graph
 
-show-vars: check-host $(ANSIBLE_DEPENDENCIES)
+show-vars: check-host requirements
 	.venv/bin/ansible -i ./inventory/ec2-hosts $(host) -m debug -a "var=hostvars[inventory_hostname]"
 
-show-facts: check-host $(ANSIBLE_DEPENDENCIES)
+show-facts: check-host requirements
 	.venv/bin/ansible -i ./inventory/ec2-hosts $(host) -m setup
 
-show-rds-facts: check-host $(ANSIBLE_DEPENDENCIES)
+show-rds-facts: check-host requirements
 	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml --limit $(host) --tags facts -e "show_rds_debug=true"
 
 # Delete all files that are normally created by running make goals
@@ -173,36 +174,36 @@ ifndef STAGE
 endif
 
 # Checks only
-check-righttoknow: $(ANSIBLE_DEPENDENCIES) stage_required
+check-righttoknow: requirements stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --check --diff
-check-planningalerts: $(ANSIBLE_DEPENDENCIES) # stage_required
+check-planningalerts: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --check --diff
-check-theyvoteforyou: $(ANSIBLE_DEPENDENCIES) # stage_required
+check-theyvoteforyou: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --check --diff
-check-oaf: $(ANSIBLE_DEPENDENCIES) # stage_required
+check-oaf: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --check --diff
-check-openaustralia: $(ANSIBLE_DEPENDENCIES) stage_required
+check-openaustralia: requirements stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --check --diff
-check-metabase: $(ANSIBLE_DEPENDENCIES) # stage_required
+check-metabase: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --check --diff
 
 # These make changes 
-apply-righttoknow: $(ANSIBLE_DEPENDENCIES) stage_required
+apply-righttoknow: requirements stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --diff
-apply-planningalerts: $(ANSIBLE_DEPENDENCIES) # stage_required
+apply-planningalerts: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --diff
-apply-theyvoteforyou: $(ANSIBLE_DEPENDENCIES) # stage_required
+apply-theyvoteforyou: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --diff
-apply-oaf: $(ANSIBLE_DEPENDENCIES) # stage_required
+apply-oaf: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --diff
-apply-openaustralia: $(ANSIBLE_DEPENDENCIES) stage_required
+apply-openaustralia: requirements stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --diff
 
-apply-metabase: $(ANSIBLE_DEPENDENCIES) # stage_required
+apply-metabase: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
 
 # Update ssh keys on all servers
-update-github-ssh-keys: $(ANSIBLE_DEPENDENCIES)
+update-github-ssh-keys: requirements
 	.venv/bin/ansible-playbook site.yml --tags userkeys
 
 yaml-lint: venv

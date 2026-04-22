@@ -41,7 +41,7 @@
 - name: Set certificate configuration for staging
   set_fact:
     staging_certs:
-      - email: 'contact@oaf.org.au'
+      - email: 'contact@oaf.{{ base_domain }}'
         domains: 
           - "{{ righttoknow_domain }}"
           - "www.{{ righttoknow_domain }}"
@@ -50,7 +50,7 @@
 - name: Set certificate configuration for production
   set_fact:
     production_certs:
-      - email: 'contact@oaf.org.au'
+      - email: 'contact@oaf.{{ base_domain }}'
         domains: 
           - "{{ righttoknow_domain }}"
           - "www.{{ righttoknow_domain }}"
