@@ -32,7 +32,7 @@
     group: deploy
     state: directory
   with_nested:
-    - ['production', 'staging']
+    - "{{ environments }}"
     - ['images/mps', 'images/mpsL', 'images/mpsXL', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search/searchdb']
 
 - name: Ensure that directories in /srv/www exist
@@ -42,7 +42,7 @@
     group: deploy
     state: directory
   with_nested:
-    - ['production', 'staging']
+    - "{{ environments }}"
     - ['log', 'releases', 'shared/config', 'shared/rss/mp', 'shared/sitemaps']
 
 - name: Link directories in /srv/www to /data
@@ -51,7 +51,7 @@
     src: "/data/{{ item[0] }}/{{ item[1] }}"
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
-    - ['production', 'staging']
+    - "{{ environments }}"
     - ['images', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search']
 
 - name: Link file alerts-lastsent in /srv/www to /data
@@ -61,43 +61,52 @@
     dest: "/srv/www/{{ item }}/shared/alerts-lastsent"
     # Doing this because the src file might not yet exist and that's okay
     force: true
-  with_items:
-    - production
-    - staging
+  with_items: "{{ environments }}"
 
 - name: Install dependency for ansible mysql_db module
   when: "'openaustralia_old' in group_names"
   apt: pkg=python-mysqldb
 
+- name: Install MySQL client dev headers
+  apt:
+    name: libmysqlclient-dev
+    state: present
+
+- name: Install OpenSSL
+  apt:
+    name: libssl-dev
+    state: present
+
+# NOTE - This works for both mysql 5 AND 8
 - name: Create openaustralia databases
   mysql_db:
     login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "oa-{{ item }}"
-  with_items:
-    - production
-    - staging
+  loop: "{{ environments }}"
 
-- name: Create openaustralia user with access to the database (production)
+- name: Create openaustralia users with access to the databases
   mysql_user:
     login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: oa-production
-    password: "{{ openaustralia_production_mysql_password }}"
-    priv: 'oa-production.*:ALL'
+    name: oa-{{ item }}
+    password: "{{ (item == 'production') | ternary(openaustralia_production_mysql_password, openaustralia_staging_mysql_password) }}"
+    priv: "oa-{{ item }}.*:ALL"
     host: "%"
+  loop: "{{ environments }}"
 
-- name: Create mysql user with readonly access to the production openaustralia database for metabase
+- name: Create mysql users with readonly access to the openaustralia databases for metabase
   mysql_user:
     login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: oa-production-readonly
+    name: "oa-{{ item }}-readonly"
     password: "{{ mysql_production_password_readonly }}"
-    priv: 'oa-production.*:SELECT'
+    priv: 'oa-{{ item }}.*:SELECT'
     host: "%"
+  loop: "{{ environments }}"
 
 - name: Create .my.cnf in development with password for both production and staging
   template:
