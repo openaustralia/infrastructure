@@ -210,7 +210,7 @@ There's a very handy `Makefile` included which will:
 Simply run
 
 ```
-make roles vagrant
+make requirements vagrant
 ```
 
 ### <a name='AddtheAnsibleVaultpassword'></a>Add the Ansible Vault password

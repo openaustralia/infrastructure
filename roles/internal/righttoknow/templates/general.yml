@@ -100,7 +100,7 @@ TIME_ZONE: Australia/Sydney
 #   BLOG_FEED: https://www.mysociety.org/category/projects/whatdotheyknow/feed/
 #
 # ---
-BLOG_FEED: 'https://www.oaf.org.au/category/projects/righttoknow-org-au/feed/'
+BLOG_FEED: 'https://www.oaf.{{ base_domain }}/category/projects/righttoknow-org-au/feed/'
 
 # BLOG_TIMEOUT -  Integer seconds before reading the blog feed fails (default: 60)
 #
@@ -417,7 +417,7 @@ SKIP_ADMIN_AUTH: false
 # CONTACT_EMAIL: String email address (default: contact@localhost)
 #
 # ---
-CONTACT_EMAIL: 'contact@righttoknow.org.au'
+CONTACT_EMAIL: 'contact@righttoknow.{{ base_domain }}'
 
 # Email "from" name
 #
@@ -431,7 +431,7 @@ CONTACT_NAME: '{{ site_name }}'
 # TRACK_SENDER_EMAIL - String email address (default: contact@localhost)
 #
 # ---
-TRACK_SENDER_EMAIL: 'contact@righttoknow.org.au'
+TRACK_SENDER_EMAIL: 'contact@righttoknow.{{ base_domain }}'
 
 # Email "from" name for track messages
 #
@@ -576,7 +576,7 @@ MAXMIND_LICENSE_KEY: '{{ alaveteli_maxmind_license_key }}'
 #   FORWARD_NONBOUNCE_RESPONSES_TO: user-support@example.com
 #
 # ---
-FORWARD_NONBOUNCE_RESPONSES_TO: contact@righttoknow.org.au
+FORWARD_NONBOUNCE_RESPONSES_TO: contact@righttoknow.{{ base_domain }}
 
 # The email address to which non-bounce responses to emails sent out to
 # Alaveteli Professional users by Alaveteli should be forwarded
@@ -588,7 +588,7 @@ FORWARD_NONBOUNCE_RESPONSES_TO: contact@righttoknow.org.au
 #   FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro-user-support@example.com
 #
 # ---
-FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro@righttoknow.org.au
+FORWARD_PRO_NONBOUNCE_RESPONSES_TO: pro@righttoknow.{{ base_domain }}
 
 # Email address used for sending exception notifications.
 #
@@ -708,7 +708,7 @@ MTA_LOG_TYPE: "postfix"
 #   DONATION_URL: http://www.mysociety.org/donate
 #
 # ---
-DONATION_URL: 'https://donate.oaf.org.au/'
+DONATION_URL: 'https://donate.oaf.{{ base_domain }}/'
 
 # If PUBLIC_BODY_STATISTICS_PAGE is set to true, Alaveteli will make a page of
 # statistics on the performance of public bodies (which you can see at
@@ -1048,7 +1048,7 @@ ENABLE_ALAVETELI_PRO: {{ enable_alaveteli_pro }}
 # PRO_CONTACT_EMAIL - String email address (default: pro-contact@localhost)
 #
 # ---
-PRO_CONTACT_EMAIL: 'pro@righttoknow.org.au'
+PRO_CONTACT_EMAIL: 'pro@righttoknow.{{ base_domain }}'
 
 # Contact name for Alaveteli Professional.
 # The corresponding name to address emails to when sending email to
