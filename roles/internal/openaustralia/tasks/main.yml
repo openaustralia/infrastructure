@@ -362,7 +362,7 @@
   notify: reload apache
 
 - name: Install certificate using certbot
-  when: "'openaustralia_old' in group_names"
+  when: "'ec2' in group_names"
   include_role:
     name: oaf.certbot
   vars:
@@ -370,14 +370,13 @@
       - email: contact@oaf.org.au
         domains:
           - "{{ openaustralia_domain }}"
-          - www."{{ openaustralia_domain }}"
+          - "www.{{ openaustralia_domain }}"
           - openaustralia.org
           - www.openaustralia.org
       - email: contact@oaf.org.au
         domains:
           - "test.{{ openaustralia_domain }}"
           - "www.test.{{ openaustralia_domain }}"
-  when: "'ec2' in group_names"
 
 - name: Copy across the application config
   template:
