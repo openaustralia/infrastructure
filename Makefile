@@ -171,9 +171,12 @@ tf-plan: .make/terraform
 	terraform -chdir=terraform plan
 tf-apply: .make/terraform
 	terraform -chdir=terraform apply
-tf-lint: .make/terraform
-	terraform -chdir=terraform fmt -check
-	terraform -chdir=terraform validate && echo "PASSED tf-lint!"
+tf-validate: tf-check-fmt .make/terraform
+	terraform -chdir=terraform validate 
+	@echo "PASSED tf-validate!"
+tf-check-fmt:
+	terraform -chdir=terraform fmt -check 
+	@echo "PASSED tf-check-fmt!"
 
 stage_required:
 ifndef STAGE
@@ -214,10 +217,11 @@ update-github-ssh-keys: requirements
 	.venv/bin/ansible-playbook site.yml --tags userkeys
 
 yaml-lint: venv
-	.venv/bin/yamllint roles/internal/ roles/*.yml site.yml && echo "PASSED yamllint!"
+	.venv/bin/yamllint roles/internal/ roles/*.yml site.yml 
+	@echo "PASSED yamllint!"
 
 ansible-lint: venv roles
-	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/ roles/*.yml site.yml && echo "PASSED ansible-lint!"
+	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/ roles/*.yml site.yml 
+	@echo "PASSED ansible-lint!"
 
-lint: yaml-lint ansible-lint tf-lint
-
+lint: yaml-lint ansible-lint tf-check-fmt tf-validate
