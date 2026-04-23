@@ -27,3 +27,12 @@ jobs:
       - run: pip install virtualenv
       - run: make venv
       - run: make yaml-lint
+
+  tf-lint:
+    name: "Terraform Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: make tf-init
+      - run: make tf-lint
