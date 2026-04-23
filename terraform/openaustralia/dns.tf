@@ -77,6 +77,22 @@ resource "cloudflare_record" "hackfest" {
   value   = "ghs.google.com"
 }
 
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.org.id
+  name    = "strong1._domainkey.openaustralia.org"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.org.id
+  name    = "strong2._domainkey.openaustralia.org"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
+}
+
 # MX records
 
 # We can now use a single MX record for Google workspace
@@ -197,6 +213,22 @@ resource "cloudflare_record" "alt_software" {
   name    = "software.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
+}
+
+resource "cloudflare_record" "alt_helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "strong1._domainkey.openaustralia.org.au"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "alt_helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "strong2._domainkey.openaustralia.org.au"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
   proxied = false
 }
 

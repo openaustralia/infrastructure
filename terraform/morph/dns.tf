@@ -63,6 +63,22 @@ resource "cloudflare_record" "email2" {
   value   = "cuttlefish.oaf.org.au"
 }
 
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.main.id
+  name    = "strong1._domainkey.morph.io"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.main.id
+  name    = "strong2._domainkey.morph.io"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
+}
+
 # MX records
 
 # We can now use a single MX record for Google workspace
