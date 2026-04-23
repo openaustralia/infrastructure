@@ -43,6 +43,17 @@
         apt install -y python-minimal
       changed_when: false
 
+- name: Validate not in multiple requires_ groups
+  hosts: all
+  gather_facts: false
+  tags: facts
+  tasks:
+    - name: Ensure host is not in multiple requires_* groups
+      assert:
+        that:
+          - "(['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
+        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list }}"
+
 - hosts: all
   name: "Install python2 requirements"
   tags:
@@ -51,6 +62,7 @@
   become: true
   tasks:
     - name: Install python packages
+      tags: python
       apt:
         pkg: "{{ item }}"
         cache_valid_time: 300
@@ -61,6 +73,7 @@
       when: ansible_python_version is version('3', '<')
 
     - name: Install boto which is required for EC2 stuff (Python 2)
+      tags: python
       pip: name=boto
       when: ansible_python_version is version('3', '<')
 
@@ -72,6 +85,7 @@
   become: true
   tasks:
     - name: Install python packages
+      tags: python
       apt:
         pkg: "{{ item }}"
         cache_valid_time: 300
@@ -82,6 +96,7 @@
       when: ansible_python_version is version('3', '>=')
 
     - name: Install boto3 which is required for EC2 stuff (Python 3)
+      tags: python
       pip: name=boto3
       when: ansible_python_version is version('3', '>=')
 
@@ -112,6 +127,9 @@
         instance_name: "{{ db_name }}"
         region: "{{ ec2_region }}"
       register: rds_database
+      tags:
+      - facts
+      - rds
       # Run this task even when running ansible-playbook with "--check"
       check_mode: false
       when: "db_name is defined"
@@ -119,7 +137,9 @@
     - name: Display information about the RDS database
       debug:
         var: "rds_database"
-      tags: facts
+      tags:
+        - facts
+        - rds
       when: "(show_rds_debug | default(false) | bool) and (db_name is defined)"
 
     - name: Get information about the planningalerts RDS instance
@@ -130,6 +150,9 @@
         instance_name: "{{ planningalerts_db_name }}"
         region: "{{ ec2_region }}"
       register: rds_planningalerts
+      tags:
+        - facts
+        - rds
       # Run this task even when running ansible-playbook with "--check"
       check_mode: false
       when: "planningalerts_db_name is defined"
@@ -137,10 +160,13 @@
     - name: Displays information about the planningalerts RDS instance
       debug:
         var: "rds_planningalerts"
-      tags: facts
+      tags:
+        - facts
+        - rds
       when: "(show_rds_debug | default(false) | bool) and (planningalerts_db_name is defined)"
 
 - hosts: all
+  tags: base-server
   become: true
   tags: base-server
   name: "Install base server packages"
