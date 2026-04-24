@@ -10,12 +10,11 @@ _STAGE := $(if $(filter-out all,$(STAGE)),_$(STAGE),)
 
 ANSIBLE_TAGS := $(shell echo "$(TAGS)" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//' | sed 's/,$$//')
 ANSIBLE_SKIP_TAGS := $(shell echo "$(SKIP_TAGS)" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//' | sed 's/,$$//')
-ANSIBLE_START_TASK := $(if $(START_AT_TASK),*$(shell echo "$(START_AT_TASK)" | sed 's/[^A-Z0-9_]\+/*/gi')*,)
 
 # Build ansible-playbook options just like Vagrantfile
 ANSIBLE_OPTS :=
 ifdef ANSIBLE_TAGS
-ANSIBLE_OPTS += --tags "$(ANSIBLE_TAGS)"
+ANSIBLE_OPTS += --tags "$(ANSIBLE_TAGS),facts"
 $(info INFO: Only running TAGS: $(ANSIBLE_TAGS))
 endif
 ifdef ANSIBLE_SKIP_TAGS
@@ -26,10 +25,7 @@ ifdef ANSIBLE_VERBOSE
 ANSIBLE_OPTS += -$(ANSIBLE_VERBOSE)
 $(info INFO: Setting verbose: -$(ANSIBLE_VERBOSE))
 endif
-ifdef ANSIBLE_START_TASK
-ANSIBLE_OPTS += --start-at-task "$(ANSIBLE_START_TASK)"
-$(info INFO: Starting at task matching: $(ANSIBLE_START_TASK))
-endif
+
 
 help:
 	@echo "Available targets"
@@ -74,7 +70,6 @@ help:
 	@echo "  TAGS           Only run plays/tasks tagged with these (space or comma separated)"
 	@echo "  SKIP_TAGS      Skip plays/tasks with these tags (space or comma separated)"
 	@echo "  ANSIBLE_VERBOSE  Ansible verbosity flag, e.g. ANSIBLE_VERBOSE=vvv"
-	@echo "  START_AT_TASK  Start playbook at first task matching this string (fuzzy, * wildcards added)"
 
 requirements: .keybase .make/roles venv
 
