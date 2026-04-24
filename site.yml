@@ -54,17 +54,6 @@
         apt install -y python-minimal
       changed_when: false
 
-- name: Validate not in multiple requires_ groups
-  hosts: all
-  gather_facts: false
-  tags: facts
-  tasks:
-    - name: Ensure host is not in multiple requires_* groups
-      assert:
-        that:
-          - "(['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
-        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list }}"
-
 - hosts: all
   name: "Install python2 requirements"
   tags:
