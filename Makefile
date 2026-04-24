@@ -161,12 +161,22 @@ clobber: clean
 	# TODO: Should we delete terraform/terraform.tfstate.* ?
 
 # Terraform
-tf-init:
+tf-init: .make/terraform
+
+.make/terraform: terraform/*.tf terraform/*/*.tf | .make
 	terraform -chdir=terraform init
-tf-plan:
+	touch .make/terraform
+
+tf-plan: .make/terraform
 	terraform -chdir=terraform plan
-tf-apply:
+tf-apply: .make/terraform
 	terraform -chdir=terraform apply
+tf-validate: tf-check-fmt .make/terraform
+	terraform -chdir=terraform validate 
+	@echo "PASSED tf-validate!"
+tf-check-fmt:
+	terraform -chdir=terraform fmt -check 
+	@echo "PASSED tf-check-fmt!"
 
 stage_required:
 ifndef STAGE
@@ -207,9 +217,11 @@ update-github-ssh-keys: requirements
 	.venv/bin/ansible-playbook site.yml --tags userkeys
 
 yaml-lint: venv
-	.venv/bin/yamllint roles/internal/ roles/*.yml site.yml && echo "PASSED yamllint!"
+	.venv/bin/yamllint roles/internal/ roles/*.yml site.yml 
+	@echo "PASSED yamllint!"
 
 ansible-lint: venv roles
-	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/ roles/*.yml site.yml && echo "PASSED ansible-lint!"
+	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/ roles/*.yml site.yml 
+	@echo "PASSED ansible-lint!"
 
-lint: yaml-lint ansible-lint
+lint: yaml-lint ansible-lint tf-check-fmt tf-validate

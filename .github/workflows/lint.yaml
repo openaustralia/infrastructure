@@ -27,3 +27,11 @@ jobs:
       - run: pip install virtualenv
       - run: make venv
       - run: make yaml-lint
+
+  tf-lint:
+    name: "Terraform check format"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: make tf-check-fmt
