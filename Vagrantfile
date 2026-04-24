@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -138,7 +140,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # TODO: Consider adding hosts for these Server groups (that are used)
       "openvpn" => [],
-      "plausible" => [],
+      "plausible" => []
     }
     hosts.each do |hostname, details|
       hostname = "#{hostname}.#{BASE_DOMAIN}"
