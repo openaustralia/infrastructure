@@ -134,6 +134,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     ansible.groups = {
       "development" => [ ],
+      "catch_all_mail" => [ ],
 
       # Empty list just so ansible doesn't complain it doesn't know about these cloud servers
       "ec2" => [],
@@ -145,6 +146,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     hosts.each do |hostname, details|
       hostname = "#{hostname}.#{BASE_DOMAIN}"
       ansible.groups["development"] << hostname
+      ansible.groups["catch_all_mail"] << hostname
       details[:groups]&.each do |group|
         ansible.groups[group] ||= []
         ansible.groups[group] << hostname
