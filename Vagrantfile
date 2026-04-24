@@ -160,8 +160,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider "virtualbox" do |v|
     # More cpus and crank up the memory for a faster build
-    v.memory = 2048
-    v.cpus = 2
+    v.memory = (ENV['VAGRANT_MEMORY'] || 2048).to_i
+    v.cpus   = (ENV['VAGRANT_CPUS']   || 2).to_i
   end
 
   # Use this so that you don't need to give the machine name for all vagrant
