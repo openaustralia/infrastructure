@@ -362,7 +362,7 @@
   notify: reload apache
 
 - name: Install certificate using certbot
-  when: "'openaustralia_old' in group_names"
+  when: "'ec2' in group_names"
   include_role:
     name: oaf.certbot
   vars:
@@ -370,14 +370,13 @@
       - email: contact@oaf.org.au
         domains:
           - "{{ openaustralia_domain }}"
-          - www."{{ openaustralia_domain }}"
+          - "www.{{ openaustralia_domain }}"
           - openaustralia.org
           - www.openaustralia.org
       - email: contact@oaf.org.au
         domains:
           - "test.{{ openaustralia_domain }}"
           - "www.test.{{ openaustralia_domain }}"
-  when: "'ec2' in group_names"
 
 - name: Copy across the application config
   template:
@@ -406,7 +405,7 @@
     - production
     - staging
 
-- name: Enable virtual hosts
+- name: Enable virtual hosts # noqa: ignore-errors
   file:
     src: /etc/apache2/sites-available/{{ item }}.conf
     dest: /etc/apache2/sites-enabled/{{ item }}.conf
@@ -419,6 +418,8 @@
     - software
     - blog
   notify: reload apache
+  # FIXME: set up correct vhosts so we don't "src file does not exist" errors and remove the noqa and the line below
+  ignore_errors: "{{ lookup('env', 'IGNORE_VHOST_ERRORS') != '' }}"
 
 - name: Copy msmtp configuration
   template: src=msmtprc dest=/etc/
@@ -483,7 +484,8 @@
     pkg: postfix
 
 # For local development (under vagrant we don't want the cron jobs generating email)
-- cronvar:
+- name: "Set MAILTO only for ec2 cron jobs"
+  cronvar:
     name: MAILTO
     user: deploy
     value: web-administrators@openaustralia.org,z4e3a8v8r4p0f9z1@oaf.slack.com
