@@ -8,11 +8,8 @@ BASE_DOMAIN = "test"
 IP_NETWORK = "192.168.56"
 STANDARD_ALIASES = %w[www test www.test]
 
-unless File.exist?(".venv/bin/ansible") && Dir.exist?(".keybase") && Dir.exist?("roles/external")
-  warn "WARNING: .venv/bin/ansible is missing. Run `make requirements` first."
-end
-unless File.exist?(".make/vagrant-plugins")
-  warn "WARNING: .venv/bin/ansible is missing. Run `make vagrant` first."
+unless File.exist?(".venv/bin/ansible") && Dir.exist?(".keybase") && Dir.exist?("roles/external") && File.exist?(".make/vagrant-plugins")
+  warn "WARNING: Run `make vagrant` first to install requirements."
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|

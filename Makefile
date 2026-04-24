@@ -35,6 +35,7 @@ help:
 	@echo "  keybase                             Set up Keybase symlink for MacOS or Linux and check perms"
 	@echo "  roles                               Install Ansible Galaxy external roles and collections"
 	@echo "  venv                                Create Python virtualenv and install requirements"
+	@echo "  generate-certificates               Generate certificates for the development *.test domains"
 	@echo "Independent targets (not required by all):"
 	@echo "  letsencrypt                         Renew/update SSL certificates"
 	@echo "  retry                               Re-run site.yml limited to hosts from last failed run"
@@ -47,7 +48,7 @@ help:
 	@echo "  tf-plan                             Run terraform plan in the terraform directory"
 	@echo "  tf-apply                            Run terraform apply in the terraform directory"
 	@echo "  update-github-ssh-keys              Update SSH keys on all servers from GitHub"
-	@echo "  vagrant                             Install vagrant plugins"
+	@echo "  vagrant                             Install vagrant plugins and ensure requirements are present"
 	@echo "  clean                               Remove virtualenv, external roles, retry file, collections, keybase symlink"
 	@echo "  clobber                             clobber everything make all created (clean + removes .vagrant and log)"
 	@echo ""
@@ -89,7 +90,11 @@ keybase: .keybase
 	done; \
 	[ $$broken -eq 0 ]
 
-vagrant: .make/vagrant-plugins
+vagrant: .make/vagrant-plugins .make/certificates requirements
+
+.make/certificates: certificates/generate-certificates.sh | .make
+	certificates/generate-certificates.sh
+	touch .make/certificates
 
 .make/vagrant-plugins: Makefile | .make
 	mkdir -p log
