@@ -1,14 +1,14 @@
 ---
 # tasks file for roles/internal/mysql
 
-# We're installing mysql 5.7 because that's what we're using on AWS in production
-- name: Install mysql 5.7 server
+# We're installing mysql because that's what we're using on AWS in production
+- name: Install mysql server
   apt:
     pkg: mysql-server
     update_cache: true
 
 - name: Install dependency for following command
-  apt: pkg=python-mysqldb
+  apt: pkg=python3-mysqldb
 
 - name: Update mysql config to bind to public ip
   copy:
@@ -23,3 +23,4 @@
     password: "{{ rds_admin_password }}"
     priv: '*.*:ALL,GRANT'
     host: '%'
+    login_unix_socket: /var/run/mysqld/mysqld.sock

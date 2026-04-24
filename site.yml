@@ -28,6 +28,17 @@
 
 # Use terraform (see terraform directory) to actually provision ec2 infrastructure
 
+- name: Validate not in multiple requires_ groups
+  hosts: all
+  gather_facts: false
+  tags: facts
+  tasks:
+    - name: Ensure host is not in multiple requires_* groups
+      assert:
+        that:
+          - "(['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
+        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list }}"
+
 # Ensure python3 is available for Ansible (required before gather_facts), with fallback to python2
 # If it does fall back, set ansible_python_interpreter to /usr/bin/python in that old group
 - hosts: all
@@ -43,14 +54,15 @@
         apt install -y python-minimal
       changed_when: false
 
-- hosts: ec2
+- hosts: all
   name: "Install python2 requirements"
   tags:
     - python
     - python2
   become: true
   tasks:
-    - name: Install python packages
+    - name: Install python2 packages
+      tags: python
       apt:
         pkg: "{{ item }}"
         cache_valid_time: 300
@@ -61,10 +73,11 @@
       when: ansible_python_version is version('3', '<')
 
     - name: Install boto which is required for EC2 stuff (Python 2)
+      tags: python
       pip: name=boto
       when: ansible_python_version is version('3', '<')
 
-- hosts: ec2
+- hosts: all
   name: "Install python3 requirements"
   tags:
     - python
@@ -72,6 +85,7 @@
   become: true
   tasks:
     - name: Install python packages
+      tags: python
       apt:
         pkg: "{{ item }}"
         cache_valid_time: 300
@@ -82,6 +96,7 @@
       when: ansible_python_version is version('3', '>=')
 
     - name: Install boto3 which is required for EC2 stuff (Python 3)
+      tags: python
       pip: name=boto3
       when: ansible_python_version is version('3', '>=')
 
@@ -90,76 +105,56 @@
   tags:
     - rds
     - facts
+  become: true
   tasks:
-    - name: Get information about the DEPRECATED Mysql 5 instance
+    - name: Get information about the RDS instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
         command: facts
-        instance_name: main-database
+        instance_name: "{{ db_name }}"
         region: "{{ ec2_region }}"
-      register: rds_mysql5
+      register: rds_database
+      tags:
+      - facts
+      - rds
       # Run this task even when running ansible-playbook with "--check"
       check_mode: false
-      when: "'requires_mysql_5' in group_names"
+      when: "db_name is defined"
 
-    - name: Display information about the DEPRECATED Mysql 5 instance
+    - name: Display information about the RDS database
       debug:
-        var: "rds_mysql5"
-      when: "(show_rds_debug | default(false) | bool) and ('requires_mysql_5' in group_names)"
-
-    - name: Get information about the Mysql 8 instance
-      rds:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        command: facts
-        instance_name: maindb
-        region: "{{ ec2_region }}"
-      register: rds_mysql8
-      # Run this task even when running ansible-playbook with "--check"
-      check_mode: false
-      when: "'requires_mysql' in group_names"
-
-    - name: Display information about the Mysql 8 instance
-      debug:
-        var: "rds_mysql8"
-      when: "(show_rds_debug | default(false) | bool) and ('requires_mysql' in group_names)"
-
-    - name: Get information about the postgresql RDS instance
-      rds:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        command: facts
-        instance_name: postgresql
-        region: "{{ ec2_region }}"
-      register: rds_postgresql
-      # Run this task even when running ansible-playbook with "--check"
-      check_mode: false
-      when: "'requires_postgresql' in group_names"
-
-    - name: Display information about the postgresql RDS instance
-      debug:
-        var: "rds_postgresql"
-      when: "(show_rds_debug | default(false) | bool) and ('requires_postgresql' in group_names)"
+        var: "rds_database"
+      tags:
+        - facts
+        - rds
+      when: "(show_rds_debug | default(false) | bool) and (db_name is defined)"
 
     - name: Get information about the planningalerts RDS instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
         command: facts
-        instance_name: planningalerts
+        instance_name: "{{ planningalerts_db_name }}"
         region: "{{ ec2_region }}"
       register: rds_planningalerts
+      tags:
+        - facts
+        - rds
       # Run this task even when running ansible-playbook with "--check"
       check_mode: false
-      when: "'requires_postgresql' in group_names"
+      when: "planningalerts_db_name is defined"
 
     - name: Displays information about the planningalerts RDS instance
       debug:
         var: "rds_planningalerts"
-      when: "(show_rds_debug | default(false) | bool) and ('requires_postgresql' in group_names)"
+      tags:
+        - facts
+        - rds
+      when: "(show_rds_debug | default(false) | bool) and (planningalerts_db_name is defined)"
 
 - hosts: all
+  tags: base-server
   become: true
   tags: base-server
   name: "Install base server packages"

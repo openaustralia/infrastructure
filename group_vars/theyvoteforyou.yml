@@ -90,3 +90,7 @@ production_certbot_domains: >-
 staging_certbot_domains:
   - "test.{{ theyvoteforyou_domain }}"
   - "www.test.{{ theyvoteforyou_domain }}"
+
+environments:
+  - production
+  - staging

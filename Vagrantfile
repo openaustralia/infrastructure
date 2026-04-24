@@ -71,7 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   hosts = {
     # Services required by the servers
     "mysql" => { node: 10,
-                 box: "ubuntu/xenial64",
+                 box: "ubuntu/jammy64",
                  groups: ["mysql"] },
     # TODO: Do we want to seperate out the postgres for PA and everything else
     "postgresql" => { node: 11,

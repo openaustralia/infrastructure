@@ -14,11 +14,12 @@
     state: present
     update_cache: true
 
-- name: Install nginx and passenger
+- name: Install nginx, passenger and libyaml packages
   apt:
     pkg:
       - libnginx-mod-http-passenger
       - nginx
+      - libyaml-dev
     state: present
 
 # We want this directory to exist in development too so that
