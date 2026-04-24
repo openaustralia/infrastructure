@@ -19,7 +19,6 @@ resource "aws_instance" "production" {
   }
 
   vpc_security_group_ids = [
-    var.security_group_webserver.id,
     var.security_group_service.id,
     var.security_group_incoming_email.id,
   ]

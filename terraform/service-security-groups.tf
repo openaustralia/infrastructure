@@ -46,6 +46,10 @@ resource "aws_security_group" "theyvoteforyou" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+
+  lifecycle {
+    ignore_changes = [ingress]
+  }
 }
 
 resource "aws_security_group" "righttoknow" {
@@ -91,6 +95,10 @@ resource "aws_security_group" "righttoknow" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+
+  lifecycle {
+    ignore_changes = [ingress]
+  }
 }
 
 resource "aws_security_group" "openaustralia" {
@@ -135,6 +143,10 @@ resource "aws_security_group" "openaustralia" {
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
+  }
+
+  lifecycle {
+    ignore_changes = [ingress]
   }
 }
 
