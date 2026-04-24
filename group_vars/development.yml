@@ -4,7 +4,10 @@ mysql_host: 192.168.56.10
 postgresql_host: 192.168.56.11
 planningalerts_db_host: 192.168.56.11
 
+mysql_5_host: "{{ mysql_host }}"
+mysql_8_host: "{{ mysql_host }}"
+
 newrelic_license_key: null
 devsite: true
-rds_admin_password: 1234567890
+rds_admin_password: "test_password"
 nrinfragent_state: absent

@@ -10,12 +10,11 @@ _STAGE := $(if $(filter-out all,$(STAGE)),_$(STAGE),)
 
 ANSIBLE_TAGS := $(shell echo "$(TAGS)" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//' | sed 's/,$$//')
 ANSIBLE_SKIP_TAGS := $(shell echo "$(SKIP_TAGS)" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//' | sed 's/,$$//')
-ANSIBLE_START_TASK := $(if $(START_AT_TASK),*$(shell echo "$(START_AT_TASK)" | sed 's/[^A-Z0-9_]\+/*/gi')*,)
 
 # Build ansible-playbook options just like Vagrantfile
 ANSIBLE_OPTS :=
 ifdef ANSIBLE_TAGS
-ANSIBLE_OPTS += --tags "$(ANSIBLE_TAGS)"
+ANSIBLE_OPTS += --tags "$(ANSIBLE_TAGS),facts"
 $(info INFO: Only running TAGS: $(ANSIBLE_TAGS))
 endif
 ifdef ANSIBLE_SKIP_TAGS
@@ -26,10 +25,7 @@ ifdef ANSIBLE_VERBOSE
 ANSIBLE_OPTS += -$(ANSIBLE_VERBOSE)
 $(info INFO: Setting verbose: -$(ANSIBLE_VERBOSE))
 endif
-ifdef ANSIBLE_START_TASK
-ANSIBLE_OPTS += --start-at-task "$(ANSIBLE_START_TASK)"
-$(info INFO: Starting at task matching: $(ANSIBLE_START_TASK))
-endif
+
 
 help:
 	@echo "Available targets"
@@ -39,6 +35,7 @@ help:
 	@echo "  keybase                             Set up Keybase symlink for MacOS or Linux and check perms"
 	@echo "  roles                               Install Ansible Galaxy external roles and collections"
 	@echo "  venv                                Create Python virtualenv and install requirements"
+	@echo "  generate-certificates               Generate certificates for the development *.test domains"
 	@echo "Independent targets (not required by all):"
 	@echo "  letsencrypt                         Renew/update SSL certificates"
 	@echo "  retry                               Re-run site.yml limited to hosts from last failed run"
@@ -51,7 +48,7 @@ help:
 	@echo "  tf-plan                             Run terraform plan in the terraform directory"
 	@echo "  tf-apply                            Run terraform apply in the terraform directory"
 	@echo "  update-github-ssh-keys              Update SSH keys on all servers from GitHub"
-	@echo "  vagrant                             Install vagrant plugins"
+	@echo "  vagrant                             Install vagrant plugins and ensure requirements are present"
 	@echo "  clean                               Remove virtualenv, external roles, retry file, collections, keybase symlink"
 	@echo "  clobber                             clobber everything make all created (clean + removes .vagrant and log)"
 	@echo ""
@@ -74,7 +71,6 @@ help:
 	@echo "  TAGS           Only run plays/tasks tagged with these (space or comma separated)"
 	@echo "  SKIP_TAGS      Skip plays/tasks with these tags (space or comma separated)"
 	@echo "  ANSIBLE_VERBOSE  Ansible verbosity flag, e.g. ANSIBLE_VERBOSE=vvv"
-	@echo "  START_AT_TASK  Start playbook at first task matching this string (fuzzy, * wildcards added)"
 
 requirements: .keybase .make/roles venv
 
@@ -94,7 +90,11 @@ keybase: .keybase
 	done; \
 	[ $$broken -eq 0 ]
 
-vagrant: .make/vagrant-plugins
+vagrant: .make/vagrant-plugins .make/certificates requirements
+
+.make/certificates: certificates/generate-certificates.sh | .make
+	certificates/generate-certificates.sh
+	touch .make/certificates
 
 .make/vagrant-plugins: Makefile | .make
 	mkdir -p log
