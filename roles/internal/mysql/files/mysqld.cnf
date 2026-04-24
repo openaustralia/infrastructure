@@ -28,24 +28,23 @@ user		= mysql
 #
 # Instead of skip-networking the default is now to listen only on
 # localhost which is more compatible and is not less secure.
-bind-address		= 127.0.0.1
-mysqlx-bind-address	= 127.0.0.1
+bind-address		= 0.0.0.0
+mysqlx = OFF
 #
 # * Fine Tuning
 #
 key_buffer_size		= 16M
-# max_allowed_packet	= 64M
-# thread_stack		= 256K
-
-# thread_cache_size       = -1
+max_allowed_packet	= 16M
+thread_stack		= 192K
+thread_cache_size	= 8
 
 # This replaces the startup script and checks MyISAM tables if needed
 # the first time they are touched
 myisam-recover-options  = BACKUP
 
-# max_connections        = 151
+max_connections        = 50
 
-# table_open_cache       = 4000
+table_open_cache       = 256
 
 #
 # * Logging and Replication
@@ -76,3 +75,22 @@ log_error = /var/log/mysql/error.log
 max_binlog_size   = 100M
 # binlog_do_db		= include_database_name
 # binlog_ignore_db	= include_database_name
+
+# Reduce memory usage
+# Add if we need extra memory
+# performance_schema = OFF
+innodb_buffer_pool_instances = 1
+innodb_log_buffer_size = 8M
+sort_buffer_size = 512K
+join_buffer_size = 256K
+table_definition_cache = 400
+innodb_buffer_pool_size = 512M
+innodb_redo_log_capacity = 256M
+tmp_table_size = 32M
+max_heap_table_size = 32M
+temptable_max_ram = 256M
+skip-name-resolve = 1
+
+# Emulate RDS:
+default_authentication_plugin = mysql_native_password
+innodb_file_per_table = 1
