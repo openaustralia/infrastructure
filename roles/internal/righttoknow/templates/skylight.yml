@@ -1,0 +1,5 @@
+# config/skylight.yml
+
+---
+# The authentication token for the application.
+authentication: "{{ skylight_authentication }}"

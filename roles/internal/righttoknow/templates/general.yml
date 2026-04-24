@@ -809,6 +809,7 @@ SHARED_FILES:
   - config/database.yml
   - config/general.yml
   - config/sidekiq.yml
+  - config/skylight.yml
   - config/storage.yml
   - config/user_spam_scorer.yml
   - config/rails_env.rb
