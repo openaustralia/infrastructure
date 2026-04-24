@@ -255,14 +255,18 @@ See certificates/README.md for more information. This also generates a certifica
 
 ### <a name='ProvisioninglocaldevelopmentserversusingVagrant'></a>Provisioning local development servers using Vagrant
 
-In development you set up and provision a server using Vagrant. You probably only want to run
-one main server and the mysql server so you can bring it up with:
+In development, you set up and provision a server using Vagrant. You probably only want to run
+one main server and the mysql server, so you can bring it up with:
 
-    vagrant up web1.planningalerts.org.au.test mysql.test
+    vagrant up mysql.test web.planningalerts.test
 
-If it's already up you can re-run Ansible provisioning with:
+If it's already up, you can re-run Ansible provisioning with:
 
-    vagrant provision web1.planningalerts.org.au.test
+    vagrant provision oaf
+
+Or combine with:
+
+    vagrant up --provision staging.righttoknow.test
 
 ### <a name='Provisioningproductionservers'></a>Provisioning production servers
 
@@ -280,7 +284,7 @@ or where there are multiple servers, specify which one you want to provision:
 
      STAGE=old make apply-openaustralia
 
-To provision all stages, just specify `STAGE=`
+To provision all stages, just specify `STAGE=all`
 
 ### <a name='ForciblyrenewingLetsEncryptcertificatesonproductionservers'></a>Forcibly renewing LetsEncrypt certificates on production servers
 
@@ -349,7 +353,7 @@ staging:
 development:
   branch: production
   repository: https://github.com/openaustralia/alaveteli.git
-  server: righttoknow.org.au.test
+  server: righttoknow.test
   user: deploy
   deploy_to: /srv/www/production
   rails_env: production

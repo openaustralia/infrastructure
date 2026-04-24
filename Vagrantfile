@@ -75,7 +75,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     "postgresql" => { node: 11,
                       box: "ubuntu/jammy64",
                       groups: ["postgresql"] },
-    "au.proxy.oaf" => { node: 12,
+    "au.proxy" => { node: 12,
                         box: "ubuntu/xenial64",
                         groups: ["proxy"] },
     "redis" => { node: 13,

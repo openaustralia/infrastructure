@@ -72,3 +72,21 @@ logs:
 ruby_manager: rvm
 ruby_versions:
    - ruby-3.4.4
+
+production_domain_aliases:
+  - "{{ theyvoteforyou_domain }}"
+  - "www.{{ theyvoteforyou_domain }}"
+
+extra_domain_aliases:
+  - theyvoteforyou.org
+  - www.theyvoteforyou.org
+  - theyvoteforyou.com.au
+  - www.theyvoteforyou.com.au
+
+production_certbot_domains: >-
+  {{ production_domain_aliases +
+     ((base_domain == 'org.au') | ternary(extra_domain_aliases, [])) }}
+
+staging_certbot_domains:
+  - "test.{{ theyvoteforyou_domain }}"
+  - "www.test.{{ theyvoteforyou_domain }}"
