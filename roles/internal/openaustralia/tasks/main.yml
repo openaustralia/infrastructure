@@ -86,7 +86,7 @@
     name: "oa-{{ item }}"
   loop: "{{ environments }}"
 
-- name: Create openaustralia users with access to the databases
+- name: Create openaustralia mysql admin user with access to the databases
   mysql_user:
     login_host: "{{ db_host }}"
     login_user: admin
@@ -97,7 +97,7 @@
     host: "%"
   loop: "{{ environments }}"
 
-- name: Create mysql users with readonly access to the openaustralia databases for metabase
+- name: Create mysql user with readonly access to the openaustralia databases for metabase
   mysql_user:
     login_host: "{{ db_host }}"
     login_user: admin
