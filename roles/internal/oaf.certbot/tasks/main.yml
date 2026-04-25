@@ -22,7 +22,8 @@
     pkg: "python3-certbot-{{ certbot_webserver }}"
   when: ansible_python['version']['major'] == 3
 
-- debug: var=certbot_certs
+- name: "Show certbot certificate list [DEBUG]"
+  debug: var=certbot_certs
 
 - name: Install certificates with certbot
   command: certbot run --non-interactive --agree-tos --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
