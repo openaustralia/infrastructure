@@ -239,6 +239,20 @@ Use `make keybase` to check you have the required permissions.
 Once this is done, the symlinks to .*-vault-pass inside the repo
 should point to the password files. If this doesn't work you may need to update these files yourself.
 
+#### Memory and CPU Usage
+
+Vagrant will allocate 2 GB of RAM and 2 CPU cores per VM by default, which can be overridden. 
+When tested with provisioning newprod.openaustralia from scratch (YMMV) compared to default settings:
+* `VAGRANT_MEMORY=4096` was 9% faster if you have enough host memory (2 x memory)
+* `VAGRANT_CPUS=1 VAGRANT_MEMORY=3072` for running many VMs (12% slower with 1/2 cores and 1.5 x memory)
+* `VAGRANT_CPUS=1` minimum (20% slower with 1/2 cores)
+ 
+FYI These production systems have more than 2 CPUs and/or 2 GiB memory:
+  * planningalerts - 2x t3.medium, 4 GiB RAM
+  * righttoknow - t3.large 8 GiB memory, (staging t3.medium, 4 GiB RAM)
+  * morph - linode 32 GB, 8 cpu, 2 GB swap
+  * theyvoteforyou - t3.xlarge - 4 vCPUs, 16 GiB memory
+
 #### Access to everything except right to know
 
 If the `.rtk-vault-pass` symlink is broken, then use `.envrc` (and `direnv` package) to set the following whenever you cd to this dir:
