@@ -148,6 +148,9 @@ resource "cloudflare_record" "dmarc" {
 }
 
 ## openaustralia.org.au
+# Keep apache_sites in the following up to date:
+# * group_vars/openaustralia_new.yml
+# * group_vars/openaustralia_old.yml
 
 # A records
 resource "cloudflare_record" "alt_root" {
