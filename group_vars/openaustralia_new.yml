@@ -2,7 +2,7 @@
 # Most values inherited from openaustralia.yml
 site_name: newprod.openaustralia.org.au
 
-# Cron enable/disable switch for staging
+# Cron enable/disable switch for staging - FIXME: change when emails are caught
 cron_enabled: false
 
 # Disable backups for staging
@@ -32,11 +32,14 @@ apache_sites:
   production:
     domain: "newprod.{{ openaustralia_domain }}"
     server_aliases: []
-    newrelic_appname: OpenAustralia.org
     password_protect: true
+    newrelic_appname: 'OpenAustralia.org New'
+    db_password: "{{ openaustralia_production_mysql_password }}"
   staging:
     domain: "staging.{{ openaustralia_domain }}"
     server_aliases:
       - staging.openaustralia.org
     password_protect: true
     template: production
+    newrelic_appname: 'OpenAustralia.org Staging'
+    db_password: "{{ openaustralia_staging_mysql_password }}"

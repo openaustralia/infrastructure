@@ -49,12 +49,14 @@ apache_sites:
     #cert_domain: "{{ openaustralia_domain }}"
     server_aliases: "{{ combined_production_server_aliases }}"
     newrelic_appname: OpenAustralia.org
+    db_password: "{{ openaustralia_production_mysql_password }}"
   staging:
     domain: test."{{ openaustralia_domain }}"
     password_protect: true
     server_aliases: "{{ combined_staging_server_aliases }}"
     template: production
     newrelic_appname: 'OpenAustralia.org Staging'
+    db_password: "{{ openaustralia_staging_mysql_password }}"
   "000-default":
     # redirects to another domain
     domain: "www.{{ openaustralia_domain }}"
