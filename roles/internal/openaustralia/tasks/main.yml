@@ -311,7 +311,7 @@
     owner: deploy
     group: deploy
   vars:
-    db_password: "{{ (apache_sites[item].db_password }}"
+    db_password: "{{ apache_sites[item].db_password }}"
     stage: "{{ item }}"
     domain: "{{ apache_sites[item].domain }}"
   with_items: "{{ environments }}"
