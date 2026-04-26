@@ -262,7 +262,9 @@
 
 - name: Copy across the php config
   when: "php_version is defined"
-  template: src=php.ini dest=/etc/php/{{ php_version }}/{{ item }}/
+  template:
+    src: php.ini
+    dest: /etc/php/{{ php_version }}/{{ item }}/php.ini
   notify: reload apache
   with_items:
     - apache2
@@ -337,6 +339,21 @@
 
 - name: Copy msmtp configuration
   template: src=msmtprc dest=/etc/
+
+- name: "Ensure /usr/local/bin exists"
+  file:
+    path: /usr/local/bin
+    owner: root
+    group: root
+    mode: 0755
+
+- name: "Copy log_not_sendmail"
+  copy:
+    src: log_not_sendemail.sh
+    dest: /usr/local/bin/log_not_sendemail
+    owner: root
+    group: root
+    mode: 0755
 
 # daily update at night for MP data (regmem, data from Public Whip etc.)
 - name: Set up cron job for daily update
