@@ -1,2 +1,6 @@
 # File: group_vars/catch_all_mail.yml
 ---
+
+sendmail_commands:
+  production: "{{ catch_email_cmd }}"
+  staging: "{{ catch_email_cmd }}"
