@@ -1,0 +1,14 @@
+#!/bin/bash
+
+case "$PWD" in
+*/production/*)
+    exec {{ sendmail_commands['production'] }} "$@"
+    ;;
+*/staging/*)
+    exec {{ sendmail_commands['staging'] }} "$@"
+    ;;
+*)
+    echo "WARNING: Unable to determine stage - assuming staging to be safe!" >&2
+    exec {{ sendmail_commands['staging'] }} "$@"
+    ;;
+esac
