@@ -62,6 +62,7 @@ catch_email_password: "{{ lookup('env', 'CATCH_EMAIL_PASSWORD') | default('') }}
 catch_email_auth: "{{ lookup('env', 'CATCH_EMAIL_AUTH') | default('plain') }}"
 
 live_email_cmd: "msmtp -a cuttlefish --read-envelope-from -t"
+# If we have details of a catch service, use msmtp to send it there, otherwise fallback to saving emails to the disk
 catch_email_cmd: "{{ 'msmtp -a catchmail --read-envelope-from -t' if catch_email_host else '/usr/local/bin/log_not_sendemail' }}"
 
 sendmail_commands:
