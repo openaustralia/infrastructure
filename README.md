@@ -3,41 +3,42 @@
 # Automated setup and configuration for most of OpenAustralia Foundation's servers
 
 <!-- vscode-markdown-toc -->
+
 - [Automated setup and configuration for most of OpenAustralia Foundation's servers](#automated-setup-and-configuration-for-most-of-openaustralia-foundations-servers)
-  - [A little history](#a-little-history)
-  - [Approach](#approach)
-  - [The tools](#the-tools)
-  - [Updates](#updates)
-    - [2025-05-27](#2025-05-27)
-      - [Supported Platforms](#supported-platforms)
-      - [RightToKnow Dev platform](#righttoknow-dev-platform)
-      - [PlanningAlerts Production](#planningalerts-production)
-    - [2018-05-26](#2018-05-26)
-  - [Requirements](#requirements)
-    - [Prerequisites](#prerequisites)
-    - [Environment setup](#environment-setup)
-    - [Add the Ansible Vault password](#add-the-ansible-vault-password)
-      - [Access to everything except right to know](#access-to-everything-except-right-to-know)
-  - [Generating SSL certificates for development](#generating-ssl-certificates-for-development)
-  - [Provisioning](#provisioning)
-    - [Provisioning local development servers using Vagrant](#provisioning-local-development-servers-using-vagrant)
-    - [Provisioning production servers](#provisioning-production-servers)
-    - [Forcibly renewing LetsEncrypt certificates on production servers](#forcibly-renewing-letsencrypt-certificates-on-production-servers)
-      - [Filtering hosts and/or tasks performed](#filtering-hosts-andor-tasks-performed)
-  - [Deploying](#deploying)
-    - [Deploying Right To Know to your local development server](#deploying-right-to-know-to-your-local-development-server)
-    - [Deploying PlanningAlerts](#deploying-planningalerts)
-      - [Deploying PlanningAlerts to your local development server](#deploying-planningalerts-to-your-local-development-server)
-      - [Deploying PlanningAlerts to production](#deploying-planningalerts-to-production)
-    - [Running tests locally](#running-tests-locally)
-    - [Deploying They Vote For You](#deploying-they-vote-for-you)
-      - [Deploying They Vote For You to your local development server](#deploying-they-vote-for-you-to-your-local-development-server)
-      - [Deploying They Vote For You to production](#deploying-they-vote-for-you-to-production)
-    - [Deploying OpenAustralia](#deploying-openaustralia)
-      - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
-      - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
-  - [Backups](#backups)
-  - [MailCatching](#MailCatching)
+    - [A little history](#a-little-history)
+    - [Approach](#approach)
+    - [The tools](#the-tools)
+    - [Updates](#updates)
+        - [2025-05-27](#2025-05-27)
+            - [Supported Platforms](#supported-platforms)
+            - [RightToKnow Dev platform](#righttoknow-dev-platform)
+            - [PlanningAlerts Production](#planningalerts-production)
+        - [2018-05-26](#2018-05-26)
+    - [Requirements](#requirements)
+        - [Prerequisites](#prerequisites)
+        - [Environment setup](#environment-setup)
+        - [Add the Ansible Vault password](#add-the-ansible-vault-password)
+            - [Access to everything except right to know](#access-to-everything-except-right-to-know)
+    - [Generating SSL certificates for development](#generating-ssl-certificates-for-development)
+    - [Provisioning](#provisioning)
+        - [Provisioning local development servers using Vagrant](#provisioning-local-development-servers-using-vagrant)
+        - [Provisioning production servers](#provisioning-production-servers)
+        - [Forcibly renewing LetsEncrypt certificates on production servers](#forcibly-renewing-letsencrypt-certificates-on-production-servers)
+            - [Filtering hosts and/or tasks performed](#filtering-hosts-andor-tasks-performed)
+    - [Deploying](#deploying)
+        - [Deploying Right To Know to your local development server](#deploying-right-to-know-to-your-local-development-server)
+        - [Deploying PlanningAlerts](#deploying-planningalerts)
+            - [Deploying PlanningAlerts to your local development server](#deploying-planningalerts-to-your-local-development-server)
+            - [Deploying PlanningAlerts to production](#deploying-planningalerts-to-production)
+        - [Running tests locally](#running-tests-locally)
+        - [Deploying They Vote For You](#deploying-they-vote-for-you)
+            - [Deploying They Vote For You to your local development server](#deploying-they-vote-for-you-to-your-local-development-server)
+            - [Deploying They Vote For You to production](#deploying-they-vote-for-you-to-production)
+        - [Deploying OpenAustralia](#deploying-openaustralia)
+            - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
+            - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
+    - [Backups](#backups)
+    - [MailCatching](#MailCatching)
 
 <!-- vscode-markdown-toc-config
 	numbering=false
@@ -134,42 +135,50 @@ _Umm. 7 years later, plus one day. That's weird._
 
 #### <a name='SupportedPlatforms'></a>Supported Platforms
 
-In the past, the tools in this repo were well supported across most common Linux platforms (including WSL), and OS X. However, newer versions of OSX only run on ARM chips, and older versions of OS X are increasingly unsupported by tools such as VirtualBox and Docker.
+In the past, the tools in this repo were well supported across most common Linux platforms (including WSL), and OS X.
+However, newer versions of OSX only run on ARM chips, and older versions of OS X are increasingly unsupported by tools
+such as VirtualBox and Docker.
 
-As of today, the only platform that we know works is debian-based Linux systems. Other linuxes probably work, including WSL; and there are probably two releases of MacOS which still run on the last generations of Intel Macs which might work.
+As of today, the only platform that we know works is debian-based Linux systems. Other linuxes probably work, including
+WSL; and there are probably two releases of MacOS which still run on the last generations of Intel Macs which might
+work.
 
 We'd like to expand this in future, when we have time
 
 #### <a name='RightToKnowDevplatform'></a>RightToKnow Dev platform
 
-We've moved RTK on to upstream Alavateli, so the instructions below for a dev environment are out of date. Please refer to [openaustralia/righttoknow](https://github.com/openaustralia/righttoknow?tab=readme-ov-file#development)'s README for instructions.
+We've moved RTK on to upstream Alavateli, so the instructions below for a dev environment are out of date. Please refer
+to [openaustralia/righttoknow](https://github.com/openaustralia/righttoknow?tab=readme-ov-file#development)'s README for
+instructions.
 
 #### <a name='PlanningAlertsProduction'></a>PlanningAlerts Production
 
-We now have two production servers. Every day deployment is still run by Capistrano. For major upgrades (e.g., updating the Ruby version), we have the option of a blue/green deployment driven by Terraform, allowing us to update without downtime.
+We now have two production servers. Every day deployment is still run by Capistrano. For major upgrades (e.g., updating
+the Ruby version), we have the option of a blue/green deployment driven by Terraform, allowing us to update without
+downtime.
 
 ### <a name='-1'></a>2018-05-26
 
 This repo is being used to setup and configure servers on EC2 for:
 
 - planningalerts.org.au:
-  - planningalerts.org.au
-  - test.planningalerts.org.au
-  - A cron job that uploads planningalerts data for a commercial client
+    - planningalerts.org.au
+    - test.planningalerts.org.au
+    - A cron job that uploads planningalerts data for a commercial client
 - theyvoteforyou.org.au:
-  - theyvoteforyou.org.au
-  - test.theyvoteforyou.org.au
+    - theyvoteforyou.org.au
+    - test.theyvoteforyou.org.au
 - openaustralia.org.au:
-  - openaustralia.org.au
-  - test.openaustralia.org.au
-  - data.openaustralia.org.au
-  - software.openaustralia.org.au
+    - openaustralia.org.au
+    - test.openaustralia.org.au
+    - data.openaustralia.org.au
+    - software.openaustralia.org.au
 - righttoknow.org.au:
-  - righttoknow.org.au
-  - test.righttoknow.org.au
+    - righttoknow.org.au
+    - test.righttoknow.org.au
 - openaustraliafoundation.org.au:
-  - openaustraliafoundation.org.au
-  - CiviCRM
+    - openaustraliafoundation.org.au
+    - CiviCRM
 - opengovernment.org.au (decommissioned)
 - electionleaflets.org.au (decommissioned)
 
@@ -186,19 +195,34 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 
 ### <a name='Prerequisites'></a>Prerequisites
 
-- For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
+- For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our
+  instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
 - In order to run Ansible, you'll need Python < 3.12 installed
-  - 3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
-  - Secrets: Ansible looks at the four symlinks in the root of this repo and expects to find passphrases to unlock secrets used for production deployments. Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password). If Keybase isn't working for you, any technique you have to put the right value into the right file will be fine. You may need to update the `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location.
-- In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
+    - 3.12 dropped some deprecated language features which
+      cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
+    - Secrets: Ansible looks at the four symlinks in the root of this repo and expects to find passphrases to unlock
+      secrets used for production deployments. Our usual method of distributing these files is
+      documented [below](#add-the-ansible-vault-password). If Keybase isn't working for you, any technique you have to
+      put the right value into the right file will be fine. You may need to update the `vault_identity_list`
+      in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new
+      location.
+- In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/)
+  so that you're able to manage multiple versions of Ruby.
 - For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
-- For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
-  - Terraform requires some extra secrets to access the S3 bucket we use to store Terraform's permanent state. You can put these in the usual place that AWS CLI tools look - `~/.aws/credentials`.
-  - Terraform requires some extra secrets in addition to those used by Ansible. Ask James about secrets.auto.tfvars
-    - Note that some of these secrets are the same secrets used as AWS credentials above, but they'll need to be provided again to populate the Terraform variables as well
-  - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use. `gcloud auth application-default login`
-  - Terraform runs `prepkey.sh` to grab your SSH public key to use as a deployer key in AWS. This script makes some simple assumptions: that `jq` is installed, and that your public key can be found at `~/.ssh/id_rsa.pub`.
-  - We host DNS on Cloudflare. An API key to manage these zones is one of the secrets you'll need to provide. To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
+- For a few things, including major PlanningAlerts deployments, you'll
+  need [Terraform](https://developer.hashicorp.com/terraform/install)
+    - Terraform requires some extra secrets to access the S3 bucket we use to store Terraform's permanent state. You can
+      put these in the usual place that AWS CLI tools look - `~/.aws/credentials`.
+    - Terraform requires some extra secrets in addition to those used by Ansible. Ask James about secrets.auto.tfvars
+        - Note that some of these secrets are the same secrets used as AWS credentials above, but they'll need to be
+          provided again to populate the Terraform variables as well
+    - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured
+      with authentication credentials it can use. `gcloud auth application-default login`
+    - Terraform runs `prepkey.sh` to grab your SSH public key to use as a deployer key in AWS. This script makes some
+      simple assumptions: that `jq` is installed, and that your public key can be found at `~/.ssh/id_rsa.pub`.
+    - We host DNS on Cloudflare. An API key to manage these zones is one of the secrets you'll need to provide. To get
+      access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the
+      organisation - see Matthew or James for details
 
 ### <a name='Environmentsetup'></a>Environment setup
 
@@ -231,9 +255,11 @@ Windows; or a remote Ubuntu VM running headless - there's a helper script
 at `bin/headless-keybase.sh` which will help you run the Keybase services
 as user-space systemd units.
 
-The first time you run `make` on a command that uses ansible, it will try to create the `.keybase`, symlinking it from the first
-common location for keybase that exists (on MacOS and Linux). It will fall back to actually asking keybase for its mountdir
-which requires keybase to be running. 
+The first time you run `make` on a command that uses ansible, it will try to create the `.keybase`, symlinking it from
+the first
+common location for keybase that exists (on MacOS and Linux). It will fall back to actually asking keybase for its
+mountdir
+which requires keybase to be running.
 
 Use `make keybase` to check you have the required permissions.
 
@@ -242,29 +268,35 @@ should point to the password files. If this doesn't work you may need to update 
 
 #### Memory and CPU Usage
 
-Vagrant will allocate 2 GB of RAM and 2 CPU cores per VM by default, which can be overridden. 
+Vagrant will allocate 2 GB of RAM and 2 CPU cores per VM by default, which can be overridden.
 When tested with provisioning newprod.openaustralia from scratch (YMMV) compared to default settings:
+
 * `VAGRANT_MEMORY=4096` was 9% faster if you have enough host memory (2 x memory)
 * `VAGRANT_CPUS=1 VAGRANT_MEMORY=3072` for running many VMs (12% slower with 1/2 cores and 1.5 x memory)
 * `VAGRANT_CPUS=1` minimum (20% slower with 1/2 cores)
- 
+
 FYI These production systems have more than 2 CPUs and/or 2 GiB memory:
-  * planningalerts - 2x t3.medium, 4 GiB RAM
-  * righttoknow - t3.large 8 GiB memory, (staging t3.medium, 4 GiB RAM)
-  * morph - linode 32 GB, 8 cpu, 2 GB swap
-  * theyvoteforyou - t3.xlarge - 4 vCPUs, 16 GiB memory
+
+* planningalerts - 2x t3.medium, 4 GiB RAM
+* righttoknow - t3.large 8 GiB memory, (staging t3.medium, 4 GiB RAM)
+* morph - linode 32 GB, 8 cpu, 2 GB swap
+* theyvoteforyou - t3.xlarge - 4 vCPUs, 16 GiB memory
 
 #### Access to everything except right to know
 
-If the `.rtk-vault-pass` symlink is broken, then use `.envrc` (and `direnv` package) to set the following whenever you cd to this dir:
+If the `.rtk-vault-pass` symlink is broken, then use `.envrc` (and `direnv` package) to set the following whenever you
+cd to this dir:
+
 ```bash
 export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"
 ```
+
 This will allow you to work on everything except right to know.
 
 ## <a name='GeneratingSSLcertificatesfordevelopment'></a>Generating SSL certificates for development
 
-See certificates/README.md for more information. This also generates a certificate for morph local development if present.
+See certificates/README.md for more information. This also generates a certificate for morph local development if
+present.
 
 ## <a name='Provisioning'></a>Provisioning
 
@@ -289,7 +321,8 @@ Provision all running servers (production and staging) with:
 
     make all
 
-This will create a Python virtualenv in `venv`; install ansible inside it; and install required roles from ansible-galaxy inside `roles/external`
+This will create a Python virtualenv in `venv`; install ansible inside it; and install required roles from
+ansible-galaxy inside `roles/external`
 
 If you just want to provision a single server:
 
@@ -311,9 +344,11 @@ assumes that the web server is Apache.
 Ansible then installs and configures Certbot, and uses it to create
 certificates for all domains listed in `certbot_certs`.
 
-Code for this is in the [oaf.certbot role](https://github.com/openaustralia/infrastructure/blob/9d251b5e86623efaadcd1ee39dc429cfb6f95607/roles/internal/oaf.certbot/tasks/main.yml#L16).
+Code for this is in
+the [oaf.certbot role](https://github.com/openaustralia/infrastructure/blob/9d251b5e86623efaadcd1ee39dc429cfb6f95607/roles/internal/oaf.certbot/tasks/main.yml#L16).
 
-Sample config at [RTK](https://github.com/openaustralia/infrastructure/blob/9d251b5e86623efaadcd1ee39dc429cfb6f95607/roles/internal/righttoknow/tasks/certificates.yml#L47).
+Sample config
+at [RTK](https://github.com/openaustralia/infrastructure/blob/9d251b5e86623efaadcd1ee39dc429cfb6f95607/roles/internal/righttoknow/tasks/certificates.yml#L47).
 
 After this, Certbot runs from cron (or systemd) and renews
 certificates automatically with no downtime.
@@ -337,8 +372,10 @@ You can also set:
   group in `inventory/ec2-hosts` which only contains `staging.openaustralia.org.au`
 * ANSIBLE_TAGS - limits to tasks / roles that have one of the comma-separated roles
 * ANSIBLE_SKIP_TAGS - skips tasks / roles that have one of the comma-separated roles
-* ANSIBLE_VERBOSE - set to one to four 'v's eg 'ANSIBLE_VERBOSE=vvv make apply-openaustralia' will show a lot of diagnostic information from ansible
-* ANSIBLE_START_TASK - set to part of the task description to have ansible skip to that task, which allows you to quickly debug after a failure
+* ANSIBLE_VERBOSE - set to one to four 'v's eg 'ANSIBLE_VERBOSE=vvv make apply-openaustralia' will show a lot of
+  diagnostic information from ansible
+* ANSIBLE_START_TASK - set to part of the task description to have ansible skip to that task, which allows you to
+  quickly debug after a failure
 
 ## <a name='Deploying'></a>Deploying
 
@@ -429,7 +466,8 @@ bundle exec cap production deploy
 ### <a name='Runningtestslocally'></a>Running tests locally
 
 - requires a database. Use `mysql.test` from the `infrastructure` repo.
-- Create a user called `pw_test` with password `pw_test` and grant it access to a db called `pw_test`. Then, drop this in `config/database.yml`:
+- Create a user called `pw_test` with password `pw_test` and grant it access to a db called `pw_test`. Then, drop this
+  in `config/database.yml`:
 
 ````
 test:
@@ -504,52 +542,32 @@ cap -S stage=production deploy
 
 Data directories of servers are backed up to S3 using Duply.
 
-Using the `data_directory` profile as an example, to run a backup manually you'd log in as root and run `duply data_directory backup`.
+Using the `data_directory` profile as an example, to run a backup manually you'd log in as root and run
+`duply data_directory backup`.
 
 To restore the latest backup to `/mnt/restore` you'd run `duply data_directory restore /mnt/restore`.
 
-
 ## <a name='MailCatching'></a>Mail Catching
 
-There are two ways an openaustralia server is configured to catch emails.
+Typically only the production environment on the live server is configured to send emails out, staging on any server and
+production on non-live servers are configured to catch emails.
 
-One is to be in the group `catch_all_mail`. This 
-* disables sending email to the real world in msmtp, 
-* configuires php.ini to send email to `/usr/local/bin/log_not_sendmail`
+If the host is in the `catch_all_mail` group, then both production and staging are configured to use the
+`catch_email_cmd` command to catch emails, otherwise staging catches emails and production sends them out for real.
 
-### `log_not_sendmail`
+Where both production and staging use the same command, then php.ini sends emails using that command, otherwise
+`determine_email_destination` is called to determine which environment the current command is running in and thus the
+`sendmail_path` to use.
 
-The `log_not_sendmail` command logs emails to ~/log/mail/DATE-TIME.log, keeping it to 
+The apache vhosts directly set `sendmail_path` to the appropriate command, ignoring the default in `php.ini`. It is the
+commands run via cron or manually that use the sendmail_path configured in php.ini.
 
-To send email to a mail catcher on openaustralia, update the `/etc/msmstprc` file, 
-keeping a copy as the ansible `internal/openaustralia` role will overwite it!
+If `CATCH_EMAILS_HOST` is set then the `catch_emails` account set up on msmtp is used to send emails to the
+remote catch server, otherwwise the `log_not_sendmail` command is used, which saves emails to `~/log/mail/`. The
+ENv variables are:
 
-Note: This will affect BOTH the production and staging environments on that server!
-If you ONLY want to change staging, then add the following to the `/etc/apache2/sites-enabled` config file for staging:
-```
-    php_admin_value sendmail_path "msmtp --read-envelope-from -t -a mailpit"
-```
-
-You will want to add a mailpit entry:
-```
-account mailpit
-tls off
-host <mailpit.server>
-port 2525
-auth plain
-user openaustralia
-password <your-password>
-host plannies-mate.thesite.info
-```
-
-Change the default if you want both production and staging to be changed:
-```
-account default : mailpit
-#account default : cuttlefish
-```
-
-To undo this, change the default back, optionally remove the mailpit entry, and update the apache vhost config if you have changed it.
-
-REMEMBER: Keep a copy of the files you change and copy them back after running a diff to confirm if you run ansible.
-(TODO: Make it a default for setting up qa/test servers)
-
+* CATCH_EMAIL_HOST – must be set to trigger use
+* CATCH_EMAIL_PORT – must be set, no default
+* CATCH_EMAIL_USER - optional
+* CATCH_EMAIL_PASSWORD - optional
+* CATCH_EMAIL_AUTH – defaults to `plain`, set if you want some other auth setting
