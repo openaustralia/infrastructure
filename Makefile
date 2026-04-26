@@ -1,10 +1,10 @@
 .PHONY: all ansible-lint apply-metabase apply-oaf requirements apply-openaustralia \
         apply-planningalerts apply-righttoknow apply-rtk-prod apply-rtk-staging apply-theyvoteforyou \
         check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
-        check-rtk-prod check-rtk-staging check-theyvoteforyou \
+        check-rtk-prod check-rtk-staging check-theyvoteforyou check-target \
         clean clobber help install-linters keybase letsencrypt lint production retry roles \
-        show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-init tf-plan \
-        update-github-ssh-keys vagrant venv yaml-lint
+        show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target tf-init tf-plan \
+        tf-plan-target update-github-ssh-keys vagrant venv yaml-lint
 
 _STAGE := $(if $(filter-out all,$(STAGE)),_$(STAGE),)
 
@@ -177,6 +177,19 @@ tf-validate: tf-check-fmt .make/terraform
 tf-check-fmt:
 	terraform -chdir=terraform fmt -check 
 	@echo "PASSED tf-check-fmt!"
+
+check-target:
+ifndef TARGET
+	@echo "ERROR: TARGET is not set! Available targets are:"
+	@ls -1 terraform/ | grep -E '^[a-z]' | grep -v '\.tf$$' | sed 's/^/  /'
+	@exit 1
+endif
+
+tf-plan-target: check-target .make/terraform
+	terraform -chdir=terraform plan -target=module.$(TARGET)
+
+tf-apply-target: check-target .make/terraform
+	terraform -chdir=terraform apply -target=module.$(TARGET)
 
 stage_required:
 ifndef STAGE
