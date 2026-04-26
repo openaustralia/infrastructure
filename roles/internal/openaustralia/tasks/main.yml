@@ -146,9 +146,8 @@
   when: "'development' in group_names"
   notify: reload apache
 
-- name: Install apache now (for the benefit of certbot)
+- name: Install apache for website (installed now for the benefit of certbot)
   apt: pkg=apache2
-  when: "'ec2' in group_names"
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
@@ -355,64 +354,97 @@
     group: root
     mode: 0755
 
+- name: "Create determine_email_destination"
+  template:
+    src: determine_email_destination.sh.j2
+    dest: /usr/local/bin/determine_email_destination
+    owner: root
+    group: root
+    mode: 0755
+
 # daily update at night for MP data (regmem, data from Public Whip etc.)
 - name: Set up cron job for daily update
   cron:
-    name: "dailyupdate {{ item }}"
+    name: "dailyupdate {{ item.1 }}"
     user: deploy
-    hour: 1
+    hour: "{{ 1 + item.0 }}"
     minute: 37
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./dailyupdate"
+    job: "cd /srv/www/{{ item.1 }}/current/twfy/scripts && ./dailyupdate"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items: "{{ environments }}"
+  with_indexed_items: "{{ environments }}"
 
 # every week early Sunday grab weekly range of data
 - name: Set up cron job for weekly update
   cron:
-    name: "weeklyupdate {{ item }}"
+    name: "weeklyupdate {{ item.1 }}"
     user: deploy
-    hour: 4
+    hour: "{{ 4 + item.0 }}"
     minute: 23
     weekday: 0
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./weeklyupdate"
+    job: "cd /srv/www/{{ item.1 }}/current/twfy/scripts && ./weeklyupdate"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items: "{{ environments }}"
+  with_indexed_items: "{{ environments }}"
 
 # Email updates (Going at 10am to give me time to fix things if necessary)
 - name: Set up cron job for email alerts
   cron:
-    name: "alertmailer {{ item }}"
+    name: "alertmailer {{ item.1 }}"
     user: deploy
-    hour: 10
+    hour: "{{ 10 + item.0 }}"
     minute: 0
     weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && php -q alertmailer.php"
+    job: "cd /srv/www/{{ item.1 }}/current/twfy/scripts && php -q alertmailer.php"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items: "{{ environments }}"
+  with_indexed_items: "{{ environments }}"
 
 # Morning update (Australian Hansard is supposed to be up by 9am the next working day)
 - name: Set up cron job for morning updates
   cron:
-    name: "morningupdate {{ item }}"
+    name: "morningupdate {{ item.1 }}"
     user: deploy
-    hour: 9
+    hour: "{{ 9 + item.0 }}"
     minute: 5
     weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true ./morningupdate"
+    job: "cd /srv/www/{{ item.1 }}/current/twfy/scripts && VERBOSE=true ./morningupdate"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items: "{{ environments }}"
+  with_indexed_items: "{{ environments }}"
 
-- name: Install postfix so we can mail out from cron jobs
+- name: "Remove msmtp-mta for email of output from cron jobs"
+  apt:
+    pkg: msmtp-mta
+    state: absent
+  when: "not (catch_mail_host and sendmail_commands['production'] != live_email_cmd)"
+
+- name: "Remove postfix for catch email"
   apt:
     pkg: postfix
+    state: absent
+  when: "sendmail_commands['production'] != live_email_cmd"
 
-# For local development (under vagrant we don't want the cron jobs generating email)
-- name: "Set MAILTO only for ec2 cron jobs"
+- name: "Install postfix for email of output from cron jobs (production and staging) live"
+  apt:
+    pkg: postfix
+    state: present
+  when: "sendmail_commands['production'] == live_email_cmd"
+
+- name: "Install msmtp-mta for catch email"
+  apt:
+    pkg: msmtp-mta
+    state: present
+  when: "catch_mail_host and sendmail_commands['production'] != live_email_cmd"
+
+- name: "Install log_not_sendemail as system sendmail"
+  file:
+    src: /usr/local/bin/log_not_sendemail
+    dest: /usr/sbin/sendmail
+    state: link
+  when: "not catch_mail_host and sendmail_commands['production'] != live_email_cmd"
+
+- name: "Set MAILTO for where the output and status of cron jobs is sent"
   cronvar:
     name: MAILTO
     user: deploy
     value: web-administrators@openaustralia.org,z4e3a8v8r4p0f9z1@oaf.slack.com
-  when: "'ec2' in group_names"
 
 # TODO: I have faint memory of rsync service for data.openaustralia.org.au
 
