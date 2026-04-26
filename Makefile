@@ -180,7 +180,7 @@ tf-check-fmt:
 
 stage_required:
 ifndef STAGE
-	$(error STAGE is required, for example: STAGE=staging or production,new,old or STAGE=all for everything)
+	$(error STAGE is required, for example: STAGE=staging or STAGE=production or STAGE=new or STAGE=old or STAGE=all for everything)
 endif
 
 # Checks only
@@ -208,7 +208,6 @@ apply-oaf: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --diff
 apply-openaustralia: requirements stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --diff
-
 apply-metabase: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
 
