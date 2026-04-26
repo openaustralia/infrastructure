@@ -55,11 +55,11 @@ bundle_path: "{{ ruby_manager_bundle_path[ruby_manager] }}"
 
 ruby_manager: none
 
-catch_mail_host: "{{ lookup('env', 'CATCH_MAIL_HOST') | default(omit) }}"
-catch_mail_port: "{{ lookup('env', 'CATCH_MAIL_PORT') | default(omit) }}"
-catch_mail_user: "{{ lookup('env', 'CATCH_MAIL_USER') | default(omit) }}"
-catch_mail_password: "{{ lookup('env', 'CATCH_MAIL_PASSWORD') | default(omit) }}"
-catch_mail_auth: "{{ lookup('env', 'CATCH_MAIL_AUTH') | default('plain') }}"
+catch_email_host: "{{ lookup('env', 'CATCH_EMAIL_HOST') | default('') }}"
+catch_email_port: "{{ lookup('env', 'CATCH_EMAIL_PORT') | default('') }}"
+catch_email_user: "{{ lookup('env', 'CATCH_EMAIL_USER') | default('') }}"
+catch_email_password: "{{ lookup('env', 'CATCH_EMAIL_PASSWORD') | default('') }}"
+catch_email_auth: "{{ lookup('env', 'CATCH_EMAIL_AUTH') | default('plain') }}"
 
 live_email_cmd: "msmtp -a cuttlefish --read-envelope-from -t"
 catch_email_cmd: "{{ 'msmtp -a catchmail --read-envelope-from -t' if catch_email_host else '/usr/local/bin/log_not_sendemail' }}"

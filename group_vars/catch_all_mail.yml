@@ -1,7 +1,2 @@
 # File: group_vars/catch_all_mail.yml
 ---
-catch_mail_host: "{{ lookup('env', 'CATCH_MAIL_HOST') | default(omit) }}"
-catch_mail_port: "{{ lookup('env', 'CATCH_MAIL_PORT') | default(omit) }}"
-catch_mail_user: "{{ lookup('env', 'CATCH_MAIL_USER') | default(omit) }}"
-catch_mail_password: "{{ lookup('env', 'CATCH_MAIL_PASSWORD') | default(omit) }}"
-catch_mail_auth: "{{ lookup('env', 'CATCH_MAIL_AUTH') | default('plain') }}"
