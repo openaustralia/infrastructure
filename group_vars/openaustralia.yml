@@ -85,19 +85,6 @@ logs:
      log_stream_name: "{{ inventory_hostname }}"
      timestamp_format: "%Y-%m-%d %H:%M:%S"
 
-domains_for_certbot:
-  - email: contact@oaf.org.au
-    domains:
-      - "{{ openaustralia_domain }}"
-      - www."{{ openaustralia_domain }}"
-      - openaustralia.org
-      - www.openaustralia.org
-  - email: contact@oaf.org.au
-    domains:
-      - test.{{ openaustralia_domain }}
-      - staging.{{ openaustralia_domain }}
-      - www.test.{{ openaustralia_domain }}
-
 ruby_manager: rbenv
 ruby_versions:
   - ruby-3.4.9
@@ -107,3 +94,5 @@ rbenv_extra_depends:
 environments:
   - production
   - staging
+
+certbot_email: contact@oaf.org.au

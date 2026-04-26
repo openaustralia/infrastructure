@@ -2,7 +2,7 @@
 # Most values inherited from openaustralia.yml
 site_name: newprod.openaustralia.org.au
 
-# Cron enable/disable switch for staging
+# Cron enable/disable switch for staging - FIXME: change when emails are caught
 cron_enabled: false
 
 # Disable backups for staging
@@ -11,3 +11,35 @@ domains_for_certbot:
   - email: contact@oaf.org.au
     domains:
       - "{{ openaustralia_domain }}"
+
+# Control what version is installed
+xapian_version: 1.4.25
+
+# PHP has two version numbers :( - make sure they are in sync
+php_version: 8.3
+php_api_version: "20230831"
+
+# Based on aws_eip.production.public_ip and CNAMES in terraform/openaustralia/dns.tf
+
+# stage is set to key
+# domain, server_aliases and password_protect are set to corresponding values
+
+apache_sites:
+  "000-default":
+    # redirects to another domain
+    domain: "newprod.{{ openaustralia_domain }}"
+    server_aliases: [ ]
+  production:
+    domain: "newprod.{{ openaustralia_domain }}"
+    server_aliases: []
+    password_protect: true
+    newrelic_appname: 'OpenAustralia.org New'
+    db_password: "{{ openaustralia_production_mysql_password }}"
+  staging:
+    domain: "staging.{{ openaustralia_domain }}"
+    server_aliases:
+      - staging.openaustralia.org
+    password_protect: true
+    template: production
+    newrelic_appname: 'OpenAustralia.org Staging'
+    db_password: "{{ openaustralia_staging_mysql_password }}"

@@ -156,7 +156,6 @@
 - hosts: all
   tags: base-server
   become: true
-  tags: base-server
   name: "Install base server packages"
   roles:
     - internal/base-server
@@ -196,6 +195,7 @@
   tags: 
     - ruby
   tasks:
+    # NOTE: rbenv uses the latest bin/ruby-build so there will usually be changes if you are checking
     - name: Install rbenv
       import_role:
         name: external/zzet.rbenv
@@ -234,15 +234,15 @@
 #        name: internal/mise
 #      when: "ruby_manager == 'mise'"
 
-# vagrant equivalent of AWS rds_instance
 - hosts: mysql
+  name: "Vagrant MySQL Server to mimic AWS RDS"
   tags: mysql
   become: true
   roles:
     - mysql
 
-# vagrant equivalent of AWS rds_instance
 - hosts: postgresql
+  name: "Vagrant PostgreSQL Server to mimic AWS RDS"
   tags: postgresql
   become: true
   roles:
@@ -273,6 +273,7 @@
     - openaustralia
 
 - hosts: proxy
+  name: "AU Proxy for morph scrapers"
   tags: proxy
   become: true
   roles:
@@ -292,7 +293,7 @@
 
 # vagrant equivalent of AWS redis service
 - hosts: redis
-  name: "Install redis"
+  name: "Vagrant redis Server to mimic AWS ElastiCache"
   tags: redis
   become: true
   tasks:

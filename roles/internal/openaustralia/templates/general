@@ -1,6 +1,5 @@
 <?php
-// This file general-example is a template config file.
-// Edit this, and copy it to a file called general.
+// {{ ansible_managed }}
 
 // *******************************************************************************
 // MySQL database.
@@ -12,8 +11,8 @@ define ("DB_NAME", "oa-{{ stage }}");
 // *******************************************************************************
 // Domains.
 // Set this to the domain you are hosting on. If you're running locally, this will be "localhost"
-define ("DOMAIN", "www.{{ domain }}");
-define ("COOKIEDOMAIN", "www.{{ domain }}");
+define ("DOMAIN", "{{ domain }}");
+define ("COOKIEDOMAIN", "{{ domain }}");
 
 // General 'Contact us' type email address. Point this at a real address if you
 // want the site generated email to come to you. Can be overridden for other mails below.
@@ -73,15 +72,17 @@ define ("REGMEMPDFPATH", "regmem/scan/");
 define ("METADATAPATH", BASEDIR . "/../includes/easyparliament/metadata.php");
 
 // Search related. If non-empty will use XAPIAN search instead of mysql search
+{% if xapian_version is defined %}
 define ("XAPIANDB", '/srv/www/{{ stage }}/shared/search/searchdb');
+{% else %}
+define ("XAPIANDB", '');
+{% endif %}
 
 // Location of the parliamentary recess data file. You can access this remotely
 // from the main theyworkforyou site if you use
 define ("RECESSFILE","http://www.{{ domain }}/pwdata/parl-recesses.txt");
 // AND amend your global php.ini to 'allow_url_fopen = On'
 //define ("RECESSFILE", RAWDATA . "/parl-recesses.txt");
-
-
 
 // *******************************************************************************
 // More Email addresses.
