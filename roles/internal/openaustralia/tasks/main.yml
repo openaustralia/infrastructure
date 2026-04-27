@@ -189,6 +189,13 @@
       - php{{ php_version }}-xml
       - php{{ php_version }}-zip
 
+- name: Set default PHP version
+  community.general.alternatives:
+    name: php
+    path: /usr/bin/php{{ php_version }}
+    link: /usr/bin/php
+  become: true
+
 # FIXME: Do we really need libpq-dev ??
 
 # Matching the version number of libxapian-dev above
@@ -199,7 +206,7 @@
     dest: /home/deploy
     owner: deploy
     group: deploy
-    checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
+    # FIXME: handle gpg checksum: checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
 
 - name: Unpack xapian bindings source
   when: "xapian_version is defined"
@@ -209,6 +216,7 @@
       remote_src: true
       owner: deploy
       group: deploy
+      creates: /home/deploy/xapian-bindings-{{ xapian_version }}/configure
 
 - name: Configure xapian bindings
   when: "xapian_version is defined"
@@ -259,6 +267,26 @@
   with_items: "{{ environments }}"
   notify: reload apache
 
+- name: Install ssl-cert package (provides snakeoil certs)
+  apt:
+    name: ssl-cert
+    state: present
+
+- name: Use snakeoil cert as placeholder until Let's Encrypt runs
+  shell: |
+    domain="{{ item.value.domain }}"
+    cert_dir="/etc/letsencrypt/live/${domain}"
+    if [ ! -f "${cert_dir}/fullchain.pem" ]; then
+      mkdir -p "${cert_dir}"
+      ln -sf /etc/ssl/certs/ssl-cert-snakeoil.pem "${cert_dir}/fullchain.pem"
+      ln -sf /etc/ssl/private/ssl-cert-snakeoil.key "${cert_dir}/privkey.pem"
+      ln -sf /etc/ssl/certs/ssl-cert-snakeoil.pem "${cert_dir}/chain.pem"
+    fi
+  args:
+    creates: "/etc/letsencrypt/live/{{ item.value.domain }}/fullchain.pem"
+  when: item.key != '000-default'
+  with_dict: "{{ apache_sites }}"
+
 - name: Ensure each site has an apache configuration
   template:
     src: "apache/{{ item.value.template | default(item.key) }}.conf"
@@ -272,6 +300,14 @@
   with_dict: "{{ apache_sites }}"
   notify: reload apache
 
+- name: Enable virtual hosts
+  file:
+    src: /etc/apache2/sites-available/{{ item.key }}.conf
+    dest: /etc/apache2/sites-enabled/{{ item.key }}.conf
+    state: link
+  with_dict: "{{ apache_sites }}"
+  notify: reload apache
+
 - name: Build certbot_certs from apache_sites
   set_fact:
     built_certbot_certs: >-
@@ -282,6 +318,7 @@
   with_dict: "{{ apache_sites }}"
 
 - name: Install certificate using certbot
+  tags: broken
   when: "'ec2' in group_names"
   include_role:
     name: oaf.certbot
@@ -311,13 +348,7 @@
     stage: "{{ item }}"
   with_items: "{{ environments }}"
 
-- name: Enable virtual hosts
-  file:
-    src: /etc/apache2/sites-available/{{ item.key }}.conf
-    dest: /etc/apache2/sites-enabled/{{ item.key }}.conf
-    state: link
-  with_dict: "{{ apache_sites }}"
-  notify: reload apache
+
 
 - name: Copy msmtp configuration
   template: src=msmtprc dest=/etc/
