@@ -18,7 +18,6 @@
 # NOTE: The planning alerts servers are NOT in ec2!
 theyvoteforyou.org.au
 openaustralia.org.au
-newprod.openaustralia.org.au
 staging.righttoknow.org.au
 prod.righttoknow.org.au
 au.proxy.oaf.org.au
