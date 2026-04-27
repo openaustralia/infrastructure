@@ -11,7 +11,7 @@ github_users:
     "mlandauer",
     "simonzippy",
   ]
-cron_enabled: true
+cron_enabled: "{{ lookup('env', 'CRON_DISABLED') == '' }}"
 certbot_webserver: nginx
 certbot_webroot: /usr/share/nginx/html
 backup_gpg_pw: !vault |

@@ -553,3 +553,12 @@ To undo this, change the default back, optionally remove the mailpit entry, and 
 REMEMBER: Keep a copy of the files you change and copy them back after running a diff to confirm if you run ansible.
 (TODO: Make it a default for setting up qa/test servers)
 
+## <a name='DisablingCron'></a>Disabling Cron
+
+To disable cron jobs, run the applicable command:
+
+* `CRON_DISABLED=1 make apply-planningalerts`
+* `CRON_DISABLED=1 make apply-theyvoteforyou`
+* `CRON_DISABLED=1 make apply-righttoknow_staging`
+* `CRON_DISABLED=1 make apply-openaustralia`
+* `CRON_DISABLED=1 make apply-righttoknow`

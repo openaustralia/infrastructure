@@ -8,7 +8,7 @@ domain: staging.righttoknow.org.au
 server_hostname: staging.righttoknow.org.au
 
 # Cron enable/disable switch for staging
-cron_enabled: true
+cron_enabled: "{{ lookup('env', 'CRON_DISABLED') == '' }}"
 
 # Staging-specific settings
 # Both staging and production environments run in Rails production mode
