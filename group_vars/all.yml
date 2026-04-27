@@ -55,9 +55,9 @@ bundle_path: "{{ ruby_manager_bundle_path[ruby_manager] }}"
 
 ruby_manager: none
 
-catch_mail_host: "{{ lookup('env', 'CATCH_MAIL_HOST') | default(omit) }}"
-catch_mail_port: "{{ lookup('env', 'CATCH_MAIL_PORT') | default(omit) }}"
-catch_mail_user: "{{ lookup('env', 'CATCH_MAIL_USER') | default(omit) }}"
-catch_mail_password: "{{ lookup('env', 'CATCH_MAIL_PASSWORD') | default(omit) }}"
+catch_mail_host: "{{ lookup('env', 'CATCH_MAIL_HOST') | default('') }}"
+catch_mail_port: "{{ lookup('env', 'CATCH_MAIL_PORT') | default('') }}"
+catch_mail_user: "{{ lookup('env', 'CATCH_MAIL_USER') | default('') }}"
+catch_mail_password: "{{ lookup('env', 'CATCH_MAIL_PASSWORD') | default('') }}"
 catch_mail_auth: "{{ lookup('env', 'CATCH_MAIL_AUTH') | default('plain') }}"
 
