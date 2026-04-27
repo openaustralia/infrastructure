@@ -351,6 +351,7 @@
 
 
 - name: Copy msmtp configuration
+  tags: msmtp
   template: src=msmtprc dest=/etc/
 
 - name: "Ensure /usr/local/bin exists"
