@@ -234,24 +234,6 @@
     creates: /usr/lib/php/20131226/xapian.so
   notify: reload apache
 
-- name: Configure php for xapian bindings
-  when: "xapian_version is defined"
-  template:
-    src: xapian.ini
-    dest: /etc/php/{{ php_version }}/mods-available
-  notify: reload apache
-
-- name: Enable xapian for php
-  when: "php_version is defined"
-  file:
-    state: link
-    src: /etc/php/{{ php_version }}/mods-available/xapian.ini
-    dest: "/etc/php/{{ php_version }}/{{ item }}/conf.d/30-xapian.ini"
-  with_items:
-    - apache2
-    - cli
-  notify: reload apache
-
 - name: Enable apache modules
   apache2_module: state=present name={{ item }}
   notify: reload apache
