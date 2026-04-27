@@ -36,8 +36,8 @@
     - name: Ensure host is not in multiple requires_* groups
       assert:
         that:
-          - "(['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
-        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list }}"
+          - "(['requires_mysql', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
+        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_postgresql'] | select('in', group_names) | list }}"
 
 # Ensure python3 is available for Ansible (required before gather_facts), with fallback to python2
 # If it does fall back, set ansible_python_interpreter to /usr/bin/python in that old group
