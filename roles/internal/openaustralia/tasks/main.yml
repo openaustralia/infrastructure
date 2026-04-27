@@ -329,13 +329,14 @@
     group: root
     mode: 0755
 
-- name: "Copy log_not_sendmail"
-  copy:
-    src: log_not_sendemail.sh
-    dest: /usr/local/bin/log_not_sendemail
-    owner: root
-    group: root
-    mode: 0755
+# FIXME: wrong command - copy from local to remote needed
+#- name: "Copy log_not_sendmail"
+#  copy:
+#    src: log_not_sendemail.sh
+#    dest: /usr/local/bin/log_not_sendemail
+#    owner: root
+#    group: root
+#    mode: 0755
 
 # daily update at night for MP data (regmem, data from Public Whip etc.)
 - name: Set up cron job for daily update
