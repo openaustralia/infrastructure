@@ -1,6 +1,6 @@
 # TODO: Unify this with the domain. It's currently only used to name
 # things on New Relic.
-site_name: openaustralia.org.au
+site_name: "openaustralia.{{ base_domain }}"
 openaustralia_production_mysql_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           33613134623466616233383862366434366264323562313439366566343461663337313037376364
@@ -96,3 +96,78 @@ environments:
   - staging
 
 certbot_email: contact@oaf.org.au
+
+# Disable backups for staging
+backup_profiles: []
+domains_for_certbot:
+  - email: contact@oaf.org.au
+    domains:
+      - "{{ openaustralia_domain }}"
+
+# Control what version is installed
+xapian_version: 1.4.25
+
+# PHP has two version numbers :( - make sure they are in sync
+php_version: 8.3
+php_api_version: "20230831"
+
+# Based on aws_eip.production.public_ip and CNAMES in terraform/openaustralia/dns.tf
+
+# stage is set to key
+# domain, server_aliases and password_protect are set to corresponding values
+
+production_server_aliases:
+  - "{{ openaustralia_domain }}"
+
+extra_production_server_aliases:
+  - www.openaustralia.org
+  - openaustralia.org
+
+combined_production_server_aliases: >-
+  {{ production_server_aliases +
+     ((base_domain == 'org.au') | ternary(extra_production_server_aliases, [])) }}
+
+staging_server_aliases:
+  - "www.test.{{ openaustralia_domain }}"
+
+extra_staging_server_aliases:
+  - test.openaustralia.org
+
+combined_staging_server_aliases: >-
+  {{ staging_server_aliases +
+     ((base_domain == 'org.au') | ternary(extra_staging_server_aliases, [])) }}
+
+extra_data_server_aliases:
+  - data.openaustralia.org
+
+extra_software_server_aliases:
+  - software.openaustralia.org
+
+apache_sites:
+  production:
+    # CNAME, but this is the canonical name !?
+    domain: "www.{{ openaustralia_domain }}"
+    #cert_domain: "{{ openaustralia_domain }}"
+    server_aliases: "{{ combined_production_server_aliases }}"
+    newrelic_appname: OpenAustralia.org
+    db_password: "{{ openaustralia_production_mysql_password }}"
+  staging:
+    domain: test."{{ openaustralia_domain }}"
+    password_protect: true
+    server_aliases: "{{ combined_staging_server_aliases }}"
+    template: production
+    newrelic_appname: 'OpenAustralia.org Staging'
+    db_password: "{{ openaustralia_staging_mysql_password }}"
+  "000-default":
+    # redirects to another domain
+    domain: "www.{{ openaustralia_domain }}"
+    server_aliases: []
+  blog:
+    domain: blog.openaustralia.org
+    server_aliases: []
+  data:
+    domain: "data.{{ openaustralia_domain }}"
+    server_aliases: "{{ (base_domain == 'org.au') | ternary(extra_data_server_aliases, []) }}"
+  software:
+    domain: "software.{{ openaustralia_domain }}"
+    server_aliases: "{{ (base_domain == 'org.au') | ternary(extra_software_server_aliases, []) }}"

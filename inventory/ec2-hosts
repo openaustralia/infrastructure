@@ -1,6 +1,4 @@
 # Note:
-# Groups suffixed `_new` are the configuration for new servers
-# Groups suffixed `_old` are the old rules for existing live servers
 # Groups without these suffixes can be both live and new servers
 # There is currently no group for servers that are in the process of being retired
 #
@@ -28,7 +26,6 @@ web.metabase.oaf.org.au
 vpn.oaf.org.au
 
 [catch_all_mail:children]
-openaustralia_new
 righttoknow_staging
 
 # We've decided to use the hosted version at plausible.io for the time
@@ -40,14 +37,7 @@ righttoknow_staging
 [metabase]
 web.metabase.oaf.org.au
 
-[openaustralia:children]
-openaustralia_new
-openaustralia_old
-
-[openaustralia_new]
-newprod.openaustralia.org.au
-
-[openaustralia_old]
+[openaustralia]
 openaustralia.org.au
 
 [openvpn]
@@ -66,12 +56,8 @@ au.proxy.oaf.org.au
 
 # Group for all sites that use and thus need information on the MySQL 8.x RDS instance
 [requires_mysql:children]
-openaustralia_new
+openaustralia
 theyvoteforyou
-
-# Group for all sites that use and need information on the MySQL 5.7 RDS instance
-[requires_mysql_5:children]
-openaustralia_old
 
 # Group for all sites that use and need information on the PostgreSQL RDS instance
 [requires_postgresql:children]

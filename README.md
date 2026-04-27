@@ -333,12 +333,12 @@ the top of `update-ssl-certs.yaml`.
 
 You can also set:
 
-* STAGE: to a group suffix eg `STAGE=new make apply-openaustralia` would apply changes only to `openaustralia_new`
+* STAGE: to a group suffix eg `STAGE=staging make apply-righttoknow` would apply changes only to `righttoknow_staging`
   group in `inventory/ec2-hosts` which only contains `staging.openaustralia.org.au`
-* ANSIBLE_TAGS - limits to tasks / roles that have one of the comma-separated roles
-* ANSIBLE_SKIP_TAGS - skips tasks / roles that have one of the comma-separated roles
-* ANSIBLE_VERBOSE - set to one to four 'v's eg 'ANSIBLE_VERBOSE=vvv make apply-openaustralia' will show a lot of diagnostic information from ansible
-* ANSIBLE_START_TASK - set to part of the task description to have ansible skip to that task, which allows you to quickly debug after a failure
+* `ANSIBLE_TAGS` - limits to tasks / roles that have one of the comma-separated roles
+* `ANSIBLE_SKIP_TAGS` - skips tasks / roles that have one of the comma-separated roles
+* `ANSIBLE_VERBOSE` - set to one to four 'v's eg `ANSIBLE_VERBOSE=vvv make apply-openaustralia` will show a lot of diagnostic information from ansible
+* `ANSIBLE_START_TASK` - set to part of the task description to have ansible skip to that task, which allows you to quickly debug after a failure
 
 ## <a name='Deploying'></a>Deploying
 
