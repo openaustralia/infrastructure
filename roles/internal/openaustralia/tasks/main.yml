@@ -152,10 +152,12 @@
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
+  tags: xapian
   apt_repository:
     repo: 'ppa:ondrej/php'
 
 - name: Install required packages
+  tags: xapian
   apt:
     name:
       - apache2
@@ -177,6 +179,7 @@
     update_cache: true
 
 - name: Install required packages for php
+  tags: xapian
   when: "php_version is defined"
   apt:
     name:
@@ -190,6 +193,7 @@
       - php{{ php_version }}-zip
 
 - name: Set default PHP version
+  tags: xapian
   community.general.alternatives:
     name: php
     path: /usr/bin/php{{ php_version }}
@@ -201,6 +205,7 @@
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
   when: "xapian_version is defined"
+  tags: xapian
   get_url:
     url: https://oligarchy.co.uk/xapian/{{ xapian_version }}/xapian-bindings-{{ xapian_version }}.tar.xz
     dest: /home/deploy
@@ -210,6 +215,7 @@
 
 - name: Unpack xapian bindings source
   when: "xapian_version is defined"
+  tags: xapian
   unarchive:
       src: /home/deploy/xapian-bindings-{{ xapian_version }}.tar.xz
       dest: /home/deploy
@@ -220,6 +226,7 @@
 
 - name: Configure xapian bindings
   when: "xapian_version is defined"
+  tags: xapian
   command: ./configure --with-php
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -228,6 +235,7 @@
 
 - name: Compile xapian bindings
   when: "xapian_version is defined"
+  tags: xapian
   command: make
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -236,6 +244,7 @@
 
 - name: Install xapian bindings
   when: "xapian_version is defined"
+  tags: xapian
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -251,6 +260,7 @@
     - ssl
 
 - name: Copy across the php config
+  tags: xapian
   when: "php_version is defined"
   template:
     src: php.ini
@@ -347,8 +357,6 @@
   vars:
     stage: "{{ item }}"
   with_items: "{{ environments }}"
-
-
 
 - name: Copy msmtp configuration
   tags: msmtp
