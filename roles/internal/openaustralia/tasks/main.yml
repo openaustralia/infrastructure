@@ -156,6 +156,11 @@
   apt_repository:
     repo: 'ppa:ondrej/php'
 
+- name: Add xapian backports PPA for newer libxapian
+  tags: xapian
+  apt_repository:
+    repo: 'ppa:xapian/backports'
+
 - name: Install required packages
   tags: xapian
   apt:
@@ -202,9 +207,19 @@
 
 # FIXME: Do we really need libpq-dev ??
 
+- name: Get installed libxapian-dev version
+  tags: xapian
+  command: dpkg-query -W -f='${Version}' libxapian-dev
+  register: libxapian_pkg_version
+  changed_when: false
+
+- name: Set xapian_version from installed libxapian-dev
+  tags: xapian
+  set_fact:
+    xapian_version: "{{ libxapian_pkg_version.stdout | regex_replace('^(\\d+\\.\\d+\\.\\d+).*$', '\\1') }}"
+
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
-  when: "xapian_version is defined"
   tags: xapian
   get_url:
     url: https://oligarchy.co.uk/xapian/{{ xapian_version }}/xapian-bindings-{{ xapian_version }}.tar.xz
@@ -214,7 +229,6 @@
     # FIXME: handle gpg checksum: checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
 
 - name: Unpack xapian bindings source
-  when: "xapian_version is defined"
   tags: xapian
   unarchive:
       src: /home/deploy/xapian-bindings-{{ xapian_version }}.tar.xz
@@ -225,7 +239,6 @@
       creates: /home/deploy/xapian-bindings-{{ xapian_version }}/configure
 
 - name: Configure xapian bindings
-  when: "xapian_version is defined"
   tags: xapian
   command: ./configure --with-php
   args:
@@ -234,7 +247,6 @@
   become_user: deploy
 
 - name: Compile xapian bindings
-  when: "xapian_version is defined"
   tags: xapian
   command: make
   args:
@@ -243,7 +255,6 @@
   become_user: deploy
 
 - name: Install xapian bindings
-  when: "xapian_version is defined"
   tags: xapian
   command: make install
   args:
