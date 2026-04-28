@@ -26,7 +26,6 @@ ANSIBLE_OPTS += -$(ANSIBLE_VERBOSE)
 $(info INFO: Setting verbose: -$(ANSIBLE_VERBOSE))
 endif
 
-
 help:
 	@echo "Available targets"
 	@echo "  help                                Output this help text"
@@ -56,14 +55,14 @@ help:
 	@echo "  check-planningalerts                Dry-run Ansible for planningalerts hosts"
 	@echo "  check-theyvoteforyou                Dry-run Ansible for theyvoteforyou host"
 	@echo "  check-oaf                           Dry-run Ansible for oaf host"
-	@echo "  check-openaustralia STAGE=<stage>   Dry-run Ansible for openaustralia new/old/all host/s"
+	@echo "  check-openaustralia                 Dry-run Ansible for openaustralia new/old/all host/s"
 	@echo "  check-metabase                      Dry-run Ansible for metabase host"
 	@echo ""
 	@echo "  apply-righttoknow STAGE=<stage>     Apply Ansible changes to righttoknow production/staging/all host/s"
 	@echo "  apply-planningalerts                Apply Ansible changes to planningalerts hosts"
 	@echo "  apply-theyvoteforyou                Apply Ansible changes to theyvoteforyou host"
 	@echo "  apply-oaf                           Apply Ansible changes to oaf host"
-	@echo "  apply-openaustralia STAGE=<stage>   Apply Ansible changes to openaustralia new/old/all host/s"
+	@echo "  apply-openaustralia                 Apply Ansible changes to openaustralia new/old/all host/s"
 	@echo "  apply-metabase                      Apply Ansible changes to metabase host"
 	@echo ""
 	@echo "Extra vars:"
@@ -205,7 +204,7 @@ check-theyvoteforyou: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --check --diff
 check-oaf: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --check --diff
-check-openaustralia: requirements stage_required
+check-openaustralia: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --check --diff
 check-metabase: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --check --diff
@@ -219,7 +218,7 @@ apply-theyvoteforyou: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --diff
 apply-oaf: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --diff
-apply-openaustralia: requirements stage_required
+apply-openaustralia: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --diff
 apply-metabase: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
