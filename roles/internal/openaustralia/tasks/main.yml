@@ -372,6 +372,7 @@
 
 # daily update at night for MP data (regmem, data from Public Whip etc.)
 - name: Set up cron job for daily update
+  tags: cron
   cron:
     name: "dailyupdate {{ item }}"
     user: deploy
@@ -383,6 +384,7 @@
 
 # every week early Sunday grab weekly range of data
 - name: Set up cron job for weekly update
+  tags: cron
   cron:
     name: "weeklyupdate {{ item }}"
     user: deploy
@@ -395,6 +397,7 @@
 
 # Email updates (Going at 10am to give me time to fix things if necessary)
 - name: Set up cron job for email alerts
+  tags: cron
   cron:
     name: "alertmailer {{ item }}"
     user: deploy
@@ -407,6 +410,7 @@
 
 # Morning update (Australian Hansard is supposed to be up by 9am the next working day)
 - name: Set up cron job for morning updates
+  tags: cron
   cron:
     name: "morningupdate {{ item }}"
     user: deploy
