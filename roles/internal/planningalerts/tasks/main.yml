@@ -19,6 +19,7 @@
     owner: deploy
     group: deploy
     path: "{{ item }}"
+    mode: '0755'
   with_items:
     - /srv/www/production
     - /srv/www/production/shared
@@ -44,11 +45,13 @@
     dest: "/srv/www/production/shared/config/credentials/production.key"
     owner: deploy
     group: deploy
+    mode: '0600'
 
 - name: Allow deploy user to control services
   template:
     src: deploy_service_control
     dest: /etc/sudoers.d/deploy_service_control
+    mode: '0440'
     validate: visudo -cf %s
 
 - name: Install postfix to handle incoming email
@@ -59,6 +62,7 @@
   template:
     src: "{{ item }}"
     dest: /etc/postfix
+    mode: '0644'
   with_items:
     - transport
     - virtual_alias
