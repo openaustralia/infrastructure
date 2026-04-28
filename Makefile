@@ -91,6 +91,8 @@ keybase: .keybase
 
 vagrant: .make/vagrant-plugins .make/certificates requirements
 
+generate-certificates: .make/certificates
+
 .make/certificates: certificates/generate-certificates.sh | .make
 	certificates/generate-certificates.sh
 	touch .make/certificates
@@ -157,6 +159,8 @@ clean:
 clobber: clean
 	vagrant destroy --force || echo "WARNING: Ignoring vagrant error!"
 	rm -rf .vagrant log
+	rm -f certificates/*.key certificates/*.pem certificates/*.csr certificates/myCA.srl
+	rm -f roles/internal/{openaustralia,righttoknow,theyvoteforyou}/files/*.test.{key,pem}
 	# TODO: Should we delete terraform/terraform.tfstate.* ?
 
 # Terraform
