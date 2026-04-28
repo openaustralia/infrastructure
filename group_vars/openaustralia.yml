@@ -143,6 +143,8 @@ extra_data_server_aliases:
 extra_software_server_aliases:
   - software.openaustralia.org
 
+blog_openaustralia_domain: "{{ 'blog.openaustralia.org' if base_domain == 'org.au' else 'blog.' + openaustralia_domain }}"
+
 apache_sites:
   production:
     # CNAME, but this is the canonical name !?
@@ -163,7 +165,7 @@ apache_sites:
     domain: "www.{{ openaustralia_domain }}"
     server_aliases: []
   blog:
-    domain: blog.openaustralia.org
+    domain: "{{ blog_openaustralia_domain }}"
     server_aliases: []
   data:
     domain: "data.{{ openaustralia_domain }}"
