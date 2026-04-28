@@ -243,7 +243,7 @@ should point to the password files. If this doesn't work you may need to update 
 #### Memory and CPU Usage
 
 Vagrant will allocate 2 GB of RAM and 2 CPU cores per VM by default, which can be overridden. 
-When tested with provisioning newprod.openaustralia from scratch (YMMV) compared to default settings:
+When tested with provisioning openaustralia from scratch (YMMV) compared to default settings:
 * `VAGRANT_MEMORY=4096` was 9% faster if you have enough host memory (2 x memory)
 * `VAGRANT_CPUS=1 VAGRANT_MEMORY=3072` for running many VMs (12% slower with 1/2 cores and 1.5 x memory)
 * `VAGRANT_CPUS=1` minimum (20% slower with 1/2 cores)
