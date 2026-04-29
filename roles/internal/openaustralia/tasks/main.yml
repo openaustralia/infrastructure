@@ -156,10 +156,17 @@
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
+  tags: xapian
   apt_repository:
     repo: 'ppa:ondrej/php'
 
+- name: Add xapian backports PPA for newer libxapian
+  tags: xapian
+  apt_repository:
+    repo: 'ppa:xapian/backports'
+
 - name: Install required packages
+  tags: xapian
   apt:
     name:
       - apache2
@@ -181,6 +188,7 @@
     update_cache: true
 
 - name: Install required packages for php
+  tags: xapian
   when: "php_version is defined"
   apt:
     name:
@@ -194,6 +202,7 @@
       - php{{ php_version }}-zip
 
 - name: Set default PHP version
+  tags: xapian
   community.general.alternatives:
     name: php
     path: /usr/bin/php{{ php_version }}
@@ -202,9 +211,20 @@
 
 # FIXME: Do we really need libpq-dev ??
 
+- name: Get installed libxapian-dev version
+  tags: xapian
+  command: dpkg-query -W -f='${Version}' libxapian-dev
+  register: libxapian_pkg_version
+  changed_when: false
+
+- name: Set xapian_version from installed libxapian-dev
+  tags: xapian
+  set_fact:
+    xapian_version: "{{ libxapian_pkg_version.stdout | regex_replace('^(\\d+\\.\\d+\\.\\d+).*$', '\\1') }}"
+
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
-  when: "xapian_version is defined"
+  tags: xapian
   get_url:
     url: https://oligarchy.co.uk/xapian/{{ xapian_version }}/xapian-bindings-{{ xapian_version }}.tar.xz
     dest: /home/deploy
@@ -213,7 +233,7 @@
     # FIXME: handle gpg checksum: checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
 
 - name: Unpack xapian bindings source
-  when: "xapian_version is defined"
+  tags: xapian
   unarchive:
       src: /home/deploy/xapian-bindings-{{ xapian_version }}.tar.xz
       dest: /home/deploy
@@ -223,7 +243,7 @@
       creates: /home/deploy/xapian-bindings-{{ xapian_version }}/configure
 
 - name: Configure xapian bindings
-  when: "xapian_version is defined"
+  tags: xapian
   command: ./configure --with-php
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -231,7 +251,7 @@
   become_user: deploy
 
 - name: Compile xapian bindings
-  when: "xapian_version is defined"
+  tags: xapian
   command: make
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -239,7 +259,7 @@
   become_user: deploy
 
 - name: Install xapian bindings
-  when: "xapian_version is defined"
+  tags: xapian
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -255,6 +275,7 @@
     - ssl
 
 - name: Copy across the php config
+  tags: xapian
   when: "php_version is defined"
   template:
     src: php.ini
@@ -356,8 +377,6 @@
   vars:
     stage: "{{ item }}"
   with_items: "{{ environments }}"
-
-
 
 - name: Copy msmtp configuration
   tags: msmtp
