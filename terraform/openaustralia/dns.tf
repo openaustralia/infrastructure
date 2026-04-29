@@ -112,6 +112,13 @@ resource "cloudflare_record" "spf" {
   value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
+resource "cloudflare_record" "google_site_verification_postmaster_tools" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "openaustralia.org.au"
+  type    = "TXT"
+  value   = "google-site-verification=NMrCE8wbE8mEodpPYd_RY30JbAu99A3HjWkyR6dmrK4"
+}
+
 # TODO: Remove this once the one below is up and running
 resource "cloudflare_record" "cuttlefish_domainkey" {
   zone_id = cloudflare_zone.org.id
@@ -267,6 +274,13 @@ resource "cloudflare_record" "alt_google_site_verification" {
   name    = "openaustralia.org.au"
   type    = "TXT"
   value   = "google-site-verification=1xl-YdNs-D67htH3q438bFSGf1ThVHap5vXIFS6J0dI"
+}
+
+resource "cloudflare_record" "alt_google_site_verification_postmaster_tools" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "openaustralia.org.au"
+  type    = "TXT"
+  value   = "google-site-verification=Vd5DN8gzLQUkHOGNtGd6p_zPIb_df7QELe4me2tCnEM"
 }
 
 resource "cloudflare_record" "alt_facebook_domain_verification" {
