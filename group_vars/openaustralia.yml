@@ -37,7 +37,9 @@ restic_password: !vault |
           3336323539333564320a386331383537373365303238303635373337643864653963656639336436
           37366266623064353763323665373464653937613734323733613837353065323531633931346464
           6635346235623634366536646462643332613436373034663032
-cron_enabled: false
+cron_enabled_for:
+  production: false
+  staging: false
 morph_api_key: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           66623039363037386530623963626464303838643739313264356166376639346133656337663838
@@ -170,3 +172,20 @@ apache_sites:
   software:
     domain: "software.{{ openaustralia_domain }}"
     server_aliases: "{{ (base_domain == 'org.au') | ternary(extra_software_server_aliases, []) }}"
+
+
+# Sized to cover (approximate figures):
+#  1,600 MB Xapian anon (index.pl cron job)
+#           -> true peak will be higher, only observable once swap is added
+#    120 MB Idle processes (snapd, cloudwatch, newrelic, postfix etc)
+#           -> can swap with negligible impact
+#    168 MB Apache workers anon
+#           -> can be swapped but with site performance impact
+#     42 MB Locked in memory (unevictable kernel pages, mlocked)
+#  --------
+#  1,930 MB Physical RAM
+
+# If we need more than this, we need to upgrade the ec2 instance size!
+swap_file_size_mb: '1024'
+# Prefer RAM but swap out genuinely idle processes under pressure
+swap_swappiness: '35'
