@@ -7,6 +7,7 @@
   file:
     state: directory
     path: /data
+    mode: '0755'
 
 # On EC2 we're using a seperate EBS volume to hold application data
 - name: Create filesystem on attached block storage
@@ -31,6 +32,7 @@
     owner: deploy
     group: deploy
     state: directory
+    mode: '0755'
   with_nested:
     - "{{ environments }}"
     - ['images/mps', 'images/mpsL', 'images/mpsXL', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search/searchdb']
@@ -41,6 +43,7 @@
     owner: deploy
     group: deploy
     state: directory
+    mode: '0755'
   with_nested:
     - "{{ environments }}"
     - ['log', 'releases', 'shared/config', 'shared/rss/mp', 'shared/sitemaps']
@@ -120,6 +123,7 @@
   file:
     state: directory
     path: "/etc/letsencrypt/live/{{ item }}"
+    mode: '0755'
   with_items: "{{ apache_sites.values() | map(attribute='domain') | list }}"
   when: "'development' in group_names"
 
@@ -255,6 +259,7 @@
   template:
     src: php.ini
     dest: /etc/php/{{ php_version }}/{{ item }}/php.ini
+    mode: '0644'
   notify: reload apache
   with_items:
     - apache2
@@ -264,6 +269,7 @@
   copy:
     src: htpasswd
     dest: /srv/www/{{ item }}/shared
+    mode: '0600'
   with_items: "{{ environments }}"
   notify: reload apache
 
@@ -291,6 +297,7 @@
   template:
     src: "apache/{{ item.value.template | default(item.key) }}.conf"
     dest: "/etc/apache2/sites-available/{{ item.key}}.conf"
+    mode: '0644'
   vars:
     stage: "{{ item.key }}"
     domain: "{{ item.value.domain }}"
@@ -331,6 +338,7 @@
     dest: "/srv/www/{{ item }}/shared"
     owner: deploy
     group: deploy
+    mode: '0644'
   vars:
     db_password: "{{ apache_sites[item].db_password }}"
     stage: "{{ item }}"
@@ -344,6 +352,7 @@
     dest: "/srv/www/{{ item }}/shared"
     owner: deploy
     group: deploy
+    mode: '0644'
   vars:
     stage: "{{ item }}"
   with_items: "{{ environments }}"
@@ -352,7 +361,10 @@
 
 - name: Copy msmtp configuration
   tags: msmtp
-  template: src=msmtprc dest=/etc/
+  template:
+    src: msmtprc
+    dest: /etc/
+    mode: '0644'
 
 - name: "Ensure /usr/local/bin exists"
   file:
@@ -472,4 +484,5 @@
   copy:
     src: deploy_can_restart_apache
     dest: /etc/sudoers.d/
+    mode: '0440'
     validate: visudo -cf %s
