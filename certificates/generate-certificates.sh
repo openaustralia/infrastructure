@@ -26,11 +26,18 @@ cd certificates || exit 1
 # are served from the load balancer on AWS so the server itself only needs
 # to support http and so doesn't need a certificate
 
-domains=( "theyvoteforyou.${BASE_DOMAIN}" "test.theyvoteforyou.${BASE_DOMAIN}"
-          "openaustralia.${BASE_DOMAIN}"  "test.openaustralia.${BASE_DOMAIN}"
-          "righttoknow.${BASE_DOMAIN}"    "test.righttoknow.${BASE_DOMAIN}"
-          "morph.${BASE_DOMAIN}")
-
+domains=( 
+          "blog.openaustralia.${BASE_DOMAIN}"
+          "data.openaustralia.${BASE_DOMAIN}"
+          "morph.${BASE_DOMAIN}"
+          "righttoknow.${BASE_DOMAIN}"
+          "software.openaustralia.${BASE_DOMAIN}"
+          "test.openaustralia.${BASE_DOMAIN}"
+          "test.righttoknow.${BASE_DOMAIN}"
+          "test.theyvoteforyou.${BASE_DOMAIN}"
+          "theyvoteforyou.${BASE_DOMAIN}"
+          "www.openaustralia.${BASE_DOMAIN}"
+          )
 # "oaf.${BASE_DOMAIN}"
 
 # Generates a private key with passphrase "abcd" (but only if it doesn't already exist)
@@ -77,12 +84,12 @@ done
 
 echo "Moving certificate into the right place ..."
 set -x
-mkdir -p ../roles/internal/theyvoteforyou/files ../roles/internal/openaustralia/files ../roles/internal/righttoknow/files ../roles/internal/oaf/files ../roles/internal/electionleaflets/files
+mkdir -p ../roles/internal/theyvoteforyou/files ../roles/internal/openaustralia/files ../roles/internal/righttoknow/files
 
-mv theyvoteforyou.${BASE_DOMAIN}.key theyvoteforyou.${BASE_DOMAIN}.pem test.theyvoteforyou.${BASE_DOMAIN}.key test.theyvoteforyou.${BASE_DOMAIN}.pem ../roles/internal/theyvoteforyou/files
-mv openaustralia.${BASE_DOMAIN}.key openaustralia.${BASE_DOMAIN}.pem test.openaustralia.${BASE_DOMAIN}.key test.openaustralia.${BASE_DOMAIN}.pem ../roles/internal/openaustralia/files
-mv righttoknow.${BASE_DOMAIN}.key righttoknow.${BASE_DOMAIN}.pem test.righttoknow.${BASE_DOMAIN}.key test.righttoknow.${BASE_DOMAIN}.pem ../roles/internal/righttoknow/files
-#mv oaf.${BASE_DOMAIN}.key oaf.${BASE_DOMAIN}.pem ../roles/internal/oaf/files
+mv theyvoteforyou.${BASE_DOMAIN}.{key,pem} *.theyvoteforyou.${BASE_DOMAIN}.{key,pem} ../roles/internal/theyvoteforyou/files
+mv *.openaustralia.${BASE_DOMAIN}.{key,pem} ../roles/internal/openaustralia/files
+mv righttoknow.${BASE_DOMAIN}.{key,pem} *.righttoknow.${BASE_DOMAIN}.{key,pem} ../roles/internal/righttoknow/files
+#mv oaf.${BASE_DOMAIN}.{key,pem} ../roles/internal/oaf/files
 set +x
 
 # FIXME: adjust temporary measure to copy across a certificate generated here
