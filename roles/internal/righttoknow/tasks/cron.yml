@@ -1,12 +1,11 @@
 # For local development (under vagrant we don't want the cron jobs generating email)
-- cronvar:
+- name: "Set cron variables"
+  cronvar:
     name: MAILTO
     # Also sends to #righttoknow-log slack channel
     value: web-administrators@openaustralia.org,k6g2t1e7e6u1p0f2@oaf.slack.com
     cron_file: "{{ item }}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   when: "'ec2' in group_names"
 
 # Every 5 minutes
@@ -16,12 +15,10 @@
     user: deploy
     name: "update-xapian-index"
     minute: "0,5,10,15,20,25,30,35,40,45,50,55"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./update-xapian-index.lock \"./script/update-xapian-index verbose=true\" >> ./log/update-xapian-index.log || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./change-xapian-database.lock \"./script/update-xapian-index verbose=true\" >> ./log/update-xapian-index.log || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Every 10 minutes
 # 0,10,20,30,40,50 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-batch-requests.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-batch-requests || echo "stalled?"
@@ -33,9 +30,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-batch-requests.lock ./script/send-batch-requests || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once an hour
 # 09 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-comment-on-request.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-comment-on-request || echo "stalled?"
@@ -47,9 +42,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-comment-on-request.lock ./script/alert-comment-on-request || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once an hour
 # 31 * * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/load-mail-server-logs.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/load-mail-server-logs || echo "stalled?"
@@ -61,9 +54,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./load-mail-server-logs.lock ./script/load-mail-server-logs || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 31 1 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/change-xapian-database.lock "!!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/compact-xapian-database production !!(*= $site *)!!" || echo "stalled?"
@@ -73,12 +64,10 @@
     name: "compact-xapian-database"
     minute: "31"
     hour: "1"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./compact-xapian-database.lock \"./script/compact-xapian-database production alaveteli-{{ item }}\" || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./change-xapian-database.lock \"./script/compact-xapian-database production\" || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 0 0 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/delete-expired-embargoes.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/delete-expired-embargoes || echo "stalled?"
@@ -91,9 +80,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./delete-expired-embargoes.lock ./script/delete-expired-embargoes || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 
 # Once a day, early morning
@@ -107,9 +94,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./delete-old-things.lock ./script/delete-old-things || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 0 5 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-overdue-info-request-events.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-overdue-info-request-events || echo "stalled?"
@@ -122,9 +107,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./update-overdue-info-request-events.lock ./script/update-overdue-info-request-events || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 0 6 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-overdue-requests.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-overdue-requests || echo "stalled?"
@@ -137,9 +120,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-overdue-requests.lock ./script/alert-overdue-requests || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 0 7 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-new-response-reminders.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-new-response-reminders || echo "stalled?"
@@ -152,9 +133,19 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-new-response-reminders.lock ./script/alert-new-response-reminders || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
+# Once a day, early morning (added) - alert-survey
+- name: Add alaveteli crontab - alert-survey
+  cron:
+    user: deploy
+    name: "alert-survey"
+    minute: "0"
+    hour: "7"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-survey.lock ./script/alert-survey || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 0 8 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-not-clarified-request.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-not-clarified-request || echo "stalled?"
@@ -167,9 +158,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-not-clarified-request.lock ./script/alert-not-clarified-request || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 0 9 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-embargoes-expiring.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-embargoes-expiring || echo "stalled?"
@@ -182,9 +171,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-embargoes-expiring.lock ./script/alert-embargoes-expiring || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 0 10 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-expiring-embargo-info-request-events.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-expiring-embargo-info-request-events || echo "stalled?"
@@ -197,9 +184,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./update-expiring-embargo-info-request-events.lock ./script/update-expiring-embargo-info-request-events || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 0 12 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/alert-embargoes-expired.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/alert-embargoes-expired || echo "stalled?"
@@ -212,9 +197,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./alert-embargoes-expired.lock ./script/alert-embargoes-expired || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 2 4 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/check-recent-requests-sent.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/check-recent-requests-sent || echo "stalled?"
@@ -227,9 +210,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./check-recent-requests-sent.lock ./script/check-recent-requests-sent || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 45 3 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/stop-new-responses-on-old-requests.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/stop-new-responses-on-old-requests || echo "stalled?"
@@ -242,9 +223,31 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./stop-new-responses-on-old-requests.lock ./script/stop-new-responses-on-old-requests || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
+# Daily storage raw emails rails tasks (added)
+- name: Add alaveteli crontab - storage-raw-emails
+  cron:
+    user: deploy
+    name: "storage-raw-emails"
+    minute: "30"
+    hour: "4"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ../storage-raw-emails.lock \"bin/rails --quiet storage:raw_emails:mirror storage:raw_emails:promote storage:raw_emails:unlink\" || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
+# Daily storage attachments rails tasks (added)
+- name: Add alaveteli crontab - storage-attachments
+  cron:
+    user: deploy
+    name: "storage-attachments"
+    minute: "30"
+    hour: "5"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ../storage-attachments.lock \"bin/rails --quiet storage:attachments:mirror storage:attachments:promote storage:attachments:unlink\" || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 55 4 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/update-public-body-stats.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/update-public-body-stats || echo "stalled?"
@@ -257,9 +260,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./update-public-body-stats.lock ./script/update-public-body-stats || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day, early morning
 # 0 6 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-webhook-digest.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-webhook-digest || echo "stalled?"
@@ -272,9 +273,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-webhook-digest.lock ./script/send-webhook-digest || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day on all servers
 # 43 2 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/request-creation-graph
@@ -287,9 +286,31 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production ./script/request-creation-graph'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
+# Daily users sign ins purge (added)
+- name: Add alaveteli crontab - users-sign-ins-purge
+  cron:
+    user: deploy
+    name: "users-sign-ins-purge"
+    minute: "40"
+    hour: "2"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ../users-signins-purge.lock \"bin/rails users:sign_ins:purge\" || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
+# Daily public body export (added)
+- name: Add alaveteli crontab - public-body-export
+  cron:
+    user: deploy
+    name: "public-body-export"
+    minute: "38"
+    hour: "2"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ../public-body-export.lock \"bin/rails public_body:export\" || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a day on all servers
 # 48 2 * * * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/user-use-graph
@@ -302,9 +323,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production ./script/user-use-graph'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a week (very early Monday morning)
 # 54 2 * * 1 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/cleanup-holding-pen
@@ -318,9 +337,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production ./script/cleanup-holding-pen'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a week (early Monday morning)
 # 37 8 * * 1 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/commonlib/bin/run-with-lockfile.sh -n !!(*= $vhost_dir *)!!/send-pro-metrics-report.lock !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-pro-metrics-report || echo "stalled?"
@@ -334,9 +351,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ./send-pro-metrics-report.lock ./script/send-pro-metrics-report || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a week (on a Wednesday evening)
 # 42 23 * * 3 !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/download-geoip-data
@@ -350,9 +365,7 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production ./script/download-geoip-data'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Once a year :)
 # 0 0 1 11 * !!(*= $user *)!! !!(*= $vhost_dir *)!!/!!(*= $vcspath *)!!/script/send-public-holiday-reminder
@@ -367,6 +380,4 @@
     job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production ./script/send-public-holiday-reminder'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"

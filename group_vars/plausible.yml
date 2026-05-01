@@ -1,4 +1,4 @@
-name: plausible.oaf.org.au
+site_name: plausible.oaf.org.au
 secret_key_base: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           63663637316331323333393266623234343565316435376539353031383035343737393738633137

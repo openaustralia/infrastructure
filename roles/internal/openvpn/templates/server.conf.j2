@@ -1,0 +1,41 @@
+port 1194
+proto udp
+dev tun
+
+ca ca.crt
+cert server.crt
+key server.key
+dh dh.pem
+tls-auth ta.key 0
+
+server {{ openvpn_server_network }} {{ openvpn_server_netmask }}
+
+# Push routes to clients for VPC access
+push "route {{ openvpn_vpc_network }} {{ openvpn_vpc_netmask }}"
+
+# DNS - use VPC DNS
+push "dhcp-option DNS {{ openvpn_vpc_dns }}"
+
+# Client networking
+client-to-client
+keepalive 10 120
+cipher AES-256-GCM
+auth SHA256
+user nobody
+group nogroup
+persist-key
+persist-tun
+
+status /var/log/openvpn-status.log
+log-append /var/log/openvpn.log
+verb 4
+
+# IAM Authentication
+plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so openvpn
+username-as-common-name
+
+# Allow auth without client TLS certs (we're using PAM/IAM)
+verify-client-cert none
+
+# Make sure scripts/PAM helpers can run with env
+script-security 2

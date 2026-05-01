@@ -3,7 +3,8 @@
   file:
     state: directory
     path: "/etc/letsencrypt/live/{{ item }}"
-  with_items: "{{ [righttoknow_domain] + ([] if (standalone_staging | default(false)) else ['test.' + righttoknow_domain]) }}"
+    mode: '0755'
+  with_items: "{{ [righttoknow_domain] + ([] if ('righttoknow_staging' in group_names) else ['test.' + righttoknow_domain]) }}"
   when: "'development' in group_names"
 
 # We need to setup the SSL certificates before we try to configure nginx
@@ -14,7 +15,7 @@
     # We're faking it as if these are let's encrypt certs. Makes for less magic config
     dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
     mode: 0644
-  with_items: "{{ [righttoknow_domain] + ([] if (standalone_staging | default(false)) else ['test.' + righttoknow_domain]) }}"
+  with_items: "{{ [righttoknow_domain] + ([] if ('righttoknow_staging' in group_names) else ['test.' + righttoknow_domain]) }}"
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: nginx restart
@@ -24,7 +25,7 @@
     src: "{{ item }}.key"
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
     mode: 0640
-  with_items: "{{ [righttoknow_domain] + ([] if (standalone_staging | default(false)) else ['test.' + righttoknow_domain]) }}"
+  with_items: "{{ [righttoknow_domain] + ([] if ('righttoknow_staging' in group_names) else ['test.' + righttoknow_domain]) }}"
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: nginx restart
@@ -37,27 +38,30 @@
     - nginx
   when: "'ec2' in group_names"
 
+# Staging Certbot only needs certs for the hostname
+- name: Set certificate configuration for staging
+  set_fact:
+    staging_certs:
+      - email: 'contact@oaf.{{ base_domain }}'
+        domains: 
+          - "{{ righttoknow_domain }}"
+          - "www.{{ righttoknow_domain }}"
+  when: "'righttoknow_staging' in group_names"
+
+- name: Set certificate configuration for production
+  set_fact:
+    production_certs:
+      - email: 'contact@oaf.{{ base_domain }}'
+        domains: 
+          - "{{ righttoknow_domain }}"
+          - "www.{{ righttoknow_domain }}"
+          - "{{ server_hostname }}"
+  when: "'righttoknow_production' in group_names"
+
 # TODO: When (if) we use a newer version of certbot add "--post-hook" to restart nginx after renew
 - name: Install certificate using certbot
   include_role:
     name: oaf.certbot
   vars:
-    certbot_certs: "{{ (standalone_staging | default(false)) | ternary(
-      [
-        {
-          'email': 'contact@oaf.org.au',
-          'domains': [righttoknow_domain]
-        }
-      ],
-      [
-        {
-          'email': 'contact@oaf.org.au',
-          'domains': [righttoknow_domain, 'www.' + righttoknow_domain]
-        },
-        {
-          'email': 'contact@oaf.org.au',
-          'domains': ['test.' + righttoknow_domain, 'www.test.' + righttoknow_domain]
-        }
-      ]
-    ) }}"
+    certbot_certs: "{{ staging_certs if ('righttoknow_staging' in group_names) else production_certs }}"
   when: "'ec2' in group_names"

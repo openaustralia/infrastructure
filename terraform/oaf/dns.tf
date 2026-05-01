@@ -1,31 +1,89 @@
 
 ## oaf.org.au
 # A records
-resource "cloudflare_record" "root" {
+resource "cloudflare_record" "root_primary" {
   zone_id = var.oaf_org_au_zone_id
   name    = "oaf.org.au"
   type    = "A"
-  value   = aws_eip.main.public_ip
+  value   = "192.0.78.154" # hosted on wordpress.com
+  proxied = false
+}
+
+resource "cloudflare_record" "root_secondary" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "oaf.org.au"
+  type    = "A"
+  value   = "192.0.78.197" # hosted on wordpress.com
+  proxied = false
 }
 
 # CNAME records
-resource "cloudflare_record" "test" {
-  zone_id = var.oaf_org_au_zone_id
-  name    = "test.oaf.org.au"
-  type    = "CNAME"
-  value   = "oaf.org.au"
-}
-
 resource "cloudflare_record" "www" {
   zone_id = var.oaf_org_au_zone_id
   name    = "www.oaf.org.au"
   type    = "CNAME"
   value   = "oaf.org.au"
+  proxied = false
+}
+
+# Google Workspace custom URLs
+resource "cloudflare_record" "google_workspace_calendar" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "calendar.oaf.org.au"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+  proxied = false
+}
+
+resource "cloudflare_record" "google_workspace_drive" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "drive.oaf.org.au"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+  proxied = false
+}
+
+resource "cloudflare_record" "google_workspace_mail" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "mail.oaf.org.au"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+  proxied = false
+}
+
+resource "cloudflare_record" "google_workspace_groups" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "groups.oaf.org.au"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+  proxied = false
+}
+
+resource "cloudflare_record" "google_workspace_sites" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "sites.oaf.org.au"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "strong1._domainkey.oaf.org.au"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "strong2._domainkey.oaf.org.au"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
 }
 
 # MX records
-
-# We can now use a single MX record for Google workspace
 resource "cloudflare_record" "mx" {
   zone_id  = var.oaf_org_au_zone_id
   name     = "oaf.org.au"
@@ -39,7 +97,7 @@ resource "cloudflare_record" "spf" {
   zone_id = var.oaf_org_au_zone_id
   name    = "oaf.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "google_site_verification" {
@@ -55,6 +113,14 @@ resource "cloudflare_record" "facebook_domain_verification" {
   type    = "TXT"
   value   = "facebook-domain-verification=hfy8rxjyjsmjynz68xr373fy86lg4o"
 }
+
+resource "cloudflare_record" "yahoo_domain_verification" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "oaf.org.au"
+  type    = "TXT"
+  value   = "yahoo-verification-key=b22Y3XMni7mCqo0n03D0IOvczsLEdMQZ4i+Pt1WMJ0Y="
+}
+
 
 resource "cloudflare_record" "bluesky_domain_verification" {
   zone_id = var.oaf_org_au_zone_id
@@ -92,28 +158,51 @@ resource "cloudflare_record" "domainkey_cuttlefish" {
   value = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7fLXgEr26+qIswukULxl1OIPfz2CZ1iPcy4+LsveWZKGi1mU4jcy2vregS8FOm1B/V2nI354jBxlEi4XLxElcThq7zrFcDLXPNkrCg7yyPCF3qBnISlWDF/EwB0wOE1VF3QcwcILdR9vzRHP2yo0uTkz+stZpzVgthfM4FAOd5vDQ+cYxCwKTtXyCBUHH+/c2KUYnKiAOEXmuOUfwdo7uAPdClyg8mPAqYzjEQtPlktulD3rLQp3bom5lkGVLzklfiD77JVK1PD1a9C2OItG55KYbie3EPrXLkecGMob1ulhvz7ml/bSx3bqDUcbelnVLlT9VjeRiEUWoSYzJxXoMwIDAQAB"
 }
 
-# For the time being we're just using DMARC records to get some data on what's
-# happening with email that we're sending (and whether anyone else is impersonating
-# us).
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# DMARC record for email authentication and reporting
+# Reports are sent to both Suped (for monitoring) and Postmark (legacy weekly reports)
+# Suped provides ongoing monitoring and analysis
+# Postmark generates a weekly DMARC report which gets sent by email on Monday mornings
 # Report goes to webmaster@oaf.org.au
 resource "cloudflare_record" "dmarc" {
   zone_id = var.oaf_org_au_zone_id
   name    = "_dmarc.oaf.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+}
+
+# SPF include record containing all A records for OAF services
+# This is used by other domains via "include:_spf1.oaf.org.au"
+# Dynamically includes IPs from:
+# - oaf.org.au (WordPress.com hosted)
+# - openaustraliafoundation.org.au (WordPress.com hosted)
+# - openaustralia.org / openaustralia.org.au (main and production servers)
+# - righttoknow.org.au (production and staging)
+# - cuttlefish.oaf.org.au
+resource "cloudflare_record" "spf_include" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "_spf1.oaf.org.au"
+  type    = "TXT"
+  value   = "v=spf1 ip4:192.0.78.154 ip4:192.0.78.197 ip4:192.0.78.177 ip4:192.0.78.220 ip4:${var.openaustralia_main_ip} ip4:${var.openaustralia_production_ip} ip4:${var.righttoknow_production_ip} ip4:${var.righttoknow_staging_ip} ip4:${var.cuttlefish_ip} -all"
 }
 
 ## openaustraliafoundation.org.au
 
 # A records
 
-resource "cloudflare_record" "alt_root" {
+resource "cloudflare_record" "alt_root_primary" {
   zone_id = var.openaustraliafoundation_org_au_zone_id
   name    = "openaustraliafoundation.org.au"
   type    = "A"
-  value   = aws_eip.main.public_ip
+  value   = "192.0.78.177" # hosted on wordpress.com
+  proxied = false
+}
+
+resource "cloudflare_record" "alt_root_secondary" {
+  zone_id = var.openaustraliafoundation_org_au_zone_id
+  name    = "openaustraliafoundation.org.au"
+  type    = "A"
+  value   = "192.0.78.220" # hosted on wordpress.com
+  proxied = false
 }
 
 # CNAME records
@@ -122,18 +211,10 @@ resource "cloudflare_record" "alt_www" {
   name    = "www.openaustraliafoundation.org.au"
   type    = "CNAME"
   value   = "openaustraliafoundation.org.au"
-}
-
-resource "cloudflare_record" "alt_test" {
-  zone_id = var.openaustraliafoundation_org_au_zone_id
-  name    = "test.openaustraliafoundation.org.au"
-  type    = "CNAME"
-  value   = "openaustraliafoundation.org.au"
+  proxied = false
 }
 
 # MX records
-
-# We can now use a single MX record for Google workspace
 resource "cloudflare_record" "alt_mx" {
   zone_id  = var.openaustraliafoundation_org_au_zone_id
   name     = "openaustraliafoundation.org.au"
@@ -147,7 +228,7 @@ resource "cloudflare_record" "alt_spf" {
   zone_id = var.openaustraliafoundation_org_au_zone_id
   name    = "openaustraliafoundation.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "alt_google_site_verification" {

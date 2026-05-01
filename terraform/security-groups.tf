@@ -73,6 +73,11 @@ resource "aws_security_group" "webserver" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+
+  # Ignore ingress changes while testing VPN
+  lifecycle {
+    ignore_changes = [ingress]
+  }
 }
 
 data "aws_security_group" "default" {
@@ -177,5 +182,10 @@ resource "aws_security_group" "planningalerts" {
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
+  }
+
+  # Ignore ingress changes while testing VPN
+  lifecycle {
+    ignore_changes = [ingress]
   }
 }

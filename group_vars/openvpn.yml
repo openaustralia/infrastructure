@@ -1,0 +1,15 @@
+site_name: openvpn-server
+
+# Disable NewRelic for VPN server
+newrelic_license_key: "disabled"
+
+# OpenVPN specific configuration
+# Update this IP after Terraform creates the Elastic IP
+openvpn_server_public_ip: "52.64.33.12"
+openvpn_iam_group: "vpn-users"
+openvpn_aws_region: "ap-southeast-2"
+
+# VPC configuration for ap-southeast-2
+openvpn_vpc_network: "172.31.0.0"
+openvpn_vpc_netmask: "255.255.0.0"
+openvpn_vpc_dns: "172.31.0.2"

@@ -16,8 +16,17 @@ resource "cloudflare_record" "root" {
   zone_id = cloudflare_zone.org.id
   name    = "openaustralia.org"
   type    = "A"
-  value   = aws_eip.main.public_ip
+  value   = aws_eip.production.public_ip
+  proxied = false
 }
+
+# resource "cloudflare_record" "root_staging" {
+#   zone_id = cloudflare_zone.org.id
+#   name    = "staging.openaustralia.org"
+#   type    = "A"
+#   value   = aws_eip.production.public_ip
+#   proxied = false
+# }
 
 # CNAME records
 resource "cloudflare_record" "www" {
@@ -25,6 +34,7 @@ resource "cloudflare_record" "www" {
   name    = "www.openaustralia.org"
   type    = "CNAME"
   value   = "openaustralia.org"
+  proxied = false
 }
 
 resource "cloudflare_record" "test" {
@@ -32,6 +42,7 @@ resource "cloudflare_record" "test" {
   name    = "test.openaustralia.org"
   type    = "CNAME"
   value   = "openaustralia.org"
+  proxied = false
 }
 
 # TODO: This should point at oaf.org.au
@@ -40,6 +51,7 @@ resource "cloudflare_record" "blog" {
   name    = "blog.openaustralia.org"
   type    = "CNAME"
   value   = "openaustralia.org"
+  proxied = false
 }
 
 resource "cloudflare_record" "data" {
@@ -47,6 +59,7 @@ resource "cloudflare_record" "data" {
   name    = "data.openaustralia.org"
   type    = "CNAME"
   value   = "openaustralia.org"
+  proxied = false
 }
 
 resource "cloudflare_record" "software" {
@@ -54,6 +67,7 @@ resource "cloudflare_record" "software" {
   name    = "software.openaustralia.org"
   type    = "CNAME"
   value   = "openaustralia.org"
+  proxied = false
 }
 
 resource "cloudflare_record" "hackfest" {
@@ -61,6 +75,22 @@ resource "cloudflare_record" "hackfest" {
   name    = "hackfest.openaustralia.org"
   type    = "CNAME"
   value   = "ghs.google.com"
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.org.id
+  name    = "strong1._domainkey.openaustralia.org"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.org.id
+  name    = "strong2._domainkey.openaustralia.org"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
 }
 
 # MX records
@@ -79,7 +109,7 @@ resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.org.id
   name    = "openaustralia.org"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 # TODO: Remove this once the one below is up and running
@@ -118,14 +148,42 @@ resource "cloudflare_record" "dmarc" {
 }
 
 ## openaustralia.org.au
+# Keep apache_sites in the following up to date:
+# * group_vars/openaustralia.yml
 
 # A records
+resource "cloudflare_record" "old_root" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "oldprod.openaustralia.org.au"
+  type    = "A"
+  value   = aws_eip.main.public_ip
+  proxied = false
+}
+
 resource "cloudflare_record" "alt_root" {
   zone_id = cloudflare_zone.org_au.id
   name    = "openaustralia.org.au"
   type    = "A"
-  value   = aws_eip.main.public_ip
+  value   = aws_eip.production.public_ip
+  proxied = false
 }
+
+# template if we again do a newprod, though I suggest we consider blue/green like planningalerts
+# resource "cloudflare_record" "alt_root_staging" {
+#   zone_id = cloudflare_zone.org_au.id
+#   name    = "staging.openaustralia.org.au"
+#   type    = "A"
+#   value   = aws_eip.production.public_ip
+#   proxied = false
+# }
+
+# resource "cloudflare_record" "alt_root_newprod" {
+#   zone_id = cloudflare_zone.org_au.id
+#   name    = "newprod.openaustralia.org.au"
+#   type    = "A"
+#   value   = aws_eip.production.public_ip
+#   proxied = false
+# }
 
 # CNAME records
 
@@ -134,6 +192,7 @@ resource "cloudflare_record" "alt_www" {
   name    = "www.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "alt_test" {
@@ -141,6 +200,7 @@ resource "cloudflare_record" "alt_test" {
   name    = "test.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "alt_www_test" {
@@ -148,6 +208,7 @@ resource "cloudflare_record" "alt_www_test" {
   name    = "www.test.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "alt_data" {
@@ -155,6 +216,7 @@ resource "cloudflare_record" "alt_data" {
   name    = "data.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "alt_software" {
@@ -162,6 +224,23 @@ resource "cloudflare_record" "alt_software" {
   name    = "software.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
+}
+
+resource "cloudflare_record" "alt_helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "strong1._domainkey.openaustralia.org.au"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "alt_helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "strong2._domainkey.openaustralia.org.au"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
 }
 
 # MX records
@@ -180,7 +259,7 @@ resource "cloudflare_record" "alt_spf" {
   zone_id = cloudflare_zone.org_au.id
   name    = "openaustralia.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "alt_google_site_verification" {
@@ -204,15 +283,14 @@ resource "cloudflare_record" "alt_domainkey_google" {
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlL0dk9aaopGcbFKfugmxVqdUKCnpYTrnQj0Sz6RW1a+kFK44snSraBdMe6B14mvfUH1xkIuEiuKKWYIkYq5FHHZYcszVwt66FieU6HTaOvMNwDuXEJgU2zMIvGsUNiDO87CiEMZf0KhqyTrXIldVO/d9A5U7iZRy4poIKOQlm6NNEk6brfUXHct9S/Z4H6dlaowxUdjIp37838/U0AVTDiYYbSDrv2w60e1zTZy1y/9YXEGPlDpue4ijjJz1tjvJtS6cxfKT8elmXEOAo5j45K8NONJ4bEGNmTJxPMQwox0gBFwXwrf7pd4uYUpJW6GH9/vx7AW/jZe0SafCV/f0NQIDAQAB"
 }
 
-# For the time being we're just using DMARC records to get some data on what's
-# happening with email that we're sending (and whether anyone else is impersonating
-# us).
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# DMARC record for email authentication and reporting
+# Reports are sent to both Suped (for monitoring) and Postmark (legacy weekly reports)
+# Suped provides ongoing monitoring and analysis
+# Postmark generates a weekly DMARC report which gets sent by email on Monday mornings
 # Report goes to webmaster@openaustralia.org.au
 resource "cloudflare_record" "alt_dmarc" {
   zone_id = cloudflare_zone.org_au.id
   name    = "_dmarc.openaustralia.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+no6xy3wrymr@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+no6xy3wrymr@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }

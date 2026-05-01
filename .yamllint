@@ -1,6 +1,7 @@
 ---
 rules:
-  # 80 chars should be enough, but don't fail if a line is longer
+  # Updated to match rubocop: 120 chars, but don't fail if a line is longer
+  # Use `rubocop --show-cops Layout/LineLength` to check
   line-length:
-    max: 80
+    max: 120
     level: warning

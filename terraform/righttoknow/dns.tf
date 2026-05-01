@@ -4,15 +4,13 @@ resource "cloudflare_zone" "main" {
   zone       = "righttoknow.org.au"
 }
 
-# TODO: Update any values from "aws_eip.main" to "aws_eip.production" when we
-# are ready to move to the production environment
-
 # A records
 resource "cloudflare_record" "root" {
   zone_id = cloudflare_zone.main.id
   name    = "righttoknow.org.au"
   type    = "A"
-  value   = aws_eip.main.public_ip
+  value   = aws_eip.production.public_ip
+  proxied = true
 }
 
 resource "cloudflare_record" "production" {
@@ -20,7 +18,7 @@ resource "cloudflare_record" "production" {
   name    = "prod.righttoknow.org.au"
   type    = "A"
   value   = aws_eip.production.public_ip
-  
+  proxied = false
 }
 
 
@@ -30,20 +28,31 @@ resource "cloudflare_record" "www" {
   name    = "www.righttoknow.org.au"
   type    = "CNAME"
   value   = "righttoknow.org.au"
+  proxied = true
 }
 
-resource "cloudflare_record" "test" {
+resource "cloudflare_record" "www_production" {
   zone_id = cloudflare_zone.main.id
-  name    = "test.righttoknow.org.au"
+  name    = "www.prod.righttoknow.org.au"
   type    = "CNAME"
-  value   = "righttoknow.org.au"
+  value   = "prod.righttoknow.org.au"
+  proxied = false
 }
 
-resource "cloudflare_record" "www_test" {
+resource "cloudflare_record" "helpscout_dkim_strong1" {
   zone_id = cloudflare_zone.main.id
-  name    = "www.test.righttoknow.org.au"
+  name    = "strong1._domainkey.righttoknow.org.au"
   type    = "CNAME"
-  value   = "righttoknow.org.au"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.main.id
+  name    = "strong2._domainkey.righttoknow.org.au"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
 }
 
 # MX records
@@ -71,7 +80,7 @@ resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.main.id
   name    = "righttoknow.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "google_site_verification" {
@@ -88,11 +97,26 @@ resource "cloudflare_record" "facebook_domain_verification" {
   value   = "facebook-domain-verification=vtlcbmfm4mihp4wql58lwz3nbhc8bt"
 }
 
+resource "cloudflare_record" "yahoo_domain_verification" {
+  zone_id = cloudflare_zone.main.id
+  name    = "righttoknow.org.au"
+  type    = "TXT"
+  value   = "yahoo-verification-key=J/Bl98qV16dX75A0CTg77/jNdSKtp+ULdHN7fwQ6SHw="
+}
+
+
 # Note that this record comes from roles/internal/righttoknow/files/dkimkeys/default.txt which in turn is generated
 # by hand (as part of a keypair) using opendkim
 resource "cloudflare_record" "default_domainkey" {
   zone_id = cloudflare_zone.main.id
   name    = "default._domainkey.righttoknow.org.au"
+  type    = "TXT"
+  value   = "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzWFLO143fpHeVU27EjmOsY4hpKtR+/PI+idJItMWiHSwjgcX21QYMbQjPcHfHFhsDbblBBQy/MtcTwynSYFp1SWkTI8EsHLS1+pp1HAI3wx7ZWLmwE6di+qRKu+3ooPFSIUbA+TvA7GJmHBfBf/ubASWff4t5ByZ9edZOA4lZ7pGdG7O0duH+/hhggH/LFMPX6a0CzyXYjsfTvtyYMJvvRsoepEs/QjtdBarZS2roR7qxZQhSRUlbZgSNAbyO0+3wJptpxvAXleSuOFoN5nHMV4LT+vuF0g+FDxIpbJu+bW08IKL1qMSH8Gtwd20Hy34h88IHPg8zx5FUoeeOS5W/wIDAQAB"
+}
+
+resource "cloudflare_record" "staging_default_domainkey" {
+  zone_id = cloudflare_zone.main.id
+  name    = "default._domainkey.staging.righttoknow.org.au"
   type    = "TXT"
   value   = "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzWFLO143fpHeVU27EjmOsY4hpKtR+/PI+idJItMWiHSwjgcX21QYMbQjPcHfHFhsDbblBBQy/MtcTwynSYFp1SWkTI8EsHLS1+pp1HAI3wx7ZWLmwE6di+qRKu+3ooPFSIUbA+TvA7GJmHBfBf/ubASWff4t5ByZ9edZOA4lZ7pGdG7O0duH+/hhggH/LFMPX6a0CzyXYjsfTvtyYMJvvRsoepEs/QjtdBarZS2roR7qxZQhSRUlbZgSNAbyO0+3wJptpxvAXleSuOFoN5nHMV4LT+vuF0g+FDxIpbJu+bW08IKL1qMSH8Gtwd20Hy34h88IHPg8zx5FUoeeOS5W/wIDAQAB"
 }
@@ -105,14 +129,16 @@ resource "cloudflare_record" "google_domainkey" {
 }
 
 ## 2024-09-02 - Set DMARC to quarantine emails that don't meet the DMARC requirements.
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# DMARC record for email authentication and reporting
+# Reports are sent to both Suped (for monitoring) and Postmark (legacy weekly reports)
+# Suped provides ongoing monitoring and analysis
+# Postmark generates a weekly DMARC report which gets sent by email on Monday mornings
 # Report goes to webmaster@righttoknow.org.au
 resource "cloudflare_record" "dmarc" {
   zone_id = cloudflare_zone.main.id
   name    = "_dmarc.righttoknow.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=quarantine; rua=mailto:re+aysyay6u9ct@dmarc.postmarkapp.com; sp=none; pct=100; aspf=r;"
+  value   = "v=DMARC1; p=quarantine; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+aysyay6u9ct@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
 
 # Staging environment DNS records
@@ -121,6 +147,7 @@ resource "cloudflare_record" "staging" {
   name    = "staging.righttoknow.org.au"
   type    = "A"
   value   = aws_eip.staging.public_ip
+  proxied = false
 }
 
 resource "cloudflare_record" "www_staging" {
@@ -128,13 +155,14 @@ resource "cloudflare_record" "www_staging" {
   name    = "www.staging.righttoknow.org.au"
   type    = "CNAME"
   value   = "staging.righttoknow.org.au"
+  proxied = false
 }
 
 resource "cloudflare_record" "staging-spf" {
   zone_id = cloudflare_zone.main.id
   name    = "staging.righttoknow.org.au"
   type    = "TXT"
-  value   = "v=spf1 a include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
 }
 
 resource "cloudflare_record" "staging-mx" {

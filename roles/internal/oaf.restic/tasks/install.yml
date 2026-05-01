@@ -1,0 +1,53 @@
+---
+- name: Create restic directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0750"
+  loop:
+    - "{{ restic_config_dir }}"
+    - "{{ restic_log_dir }}"
+    - "{{ restic_cache_dir }}"
+
+- name: Check current restic version
+  command: restic version
+  register: restic_installed_version
+  changed_when: false
+  failed_when: false
+
+- name: Download and install restic
+  when: restic_installed_version.rc != 0 or restic_version not in restic_installed_version.stdout
+  block:
+    - name: Download restic binary
+      get_url:
+        url: "https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_amd64.bz2"
+        dest: "/tmp/restic_{{ restic_version }}.bz2"
+        mode: "0644"
+
+    - name: Extract restic binary
+      shell: "bunzip2 -c /tmp/restic_{{ restic_version }}.bz2 > /usr/local/bin/restic"
+      args:
+        creates: "/usr/local/bin/restic"
+
+    - name: Set restic binary permissions
+      file:
+        path: /usr/local/bin/restic
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Clean up downloaded archive
+      file:
+        path: "/tmp/restic_{{ restic_version }}.bz2"
+        state: absent
+
+- name: Verify restic installation
+  command: restic version
+  register: restic_version_check
+  changed_when: false
+
+- name: Display restic version
+  debug:
+    msg: "Installed: {{ restic_version_check.stdout }}"

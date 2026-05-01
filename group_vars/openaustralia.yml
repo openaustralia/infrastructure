@@ -1,6 +1,6 @@
 # TODO: Unify this with the domain. It's currently only used to name
 # things on New Relic.
-name: openaustralia.org.au
+site_name: "openaustralia.{{ base_domain }}"
 openaustralia_production_mysql_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           33613134623466616233383862366434366264323562313439366566343461663337313037376364
@@ -29,7 +29,17 @@ backup_gpg_pw: !vault |
           39663261383131313338373231626530383065326230656133333865383966643536616134613663
           3130363437356231360a626632316266383136643663326239633333356631343462346435316661
           30393132663263643432643032633731336139343132326362626462373738373132
-cron_enabled: true
+restic_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          32323166633732633937306530613139626135613130366335613835323663323233633365376133
+          6265656532656336393361633338616637386536666363300a333561646162356535386563613537
+          66656138363332646165626437633764656335613563343433366638653865633663343731613062
+          3336323539333564320a386331383537373365303238303635373337643864653963656639336436
+          37366266623064353763323665373464653937613734323733613837353065323531633931346464
+          6635346235623634366536646462643332613436373034663032
+cron_enabled_for:
+  production: false
+  staging: false
 morph_api_key: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           66623039363037386530623963626464303838643739313264356166376639346133656337663838
@@ -51,10 +61,15 @@ logs:
      log_stream_name: "{{ inventory_hostname }}"
      timestamp_format: "%b %d %H:%M:%S"
 
-   - file_path: /var/log/duply/openaustralia_data.log
-     log_group_name: /var/log/duply/openaustralia_data.log
+   # Duplicity disabled Dec 2025 - replaced by restic
+   # - file_path: /var/log/duply/openaustralia_data.log
+   #   log_group_name: /var/log/duply/openaustralia_data.log
+   #   log_stream_name: "{{ inventory_hostname }}"
+   #   timestamp_format: "%b %d %H:%M:%S"
+
+   - file_path: /var/log/restic/openaustralia.log
+     log_group_name: /var/log/restic/openaustralia.log
      log_stream_name: "{{ inventory_hostname }}"
-     # No idea what the format should be otherwise
      timestamp_format: "%b %d %H:%M:%S"
 
    - file_path: /srv/www/production/log/error.log
@@ -71,3 +86,107 @@ logs:
      log_group_name: /var/log/unattended-upgrades/unattended-upgrades.log
      log_stream_name: "{{ inventory_hostname }}"
      timestamp_format: "%Y-%m-%d %H:%M:%S"
+
+ruby_manager: rbenv
+ruby_versions:
+  - ruby-3.4.9
+rbenv_extra_depends:
+  - libyaml-dev
+
+environments:
+  - production
+  - staging
+
+certbot_email: contact@oaf.org.au
+
+# Disable backups for staging
+backup_profiles: []
+domains_for_certbot:
+  - email: contact@oaf.org.au
+    domains:
+      - "{{ openaustralia_domain }}"
+
+# Control what version is installed
+xapian_version: 1.4.25
+
+# PHP has two version numbers :( - make sure they are in sync
+php_version: 8.3
+php_api_version: "20230831"
+
+# Based on aws_eip.production.public_ip and CNAMES in terraform/openaustralia/dns.tf
+
+# stage is set to key
+# domain, server_aliases and password_protect are set to corresponding values
+
+production_server_aliases:
+  - "{{ openaustralia_domain }}"
+
+extra_production_server_aliases:
+  - www.openaustralia.org
+  - openaustralia.org
+
+combined_production_server_aliases: >-
+  {{ production_server_aliases +
+     ((base_domain == 'org.au') | ternary(extra_production_server_aliases, [])) }}
+
+staging_server_aliases:
+  - "www.test.{{ openaustralia_domain }}"
+
+extra_staging_server_aliases:
+  - test.openaustralia.org
+
+combined_staging_server_aliases: >-
+  {{ staging_server_aliases +
+     ((base_domain == 'org.au') | ternary(extra_staging_server_aliases, [])) }}
+
+extra_data_server_aliases:
+  - data.openaustralia.org
+
+extra_software_server_aliases:
+  - software.openaustralia.org
+
+apache_sites:
+  production:
+    # CNAME, but this is the canonical name !?
+    domain: "www.{{ openaustralia_domain }}"
+    #cert_domain: "{{ openaustralia_domain }}"
+    server_aliases: "{{ combined_production_server_aliases }}"
+    newrelic_appname: OpenAustralia.org
+    db_password: "{{ openaustralia_production_mysql_password }}"
+  staging:
+    domain: "test.{{ openaustralia_domain }}"
+    password_protect: true
+    server_aliases: "{{ combined_staging_server_aliases }}"
+    template: production
+    newrelic_appname: 'OpenAustralia.org Staging'
+    db_password: "{{ openaustralia_staging_mysql_password }}"
+  "000-default":
+    # redirects to another domain
+    domain: "www.{{ openaustralia_domain }}"
+    server_aliases: []
+  blog:
+    domain: blog.openaustralia.org
+    server_aliases: []
+  data:
+    domain: "data.{{ openaustralia_domain }}"
+    server_aliases: "{{ (base_domain == 'org.au') | ternary(extra_data_server_aliases, []) }}"
+  software:
+    domain: "software.{{ openaustralia_domain }}"
+    server_aliases: "{{ (base_domain == 'org.au') | ternary(extra_software_server_aliases, []) }}"
+
+
+# Sized to cover (approximate figures):
+#  1,600 MB Xapian anon (index.pl cron job)
+#           -> true peak will be higher, only observable once swap is added
+#    120 MB Idle processes (snapd, cloudwatch, newrelic, postfix etc)
+#           -> can swap with negligible impact
+#    168 MB Apache workers anon
+#           -> can be swapped but with site performance impact
+#     42 MB Locked in memory (unevictable kernel pages, mlocked)
+#  --------
+#  1,930 MB Physical RAM
+
+# If we need more than this, we need to upgrade the ec2 instance size!
+swap_file_size_mb: '1024'
+# Prefer RAM but swap out genuinely idle processes under pressure
+swap_swappiness: '35'

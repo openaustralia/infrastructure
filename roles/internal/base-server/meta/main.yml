@@ -14,4 +14,4 @@ dependencies:
   - role: newrelic.newrelic-infra
     nrinfragent_config:
       license_key: "{{ newrelic_license_key }}"
-      display_name: "{{ name }}"
+      display_name: "{{ site_name }}"

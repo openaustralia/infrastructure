@@ -74,6 +74,52 @@ variable "ubuntu_24_ami" {
   default = "ami-001f2488b35ca8aad"
 }
 
+# AMI for Ubuntu 22.04 LTS (used by OpenVPN server), locked to a specific version 
+# so that we don't keep re-provisioning the servers when the AMI gets updated
+variable "ubuntu_22_openvpn_ami" {
+  # Created by: Canonical
+  # Virtualization type: hvm
+  # 64-bit x86
+  default = "ami-0c73bd9145b5546f5"
+}
+
 variable "cloudflare_account_id" {
   default = "668e6ebb9952c26ec3c17a85fb3a25a1"
 }
+
+# =============================================================================
+# Cloudflare-only restrictions
+# When enabled, adds security group rules to allow HTTP/HTTPS only from Cloudflare IPs
+# Note: You must also remove the 0.0.0.0/0 rules from the SG to enforce the restriction
+# =============================================================================
+
+variable "theyvoteforyou_cloudflare_only" {
+  description = "Add Cloudflare IP rules to theyvoteforyou security group"
+  type        = bool
+  default     = false
+}
+
+variable "righttoknow_cloudflare_only" {
+  description = "Add Cloudflare IP rules to righttoknow security group"
+  type        = bool
+  default     = false
+}
+
+variable "openaustralia_cloudflare_only" {
+  description = "Add Cloudflare IP rules to openaustralia security group"
+  type        = bool
+  default     = false
+}
+
+variable "opengovernment_cloudflare_only" {
+  description = "Add Cloudflare IP rules to opengovernment security group"
+  type        = bool
+  default     = false
+}
+
+variable "planningalerts_cloudflare_only" {
+  description = "Add Cloudflare IP rules to planningalerts load balancer security group"
+  type        = bool
+  default     = false
+}
+

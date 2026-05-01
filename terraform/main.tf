@@ -5,9 +5,6 @@ module "cuttlefish" {
 
 module "electionleaflets" {
   source                = "./electionleaflets"
-  security_group        = aws_security_group.webserver
-  instance_profile      = aws_iam_instance_profile.logging
-  ami                   = var.ubuntu_16_ami
   cloudflare_account_id = var.cloudflare_account_id
 }
 
@@ -40,17 +37,19 @@ module "planningalerts" {
 }
 
 module "theyvoteforyou" {
-  source                = "./theyvoteforyou"
-  ami                   = var.ubuntu_20_ami
-  deployer_key          = aws_key_pair.deployer
-  security_group        = aws_security_group.webserver
-  instance_profile      = aws_iam_instance_profile.logging
-  cloudflare_account_id = var.cloudflare_account_id
+  source                 = "./theyvoteforyou"
+  ami                    = var.ubuntu_20_ami
+  deployer_key           = aws_key_pair.deployer
+  security_group         = aws_security_group.webserver
+  security_group_service = aws_security_group.theyvoteforyou
+  instance_profile       = aws_iam_instance_profile.logging
+  cloudflare_account_id  = var.cloudflare_account_id
 }
 
 module "righttoknow" {
   source                        = "./righttoknow"
   security_group_webserver      = aws_security_group.webserver
+  security_group_service        = aws_security_group.righttoknow
   security_group_incoming_email = aws_security_group.incoming_email
   instance_profile              = aws_iam_instance_profile.logging
   cloudflare_account_id         = var.cloudflare_account_id
@@ -62,16 +61,6 @@ module "righttoknow" {
 module "morph" {
   source                = "./morph"
   cloudflare_account_id = var.cloudflare_account_id
-}
-
-module "oaf" {
-  source                                 = "./oaf"
-  oaf_org_au_zone_id                     = cloudflare_zone.oaf_org_au.id
-  openaustraliafoundation_org_au_zone_id = cloudflare_zone.openaustraliafoundation_org_au.id
-  security_group_webserver               = aws_security_group.webserver
-  instance_profile                       = aws_iam_instance_profile.logging
-  # This has been upgraded in place to Ubuntu 18.04
-  ami = var.ubuntu_16_ami
 }
 
 module "metabase" {
@@ -102,18 +91,33 @@ module "metabase" {
 module "openaustralia" {
   source                   = "./openaustralia"
   security_group_webserver = aws_security_group.webserver
+  security_group_service   = aws_security_group.openaustralia
   instance_profile         = aws_iam_instance_profile.logging
   ami                      = var.ubuntu_16_ami
+  ubuntu_22_ami            = var.ubuntu_22_ami
+  ubuntu_24_ami            = var.ubuntu_24_ami
   cloudflare_account_id    = var.cloudflare_account_id
 }
 
-module "opengovernment" {
-  source                   = "./opengovernment"
-  security_group_webserver = aws_security_group.webserver
-  instance_profile         = aws_iam_instance_profile.logging
-  ami                      = var.ubuntu_16_ami
-  cloudflare_account_id    = var.cloudflare_account_id
+module "oaf" {
+  source                                 = "./oaf"
+  oaf_org_au_zone_id                     = cloudflare_zone.oaf_org_au.id
+  openaustraliafoundation_org_au_zone_id = cloudflare_zone.openaustraliafoundation_org_au.id
+  openaustralia_main_ip                  = module.openaustralia.main_public_ip
+  openaustralia_production_ip            = module.openaustralia.production_public_ip
+  righttoknow_production_ip              = module.righttoknow.production_public_ip
+  righttoknow_staging_ip                 = module.righttoknow.staging_public_ip
+  cuttlefish_ip                          = module.cuttlefish.ipv4_address
 }
+
+# module "opengovernment" {
+#   source                   = "./opengovernment"
+#   security_group_webserver = aws_security_group.webserver
+#   security_group_service   = aws_security_group.opengovernment
+#   instance_profile         = aws_iam_instance_profile.logging
+#   ami                      = var.ubuntu_16_ami
+#   cloudflare_account_id    = var.cloudflare_account_id
+# }
 
 module "campaign-monitor" {
   source  = "./campaign-monitor"

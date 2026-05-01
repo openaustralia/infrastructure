@@ -1,4 +1,4 @@
-{% if not (standalone_staging | default(false)) %}
+{% if 'righttoknow_production' in group_names %}
 /^foi\+.*/  alaveteli
 {% endif %}
 /^foitest\+.*/  alavetelitest

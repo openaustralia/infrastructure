@@ -24,6 +24,7 @@ resource "cloudflare_record" "root" {
   name    = "theyvoteforyou.org.au"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = true
 }
 
 # CNAME records
@@ -33,6 +34,7 @@ resource "cloudflare_record" "www" {
   name    = "www.theyvoteforyou.org.au"
   type    = "CNAME"
   value   = "theyvoteforyou.org.au"
+  proxied = true
 }
 
 resource "cloudflare_record" "test" {
@@ -40,6 +42,7 @@ resource "cloudflare_record" "test" {
   name    = "test.theyvoteforyou.org.au"
   type    = "CNAME"
   value   = "theyvoteforyou.org.au"
+  proxied = true
 }
 
 resource "cloudflare_record" "www_test" {
@@ -47,6 +50,7 @@ resource "cloudflare_record" "www_test" {
   name    = "www.test.theyvoteforyou.org.au"
   type    = "CNAME"
   value   = "theyvoteforyou.org.au"
+  proxied = true
 }
 
 resource "cloudflare_record" "email" {
@@ -70,6 +74,22 @@ resource "cloudflare_record" "shopify" {
   value   = "shops.myshopify.com"
 }
 
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "strong1._domainkey.theyvoteforyou.org.au"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "strong2._domainkey.theyvoteforyou.org.au"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
+}
+
 # MX records
 
 # We can now use a single MX record for Google workspace
@@ -88,7 +108,7 @@ resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.org_au.id
   name    = "theyvoteforyou.org.au"
   type    = "TXT"
-  value   = "v=spf1 include:_spf.google.com -all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com -all"
 }
 
 # TODO: Remove this once the one below is up and running
@@ -137,7 +157,7 @@ resource "cloudflare_record" "tvfy_dmarc" {
   zone_id = cloudflare_zone.org_au.id
   name    = "_dmarc.theyvoteforyou.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ldnqce6nisu@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ldnqce6nisu@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
 
 ## theyvoteforyou.org
@@ -147,6 +167,7 @@ resource "cloudflare_record" "alt1_root" {
   name    = "theyvoteforyou.org"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = false
 }
 
 resource "cloudflare_record" "alt1_www" {
@@ -154,6 +175,7 @@ resource "cloudflare_record" "alt1_www" {
   name    = "www.theyvoteforyou.org"
   type    = "CNAME"
   value   = "theyvoteforyou.org"
+  proxied = false
 }
 
 # For the time being we're just using DMARC records to get some data on what's
@@ -166,7 +188,7 @@ resource "cloudflare_record" "tvfy_alt1_dmarc" {
   zone_id = cloudflare_zone.org.id
   name    = "_dmarc.theyvoteforyou.org"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+qbce7gaoklg@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+qbce7gaoklg@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }
 
 ## theyvoteforyou.com.au
@@ -176,6 +198,7 @@ resource "cloudflare_record" "alt2_root" {
   name    = "theyvoteforyou.com.au"
   type    = "A"
   value   = aws_eip.main.public_ip
+  proxied = false
 }
 
 resource "cloudflare_record" "alt2_www" {
@@ -183,6 +206,7 @@ resource "cloudflare_record" "alt2_www" {
   name    = "www.theyvoteforyou.com.au"
   type    = "CNAME"
   value   = "theyvoteforyou.com.au"
+  proxied = false
 }
 
 # For the time being we're just using DMARC records to get some data on what's
@@ -195,5 +219,5 @@ resource "cloudflare_record" "tvfy_alt2_dmarc" {
   zone_id = cloudflare_zone.com_au.id
   name    = "_dmarc.theyvoteforyou.com.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+ffljniarmuh@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ffljniarmuh@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }

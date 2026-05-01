@@ -1,0 +1,12 @@
+development:
+  :concurrency: 1
+
+production:
+  :concurrency: 2
+
+:queues:
+  - default
+  - xapian
+
+:limits:
+  xapian: 1

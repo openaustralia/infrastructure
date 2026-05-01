@@ -3,7 +3,7 @@
 - name: restart varnish
   systemd:
     name: varnish
-    daemon_reload: yes
+    daemon_reload: true
     state: restarted
 
 - name: restart postfix
@@ -25,4 +25,10 @@
 - name: restart opendkim
   service:
     name: opendkim
+    state: restarted
+
+- name: restart sidekiq
+  systemd:
+    name: sidekiq
+    daemon_reload: true
     state: restarted

@@ -1,0 +1,18 @@
+# Staging environment configuration for RightToKnow
+# Most values inherited from righttoknow.yml
+site_name: staging.righttoknow.org.au
+
+# Domain configuration for standalone staging server
+righttoknow_domain: staging.righttoknow.org.au
+domain: staging.righttoknow.org.au
+server_hostname: staging.righttoknow.org.au
+
+# Cron enable/disable switch for staging
+cron_enabled: true
+
+# Staging-specific settings
+# Both staging and production environments run in Rails production mode
+rails_env: production
+
+# Disable backups for staging
+backup_profiles: []

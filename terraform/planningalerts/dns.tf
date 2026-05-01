@@ -31,6 +31,7 @@ resource "cloudflare_record" "root" {
   name    = "planningalerts.org.au"
   type    = "CNAME"
   value   = var.load_balancer.dns_name
+  proxied = false
 }
 
 resource "cloudflare_record" "www" {
@@ -38,6 +39,7 @@ resource "cloudflare_record" "www" {
   name    = "www.planningalerts.org.au"
   type    = "CNAME"
   value   = var.load_balancer.dns_name
+  proxied = false
 }
 
 resource "cloudflare_record" "api" {
@@ -45,6 +47,7 @@ resource "cloudflare_record" "api" {
   name    = "api.planningalerts.org.au"
   type    = "CNAME"
   value   = var.load_balancer.dns_name
+  proxied = false
 }
 
 resource "cloudflare_record" "email2" {
@@ -59,6 +62,22 @@ resource "cloudflare_record" "donate" {
   name    = "donate.planningalerts.org.au"
   type    = "CNAME"
   value   = "hosting.raisely.com"
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.main.id
+  name    = "strong1._domainkey.planningalerts.org.au"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.main.id
+  name    = "strong2._domainkey.planningalerts.org.au"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
 }
 
 # MX records
@@ -78,7 +97,7 @@ resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.main.id
   name    = "planningalerts.org.au"
   type    = "TXT"
-  value   = "v=spf1 include:_spf.google.com a:cuttlefish.oaf.org.au  -all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com a:cuttlefish.oaf.org.au -all"
 }
 
 resource "cloudflare_record" "google_site_verification" {
@@ -95,6 +114,14 @@ resource "cloudflare_record" "facebook_domain_verification" {
   value   = "facebook-domain-verification=djdz2wywxnas3cxhrch14pfk145g93"
 }
 
+resource "cloudflare_record" "yahoo_domain_verification" {
+  zone_id = cloudflare_zone.main.id
+  name    = "planningalerts.org.au"
+  type    = "TXT"
+  value   = "yahoo-verification-key=j/JGsx5QsyhsESucFAGKelmOmW80kCYKW5lxhkxvzr4="
+}
+
+
 resource "cloudflare_record" "domainkey" {
   zone_id = cloudflare_zone.main.id
   name    = "planningalerts_3.cuttlefish._domainkey.planningalerts.org.au"
@@ -109,15 +136,14 @@ resource "cloudflare_record" "domainkey_google" {
   value   = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkUq+EPS6XemyHdVi5CCW7+M+X1XMrAg85Y2oYEUYVcB2IU+1HF/fGUdY9w8wvphSC/28wznJOOTl92pj6/DvwRcfpogRrjITYmPZQMOC0SQ4/4nOeL5ug6fNWFg74LZQvQJqWGAQuUhiSiwxUpkUHAv6H5iE/EKDVOdeWjPWjsIkoAC5HdAie0WCcq3gDlfDJZ3L6K7/nGorPd96764EYG/pdsN43/jzcU23vVGJlhw9my1jvkxNnMS1xRkUuk/JcCIRWp4RkgQOkK7JEoNXB2u+bgW+8mLlGX66dag2l67CR+qzOuE1nHcOu5ADLqVh42MOTNMhw75TzugEbtn0QQIDAQAB"
 }
 
-# For the time being we're just using DMARC records to get some data on what's
-# happening with email that we're sending (and whether anyone else is impersonating
-# us).
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
+# DMARC record for email authentication and reporting
+# Reports are sent to both Suped (for monitoring) and Postmark (legacy weekly reports)
+# Suped provides ongoing monitoring and analysis
+# Postmark generates a weekly DMARC report which gets sent by email on Monday mornings
 # Report goes to contact@oaf.org.au
 resource "cloudflare_record" "dmarc" {
   zone_id = cloudflare_zone.main.id
   name    = "_dmarc.planningalerts.org.au"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+b1g0fn6boqu@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+b1g0fn6boqu@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
 }

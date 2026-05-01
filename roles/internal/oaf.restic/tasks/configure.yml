@@ -1,0 +1,15 @@
+---
+- name: Configure backup profiles
+  include_tasks: configure_profile.yml
+  loop: "{{ restic_profiles }}"
+  loop_control:
+    loop_var: profile
+
+- name: Setup logrotate for restic logs
+  template:
+    src: logrotate.j2
+    dest: /etc/logrotate.d/restic
+    owner: root
+    group: root
+    mode: "0644"
+  when: restic_logrotate
