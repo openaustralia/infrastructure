@@ -9,22 +9,22 @@
     dest: /tmp/tinyproxy-1.10.0.tar.gz
   register: tinyproxy_source
 
-- name: Unpacking tinyproxy
+- name: Unpacking tinyproxy # noqa: no-handler
   unarchive:
-    copy: no
+    copy: false
     dest: /tmp/
     src: "{{ tinyproxy_source.dest }}"
   when: tinyproxy_source is changed
   register: tinyproxy_source_unpack
 
-- name: Configuring tinyproxy source
+- name: Configuring tinyproxy source # noqa: no-handler
   command: "./configure"
   args:
     chdir: /tmp/tinyproxy-1.10.0
   when: tinyproxy_source_unpack is changed
   register: tinyproxy_configure
 
-- name: Compiling tinyproxy
+- name: Compiling tinyproxy # noqa: no-handler
   shell: make && make install
   args:
     chdir: /tmp/tinyproxy-1.10.0
@@ -34,7 +34,7 @@
   template:
     src: init.sh
     dest: /etc/init.d/tinyproxy
-    mode: 0755
+    mode: "0755"
 
 - name: Create user tinyproxy
   user:
@@ -48,10 +48,11 @@
   template:
     src: tinyproxy.conf
     dest: /usr/local/etc/tinyproxy/
+    mode: "0644"
   notify: restart tinyproxy
 
 - name: Enable tinyproxy service
   service:
     name: tinyproxy
-    enabled: yes
+    enabled: true
     state: started

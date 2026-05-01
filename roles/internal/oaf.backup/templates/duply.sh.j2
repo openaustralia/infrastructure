@@ -381,8 +381,8 @@ DEFAULT_GPG_PW='_GPG_PASSWORD_'
 function set_config { # sets config vars
   local CONFHOME_COMPAT="$HOME/.ftplicity"
   local CONFHOME_ETC_COMPAT="/etc/ftplicity"
-  local CONFHOME_ETC="{{backup_home}}"
-  local CONFHOME="{{backup_home}}"
+  local CONFHOME_ETC="{{ backup_home }}"
+  local CONFHOME="{{ backup_home }}"
 
   # confdir can be delivered as path (must contain /)
   if [ `echo $FTPLCFG | grep /` ] ; then

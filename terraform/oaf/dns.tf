@@ -67,6 +67,22 @@ resource "cloudflare_record" "google_workspace_sites" {
   proxied = false
 }
 
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "strong1._domainkey.oaf.org.au"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "strong2._domainkey.oaf.org.au"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
+}
+
 # MX records
 resource "cloudflare_record" "mx" {
   zone_id  = var.oaf_org_au_zone_id

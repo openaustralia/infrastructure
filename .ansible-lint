@@ -1,0 +1,13 @@
+exclude_paths:
+  - roles/external
+# We are not publishing to Galaxy, so these don't matter
+skip_list:
+  - meta-incorrect          # 28 occurrences - not required,
+  - meta-no-info            # 17 occurrences - not required,
+  - role-name               # 4 occurrences - not required,
+  - var-spacing             # ~25 occurrences - cosmetic, all in cron files
+  - yaml                    # ~200 occurrences - yamllint already runs separately
+
+# Worth knowing about but not blocking - fix in new code
+warn_list:
+  - risky-file-permissions  # ~50 occurrences - fix in separate PR

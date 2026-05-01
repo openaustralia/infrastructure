@@ -17,11 +17,13 @@
     - [Prerequisites](#prerequisites)
     - [Environment setup](#environment-setup)
     - [Add the Ansible Vault password](#add-the-ansible-vault-password)
+      - [Access to everything except right to know](#access-to-everything-except-right-to-know)
   - [Generating SSL certificates for development](#generating-ssl-certificates-for-development)
   - [Provisioning](#provisioning)
     - [Provisioning local development servers using Vagrant](#provisioning-local-development-servers-using-vagrant)
     - [Provisioning production servers](#provisioning-production-servers)
     - [Forcibly renewing LetsEncrypt certificates on production servers](#forcibly-renewing-letsencrypt-certificates-on-production-servers)
+      - [Filtering hosts and/or tasks performed](#filtering-hosts-andor-tasks-performed)
   - [Deploying](#deploying)
     - [Deploying Right To Know to your local development server](#deploying-right-to-know-to-your-local-development-server)
     - [Deploying PlanningAlerts](#deploying-planningalerts)
@@ -35,6 +37,7 @@
       - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
       - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
   - [Backups](#backups)
+  - [MailCatching](#MailCatching)
 
 <!-- vscode-markdown-toc-config
 	numbering=false
@@ -208,7 +211,7 @@ There's a very handy `Makefile` included which will:
 Simply run
 
 ```
-make
+make requirements vagrant
 ```
 
 ### <a name='AddtheAnsibleVaultpassword'></a>Add the Ansible Vault password
@@ -228,15 +231,36 @@ Windows; or a remote Ubuntu VM running headless - there's a helper script
 at `bin/headless-keybase.sh` which will help you run the Keybase services
 as user-space systemd units.
 
-The first time you run `make`, it will try to create `.keybase` as a symlink to
-the place where Keybase makes the files available. This is often `/keybase` on
-linux desktops. On headless systems it might be under `/run/user/`.
+The first time you run `make` on a command that uses ansible, it will try to create the `.keybase`, symlinking it from the first
+common location for keybase that exists (on MacOS and Linux). It will fall back to actually asking keybase for its mountdir
+which requires keybase to be running. 
 
-For Mac users, you may need to run `make macos-keybase`, which forces the `.keybase`
-folder to symlink to `/Volumes/Keybase`.
+Use `make keybase` to check you have the required permissions.
 
 Once this is done, the symlinks to .*-vault-pass inside the repo
 should point to the password files. If this doesn't work you may need to update these files yourself.
+
+#### Memory and CPU Usage
+
+Vagrant will allocate 2 GB of RAM and 2 CPU cores per VM by default, which can be overridden. 
+When tested with provisioning openaustralia from scratch (YMMV) compared to default settings:
+* `VAGRANT_MEMORY=4096` was 9% faster if you have enough host memory (2 x memory)
+* `VAGRANT_CPUS=1 VAGRANT_MEMORY=3072` for running many VMs (12% slower with 1/2 cores and 1.5 x memory)
+* `VAGRANT_CPUS=1` minimum (20% slower with 1/2 cores)
+ 
+FYI These production systems have more than 2 CPUs and/or 2 GiB memory:
+  * planningalerts - 2x t3.medium, 4 GiB RAM
+  * righttoknow - t3.large 8 GiB memory, (staging t3.medium, 4 GiB RAM)
+  * morph - linode 32 GB, 8 cpu, 2 GB swap
+  * theyvoteforyou - t3.xlarge - 4 vCPUs, 16 GiB memory
+
+#### Access to everything except right to know
+
+If the `.rtk-vault-pass` symlink is broken, then use `.envrc` (and `direnv` package) to set the following whenever you cd to this dir:
+```bash
+export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"
+```
+This will allow you to work on everything except right to know.
 
 ## <a name='GeneratingSSLcertificatesfordevelopment'></a>Generating SSL certificates for development
 
@@ -246,26 +270,36 @@ See certificates/README.md for more information. This also generates a certifica
 
 ### <a name='ProvisioninglocaldevelopmentserversusingVagrant'></a>Provisioning local development servers using Vagrant
 
-In development you set up and provision a server using Vagrant. You probably only want to run
-one main server and the mysql server so you can bring it up with:
+In development, you set up and provision a server using Vagrant. You probably only want to run
+one main server and the mysql server, so you can bring it up with:
 
-    vagrant up web1.planningalerts.org.au.test mysql.test
+    vagrant up mysql.test web.planningalerts.test
 
-If it's already up you can re-run Ansible provisioning with:
+If it's already up, you can re-run Ansible provisioning with:
 
-    vagrant provision web1.planningalerts.org.au.test
+    vagrant provision oaf
+
+Or combine with:
+
+    vagrant up --provision staging.righttoknow.test
 
 ### <a name='Provisioningproductionservers'></a>Provisioning production servers
 
-Provision all running servers with:
+Provision all running servers (production and staging) with:
 
-    make production
+    make all
 
 This will create a Python virtualenv in `venv`; install ansible inside it; and install required roles from ansible-galaxy inside `roles/external`
 
 If you just want to provision a single server:
 
-    .venv/bin/ansible-playbook -i ec2-hosts site.yml -l planningalerts
+    make apply-planningalerts
+
+or where there are multiple servers, specify which one you want to provision:
+
+     STAGE=old make apply-openaustralia
+
+To provision all stages, just specify `STAGE=all`
 
 ### <a name='ForciblyrenewingLetsEncryptcertificatesonproductionservers'></a>Forcibly renewing LetsEncrypt certificates on production servers
 
@@ -295,6 +329,17 @@ config.
 If you want to forcibly renew just one service, instructions are in
 the top of `update-ssl-certs.yaml`.
 
+#### Filtering hosts and/or tasks performed
+
+You can also set:
+
+* STAGE: to a group suffix eg `STAGE=staging make apply-righttoknow` would apply changes only to `righttoknow_staging`
+  group in `inventory/ec2-hosts` which only contains `staging.openaustralia.org.au`
+* `ANSIBLE_TAGS` - limits to tasks / roles that have one of the comma-separated roles
+* `ANSIBLE_SKIP_TAGS` - skips tasks / roles that have one of the comma-separated roles
+* `ANSIBLE_VERBOSE` - set to one to four 'v's eg `ANSIBLE_VERBOSE=vvv make apply-openaustralia` will show a lot of diagnostic information from ansible
+* `ANSIBLE_START_TASK` - set to part of the task description to have ansible skip to that task, which allows you to quickly debug after a failure
+
 ## <a name='Deploying'></a>Deploying
 
 ### <a name='DeployingRightToKnowtoyourlocaldevelopmentserver'></a>Deploying Right To Know to your local development server
@@ -323,7 +368,7 @@ staging:
 development:
   branch: production
   repository: https://github.com/openaustralia/alaveteli.git
-  server: righttoknow.org.au.test
+  server: righttoknow.test
   user: deploy
   deploy_to: /srv/www/production
   rails_env: production
@@ -462,3 +507,49 @@ Data directories of servers are backed up to S3 using Duply.
 Using the `data_directory` profile as an example, to run a backup manually you'd log in as root and run `duply data_directory backup`.
 
 To restore the latest backup to `/mnt/restore` you'd run `duply data_directory restore /mnt/restore`.
+
+
+## <a name='MailCatching'></a>Mail Catching
+
+There are two ways an openaustralia server is configured to catch emails.
+
+One is to be in the group `catch_all_mail`. This 
+* disables sending email to the real world in msmtp, 
+* configuires php.ini to send email to `/usr/local/bin/log_not_sendmail`
+
+### `log_not_sendmail`
+
+The `log_not_sendmail` command logs emails to ~/log/mail/DATE-TIME.log, keeping it to 
+
+To send email to a mail catcher on openaustralia, update the `/etc/msmstprc` file, 
+keeping a copy as the ansible `internal/openaustralia` role will overwite it!
+
+Note: This will affect BOTH the production and staging environments on that server!
+If you ONLY want to change staging, then add the following to the `/etc/apache2/sites-enabled` config file for staging:
+```
+    php_admin_value sendmail_path "msmtp --read-envelope-from -t -a mailpit"
+```
+
+You will want to add a mailpit entry:
+```
+account mailpit
+tls off
+host <mailpit.server>
+port 2525
+auth plain
+user openaustralia
+password <your-password>
+host plannies-mate.thesite.info
+```
+
+Change the default if you want both production and staging to be changed:
+```
+account default : mailpit
+#account default : cuttlefish
+```
+
+To undo this, change the default back, optionally remove the mailpit entry, and update the apache vhost config if you have changed it.
+
+REMEMBER: Keep a copy of the files you change and copy them back after running a diff to confirm if you run ansible.
+(TODO: Make it a default for setting up qa/test servers)
+

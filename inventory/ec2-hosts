@@ -1,46 +1,43 @@
+# Note:
+# Groups without these suffixes can be both live and new servers
+# There is currently no group for servers that are in the process of being retired
+#
+# Other inventory files:
+
+# KEEP EMPTY - see `Vagrantfile` for development inventory
+[development]
+
+# KEEP EMPTY - used by `Vagrantfile` to set up rds equivalents
+[mysql]
+[postgresql]
+[redis]
+
+# INVENTORY IN alphabetical order by group name
+
 [ec2]
+# NOTE: The planning alerts servers are NOT in ec2!
 theyvoteforyou.org.au
 openaustralia.org.au
-newprod.openaustralia.org.au
 staging.righttoknow.org.au
 prod.righttoknow.org.au
 au.proxy.oaf.org.au
 web.metabase.oaf.org.au
 vpn.oaf.org.au
-; We've decided to use the hosted version at plausible.io for the time
-; being because it was just a little too much work to get a decent
-; production worthy setup going. That could of course change and we always
-; have to option to switch because it's open-source.
-; web.plausible.oaf.org.au
 
-[theyvoteforyou]
-theyvoteforyou.org.au
+[catch_all_mail:children]
+righttoknow_staging
 
-[openaustralia]
-openaustralia.org.au
-newprod.openaustralia.org.au
-
-[openaustralia_old]
-openaustralia.org.au
-
-[openaustralia_new]
-newprod.openaustralia.org.au
-
-[righttoknow]
-staging.righttoknow.org.au
-prod.righttoknow.org.au
-
-[righttoknow_staging]
-staging.righttoknow.org.au
-
-[righttoknow_production]
-prod.righttoknow.org.au
-
-[proxy]
-au.proxy.oaf.org.au
+# We've decided to use the hosted version at plausible.io for the time
+# being because it was just a little too much work to get a decent
+# production worthy setup going. That could of course change and we always
+# have to option to switch because it's open-source.
+# web.plausible.oaf.org.au
 
 [metabase]
 web.metabase.oaf.org.au
+
+[openaustralia]
+openaustralia.org.au
 
 [openvpn]
 52.64.33.12 ansible_user=ubuntu ansible_ssh_private_key_file=terraform.pem
@@ -50,22 +47,33 @@ ec2-3-27-58-54.ap-southeast-2.compute.amazonaws.com
 ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 
 [plausible]
-; See comment above
-; web.plausible.oaf.org.au
+# See comment above
+# web.plausible.oaf.org.au
 
-; Group for all sites that need information on the MySQL RDS instance
+[proxy]
+au.proxy.oaf.org.au
+
+# Group for all sites that use and thus need information on the MySQL 8.x RDS instance
 [requires_mysql:children]
-openaustralia_new
+openaustralia
 theyvoteforyou
-metabase
 
-; Group for all sites that need information on the MySQL RDS instance
-[requires_mysql_5:children]
-openaustralia_old
-
-; Group for all sites that need information on the PostgreSQL RDS instance
+# Group for all sites that use and need information on the PostgreSQL RDS instance
 [requires_postgresql:children]
-theyvoteforyou
 righttoknow
 metabase
 planningalerts
+
+[righttoknow:children]
+righttoknow_production
+righttoknow_staging
+
+[righttoknow_production]
+prod.righttoknow.org.au
+
+[righttoknow_staging]
+staging.righttoknow.org.au
+
+[theyvoteforyou]
+theyvoteforyou.org.au
+

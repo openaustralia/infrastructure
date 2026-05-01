@@ -1,5 +1,11 @@
 [client]
 port = 3306
-host = {{ mysql_8_host }}
+host = {{ db_host }}
+
+[production]
 database = oa-production
-password = {{ db_password }}
+password = {{ openaustralia_production_mysql_password }}
+
+[staging]
+database = oa-staging
+password = {{ openaustralia_staging_mysql_password }}

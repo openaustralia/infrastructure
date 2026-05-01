@@ -16,17 +16,17 @@ resource "cloudflare_record" "root" {
   zone_id = cloudflare_zone.org.id
   name    = "openaustralia.org"
   type    = "A"
-  value   = aws_eip.main.public_ip
-  proxied = false
-}
-
-resource "cloudflare_record" "root_staging" {
-  zone_id = cloudflare_zone.org.id
-  name    = "staging.openaustralia.org"
-  type    = "A"
   value   = aws_eip.production.public_ip
   proxied = false
 }
+
+# resource "cloudflare_record" "root_staging" {
+#   zone_id = cloudflare_zone.org.id
+#   name    = "staging.openaustralia.org"
+#   type    = "A"
+#   value   = aws_eip.production.public_ip
+#   proxied = false
+# }
 
 # CNAME records
 resource "cloudflare_record" "www" {
@@ -75,6 +75,22 @@ resource "cloudflare_record" "hackfest" {
   name    = "hackfest.openaustralia.org"
   type    = "CNAME"
   value   = "ghs.google.com"
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.org.id
+  name    = "strong1._domainkey.openaustralia.org"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.org.id
+  name    = "strong2._domainkey.openaustralia.org"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
 }
 
 # MX records
@@ -132,31 +148,42 @@ resource "cloudflare_record" "dmarc" {
 }
 
 ## openaustralia.org.au
+# Keep apache_sites in the following up to date:
+# * group_vars/openaustralia.yml
 
 # A records
-resource "cloudflare_record" "alt_root" {
+resource "cloudflare_record" "old_root" {
   zone_id = cloudflare_zone.org_au.id
-  name    = "openaustralia.org.au"
+  name    = "oldprod.openaustralia.org.au"
   type    = "A"
   value   = aws_eip.main.public_ip
   proxied = false
 }
 
-resource "cloudflare_record" "alt_root_staging" {
+resource "cloudflare_record" "alt_root" {
   zone_id = cloudflare_zone.org_au.id
-  name    = "staging.openaustralia.org.au"
+  name    = "openaustralia.org.au"
   type    = "A"
   value   = aws_eip.production.public_ip
   proxied = false
 }
 
-resource "cloudflare_record" "alt_root_newprod" {
-  zone_id = cloudflare_zone.org_au.id
-  name    = "newprod.openaustralia.org.au"
-  type    = "A"
-  value   = aws_eip.production.public_ip
-  proxied = false
-}
+# template if we again do a newprod, though I suggest we consider blue/green like planningalerts
+# resource "cloudflare_record" "alt_root_staging" {
+#   zone_id = cloudflare_zone.org_au.id
+#   name    = "staging.openaustralia.org.au"
+#   type    = "A"
+#   value   = aws_eip.production.public_ip
+#   proxied = false
+# }
+
+# resource "cloudflare_record" "alt_root_newprod" {
+#   zone_id = cloudflare_zone.org_au.id
+#   name    = "newprod.openaustralia.org.au"
+#   type    = "A"
+#   value   = aws_eip.production.public_ip
+#   proxied = false
+# }
 
 # CNAME records
 
@@ -197,6 +224,22 @@ resource "cloudflare_record" "alt_software" {
   name    = "software.openaustralia.org.au"
   type    = "CNAME"
   value   = "openaustralia.org.au"
+  proxied = false
+}
+
+resource "cloudflare_record" "alt_helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "strong1._domainkey.openaustralia.org.au"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "alt_helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "strong2._domainkey.openaustralia.org.au"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
   proxied = false
 }
 
