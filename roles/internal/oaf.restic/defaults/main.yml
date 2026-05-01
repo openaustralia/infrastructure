@@ -1,7 +1,7 @@
 ---
 # Restic backup role defaults
 
-restic_enabled: yes
+restic_enabled: true
 restic_remove: no
 
 # Restic version to install (from GitHub releases)
@@ -17,7 +17,7 @@ restic_log_dir: /var/log/restic
 restic_cache_dir: /var/cache/restic
 
 # Logging
-restic_logrotate: yes
+restic_logrotate: true
 restic_logrotate_keep: 4
 
 # Default S3 credentials (override per-profile or globally)

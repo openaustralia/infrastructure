@@ -7,6 +7,7 @@
   file:
     state: directory
     path: /data
+    mode: '0755'
 
 # On EC2 we're using a seperate EBS volume to hold application data
 - name: Create filesystem on attached block storage
@@ -31,8 +32,9 @@
     owner: deploy
     group: deploy
     state: directory
+    mode: '0755'
   with_nested:
-    - ['production', 'staging']
+    - "{{ environments }}"
     - ['images/mps', 'images/mpsL', 'images/mpsXL', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search/searchdb']
 
 - name: Ensure that directories in /srv/www exist
@@ -41,8 +43,9 @@
     owner: deploy
     group: deploy
     state: directory
+    mode: '0755'
   with_nested:
-    - ['production', 'staging']
+    - "{{ environments }}"
     - ['log', 'releases', 'shared/config', 'shared/rss/mp', 'shared/sitemaps']
 
 - name: Link directories in /srv/www to /data
@@ -51,7 +54,7 @@
     src: "/data/{{ item[0] }}/{{ item[1] }}"
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
   with_nested:
-    - ['production', 'staging']
+    - "{{ environments }}"
     - ['images', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search']
 
 - name: Link file alerts-lastsent in /srv/www to /data
@@ -60,64 +63,53 @@
     src: "/data/{{ item }}/alerts-lastsent"
     dest: "/srv/www/{{ item }}/shared/alerts-lastsent"
     # Doing this because the src file might not yet exist and that's okay
-    force: yes
-  with_items:
-    - production
-    - staging
+    force: true
+  with_items: "{{ environments }}"
 
-- name: Install dependency for ansible mysql_db module
-  when: "'openaustralia_old' in group_names"
-  apt: pkg=python-mysqldb
+# dependency for ansible mysql_db module handled in site.yml
 
+- name: Install MySQL client dev headers
+  apt:
+    name: libmysqlclient-dev
+    state: present
+
+- name: Install OpenSSL
+  apt:
+    name: libssl-dev
+    state: present
+
+# NOTE - This works for both mysql 5 AND 8
 - name: Create openaustralia databases
-  when: "'openaustralia_old' in group_names"
   mysql_db:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
     name: "oa-{{ item }}"
-  with_items:
-    - production
-    - staging
+  loop: "{{ environments }}"
 
-- name: Create openaustralia user with access to the database (production)
-  when: "'openaustralia_old' in group_names"
+- name: Create openaustralia mysql admin user with access to the databases
   mysql_user:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: oa-production
-    password: "{{ openaustralia_production_mysql_password }}"
-    priv: 'oa-production.*:ALL'
+    name: oa-{{ item }}
+    password: "{{ (item == 'production') | ternary(openaustralia_production_mysql_password, openaustralia_staging_mysql_password) }}"
+    priv: "oa-{{ item }}.*:ALL"
     host: "%"
+  loop: "{{ environments }}"
 
-- name: Create mysql user with readonly access to the production openaustralia database for metabase
-  when: "'openaustralia_old' in group_names"
+- name: Create mysql user with readonly access to the openaustralia databases for metabase
   mysql_user:
-    login_host: "{{ mysql_5_host }}"
+    login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
-    name: oa-production-readonly
+    name: "oa-{{ item }}-readonly"
     password: "{{ mysql_production_password_readonly }}"
-    priv: 'oa-production.*:SELECT'
+    priv: 'oa-{{ item }}.*:SELECT'
     host: "%"
-  run_once: true
+  loop: "{{ environments }}"
 
-# Removed from mysql5 host
-# - name: Create openaustralia user with access to the database (staging)
-#   when: "'openaustralia_old' in group_names"
-#   mysql_user:
-#     login_host: "{{ mysql_5_host }}"
-#     login_user: admin
-#     login_password: "{{ rds_admin_password }}"
-#     name: oa-staging
-#     password: "{{ openaustralia_staging_mysql_password }}"
-#     priv: 'oa-staging.*:ALL'
-#     host: "%"
-
-#This file will always point at the production db
-# Which seems like that's what we want, in development
-- name: Create .my.cnf in development
+- name: Create .my.cnf in development with password for both production and staging
   template:
     src: mysql
     dest: /root/.my.cnf
@@ -125,22 +117,14 @@
     group: root
     mode: "0600"
   when: "'development' in group_names"
-  vars:
-    db_password: "{{ (item == 'production') | ternary(openaustralia_production_mysql_password, openaustralia_staging_mysql_password) }}"
-    stage: "{{ item }}"
-  with_items:
-    - production
-
-
 
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
   file:
     state: directory
     path: "/etc/letsencrypt/live/{{ item }}"
-  with_items:
-    - "{{ openaustralia_domain }}"
-    - "test.{{ openaustralia_domain }}"
+    mode: '0755'
+  with_items: "{{ apache_sites.values() | map(attribute='domain') | list }}"
   when: "'development' in group_names"
 
 # We need to setup the SSL certificates before we try to configure nginx
@@ -151,9 +135,7 @@
     # We're faking it as if these are let's encrypt certs. Makes for less magic config
     dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
     mode: 0644
-  with_items:
-    - "{{ openaustralia_domain }}"
-    - "test.{{ openaustralia_domain }}"
+  with_items: "{{ apache_sites.values() | map(attribute='domain') | list }}"
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: reload apache
@@ -163,9 +145,7 @@
     src: "{{ item }}.key"
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
     mode: 0640
-  with_items:
-    - "{{ openaustralia_domain }}"
-    - "test.{{ openaustralia_domain }}"
+  with_items: "{{ apache_sites.values() | map(attribute='domain') | list }}"
   # Only run this task when this machine is the development group
   when: "'development' in group_names"
   notify: reload apache
@@ -179,126 +159,91 @@
   apt_repository:
     repo: 'ppa:ondrej/php'
 
-- name: Install required packages (Legacy - PHP 5.6)
-  when: "'openaustralia_old' in group_names"
+- name: Install required packages
   apt:
-    name: "{{ item }}"
-    update_cache: yes
-  with_items:
-    - php5.6
-    - php5.6-curl
-    - php5.6-mysql
-    - apache2
-    - libapache2-mod-php5.6
-    - imagemagick
-    - libmagickcore-dev
-    - libmagickwand-dev
-    - ghostscript
-    - libxslt1-dev
-    - libxml-twig-perl
-    - msmtp
-    - libdbi-perl
-    - libdbd-mysql-perl
-    - php5.6-dev
-    - libxapian-dev
-    - xapian-tools
-    - libsearch-xapian-perl
-    - libxml-rss-perl
-    - libmysqlclient-dev
-    # Need the mysql command line when setting up a database initially
-    - mysql-client-core-5.7
+    name:
+      - apache2
+      - ghostscript
+      - imagemagick
+      - libdbd-mysql-perl
+      - libdbi-perl
+      - libmagickcore-dev
+      - libmagickwand-dev
+      - libmysqlclient-dev
+      - libsearch-xapian-perl
+      - libxapian-dev
+      - libxml-rss-perl
+      - libxml-twig-perl
+      - libxslt1-dev
+      - mysql-client
+      - msmtp
+      - xapian-tools
+    update_cache: true
 
-- name: Install required packages (PHP 8.3)
-  when: "'openaustralia_new' in group_names"
+- name: Install required packages for php
+  when: "php_version is defined"
   apt:
-    name: "{{ item }}"
-    update_cache: yes
-  with_items:
-    - apache2
-    - ghostscript
-    - imagemagick
-    - libapache2-mod-php8.3
-    - libdbi-perl
-    - libdbd-mysql-perl
-    - libmagickcore-dev
-    - libmagickwand-dev
-    - libpq-dev
-    - libsearch-xapian-perl
-    - libxapian-dev
-    - libxml-rss-perl
-    - libxml-twig-perl
-    - libxslt1-dev
-    - msmtp
-    - mysql-client-core-8.0 # Need the mysql command line when setting up a database initially
-    - php8.3
-    - php8.3-curl
-    - php8.3-dev
-    - php8.3-mysql
-    - php8.3-xml
-    - php8.3-curl
-    - php8.3-mbstring
-    - php8.3-zip
-    - xapian-tools
+    name:
+      - libapache2-mod-php{{ php_version }}
+      - php{{ php_version }}
+      - php{{ php_version }}-curl
+      - php{{ php_version }}-dev
+      - php{{ php_version }}-mysql
+      - php{{ php_version }}-mbstring
+      - php{{ php_version }}-xml
+      - php{{ php_version }}-zip
+
+- name: Set default PHP version
+  community.general.alternatives:
+    name: php
+    path: /usr/bin/php{{ php_version }}
+    link: /usr/bin/php
+  become: true
+
+# FIXME: Do we really need libpq-dev ??
 
 # Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
-  when: "'openaustralia_old' in group_names"
+  when: "xapian_version is defined"
   get_url:
-    url: https://oligarchy.co.uk/xapian/1.2.22/xapian-bindings-1.2.22.tar.xz
+    url: https://oligarchy.co.uk/xapian/{{ xapian_version }}/xapian-bindings-{{ xapian_version }}.tar.xz
     dest: /home/deploy
     owner: deploy
     group: deploy
-    checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
+    # FIXME: handle gpg checksum: checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
 
 - name: Unpack xapian bindings source
-  when: "'openaustralia_old' in group_names"
+  when: "xapian_version is defined"
   unarchive:
-      src: /home/deploy/xapian-bindings-1.2.22.tar.xz
+      src: /home/deploy/xapian-bindings-{{ xapian_version }}.tar.xz
       dest: /home/deploy
-      remote_src: yes
+      remote_src: true
       owner: deploy
       group: deploy
+      creates: /home/deploy/xapian-bindings-{{ xapian_version }}/configure
 
 - name: Configure xapian bindings
-  when: "'openaustralia_old' in group_names"
+  when: "xapian_version is defined"
   command: ./configure --with-php
   args:
-    chdir: /home/deploy/xapian-bindings-1.2.22
-    creates: /home/deploy/xapian-bindings-1.2.22/Makefile
+    chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
+    creates: /home/deploy/xapian-bindings-{{ xapian_version }}/Makefile
   become_user: deploy
 
 - name: Compile xapian bindings
-  when: "'openaustralia_old' in group_names"
+  when: "xapian_version is defined"
   command: make
   args:
-    chdir: /home/deploy/xapian-bindings-1.2.22
-    creates: /home/deploy/xapian-bindings-1.2.22/php/xapian.la
+    chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
+    creates: /home/deploy/xapian-bindings-{{ xapian_version }}/php/xapian.la
   become_user: deploy
 
 - name: Install xapian bindings
-  when: "'openaustralia_old' in group_names"
+  when: "xapian_version is defined"
   command: make install
   args:
-    chdir: /home/deploy/xapian-bindings-1.2.22
+    chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
     creates: /usr/lib/php/20131226/xapian.so
-  notify: reload apache
-
-- name: Configure php for xapian bindings
-  when: "'openaustralia_old' in group_names"
-  template:
-    src: xapian.ini
-    dest: /etc/php/5.6/mods-available
-  notify: reload apache
-
-- name: Enable xapian for php
-  when: "'openaustralia_old' in group_names"
-  file:
-    state: link
-    src: /etc/php/5.6/mods-available/xapian.ini
-    dest: "/etc/php/5.6/{{ item }}/conf.d/30-xapian.ini"
-  with_items:
-    - apache2
-    - cli
   notify: reload apache
 
 - name: Enable apache modules
@@ -309,17 +254,12 @@
     - rewrite
     - ssl
 
-- name: Copy across the php config (PHP 5)
-  when: "'openaustralia_old' in group_names"
-  template: src=php.ini dest=/etc/php/5.6/{{ item }}/
-  notify: reload apache
-  with_items:
-    - apache2
-    - cli
-
-- name: Copy across the php config (PHP 8.3)
-  when: "'openaustralia_new' in group_names"
-  template: src=php.ini dest=/etc/php/8.3/{{ item }}/
+- name: Copy across the php config
+  when: "php_version is defined"
+  template:
+    src: php.ini
+    dest: /etc/php/{{ php_version }}/{{ item }}/php.ini
+    mode: '0644'
   notify: reload apache
   with_items:
     - apache2
@@ -329,55 +269,68 @@
   copy:
     src: htpasswd
     dest: /srv/www/{{ item }}/shared
-  with_items:
-    - production
-    - staging
+    mode: '0600'
+  with_items: "{{ environments }}"
   notify: reload apache
 
-- name: Copy across the apache configs
-  when: "'openaustralia_old' in group_names"
+- name: Install ssl-cert package (provides snakeoil certs)
+  apt:
+    name: ssl-cert
+    state: present
+
+- name: Use snakeoil cert as placeholder until Let's Encrypt runs
+  shell: |
+    domain="{{ item.value.domain }}"
+    cert_dir="/etc/letsencrypt/live/${domain}"
+    if [ ! -f "${cert_dir}/fullchain.pem" ]; then
+      mkdir -p "${cert_dir}"
+      ln -sf /etc/ssl/certs/ssl-cert-snakeoil.pem "${cert_dir}/fullchain.pem"
+      ln -sf /etc/ssl/private/ssl-cert-snakeoil.key "${cert_dir}/privkey.pem"
+      ln -sf /etc/ssl/certs/ssl-cert-snakeoil.pem "${cert_dir}/chain.pem"
+    fi
+  args:
+    creates: "/etc/letsencrypt/live/{{ item.value.domain }}/fullchain.pem"
+  when: item.key != '000-default'
+  with_dict: "{{ apache_sites }}"
+
+- name: Ensure each site has an apache configuration
   template:
-    src: apache/stage.conf
-    dest: "/etc/apache2/sites-available/{{ item }}.conf"
+    src: "apache/{{ item.value.template | default(item.key) }}.conf"
+    dest: "/etc/apache2/sites-available/{{ item.key}}.conf"
+    mode: '0644'
   vars:
-    stage: "{{ item }}"
-    domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ openaustralia_domain }}"
-    newrelic_appname: "{{ (item == 'production') | ternary('OpenAustralia.org', 'OpenAustralia.org Staging') }}"
-    password_protect: "{{ item == 'staging' }}"
-  with_items:
-    - production
-    - staging
+    stage: "{{ item.key }}"
+    domain: "{{ item.value.domain }}"
+    server_aliases: "{{ item.value.server_aliases }}"
+    password_protect: "{{ item.value.password_protect | default(false) }}"
+    newrelic_appname: "{{ item.value.newrelic_appname | default('OpenAustralia.org ' ~ item.key) }}"
+  with_dict: "{{ apache_sites }}"
   notify: reload apache
 
-- name: Copy across the other apache configs
-  when: "'openaustralia_old' in group_names"
-  template:
-    src: "apache/{{ item }}.conf"
-    dest: /etc/apache2/sites-available/
-  with_items:
-    - 000-default
-    - data
-    - software
-    - blog
+- name: Enable virtual hosts
+  file:
+    src: /etc/apache2/sites-available/{{ item.key }}.conf
+    dest: /etc/apache2/sites-enabled/{{ item.key }}.conf
+    state: link
+  with_dict: "{{ apache_sites }}"
   notify: reload apache
+
+- name: Build certbot_certs from apache_sites
+  set_fact:
+    built_certbot_certs: >-
+      {{ built_certbot_certs | default([]) +
+         [{'email': certbot_email,
+           'domains': [item.value.domain] + item.value.server_aliases}] }}
+  when: item.key != '000-default'
+  with_dict: "{{ apache_sites }}"
 
 - name: Install certificate using certbot
-  when: "'openaustralia_old' in group_names"
+  tags: broken
+  when: "'ec2' in group_names"
   include_role:
     name: oaf.certbot
   vars:
-    certbot_certs:
-      - email: contact@oaf.org.au
-        domains:
-          - "{{ openaustralia_domain }}"
-          - www."{{ openaustralia_domain }}"
-          - openaustralia.org
-          - www.openaustralia.org
-      - email: contact@oaf.org.au
-        domains:
-          - "test.{{ openaustralia_domain }}"
-          - "www.test.{{ openaustralia_domain }}"
-  when: "'ec2' in group_names"
+    certbot_certs: "{{ built_certbot_certs }}"
 
 - name: Copy across the application config
   template:
@@ -385,13 +338,12 @@
     dest: "/srv/www/{{ item }}/shared"
     owner: deploy
     group: deploy
+    mode: '0644'
   vars:
-    db_password: "{{ (item == 'production') | ternary(openaustralia_production_mysql_password, openaustralia_staging_mysql_password) }}"
+    db_password: "{{ apache_sites[item].db_password }}"
     stage: "{{ item }}"
-    domain: "{{ (item == 'staging') | ternary('test.', '') }}{{ openaustralia_domain }}"
-  with_items:
-    - production
-    - staging
+    domain: "{{ apache_sites[item].domain }}"
+  with_items: "{{ environments }}"
   notify: reload apache
 
 - name: Copy across the parser config
@@ -400,90 +352,94 @@
     dest: "/srv/www/{{ item }}/shared"
     owner: deploy
     group: deploy
+    mode: '0644'
   vars:
     stage: "{{ item }}"
-  with_items:
-    - production
-    - staging
+  with_items: "{{ environments }}"
 
-- name: Enable virtual hosts
-  file:
-    src: /etc/apache2/sites-available/{{ item }}.conf
-    dest: /etc/apache2/sites-enabled/{{ item }}.conf
-    state: link
-  with_items:
-    - production
-    - staging
-    - 000-default
-    - data
-    - software
-    - blog
-  notify: reload apache
+
 
 - name: Copy msmtp configuration
-  template: src=msmtprc dest=/etc/
+  tags: msmtp
+  template:
+    src: msmtprc
+    dest: /etc/
+    mode: '0644'
+
+- name: "Ensure /usr/local/bin exists"
+  file:
+    path: /usr/local/bin
+    owner: root
+    group: root
+    mode: 0755
+
+# FIXME: wrong command - copy from local to remote needed
+#- name: "Copy log_not_sendmail"
+#  copy:
+#    src: log_not_sendemail.sh
+#    dest: /usr/local/bin/log_not_sendemail
+#    owner: root
+#    group: root
+#    mode: 0755
 
 # daily update at night for MP data (regmem, data from Public Whip etc.)
 - name: Set up cron job for daily update
+  tags: cron
   cron:
     name: "dailyupdate {{ item }}"
     user: deploy
     hour: 1
     minute: 37
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./dailyupdate"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./dailyupdate 2>> /srv/www/{{ item }}/log/dailyupdate_log"
+    state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
+  with_items: "{{ environments }}"
 
 # every week early Sunday grab weekly range of data
 - name: Set up cron job for weekly update
+  tags: cron
   cron:
     name: "weeklyupdate {{ item }}"
     user: deploy
     hour: 4
     minute: 23
     weekday: 0
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./weeklyupdate"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./weeklyupdate 2>> /srv/www/{{ item }}/log/weeklyupdate_log"
+    state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
+  with_items: "{{ environments }}"
 
 # Email updates (Going at 10am to give me time to fix things if necessary)
 - name: Set up cron job for email alerts
+  tags: cron
   cron:
     name: "alertmailer {{ item }}"
     user: deploy
     hour: 10
     minute: 0
     weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && php -q alertmailer.php"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v php -q alertmailer.php 2>> /srv/www/{{ item }}/log/alertmailer_log"
+    state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
+  with_items: "{{ environments }}"
 
 # Morning update (Australian Hansard is supposed to be up by 9am the next working day)
 - name: Set up cron job for morning updates
+  tags: cron
   cron:
     name: "morningupdate {{ item }}"
     user: deploy
     hour: 9
     minute: 5
     weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true ./morningupdate"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
-  with_items:
-    - production
-    - staging
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true /usr/bin/time -v ./morningupdate 2>> /srv/www/{{ item }}/log/morningupdate_log"
+    state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
+  with_items: "{{ environments }}"
 
 - name: Install postfix so we can mail out from cron jobs
   apt:
     pkg: postfix
 
 # For local development (under vagrant we don't want the cron jobs generating email)
-- cronvar:
+- name: "Set MAILTO only for ec2 cron jobs"
+  cronvar:
     name: MAILTO
     user: deploy
     value: web-administrators@openaustralia.org,z4e3a8v8r4p0f9z1@oaf.slack.com
@@ -499,13 +455,13 @@
 - name: Configure newrelic php monitor
   file:
     state: absent
-    path: /etc/php/5.6/mods-available/newrelic.ini
+    path: /etc/php/{{ php_version }}/mods-available/newrelic.ini
   notify: reload apache
 
 - name: Enable newrelic for php
   file:
     state: absent
-    path: "/etc/php/5.6/{{ item }}/conf.d/30-newrelic.ini"
+    path: "/etc/php/{{ php_version }}/{{ item }}/conf.d/30-newrelic.ini"
   with_items:
     - apache2
     - cli
@@ -521,11 +477,12 @@
 
 - name: Autoremove unneeded packages
   apt:
-    autoremove: yes
+    autoremove: true
 
 # We allow the capistrano deploys to restart apache
 - name: Allow deploy user to restart apache
   copy:
     src: deploy_can_restart_apache
     dest: /etc/sudoers.d/
+    mode: '0440'
     validate: visudo -cf %s
