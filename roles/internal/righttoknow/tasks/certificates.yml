@@ -3,6 +3,7 @@
   file:
     state: directory
     path: "/etc/letsencrypt/live/{{ item }}"
+    mode: '0755'
   with_items: "{{ [righttoknow_domain] + ([] if ('righttoknow_staging' in group_names) else ['test.' + righttoknow_domain]) }}"
   when: "'development' in group_names"
 

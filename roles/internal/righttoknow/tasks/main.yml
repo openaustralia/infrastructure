@@ -30,6 +30,7 @@
   file:
     state: directory
     path: /data
+    mode: '0755'
 
 # On EC2 we're using a seperate EBS volume to hold application data
 - name: Create filesystem on attached block storage
@@ -54,6 +55,7 @@
     owner: deploy
     group: deploy
     state: directory
+    mode: '0755'
   with_nested:
     - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
     - ['cache', 'bundle', 'storage', 'xapiandbs']
@@ -64,6 +66,7 @@
     owner: deploy
     group: deploy
     path: "/srv/www/{{ item[0] }}/{{ item[1] }}"
+    mode: '0755'
   with_nested:
     - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
     - ['', 'shared']
@@ -81,24 +84,28 @@
   copy:
     content: "{{ ruby_version_production }}"
     dest: /srv/www/production/shared/rbenv-version
+    mode: '0644'
   when: "'righttoknow_production' in group_names"
 
 - name: Set the ruby version for the alaveteli deploy (staging)
   copy:
     content: "{{ ruby_version_staging }}"
     dest: /srv/www/staging/shared/rbenv-version
+    mode: '0644'
   when: "'righttoknow_staging' in group_names"
 
 - name: Another Aleveteli config to force production environment
   template:
     src: rails_env.rb
     dest: /srv/www/{{ item }}/shared
+    mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Add newrelic configuration to disable agent
   template:
     src: newrelic.yml
     dest: /srv/www/{{ item }}/shared/
+    mode: '0644'
   vars:
     newrelic_app_name: "Right To Know{{ (item == 'production') | ternary('', ' Staging') }}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
@@ -289,6 +296,7 @@
     dest: "/srv/www/{{ item }}/shared/database.yml"
     owner: deploy
     group: deploy
+    mode: '0644'
   vars:
     stage: "{{ item }}"
     password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
@@ -310,6 +318,7 @@
   template:
     src: "nginx/{{ item }}"
     dest: /etc/nginx
+    mode: '0644'
   with_items:
     - nginx.conf
     - htpasswd
@@ -353,6 +362,7 @@
     dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
+    mode: '0644'
   vars:
     domain: "{{ righttoknow_domain }}"
     site_name: "Right to Know"
@@ -375,6 +385,7 @@
     dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
+    mode: '0644'
   notify: nginx restart
   when: "'righttoknow_production' in group_names"
 
@@ -384,6 +395,7 @@
     dest: /srv/www/staging/shared/
     owner: deploy
     group: deploy
+    mode: '0644'
   vars:
     domain: "{{ righttoknow_domain }}"
     site_name: "Right to Know (STAGING)"
@@ -406,6 +418,7 @@
     dest: /srv/www/{{ item }}/shared/storage.yml
     owner: deploy
     group: deploy
+    mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
@@ -415,6 +428,7 @@
     dest: "/srv/www/{{ item }}/shared/user_spam_scorer.yml"
     owner: deploy
     group: deploy
+    mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
@@ -424,6 +438,7 @@
     dest: "/srv/www/{{ item }}/shared/sidekiq.yml"
     owner: deploy
     group: deploy
+    mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: restart sidekiq
 
@@ -441,12 +456,14 @@
   copy:
     src: default.vcl
     dest: /etc/varnish
+    mode: '0644'
   notify: restart varnish
 
 - name: Update varnish startup config
   copy:
     src: varnish.service
     dest: /lib/systemd/system/varnish.service
+    mode: '0644'
   notify: restart varnish
 
 - import_tasks: certificates.yml
@@ -492,6 +509,7 @@
     owner: opendkim
     group: postfix
     state: directory
+    mode: '0755'
 
 - name: Postfix needs to be part of opendkim group to access the socket
   user:
@@ -502,12 +520,14 @@
   template:
     src: "opendkim.conf"
     dest: /etc
+    mode: '0644'
   notify: restart opendkim
 
 - name: Update postfix configuration
   template:
     src: "postfix/{{ item }}"
     dest: /etc/postfix
+    mode: '0644'
   with_items:
     - master.cf
     - main.cf
@@ -519,12 +539,14 @@
   template:
     src: mailname
     dest: /etc/mailname
+    mode: '0644'
   notify: restart postfix
 
 - name: Configure postfix logs to go to their own directory
   copy:
     src: 50-default.conf
     dest: /etc/rsyslog.d
+    mode: '0644'
   notify: restart rsyslog
 
 - name: Install memcached

@@ -36,8 +36,8 @@
     - name: Ensure host is not in multiple requires_* groups
       assert:
         that:
-          - "(['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
-        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_mysql_5', 'requires_postgresql'] | select('in', group_names) | list }}"
+          - "(['requires_mysql', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
+        fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_postgresql'] | select('in', group_names) | list }}"
 
 # Ensure python3 is available for Ansible (required before gather_facts), with fallback to python2
 # If it does fall back, set ansible_python_interpreter to /usr/bin/python in that old group
@@ -163,6 +163,14 @@
   name: "Install base server packages"
   roles:
     - internal/base-server
+
+- hosts: all
+  tags: swap
+  become: true
+  name: "Configure swap file"
+  roles:
+    - role: geerlingguy.swap
+      when: swap_file_size_mb is defined or (swap_file_state | default('present')) == 'absent'
 
 - hosts: all
   name: "Remove unused ruby managers"

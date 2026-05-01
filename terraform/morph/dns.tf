@@ -105,6 +105,14 @@ resource "cloudflare_record" "google_site_verification" {
   value   = "google-site-verification=in8HCE8-6fspAg-ak4TpaWthQ2ix6Ne8sBIzAPwFdDc"
 }
 
+resource "cloudflare_record" "google_site_verification_postmaster_tools" {
+  zone_id = cloudflare_zone.main.id
+  name    = "morph.io"
+  type    = "TXT"
+  value   = "google-site-verification=NONJQb5wOBp2O2pF1c8Ly8yFFZUJdl6S7paXN3t-CWI"
+}
+
+
 # TODO: Remove this once the one below is up and running
 resource "cloudflare_record" "domainkey" {
   zone_id = cloudflare_zone.main.id
