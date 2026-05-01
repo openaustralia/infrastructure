@@ -390,8 +390,8 @@
     user: deploy
     hour: 1
     minute: 37
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./dailyupdate"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./dailyupdate 2>> /srv/www/{{ item }}/log/dailyupdate_log"
+    state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
 # every week early Sunday grab weekly range of data
@@ -403,8 +403,8 @@
     hour: 4
     minute: 23
     weekday: 0
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && ./weeklyupdate"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./weeklyupdate 2>> /srv/www/{{ item }}/log/weeklyupdate_log"
+    state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
 # Email updates (Going at 10am to give me time to fix things if necessary)
@@ -416,8 +416,8 @@
     hour: 10
     minute: 0
     weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && php -q alertmailer.php"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v php -q alertmailer.php 2>> /srv/www/{{ item }}/log/alertmailer_log"
+    state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
 # Morning update (Australian Hansard is supposed to be up by 9am the next working day)
@@ -429,8 +429,8 @@
     hour: 9
     minute: 5
     weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true ./morningupdate"
-    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true /usr/bin/time -v ./morningupdate 2>> /srv/www/{{ item }}/log/morningupdate_log"
+    state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
 - name: Install postfix so we can mail out from cron jobs

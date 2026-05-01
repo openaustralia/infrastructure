@@ -161,6 +161,14 @@
     - internal/base-server
 
 - hosts: all
+  tags: swap
+  become: true
+  name: "Configure swap file"
+  roles:
+    - role: geerlingguy.swap
+      when: swap_file_size_mb is defined or (swap_file_state | default('present')) == 'absent'
+
+- hosts: all
   name: "Remove unused ruby managers"
   become: true
   tags: 

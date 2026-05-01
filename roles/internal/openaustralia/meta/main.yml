@@ -151,7 +151,7 @@ dependencies:
   - role: nickhammond.logrotate
     logrotate_scripts:
       - name: production
-        path: "/srv/www/production/log/*_log"
+        path: "/srv/www/production/log/*.log"
         options:
           - daily
           - rotate 30
@@ -159,7 +159,7 @@ dependencies:
           - missingok
           - copytruncate
       - name: staging
-        path: "/srv/www/staging/shared/log/*_log"
+        path: "/srv/www/staging/shared/log/*.log"
         options:
           - daily
           - rotate 30
