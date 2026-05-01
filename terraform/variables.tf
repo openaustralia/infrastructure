@@ -123,10 +123,3 @@ variable "planningalerts_cloudflare_only" {
   default     = false
 }
 
-# DMS Migration settings - set to false to stop replicating a database
-# once an application has been migrated to MySQL 8
-variable "dms_replicate_openaustralia" {
-  description = "Enable DMS replication for oa-production and oa-staging databases"
-  type        = bool
-  default     = true
-}

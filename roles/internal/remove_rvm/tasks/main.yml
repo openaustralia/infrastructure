@@ -1,0 +1,33 @@
+---
+- name: Check rvm symlinks in system path
+  stat:
+    path: '/usr/local/bin/{{ item }}'
+  register: symlink_stats
+  with_items:
+    - erb
+    - executable-hooks-uninstaller
+    - gem
+    - irb
+    - rake
+    - rdoc
+    - ri
+    - ruby
+    - bundle
+    - bundler
+
+- name: Remove rvm symlinks from system path
+  file:
+    state: absent
+    path: '/usr/local/bin/{{ item.item }}'
+  when: item.stat.exists and item.stat.islnk and '/usr/local/rvm' in item.stat.lnk_source
+  with_items: '{{ symlink_stats.results }}'
+
+- name: Remove rvm installation
+  file:
+    state: absent
+    path: /usr/local/rvm
+
+- name: Remove rvm profile.d script
+  file:
+    state: absent
+    path: /etc/profile.d/rvm.sh

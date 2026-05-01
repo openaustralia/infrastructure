@@ -67,6 +67,22 @@ resource "cloudflare_record" "google_workspace_sites" {
   proxied = false
 }
 
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "strong1._domainkey.oaf.org.au"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "strong2._domainkey.oaf.org.au"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
+}
+
 # MX records
 resource "cloudflare_record" "mx" {
   zone_id  = var.oaf_org_au_zone_id
@@ -90,6 +106,14 @@ resource "cloudflare_record" "google_site_verification" {
   type    = "TXT"
   value   = "google-site-verification=RLhe_zgIDJMxpFFYFewv0KaRlWQvH-JDBxxpEV-8noY"
 }
+
+resource "cloudflare_record" "google_site_verification_postmaster_tools" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "oaf.org.au"
+  type    = "TXT"
+  value   = "google-site-verification=IFIoBjxQqagUuE0twx28St9tSVJheGEpV7-PhlYqvIQ"
+}
+
 
 resource "cloudflare_record" "facebook_domain_verification" {
   zone_id = var.oaf_org_au_zone_id

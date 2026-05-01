@@ -9,7 +9,7 @@
       - python3-pip
       - jq
     state: present
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
 
 - name: Install AWS CLI and boto3 via pip
@@ -73,18 +73,26 @@
   copy:
     src: "/etc/openvpn/easy-rsa/pki/{{ item.src }}"
     dest: "/etc/openvpn/{{ item.dest }}"
-    remote_src: yes
+    remote_src: true
     mode: "{{ item.mode }}"
   loop:
-    - { src: 'ca.crt', dest: 'ca.crt', mode: '0644' }
-    - { src: 'issued/server.crt', dest: 'server.crt', mode: '0644' }
-    - { src: 'private/server.key', dest: 'server.key', mode: '0600' }
-    - { src: 'dh.pem', dest: 'dh.pem', mode: '0644' }
+    - src: 'ca.crt'
+      dest: 'ca.crt'
+      mode: '0644'
+    - src: 'issued/server.crt'
+      dest: 'server.crt'
+      mode: '0644'
+    - src: 'private/server.key'
+      dest: 'server.key'
+      mode: '0600'
+    - src: 'dh.pem'
+      dest: 'dh.pem'
+      mode: '0644'
 
 - name: Get EC2 instance metadata (private IP)
   uri:
     url: http://169.254.169.254/latest/meta-data/local-ipv4
-    return_content: yes
+    return_content: true
   register: ec2_private_ip
 
 - name: Create OpenVPN server configuration
@@ -114,10 +122,12 @@
     name: net.ipv4.ip_forward
     value: '1'
     state: present
-    reload: yes
+    reload: true
 
 - name: Get default network interface
-  shell: ip route | grep default | awk '{print $5}'
+  shell: |
+    set -o pipefail
+    ip route show default | awk '{print $5}'
   register: default_interface
   changed_when: false
 
@@ -141,7 +151,7 @@
 - name: Enable and start OpenVPN service
   systemd:
     name: openvpn@server
-    enabled: yes
+    enabled: true
     state: started
 
 - name: Read CA certificate for client config

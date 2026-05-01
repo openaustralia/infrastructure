@@ -6,7 +6,7 @@ openvpn_country: "AU"
 openvpn_province: "NSW"
 openvpn_city: "Sydney"
 openvpn_org: "OAF"
-openvpn_email: "admin@openaustraliafoundation.org.au"
+openvpn_email: "admin@openaustraliafoundation.{{ base_domain }}"
 openvpn_ou: "IT"
 openvpn_key_size: 2048
 openvpn_ca_expire: 3650

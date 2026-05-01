@@ -12,11 +12,11 @@ Ansible role which manage backups. Support file backups, postgresql, mysql, mong
 The role variables and default values.
 
 ```yaml
-backup_enabled: yes             # Enable the role
+backup_enabled: true             # Enable the role
 backup_remove: no               # Set yes for uninstall the role from target system
 
 backup_user: root               # Run backups as user
-backup_group: "{{backup_user}}"
+backup_group: "{{ backup_user }}"
 
 backup_home: /etc/duply         # Backup configuration directory
 backup_work: /var/duply         # Working directory
@@ -27,7 +27,7 @@ backup_duplicity_version:       # Set duplicity version
 
 # Logging
 backup_logdir: /var/log/duply   # Place where logs will be kept
-backup_logrotate: yes           # Setup logs rotation
+backup_logrotate: true           # Setup logs rotation
 
 # PostgreSQL
 backup_postgres_user: postgres
@@ -128,13 +128,13 @@ Example:
     - name: uploads                               # Required params
         schedule: 0 3 * * *                       # At 3am every day
         source: /usr/lib/project/uploads
-        target: s3://s3-eu-west-1.amazonaws.com/backup.backet/{{inventory_hostname}}/uploads
+        target: s3://s3-eu-west-1.amazonaws.com/backup.backet/{{ inventory_hostname }}/uploads
 
     # Backup postgresql database
     - name: postgresql
         schedule: 0 4 * * *                       # At 4am every day
         source: postgresql://project              # Backup prefixes: postgresql://, mysql://, mongo://
-        target: s3://s3-eu-west-1.amazonaws.com/backup.backet/{{inventory_hostname}}/postgresql
+        target: s3://s3-eu-west-1.amazonaws.com/backup.backet/{{ inventory_hostname }}/postgresql
         user: postgres
 
 ```

@@ -123,20 +123,8 @@ galaxy_info:
 dependencies:
   # rvm actually has some trouble now. I think it's old certs on this version of the OS
   # which is really not great.
-  - role: rvm.ruby
-    rvm1_rubies:
-      - ruby-2.7.2
-      - ruby-2.7.8
 
-    rvm1_install_flags: "--auto-dotfiles" # Remove --user-install from defaults
-    rvm1_user: root # Need root account to access system location
-    # Increase timeout on curl. For some reason some requests are taking too long
-    rvm1_ruby_install_flags: "--max-time 20"
-    # Don't want us updating rvm on every run by default
-    # rvm1_rvm_check_for_updates: false
-    # Use round-robin pool of gpg key servers to avoid timeout
-    rvm1_gpg_key_server: "hkps://keyserver.ubuntu.com"
-    rvm1_bundler_install: true
+
   # Duplicity backup disabled - replaced by restic (Dec 2025)
   # Duplicity used 55.6 GiB vs restic ~15.5 GiB for 16 GB source
   # Also duplicity had been failing since Aug 2024 due to stale lockfile
@@ -163,7 +151,7 @@ dependencies:
   - role: nickhammond.logrotate
     logrotate_scripts:
       - name: production
-        path: "/srv/www/production/log/*_log"
+        path: "/srv/www/production/log/*.log"
         options:
           - daily
           - rotate 30
@@ -171,7 +159,7 @@ dependencies:
           - missingok
           - copytruncate
       - name: staging
-        path: "/srv/www/staging/shared/log/*_log"
+        path: "/srv/www/staging/shared/log/*.log"
         options:
           - daily
           - rotate 30

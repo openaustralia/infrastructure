@@ -16,17 +16,17 @@ resource "cloudflare_record" "root" {
   zone_id = cloudflare_zone.org.id
   name    = "openaustralia.org"
   type    = "A"
-  value   = aws_eip.main.public_ip
-  proxied = false
-}
-
-resource "cloudflare_record" "root_staging" {
-  zone_id = cloudflare_zone.org.id
-  name    = "staging.openaustralia.org"
-  type    = "A"
   value   = aws_eip.production.public_ip
   proxied = false
 }
+
+# resource "cloudflare_record" "root_staging" {
+#   zone_id = cloudflare_zone.org.id
+#   name    = "staging.openaustralia.org"
+#   type    = "A"
+#   value   = aws_eip.production.public_ip
+#   proxied = false
+# }
 
 # CNAME records
 resource "cloudflare_record" "www" {
@@ -77,6 +77,22 @@ resource "cloudflare_record" "hackfest" {
   value   = "ghs.google.com"
 }
 
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.org.id
+  name    = "strong1._domainkey.openaustralia.org"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.org.id
+  name    = "strong2._domainkey.openaustralia.org"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
+}
+
 # MX records
 
 # We can now use a single MX record for Google workspace
@@ -94,6 +110,13 @@ resource "cloudflare_record" "spf" {
   name    = "openaustralia.org"
   type    = "TXT"
   value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
+}
+
+resource "cloudflare_record" "google_site_verification_postmaster_tools" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "openaustralia.org.au"
+  type    = "TXT"
+  value   = "google-site-verification=NMrCE8wbE8mEodpPYd_RY30JbAu99A3HjWkyR6dmrK4"
 }
 
 # TODO: Remove this once the one below is up and running
@@ -132,24 +155,42 @@ resource "cloudflare_record" "dmarc" {
 }
 
 ## openaustralia.org.au
+# Keep apache_sites in the following up to date:
+# * group_vars/openaustralia.yml
 
 # A records
-resource "cloudflare_record" "alt_root" {
+resource "cloudflare_record" "old_root" {
   zone_id = cloudflare_zone.org_au.id
-  name    = "openaustralia.org.au"
+  name    = "oldprod.openaustralia.org.au"
   type    = "A"
   value   = aws_eip.main.public_ip
   proxied = false
 }
 
-resource "cloudflare_record" "alt_root_staging" {
+resource "cloudflare_record" "alt_root" {
   zone_id = cloudflare_zone.org_au.id
-  name    = "staging.openaustralia.org.au"
+  name    = "openaustralia.org.au"
   type    = "A"
   value   = aws_eip.production.public_ip
   proxied = false
 }
 
+# template if we again do a newprod, though I suggest we consider blue/green like planningalerts
+# resource "cloudflare_record" "alt_root_staging" {
+#   zone_id = cloudflare_zone.org_au.id
+#   name    = "staging.openaustralia.org.au"
+#   type    = "A"
+#   value   = aws_eip.production.public_ip
+#   proxied = false
+# }
+
+# resource "cloudflare_record" "alt_root_newprod" {
+#   zone_id = cloudflare_zone.org_au.id
+#   name    = "newprod.openaustralia.org.au"
+#   type    = "A"
+#   value   = aws_eip.production.public_ip
+#   proxied = false
+# }
 
 # CNAME records
 
@@ -193,6 +234,22 @@ resource "cloudflare_record" "alt_software" {
   proxied = false
 }
 
+resource "cloudflare_record" "alt_helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "strong1._domainkey.openaustralia.org.au"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "alt_helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "strong2._domainkey.openaustralia.org.au"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
+}
+
 # MX records
 
 # We can now use a single MX record for Google workspace
@@ -217,6 +274,13 @@ resource "cloudflare_record" "alt_google_site_verification" {
   name    = "openaustralia.org.au"
   type    = "TXT"
   value   = "google-site-verification=1xl-YdNs-D67htH3q438bFSGf1ThVHap5vXIFS6J0dI"
+}
+
+resource "cloudflare_record" "alt_google_site_verification_postmaster_tools" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "openaustralia.org.au"
+  type    = "TXT"
+  value   = "google-site-verification=Vd5DN8gzLQUkHOGNtGd6p_zPIb_df7QELe4me2tCnEM"
 }
 
 resource "cloudflare_record" "alt_facebook_domain_verification" {

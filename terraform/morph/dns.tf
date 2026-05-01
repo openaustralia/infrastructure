@@ -63,6 +63,22 @@ resource "cloudflare_record" "email2" {
   value   = "cuttlefish.oaf.org.au"
 }
 
+resource "cloudflare_record" "helpscout_dkim_strong1" {
+  zone_id = cloudflare_zone.main.id
+  name    = "strong1._domainkey.morph.io"
+  type    = "CNAME"
+  value   = "strong1._domainkey.helpscout.net"
+  proxied = false
+}
+
+resource "cloudflare_record" "helpscout_dkim_strong2" {
+  zone_id = cloudflare_zone.main.id
+  name    = "strong2._domainkey.morph.io"
+  type    = "CNAME"
+  value   = "strong2._domainkey.helpscout.net"
+  proxied = false
+}
+
 # MX records
 
 # We can now use a single MX record for Google workspace
@@ -88,6 +104,14 @@ resource "cloudflare_record" "google_site_verification" {
   type    = "TXT"
   value   = "google-site-verification=in8HCE8-6fspAg-ak4TpaWthQ2ix6Ne8sBIzAPwFdDc"
 }
+
+resource "cloudflare_record" "google_site_verification_postmaster_tools" {
+  zone_id = cloudflare_zone.main.id
+  name    = "morph.io"
+  type    = "TXT"
+  value   = "google-site-verification=NONJQb5wOBp2O2pF1c8Ly8yFFZUJdl6S7paXN3t-CWI"
+}
+
 
 # TODO: Remove this once the one below is up and running
 resource "cloudflare_record" "domainkey" {
