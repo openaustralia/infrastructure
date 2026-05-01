@@ -107,6 +107,14 @@ resource "cloudflare_record" "google_site_verification" {
   value   = "google-site-verification=RLhe_zgIDJMxpFFYFewv0KaRlWQvH-JDBxxpEV-8noY"
 }
 
+resource "cloudflare_record" "google_site_verification_postmaster_tools" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "oaf.org.au"
+  type    = "TXT"
+  value   = "google-site-verification=IFIoBjxQqagUuE0twx28St9tSVJheGEpV7-PhlYqvIQ"
+}
+
+
 resource "cloudflare_record" "facebook_domain_verification" {
   zone_id = var.oaf_org_au_zone_id
   name    = "oaf.org.au"
