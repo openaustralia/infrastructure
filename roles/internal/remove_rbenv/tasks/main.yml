@@ -1,0 +1,16 @@
+---
+- name: Remove rbenv profile.d script
+  file:
+    state: absent
+    path: /etc/profile.d/rbenv.sh
+
+- name: Remove rbenv installation
+  file:
+    state: absent
+    path: '{{ rbenv_root }}'
+
+- name: Remove rbenv user installations
+  file:
+    state: absent
+    path: '~{{ item }}/.rbenv'
+  with_items: '{{ rbenv_users }}'

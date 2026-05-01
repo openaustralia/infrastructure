@@ -14,7 +14,7 @@
 - name: Install docker
   apt:
     name:
-      - docker-ce 
+      - docker-ce
       - docker-ce-cli
       - containerd.io
 
@@ -53,12 +53,14 @@
     state: directory
     owner: deploy
     group: deploy
+    mode: '0755'
     path: /srv/www
 
 - name: Copy across docker-compose.yml
   template:
     src: docker-compose.yml
     dest: /srv/www
+    mode: '0644'
 
 - name: Run metabase
   docker_compose:

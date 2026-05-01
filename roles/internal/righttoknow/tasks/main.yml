@@ -10,15 +10,16 @@
     dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
 - name: Add passenger apt repository
   apt_repository:
-    repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ansible_distribution_release}} main'
+    repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
-    update_cache: yes
+    update_cache: true
 
-- name: Install nginx and passenger
+- name: Install nginx, passenger and libyaml packages
   apt:
     pkg:
       - libnginx-mod-http-passenger
       - nginx
+      - libyaml-dev
     state: present
 
 # We want this directory to exist in development too so that
@@ -29,6 +30,7 @@
   file:
     state: directory
     path: /data
+    mode: '0755'
 
 # On EC2 we're using a seperate EBS volume to hold application data
 - name: Create filesystem on attached block storage
@@ -53,6 +55,7 @@
     owner: deploy
     group: deploy
     state: directory
+    mode: '0755'
   with_nested:
     - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
     - ['cache', 'bundle', 'storage', 'xapiandbs']
@@ -63,6 +66,7 @@
     owner: deploy
     group: deploy
     path: "/srv/www/{{ item[0] }}/{{ item[1] }}"
+    mode: '0755'
   with_nested:
     - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
     - ['', 'shared']
@@ -80,24 +84,28 @@
   copy:
     content: "{{ ruby_version_production }}"
     dest: /srv/www/production/shared/rbenv-version
+    mode: '0644'
   when: "'righttoknow_production' in group_names"
 
 - name: Set the ruby version for the alaveteli deploy (staging)
   copy:
     content: "{{ ruby_version_staging }}"
     dest: /srv/www/staging/shared/rbenv-version
+    mode: '0644'
   when: "'righttoknow_staging' in group_names"
 
 - name: Another Aleveteli config to force production environment
   template:
     src: rails_env.rb
     dest: /srv/www/{{ item }}/shared
+    mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Add newrelic configuration to disable agent
   template:
     src: newrelic.yml
     dest: /srv/www/{{ item }}/shared/
+    mode: '0644'
   vars:
     newrelic_app_name: "Right To Know{{ (item == 'production') | ternary('', ' Staging') }}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
@@ -125,7 +133,7 @@
 # We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
 # we use a later version of bundler it will complain and not deploy
 - name: Install bundler gem (staging)
-  command: bash -lc "rbenv shell {{ ruby_version_staging}}; gem install bundler --version 1.14.6"
+  command: bash -lc "rbenv shell {{ ruby_version_staging }}; gem install bundler --version 1.14.6"
   args:
     creates: "/home/deploy/.rbenv/versions/{{ ruby_version_staging }}/lib/ruby/gems/*/gems/bundler-*"
   become: true
@@ -174,6 +182,17 @@
       - xapian-tools
     state: present
 
+- name: Harden ImageMagick policy
+  ansible.builtin.blockinfile:
+    path: /etc/ImageMagick-6/policy.xml
+    insertbefore: "</policymap>"
+    marker: "  <!-- {mark} ANSIBLE MANAGED BLOCK: righttoknow hardening -->"
+    block: |
+      <policy domain="delegate" rights="none" pattern="*" />
+      <policy domain="filter" rights="none" pattern="*" />
+      <policy domain="coder" rights="none" pattern="*" />
+      <policy domain="coder" rights="read|write" pattern="{GIF,JPEG,PNG,WEBP}" />
+
 - name: Install sidekiq systemd unit (staging)
   template:
     src: sidekiq.service
@@ -191,9 +210,9 @@
 - name: Enable and start sidekiq (staging)
   systemd:
     name: sidekiq
-    enabled: yes
+    enabled: true
     state: started
-    daemon_reload: yes
+    daemon_reload: true
   when: "'righttoknow_staging' in group_names"
 
 - name: Install sidekiq systemd unit (Production)
@@ -213,9 +232,9 @@
 - name: Enable and start sidekiq (production)
   systemd:
     name: sidekiq
-    enabled: yes
+    enabled: true
     state: started
-    daemon_reload: yes
+    daemon_reload: true
   when: "'righttoknow_production' in group_names"
 
 - name: Link run-with-lockfile.sh so it's available system-wide
@@ -277,9 +296,10 @@
     dest: "/srv/www/{{ item }}/shared/database.yml"
     owner: deploy
     group: deploy
+    mode: '0644'
   vars:
-    - stage: "{{ item }}"
-    - password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
+    stage: "{{ item }}"
+    password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
@@ -298,6 +318,7 @@
   template:
     src: "nginx/{{ item }}"
     dest: /etc/nginx
+    mode: '0644'
   with_items:
     - nginx.conf
     - htpasswd
@@ -309,7 +330,7 @@
     dest: /etc/nginx/sites-available
     owner: root
     group: root
-    mode: 644
+    mode: "0644"
   notify: nginx reload
   when: "'righttoknow_production' in group_names"
 
@@ -319,7 +340,7 @@
     dest: /etc/nginx/sites-available/{{ item }}
     owner: root
     group: root
-    mode: 644
+    mode: "0644"
   vars:
     domain: "{{ righttoknow_domain }}"
     stage: "{{ item }}"
@@ -341,6 +362,7 @@
     dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
+    mode: '0644'
   vars:
     domain: "{{ righttoknow_domain }}"
     site_name: "Right to Know"
@@ -359,10 +381,11 @@
 
 - name: Apply Alaveteli Storage Config (production)
   template:
-    src: storage.yml
+    src: storage.yml.j2
     dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
+    mode: '0644'
   notify: nginx restart
   when: "'righttoknow_production' in group_names"
 
@@ -372,12 +395,13 @@
     dest: /srv/www/staging/shared/
     owner: deploy
     group: deploy
+    mode: '0644'
   vars:
     domain: "{{ righttoknow_domain }}"
     site_name: "Right to Know (STAGING)"
     incoming_email_prefix: "foitest+"
     staging_site: "1"
-    override_all_public_body_request_emails: "contact@righttoknow.org.au"
+    override_all_public_body_request_emails: "contact@righttoknow.{{ base_domain }}"
     stage: staging
     stripe_publishable_key: "{{ stripe_publishable_key_test }}"
     stripe_secret_key: "{{ stripe_secret_key_test }}"
@@ -394,6 +418,7 @@
     dest: /srv/www/{{ item }}/shared/storage.yml
     owner: deploy
     group: deploy
+    mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
@@ -403,6 +428,7 @@
     dest: "/srv/www/{{ item }}/shared/user_spam_scorer.yml"
     owner: deploy
     group: deploy
+    mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
@@ -412,6 +438,7 @@
     dest: "/srv/www/{{ item }}/shared/sidekiq.yml"
     owner: deploy
     group: deploy
+    mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: restart sidekiq
 
@@ -419,7 +446,7 @@
   user:
     name: deploy
     groups: adm
-    append: yes
+    append: true
 
 - name: Install varnish
   apt:
@@ -429,12 +456,14 @@
   copy:
     src: default.vcl
     dest: /etc/varnish
+    mode: '0644'
   notify: restart varnish
 
 - name: Update varnish startup config
   copy:
     src: varnish.service
     dest: /lib/systemd/system/varnish.service
+    mode: '0644'
   notify: restart varnish
 
 - import_tasks: certificates.yml
@@ -480,6 +509,7 @@
     owner: opendkim
     group: postfix
     state: directory
+    mode: '0755'
 
 - name: Postfix needs to be part of opendkim group to access the socket
   user:
@@ -490,12 +520,14 @@
   template:
     src: "opendkim.conf"
     dest: /etc
+    mode: '0644'
   notify: restart opendkim
 
 - name: Update postfix configuration
   template:
     src: "postfix/{{ item }}"
     dest: /etc/postfix
+    mode: '0644'
   with_items:
     - master.cf
     - main.cf
@@ -507,12 +539,14 @@
   template:
     src: mailname
     dest: /etc/mailname
+    mode: '0644'
   notify: restart postfix
 
 - name: Configure postfix logs to go to their own directory
   copy:
     src: 50-default.conf
     dest: /etc/rsyslog.d
+    mode: '0644'
   notify: restart rsyslog
 
 - name: Install memcached
