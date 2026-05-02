@@ -72,11 +72,7 @@ define ("REGMEMPDFPATH", "regmem/scan/");
 define ("METADATAPATH", BASEDIR . "/../includes/easyparliament/metadata.php");
 
 // Search related. If non-empty will use XAPIAN search instead of mysql search
-{% if xapian_version is defined %}
 define ("XAPIANDB", '/srv/www/{{ stage }}/shared/search/searchdb');
-{% else %}
-define ("XAPIANDB", '');
-{% endif %}
 
 // Location of the parliamentary recess data file. You can access this remotely
 // from the main theyworkforyou site if you use

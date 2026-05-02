@@ -106,9 +106,6 @@ domains_for_certbot:
     domains:
       - "{{ openaustralia_domain }}"
 
-# Control what version is installed
-xapian_version: 1.4.25
-
 # PHP has two version numbers :( - make sure they are in sync
 php_version: 8.3
 php_api_version: "20230831"
