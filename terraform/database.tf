@@ -39,13 +39,14 @@ resource "aws_db_instance" "main" {
   auto_minor_version_upgrade = true
   apply_immediately          = false
   skip_final_snapshot        = false
+  final_snapshot_identifier  = "main-database-final"
   vpc_security_group_ids     = [aws_security_group.main_database.id]
   # The parameter group name below was automatically created during an upgrade to mysql 5.7
   # The commented out group name was the one we were using with mysql 5.6
   # TODO: Go through parameter group and see if anything is different than the 5.7 default and if so make a custom one for us
   # parameter_group_name       = aws_db_parameter_group.mysql_default.name
   parameter_group_name = "default.mysql5.7-db-3zfhxnxjf2w5aymy2dl3hbsk3m-upgrade"
-  deletion_protection  = true
+  deletion_protection  = false
 }
 
 resource "aws_iam_role" "rds-monitoring-role" {
