@@ -68,10 +68,12 @@
 
 # dependency for ansible mysql_db module handled in site.yml
 
-- name: Install MySQL client dev headers
+- name: Install MySQL client dev headers, updating cache as needed
   apt:
     name: libmysqlclient-dev
     state: present
+    update_cache: true
+    cache_valid_time: 3600
 
 - name: Install OpenSSL
   apt:
@@ -159,11 +161,13 @@
   tags: xapian
   apt_repository:
     repo: 'ppa:ondrej/php'
+    update_cache: true
 
 - name: Add xapian backports PPA for newer libxapian
   tags: xapian
   apt_repository:
     repo: 'ppa:xapian/backports'
+    update_cache: true
 
 - name: Install required packages
   tags: xapian
@@ -185,7 +189,6 @@
       - mysql-client
       - msmtp
       - xapian-tools
-    update_cache: true
 
 - name: Install required packages for php
   tags: xapian
@@ -263,7 +266,21 @@
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
-    creates: /usr/lib/php/20131226/xapian.so
+    creates: "/usr/lib/php/{{ php_api_version }}/xapian.so"
+  notify: reload apache
+
+- name: Create xapian mods-available ini
+  tags: xapian
+  copy:
+    content: "extension=xapian.so\n"
+    dest: /etc/php/{{ php_version }}/mods-available/xapian.ini
+    mode: '0644'
+
+- name: Enable xapian extension
+  tags: xapian
+  command: phpenmod xapian
+  args:
+    creates: /etc/php/{{ php_version }}/apache2/conf.d/20-xapian.ini
   notify: reload apache
 
 - name: Enable apache modules
