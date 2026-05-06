@@ -184,6 +184,7 @@
       - libsearch-xapian-perl
       - libxapian-dev
       - libxml-rss-perl
+      - libxml-simple-perl
       - libxml-twig-perl
       - libxslt1-dev
       - mysql-client
