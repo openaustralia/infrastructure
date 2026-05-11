@@ -39,7 +39,7 @@ restic_password: !vault |
           6635346235623634366536646462643332613436373034663032
 cron_enabled_for:
   production: false
-  staging: false
+  staging: true
 morph_api_key: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           66623039363037386530623963626464303838643739313264356166376639346133656337663838
