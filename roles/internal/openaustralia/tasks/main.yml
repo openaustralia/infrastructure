@@ -16,7 +16,13 @@
     dev: /dev/nvme1n1
   when: "'ec2' in group_names"
 
+- name: Debug ansible_facts
+  debug:
+    var: ansible_facts
+
 - name: Mount /data filesystem
+  # Use SKIP_TAGS=mount_data to get past this point when checking
+  tags: mount_data
   mount:
     path: /data
     # Mount device by UUID because that's needed to run on AWS Nitro based instances (e.g. t3)
