@@ -417,6 +417,7 @@
   notify: reload apache
 
 - name: Copy across the parser config
+  tags: parser_config
   template:
     src: parser_configuration.yml
     dest: "/srv/www/{{ item }}/shared"
