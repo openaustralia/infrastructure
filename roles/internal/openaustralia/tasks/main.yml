@@ -363,6 +363,7 @@
   when: item.skipped is not defined
 
 - name: Ensure each site has an apache configuration
+  tags: sites_available
   template:
     src: "apache/{{ item.value.template | default(item.key) }}.conf"
     dest: "/etc/apache2/sites-available/{{ item.key}}.conf"
