@@ -2,6 +2,7 @@
         apply-planningalerts apply-righttoknow apply-rtk-prod apply-rtk-staging apply-theyvoteforyou \
         check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
         check-rtk-prod check-rtk-staging check-theyvoteforyou check-target \
+        scan-oaf scan-openaustralia scan-planningalerts \
         clean clobber help install-linters keybase letsencrypt lint production retry roles \
         show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target tf-init tf-plan \
         tf-plan-target update-github-ssh-keys vagrant venv yaml-lint
@@ -26,6 +27,7 @@ ANSIBLE_OPTS += -$(ANSIBLE_VERBOSE)
 $(info INFO: Setting verbose: -$(ANSIBLE_VERBOSE))
 endif
 
+
 help:
 	@echo "Available targets"
 	@echo "  help                                Output this help text"
@@ -37,17 +39,19 @@ help:
 	@echo "  generate-certificates               Generate certificates for the development *.test domains"
 	@echo "Independent targets (not required by all):"
 	@echo "  letsencrypt                         Renew/update SSL certificates"
+	@echo "  lint                                Run yamllint and ansible-lint on roles and site.yml"
 	@echo "  retry                               Re-run site.yml limited to hosts from last failed run"
+	@echo "  setup                               Install ubuntu packages required for development"
 	@echo "  show-inventory                      List all hosts in the EC2 inventory"
 	@echo "  show-vars host=<host>               Show all Ansible variables for a host"
 	@echo "  show-facts host=<host>              Show all Ansible facts for a host"
 	@echo "  show-rds-facts host=<host>          Show RDS debug facts for a host"
-	@echo "  lint                                Run yamllint and ansible-lint on roles and site.yml"
 	@echo "  tf-init                             Run terraform init in the terraform directory"
 	@echo "  tf-plan                             Run terraform plan in the terraform directory"
 	@echo "  tf-apply                            Run terraform apply in the terraform directory"
 	@echo "  update-github-ssh-keys              Update SSH keys on all servers from GitHub"
 	@echo "  vagrant                             Install vagrant plugins and ensure requirements are present"
+	@echo ""
 	@echo "  clean                               Remove virtualenv, external roles, retry file, collections, keybase symlink"
 	@echo "  clobber                             clobber everything make all created (clean + removes .vagrant and log)"
 	@echo ""
@@ -65,11 +69,18 @@ help:
 	@echo "  apply-openaustralia                 Apply Ansible changes to openaustralia new/old/all host/s"
 	@echo "  apply-metabase                      Apply Ansible changes to metabase host"
 	@echo ""
+	@echo "  scan-oaf                            Scan oaf.org.au for broken links (1/2 hour)"
+	@echo "  scan-openaustralia                  Scan openaustralia.org.au for broken links (2-3 hours)"
+	@echo "  scan-planningalerts                 Scan planningalerts.org.au for broken links (1 hour)"
+	@echo ""
 	@echo "Extra vars:"
 	@echo "  STAGE          Target stage, e.g. STAGE=new or old or staging or '' (required by check-*/apply-* targets)"
 	@echo "  TAGS           Only run plays/tasks tagged with these (space or comma separated)"
 	@echo "  SKIP_TAGS      Skip plays/tasks with these tags (space or comma separated)"
 	@echo "  ANSIBLE_VERBOSE  Ansible verbosity flag, e.g. ANSIBLE_VERBOSE=vvv"
+
+setup:
+	sudo apt install parallel
 
 requirements: .keybase .make/roles venv
 
@@ -230,6 +241,31 @@ apply-metabase: requirements # stage_required
 # Update ssh keys on all servers
 update-github-ssh-keys: requirements
 	.venv/bin/ansible-playbook site.yml --tags userkeys
+
+#   Behind cloudflare consider tunnelling via ssh or proxying via bastian
+#	https://www.righttoknow.org.au
+#	https://theyvoteforyou.org.au
+
+log:
+	mkdir -p log
+
+scan-oaf: venv log
+	@url="https://oaf.org.au"; \
+	log="log/scan_oaf.html"; \
+	echo "=== Checking links: $$url > $$log ==="; \
+	.venv/bin/linkchecker --check-extern --no-warnings --threads 5 -F html/utf-8/$$log $$url
+
+scan-openaustralia: venv log
+	@url="https://openaustralia.org.au"; \
+	log="log/scan_openaustralia.html"; \
+	echo "=== Checking links: $$url > $$log ==="; \
+	.venv/bin/linkchecker --check-extern --no-warnings --threads 5 -F html/utf-8/$$log $$url
+
+scan-planningalerts: venv log
+	@url="https://www.planningalerts.org.au"; \
+	log="log/scan_planningalerts.html"; \
+	echo "=== Checking links: $$url > $$log ==="; \
+	.venv/bin/linkchecker --check-extern --no-warnings --threads 5 -F html/utf-8/$$log $$url
 
 yaml-lint: venv
 	.venv/bin/yamllint roles/internal/ roles/*.yml site.yml 
