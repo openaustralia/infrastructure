@@ -149,6 +149,7 @@ dependencies:
       - backup
 
   - role: nickhammond.logrotate
+    tags: [logrotate]
     logrotate_scripts:
       - name: production
         path: "/srv/www/production/log/*.log"
