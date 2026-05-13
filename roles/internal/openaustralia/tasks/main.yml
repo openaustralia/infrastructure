@@ -335,6 +335,27 @@
   when: item.key != '000-default'
   with_dict: "{{ apache_sites }}"
 
+
+- name: Find latest certbot live dir for each domain
+  tags: sites_available
+  shell: |
+    (ls -d /etc/letsencrypt/live/{{ item.value.domain }}-[0-9]* 2>/dev/null ; echo /etc/letsencrypt/live/{{ item.value.domain }}) | sort | tail -1
+  register: certbot_live_dirs
+  changed_when: false
+  check_mode: no
+  with_dict: "{{ apache_sites }}"
+  when: item.key != '000-default'
+
+- name: Build certbot_live_dir_map fact
+  tags: sites_available
+  set_fact:
+    certbot_live_dir_map: >-
+      {{ certbot_live_dir_map | default({}) |
+         combine({item.item.value.domain: item.stdout | default('/etc/letsencrypt/live/' + item.item.value.domain)}) }}
+  check_mode: no
+  with_items: "{{ certbot_live_dirs.results }}"
+  when: item.skipped is not defined
+
 - name: Ensure each site has an apache configuration
   template:
     src: "apache/{{ item.value.template | default(item.key) }}.conf"
