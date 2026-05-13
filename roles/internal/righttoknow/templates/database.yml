@@ -1,6 +1,6 @@
 production:
   adapter: postgresql
-  host: {{ postgresql_host }}
+  host: {{ db_host }}
   database: "rtk-{{ stage }}"
   username: "rtk-{{ stage }}"
   password: {{ password }}
