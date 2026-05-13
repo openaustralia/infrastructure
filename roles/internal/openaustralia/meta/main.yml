@@ -159,6 +159,8 @@ dependencies:
           - compress
           - missingok
           - copytruncate
+          - delaycompress
+          - notifempty
       - name: staging
         path: "/srv/www/staging/shared/log/*.log"
         options:
@@ -167,3 +169,5 @@ dependencies:
           - compress
           - missingok
           - copytruncate
+          - delaycompress
+          - notifempty

@@ -459,7 +459,7 @@
     user: deploy
     hour: 1
     minute: 37
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./dailyupdate 2>> /srv/www/{{ item }}/log/dailyupdate_log"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./dailyupdate 2>> /srv/www/{{ item }}/log/dailyupdate.log"
     state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
@@ -472,7 +472,7 @@
     hour: 4
     minute: 23
     weekday: 0
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./weeklyupdate 2>> /srv/www/{{ item }}/log/weeklyupdate_log"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./weeklyupdate 2>> /srv/www/{{ item }}/log/weeklyupdate.log"
     state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
@@ -485,7 +485,7 @@
     hour: 10
     minute: 0
     weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v php -q alertmailer.php 2>> /srv/www/{{ item }}/log/alertmailer_log"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v php -q alertmailer.php 2>> /srv/www/{{ item }}/log/alertmailer.log"
     state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
@@ -498,7 +498,7 @@
     hour: 9
     minute: 5
     weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true /usr/bin/time -v ./morningupdate 2>> /srv/www/{{ item }}/log/morningupdate_log"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true /usr/bin/time -v ./morningupdate 2>> /srv/www/{{ item }}/log/morningupdate.log"
     state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
