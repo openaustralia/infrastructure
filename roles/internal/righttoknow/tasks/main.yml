@@ -250,7 +250,7 @@
 
 - name: Create database
   postgresql_db:
-    login_host: "{{ postgresql_host }}"
+    login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
     name: "rtk-{{ item }}"
@@ -258,7 +258,7 @@
 
 - name: Create posgresql role
   postgresql_user:
-    login_host: "{{ postgresql_host }}"
+    login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
     db: "rtk-{{ item }}"
@@ -270,7 +270,7 @@
 
 - name: Create posgresql user rtk-production-readonly for metabase
   postgresql_user:
-    login_host: "{{ postgresql_host }}"
+    login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
     db: "rtk-production"
@@ -281,7 +281,7 @@
 
 - name: Give the user rtk-production-readonly readonly access to the production righttoknow database
   postgresql_privs:
-    login_host: "{{ postgresql_host }}"
+    login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
     db: "rtk-production"
