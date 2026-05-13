@@ -8,7 +8,7 @@
 web_root: "/srv/www/{{ stage }}/current"
 
 html_cache_path: "/srv/www/{{ stage }}/shared/html_cache"
-log_path: "/srv/www/{{ stage }}/log/parser_log"
+log_path: "/srv/www/{{ stage }}/log/parser.log"
 
 # Should hopefully not have to change anything below here
 

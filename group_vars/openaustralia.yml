@@ -72,8 +72,8 @@ logs:
      log_stream_name: "{{ inventory_hostname }}"
      timestamp_format: "%b %d %H:%M:%S"
 
-   - file_path: /srv/www/production/log/error_log
-     log_group_name: /srv/www/production/log/error_log
+   - file_path: /srv/www/production/log/error.log
+     log_group_name: /srv/www/production/log/error.log
      log_stream_name: "{{ inventory_hostname }}"
      timestamp_format: "%a %b %d %H:%M:%S.%f %Y"
 
