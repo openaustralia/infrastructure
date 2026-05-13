@@ -10,5 +10,5 @@ services:
       MB_DB_PORT: 5432
       MB_DB_USER: metabase
       MB_DB_PASS: {{ db_password }}
-      MB_DB_HOST: {{ postgresql_host }}
+      MB_DB_HOST: {{ db_host }}
     restart: always
