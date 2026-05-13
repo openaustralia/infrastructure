@@ -286,7 +286,7 @@ Or combine with:
 ### <a name='Provisioningproductionservers'></a>Provisioning production servers
 
 First use the `make check-<site>` commands to check what will change is as you expect.
-If nessisary, skip specific tags to skip over areas that fail on check, eg:
+If necessary, skip specific tags to skip over areas that fail on check, eg:
 
     SKIP_TAGS=mount_data,xapian make check-openaustralia
 
