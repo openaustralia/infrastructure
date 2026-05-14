@@ -341,11 +341,13 @@
   when: item.key != '000-default'
   with_dict: "{{ apache_sites }}"
 
-
 - name: Find latest certbot live dir for each domain
   tags: sites_available
   shell: |
-    (ls -d /etc/letsencrypt/live/{{ item.value.domain }}-[0-9]* 2>/dev/null ; echo /etc/letsencrypt/live/{{ item.value.domain }}) | sort | tail -1
+    set -o pipefail
+    (ls -d /etc/letsencrypt/live/{{ item.value.domain }}-[0-9]* 2>/dev/null || echo /etc/letsencrypt/live/{{ item.value.domain }}) | tail -1
+  args:
+    executable: /bin/bash
   register: certbot_live_dirs
   changed_when: false
   check_mode: no
