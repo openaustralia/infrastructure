@@ -9,16 +9,19 @@
     path: /data
     mode: '0755'
 
-# On EC2 we're using a seperate EBS volume to hold application data
+- name: Debug devices list in ansible_facts
+  debug:
+    var: ansible_facts['devices']
+
+# On EC2 we're using a separate EBS volume to hold application data
 - name: Create filesystem on attached block storage
   filesystem:
     fstype: ext4
     dev: /dev/nvme1n1
-  when: "'ec2' in group_names"
-
-- name: Debug ansible_facts
-  debug:
-    var: ansible_facts
+  when:
+    - "'ec2' in group_names"
+    - "'nvme1n1' in ansible_facts['devices']"
+    - ansible_facts['devices']['nvme1n1']['partitions'] | length == 0
 
 - name: Mount /data filesystem
   # Use SKIP_TAGS=mount_data to get past this point when checking
@@ -30,7 +33,10 @@
     src: "UUID={{ ansible_facts['devices']['nvme1n1']['links']['uuids'][0] }}"
     fstype: ext4
     state: mounted
-  when: "'ec2' in group_names"
+  when:
+  - "'ec2' in group_names"
+  - "'nvme1n1' in ansible_facts['devices']"
+  - "ansible_facts['devices']['nvme1n1']['links']['uuids'] | length > 0"
 
 - name: Create directories in /data
   file:
