@@ -14,7 +14,7 @@ resource "aws_instance" "main" {
   ebs_optimized = true
   key_name      = "test"
   tags = {
-    Name = "openaustralia"
+    Name = "OLD openaustralia"
   }
   vpc_security_group_ids  = [var.security_group_webserver.id, var.security_group_service.id]
   availability_zone       = aws_ebs_volume.data.availability_zone
@@ -25,7 +25,7 @@ resource "aws_instance" "main" {
 resource "aws_eip" "main" {
   instance = aws_instance.main.id
   tags = {
-    Name = "openaustralia"
+    Name = "OLD openaustralia"
   }
 }
 
@@ -42,7 +42,7 @@ resource "aws_ebs_volume" "data" {
   size = 20
   type = "gp3"
   tags = {
-    Name = "openaustralia_data"
+    Name = "OLD openaustralia_data"
   }
 }
 
