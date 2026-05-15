@@ -27,6 +27,15 @@ resource "cloudflare_record" "root" {
   proxied = true
 }
 
+### TODO: Remove this when we have the OpenVPN configured
+resource "cloudflare_record" "non_proxy_root" {
+  zone_id = cloudflare_zone.org_au.id
+  name    = "srv.theyvoteforyou.org.au"
+  type    = "A"
+  value   = aws_eip.main.public_ip
+  proxied = false
+}
+
 # CNAME records
 
 resource "cloudflare_record" "www" {
