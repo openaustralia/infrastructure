@@ -11,6 +11,7 @@ server {
   root /srv/www/staging/current/public;
   passenger_enabled on;
   passenger_app_env staging;
+  passenger_ruby /srv/www/staging/current/bin/passenger-ruby;
 
   auth_basic "Staging Site";
   auth_basic_user_file htpasswd;

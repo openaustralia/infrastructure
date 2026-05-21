@@ -11,6 +11,7 @@ server {
   root /srv/www/production/current/public;
   passenger_enabled on;
   passenger_app_env production;
+  passenger_ruby /srv/www/production/current/bin/passenger-ruby;
 
   location ^~ /assets/ {
     gzip_static on;
