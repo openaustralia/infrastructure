@@ -40,8 +40,7 @@
 
 - name: Install libyaml packages
   apt:
-    pkg:
-      - libyaml-dev
+    pkg: libyaml-dev
     state: present
 
 # We want this directory to exist in development too so that
