@@ -69,10 +69,6 @@ logs:
     log_stream_name: "{{ inventory_hostname }}"
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
 
-ruby_manager: rvm
-ruby_versions:
-   - ruby-3.4.4
-
 production_domain_aliases:
   - "{{ theyvoteforyou_domain }}"
   - "www.{{ theyvoteforyou_domain }}"
