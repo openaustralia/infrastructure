@@ -23,10 +23,10 @@
     url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt
     dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
 
-- name: Apt add passenger to list
+- name: Add passenger apt repository
   tags: passenger
   apt_repository:
-    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
+    repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
     update_cache: true
 
