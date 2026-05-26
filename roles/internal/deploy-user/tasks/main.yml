@@ -51,16 +51,22 @@
       {{ line }} {{ result.item }}
       {% endfor %}
       {% endfor %}
-    terraform_key_root: 'no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command="echo ''Please login as the user \"ubuntu\" rather than the user \"root\".'';echo;sleep 10;exit 142" {{ terraform_public_key }} terraform'
     terraform_key_plain: "{{ terraform_public_key }} terraform"
-    permitted_keys_for_account: "{{ github_keys }}\n{{ terraform_key_root if item == 'root' else terraform_key_plain }}"
+    permitted_keys_for_account: "{{ github_keys }}\n{{ terraform_key_plain }}"
   loop:
     - deploy
     - ubuntu
-    - root
   tags:
     - userkeys
   register: add_authorized_keys
+
+- name: Remove any existing authorized_keys for root (root is console-only)
+  become: true
+  ansible.builtin.file:
+    path: /root/.ssh/authorized_keys
+    state: absent
+  tags:
+    - userkeys
 
 - name: Only allow ssh access with keys
   become: true
@@ -70,4 +76,13 @@
     regexp: "^#?PasswordAuthentication"
     line: "PasswordAuthentication no"
   when: add_authorized_keys is success
+  notify: sshd restart
+
+- name: Disallow root SSH login (console only)
+  become: true
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: "^#?PermitRootLogin"
+    line: "PermitRootLogin no"
   notify: sshd restart
