@@ -4,22 +4,43 @@
     name: apache2
     state: absent
 
+# Based on https://www.phusionpassenger.com/docs/advanced_guides/install_and_upgrade/standalone/install/oss/jammy.html
+
+- name: Add HTTPS support for APT
+  tags: passenger
+  apt:
+    pkg:
+      - dirmngr
+      - gnupg
+      - apt-transport-https
+      - ca-certificates
+      - curl
+    state: present
+
 - name: Add key for passenger
+  tags: passenger
   ansible.builtin.get_url:
-    url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt
+    url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt
     dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
+
 - name: Add passenger apt repository
+  tags: passenger
   apt_repository:
     repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
     update_cache: true
 
-- name: Install nginx, passenger and libyaml packages
+- name: Install nginx and passenger packages
+  tags: passenger
   apt:
     pkg:
       - libnginx-mod-http-passenger
       - nginx
-      - libyaml-dev
+    state: present
+
+- name: Install libyaml packages
+  apt:
+    pkg: libyaml-dev
     state: present
 
 # We want this directory to exist in development too so that
