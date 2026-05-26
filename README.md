@@ -17,6 +17,7 @@
     - [Prerequisites](#prerequisites)
     - [Environment setup](#environment-setup)
     - [Add the Ansible Vault password](#add-the-ansible-vault-password)
+      - [Memory and CPU Usage](#memory-and-cpu-usage)
       - [Access to everything except right to know](#access-to-everything-except-right-to-know)
   - [Generating SSL certificates for development](#generating-ssl-certificates-for-development)
   - [Provisioning](#provisioning)
@@ -37,7 +38,8 @@
       - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
       - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
   - [Backups](#backups)
-  - [MailCatching](#MailCatching)
+  - [Mail Catching](#mail-catching)
+    - [`log_not_sendmail`](#log_not_sendmail)
 
 <!-- vscode-markdown-toc-config
 	numbering=false
