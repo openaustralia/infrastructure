@@ -186,19 +186,67 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 
 ### <a name='Prerequisites'></a>Prerequisites
 
-- For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
-- In order to run Ansible, you'll need Python < 3.12 installed
-  - 3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
-  - Secrets: Ansible looks at the four symlinks in the root of this repo and expects to find passphrases to unlock secrets used for production deployments. Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password). If Keybase isn't working for you, any technique you have to put the right value into the right file will be fine. You may need to update the `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location.
-- In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
-- For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
-- For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
-  - Terraform requires some extra secrets to access the S3 bucket we use to store Terraform's permanent state. You can put these in the usual place that AWS CLI tools look - `~/.aws/credentials`.
-  - Terraform requires some extra secrets in addition to those used by Ansible. Ask James about secrets.auto.tfvars
-    - Note that some of these secrets are the same secrets used as AWS credentials above, but they'll need to be provided again to populate the Terraform variables as well
-  - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use. `gcloud auth application-default login`
-  - Terraform runs `prepkey.sh` to grab your SSH public key to use as a deployer key in AWS. This script makes some simple assumptions: that `jq` is installed, and that your public key can be found at `~/.ssh/id_rsa.pub`.
-  - We host DNS on Cloudflare. An API key to manage these zones is one of the secrets you'll need to provide. To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
+- For starting local VMs for testing, you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
+
+Use `make setup` to install packages on Ubuntu for development.
+
+Use `mise install` to install the ruby and python versions required - see [mise](https://mise.jdx.dev/) for further details.
+
+Run `make requirements` to install the requirements for python and ansible.
+ 
+**Ansible**
+
+- In order to run the Ansible playbooks, you'll need Python 3.11 installed (as per `.python-version`)
+  - Note v3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
+
+**Secrets**
+
+- Ansible looks at the four symlinks in the root of this repo which symlink to paths under `.keybase` to exist and contain passphrases to decrypt secrets used for production deployments.
+  - `make .keybase` will look for the keybase mount point in various places and symlink it to `.keybase`
+    - Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password).
+  - Alternately symlink from your own copy of the keybase files
+    - If Keybase isn't working for you, any technique you have to put the right value into the right file will be fine,
+- You may override `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location,
+  or list just the files you have access to. 
+- Consider using the direnv command and setting 
+  `export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"` 
+  in your `.envrc` file if you don't have all the perms required. 
+
+**Capsitrano (in project repos)** 
+
+- In order to run Capistrano, you'll need a version of Ruby installed; 
+  - Consider installing [mise](https://mise.jdx.dev/) so that you're able to install and swap between multiple versions of Ruby, python and php.
+- For deploying code onto dev/test/prod machines, you'll need to install [capistrano](http://capistranorb.com/) using `bundle install`
+
+**Terraform**
+
+For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
+ 
+- Install [the gCloud CLI](https://cloud.google.com/sdk/docs/install) and configur with authentication credentials
+- 
+  which requires some extra secrets than ansible needs:
+  - Copy `terraform/secrets.auto.tfvars.template` to `terraform/secrets.auto.tfvars` 
+    - Note that some of these secrets are the same secrets used as AWS credentials above, 
+      but they'll need to be provided again to populate the Terraform variables as well
+  - Ask James of Ben for the extra details, including: 
+  - **AWS** - You need an account with the same permissions as the `ansible` user (from ansible vault) or better
+    - to access the S3 bucket we use to store Terraform's permanent state.
+  - The `rds_admin_password` 
+  - The `theyvoteforyou_db_password` 
+  - The `cloudflare_api_token` - at least `Zone / Zone / Read` perms for planning, and `Zone / Zone / Write` for updating
+  - The `linode_api_token` - at least read access for planning and full acces for updating
+  - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use
+    - run `gcloud auth application-default login`
+  - Terraform runs `terraform/prepkey.sh` to grab your SSH public key to use as a deployer key in AWS.
+    This script requires `jq` to have been installed. 
+    The script looks for public keys 
+    - from GitHuib if GITHUB_USER if set 
+    - from `$SSH_PUBLIC_KEY_FILE` if set
+    - from `~/.ssh/` id*pub keys with open*au and oaf in upper and lower case
+    - Lastly falls back to `~/.ssh/id_{ed25519,rsa}.pub`. 
+  - We host DNS on Cloudflare. 
+    An API key to manage these zones is one of the secrets you'll need to provide.
+    To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
 
 ### <a name='Environmentsetup'></a>Environment setup
 
