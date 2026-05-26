@@ -1,8 +1,10 @@
 base_domain: test
 
-mysql_host: 192.168.56.10
-postgresql_host: 192.168.56.11
-planningalerts_db_host: 192.168.56.11
+# Resolved by the internal/dev-hosts role, which writes /etc/hosts entries on
+# every development VM from inventory. Works for both Vagrant and Lima.
+mysql_host: mysql.test
+postgresql_host: postgresql.test
+planningalerts_db_host: postgresql.test
 
 db_host: "{{ postgresql_host if 'requires_postgresql' in group_names else mysql_host }}"
 

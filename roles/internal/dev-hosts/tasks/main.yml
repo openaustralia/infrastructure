@@ -1,0 +1,16 @@
+---
+# Write /etc/hosts entries for every peer in the `development` inventory
+# group, so apps can reach `mysql.test`, `postgresql.test`, etc. by name.
+#
+# Applies to both Vagrant and Lima dev VMs. Production uses real DNS and
+# isn't in the `development` group, so this play is a no-op there.
+
+- name: Render dev-hosts /etc/hosts block
+  ansible.builtin.blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} ANSIBLE MANAGED: dev-hosts"
+    block: |
+      {% for host in groups['development'] | sort %}
+      {{ hostvars[host].ansible_host | default(host) }} {{ host }}{% for alias in (hostvars[host].dev_aliases | default([])) %} {{ alias }}{% endfor %}
+
+      {% endfor %}
