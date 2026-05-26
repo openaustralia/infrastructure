@@ -1,0 +1,230 @@
+#!/usr/bin/env python3
+"""Bring up Lima VMs defined in lima/hosts.yml.
+
+Usage:
+    lima/bin/lima-up                     # bring up every host in hosts.yml
+    lima/bin/lima-up mysql.test postgresql.test
+    LIMA_MEMORY=4GiB LIMA_CPUS=4 lima/bin/lima-up mysql.test
+
+After all VMs are running, writes lima/inventory/lima-hosts (an Ansible
+inventory file) for use by `make lima-provision`.
+"""
+from __future__ import annotations
+
+import argparse
+import concurrent.futures
+import json
+import os
+import platform
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+try:
+    import yaml
+except ImportError:
+    sys.stderr.write(
+        "ERROR: PyYAML not installed. Run `make lima-requirements` first.\n"
+    )
+    sys.exit(1)
+
+ROOT = Path(__file__).resolve().parent.parent
+HOSTS_YML = ROOT / "hosts.yml"
+TEMPLATES_DIR = ROOT / "templates"
+STATE_DIR = ROOT / ".state"
+INVENTORY = ROOT / "inventory" / "lima-hosts"
+LIMA_USER = os.environ.get("LIMA_USER", os.environ.get("USER", "lima"))
+MIN_LIMA_VERSION = (0, 20)
+
+
+def die(msg: str, code: int = 1) -> None:
+    sys.stderr.write(f"ERROR: {msg}\n")
+    sys.exit(code)
+
+
+def run(cmd: list[str], **kw) -> subprocess.CompletedProcess:
+    return subprocess.run(cmd, check=True, **kw)
+
+
+def check_lima() -> None:
+    if not shutil.which("limactl"):
+        die("limactl not found in PATH. See docs/local-dev-with-lima.md.")
+    out = subprocess.run(
+        ["limactl", "--version"], check=True, capture_output=True, text=True
+    ).stdout
+    m = re.search(r"(\d+)\.(\d+)", out)
+    if not m:
+        die(f"Could not parse Lima version from: {out!r}")
+    found = (int(m.group(1)), int(m.group(2)))
+    if found < MIN_LIMA_VERSION:
+        die(
+            f"Lima >= {MIN_LIMA_VERSION[0]}.{MIN_LIMA_VERSION[1]} required, "
+            f"found {found[0]}.{found[1]}"
+        )
+
+
+def network_block() -> str:
+    """YAML block for `networks:` — varies by host OS.
+
+    macOS: socket_vmnet shared network (host↔VM and VM↔VM).
+    Linux: user-v2 (no extra deps; host reaches VMs by IP not name; see docs).
+    """
+    if platform.system() == "Darwin":
+        return "networks:\n  - lima: shared"
+    return "networks:\n  - lima: user-v2"
+
+
+def render_template(host: str, spec: dict) -> str:
+    release = spec["release"]
+    template_path = TEMPLATES_DIR / f"{release}.yaml"
+    if not template_path.exists():
+        die(f"No template for release '{release}' (host {host}).")
+    cpus = int(os.environ.get("LIMA_CPUS") or spec.get("cpus") or 2)
+    memory = os.environ.get("LIMA_MEMORY") or spec.get("memory") or "2GiB"
+    instance = lima_instance_for(host, spec)
+    body = template_path.read_text()
+    return (
+        body.replace("{{HOSTNAME}}", host)
+        .replace("{{LIMA_INSTANCE}}", instance)
+        .replace("{{LIMA_USER}}", LIMA_USER)
+        .replace("{{CPUS}}", str(cpus))
+        .replace("{{MEMORY}}", memory)
+        .replace("{{NETWORK_BLOCK}}", network_block())
+    )
+
+
+def lima_instance_for(host: str, spec: dict) -> str:
+    return spec.get("lima_instance") or host.replace(".", "-")
+
+
+def list_instances() -> dict[str, dict]:
+    """Return {instance_name: instance_json} from `limactl list --json`."""
+    out = subprocess.run(
+        ["limactl", "list", "--json"], check=True, capture_output=True, text=True
+    ).stdout
+    instances = {}
+    for line in out.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        inst = json.loads(line)
+        instances[inst["name"]] = inst
+    return instances
+
+
+def ensure_instance(instance: str, rendered_path: Path) -> None:
+    instances = list_instances()
+    current = instances.get(instance)
+    if current is None:
+        print(f"==> creating {instance}", flush=True)
+        run(["limactl", "create", f"--name={instance}", str(rendered_path)])
+    if (current or {}).get("status") != "Running":
+        print(f"==> starting {instance}", flush=True)
+        run(["limactl", "start", instance])
+    else:
+        print(f"==> {instance} already running", flush=True)
+
+
+def write_inventory(hosts: dict[str, dict]) -> None:
+    """Write Ansible inventory at lima/inventory/lima-hosts.
+
+    Includes group memberships from hosts.yml plus the implicit
+    `development` group. Each host has `ansible_host=<ip>` taken from
+    `limactl list --json`.
+    """
+    instances = list_instances()
+    groups: dict[str, list[str]] = {"development": []}
+    host_lines: list[str] = []
+    for host, spec in hosts.items():
+        instance = lima_instance_for(host, spec)
+        inst = instances.get(instance)
+        if not inst:
+            sys.stderr.write(f"WARN: {instance} not found; skipping in inventory\n")
+            continue
+        ip = pick_ip(inst)
+        aliases = " ".join(spec.get("aliases") or [])
+        line = f"{host} ansible_host={ip} ansible_user=root"
+        if aliases:
+            line += f' dev_aliases="[{",".join(repr(a) for a in spec.get("aliases") or [])}]"'
+        host_lines.append(line)
+        groups["development"].append(host)
+        for g in spec.get("groups") or []:
+            groups.setdefault(g, []).append(host)
+
+    INVENTORY.parent.mkdir(parents=True, exist_ok=True)
+    with INVENTORY.open("w") as f:
+        f.write("# Generated by lima/bin/lima-up — do not edit by hand.\n")
+        f.write("[all:vars]\nansible_python_interpreter=/usr/bin/python3\n\n")
+        for line in host_lines:
+            f.write(line + "\n")
+        f.write("\n")
+        for group, members in sorted(groups.items()):
+            f.write(f"[{group}]\n")
+            for h in sorted(set(members)):
+                f.write(f"{h}\n")
+            f.write("\n")
+    print(f"==> wrote {INVENTORY}")
+
+
+def pick_ip(inst: dict) -> str:
+    """Pick a usable IP from a `limactl list --json` entry.
+
+    Prefer the address on the lima-shared/lima0 network; fall back to
+    `sshLocalPort` over 127.0.0.1 if no other address is reachable.
+    """
+    for net in inst.get("network", []) or []:
+        addr = net.get("interface") and net.get("address")
+        if addr:
+            return net["address"]
+    # Newer Lima exposes addresses under `addresses`.
+    for addr in inst.get("addresses", []) or []:
+        if not addr.startswith("127."):
+            return addr
+    return "127.0.0.1"
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("hosts", nargs="*", help="Subset of hosts to bring up.")
+    args = ap.parse_args()
+
+    check_lima()
+
+    fleet = yaml.safe_load(HOSTS_YML.read_text())["hosts"]
+    if args.hosts:
+        unknown = [h for h in args.hosts if h not in fleet]
+        if unknown:
+            die(f"Unknown host(s): {unknown}. Known: {list(fleet)}")
+        selected = {h: fleet[h] for h in args.hosts}
+    else:
+        selected = fleet
+
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Dedupe by lima instance (so righttoknow staging/prod share one VM).
+    by_instance: dict[str, tuple[str, dict]] = {}
+    for host, spec in selected.items():
+        instance = lima_instance_for(host, spec)
+        by_instance.setdefault(instance, (host, spec))
+
+    def boot(instance_and_pair: tuple[str, tuple[str, dict]]) -> None:
+        instance, (host, spec) = instance_and_pair
+        rendered = STATE_DIR / f"{instance}.yaml"
+        rendered.write_text(render_template(host, spec))
+        ensure_instance(instance, rendered)
+
+    workers = min(4, max(1, len(by_instance)))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+        list(pool.map(boot, by_instance.items()))
+
+    # Write inventory using the full fleet (so partial-up workflows still
+    # produce inventory entries for the running subset; missing ones are
+    # warned about and skipped).
+    write_inventory(fleet)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

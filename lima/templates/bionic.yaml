@@ -1,0 +1,75 @@
+# Ubuntu 18.04 (bionic) Lima template. See jammy.yaml for placeholder docs.
+#
+# bionic is EOL (April 2023). The cloud image is still published at the
+# /releases/ path for archival use; expect older cloud-init (18.x).
+arch: x86_64
+cpus: {{CPUS}}
+memory: "{{MEMORY}}"
+disk: "20GiB"
+
+images:
+  - location: "https://cloud-images.ubuntu.com/releases/18.04/release/ubuntu-18.04-server-cloudimg-amd64.img"
+    arch: "x86_64"
+
+{{NETWORK_BLOCK}}
+
+mounts: []
+
+containerd:
+  system: false
+  user: false
+
+ssh:
+  loadDotSSHPubKeys: false
+
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eu
+      hostnamectl set-hostname "{{HOSTNAME}}"
+      if ! grep -qE "^127\.0\.1\.1[[:space:]]+{{HOSTNAME}}\b" /etc/hosts; then
+        sed -i '/^127\.0\.1\.1/d' /etc/hosts
+        echo "127.0.1.1 {{HOSTNAME}}" >> /etc/hosts
+      fi
+
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eu
+      install -d -m 700 /root/.ssh
+      cp /home/{{LIMA_USER}}/.ssh/authorized_keys /root/.ssh/authorized_keys
+      chmod 600 /root/.ssh/authorized_keys
+      chown -R root:root /root/.ssh
+      # bionic sshd may not support sshd_config.d; edit main config idempotently.
+      if [ -d /etc/ssh/sshd_config.d ]; then
+        cat > /etc/ssh/sshd_config.d/10-lima-ansible.conf <<EOF
+      PermitRootLogin prohibit-password
+      EOF
+      else
+        sed -i 's/^[# ]*PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
+        grep -qE '^PermitRootLogin ' /etc/ssh/sshd_config || \
+          echo 'PermitRootLogin prohibit-password' >> /etc/ssh/sshd_config
+      fi
+      systemctl reload ssh || systemctl reload sshd || true
+
+  - mode: system
+    script: |
+      #!/bin/bash
+      # bionic: python3 is present; python-is-python3 doesn't exist (it's a jammy+
+      # transitional package). Site.yml's bootstrap play handles python2 fallback
+      # for older roles that need it.
+      set -eu
+      command -v python3 >/dev/null && exit 0
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update -qq
+      apt-get install -y -qq python3
+
+probes:
+  - description: "root SSH and python3 ready"
+    script: |
+      #!/bin/bash
+      set -eu
+      test -s /root/.ssh/authorized_keys
+      command -v python3 >/dev/null
+    hint: "Provision scripts didn't complete. Check `limactl shell {{LIMA_INSTANCE}} -- systemctl status cloud-final`."

@@ -1,6 +1,12 @@
 
 .vagrant
 .keybase
+
+# Lima generated state
+/lima/inventory/lima-hosts
+/lima/.state/
+/lima/bin/__pycache__/
+
 roles/external
 collections/
 test.pem

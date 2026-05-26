@@ -138,9 +138,9 @@ _Umm. 7 years later, plus one day. That's weird._
 
 In the past, the tools in this repo were well supported across most common Linux platforms (including WSL), and OS X. However, newer versions of OSX only run on ARM chips, and older versions of OS X are increasingly unsupported by tools such as VirtualBox and Docker.
 
-As of today, the only platform that we know works is debian-based Linux systems. Other linuxes probably work, including WSL; and there are probably two releases of MacOS which still run on the last generations of Intel Macs which might work.
+For ARM/Apple Silicon developers, there is now a [Lima](https://lima-vm.io/)-based local fleet alongside the existing Vagrant flow — see [docs/local-dev-with-lima.md](docs/local-dev-with-lima.md). Lima pins every guest to `linux/amd64` and uses Apple's Rosetta to translate amd64 instructions, so locally-tested behaviour matches production exactly.
 
-We'd like to expand this in future, when we have time
+For Linux and Intel macOS contributors the Vagrant path continues to work; Lima also runs on Linux on amd64 hosts if you prefer the same tooling.
 
 #### <a name='RightToKnowDevplatform'></a>RightToKnow Dev platform
 
@@ -335,6 +335,22 @@ If it's already up, you can re-run Ansible provisioning with:
 Or combine with:
 
     vagrant up --provision staging.righttoknow.test
+
+### <a name='ProvisioninglocaldevelopmentserversusingLima'></a>Provisioning local development servers using Lima (Apple Silicon / amd64 via Rosetta)
+
+For Apple Silicon (and as an alternative on Linux/Intel Mac), Lima brings up the same fleet
+with amd64 guests via Apple's Rosetta. One-time setup (`brew install lima socket_vmnet`, sudoers)
+is documented in [docs/local-dev-with-lima.md](docs/local-dev-with-lima.md).
+
+Day-to-day:
+
+    make lima-requirements                              # one-time per checkout
+    HOSTS=mysql.test,web.planningalerts.test make lima-up
+    sudo make lima-hosts-sync                           # macOS /etc/hosts updated for the fleet
+    HOSTS=mysql.test,web.planningalerts.test make lima-provision
+
+`TAGS=`, `SKIP_TAGS=`, and `ANSIBLE_VERBOSE=` work exactly like with the `apply-*` targets.
+Tear down with `make lima-destroy` or `make lima-clean`.
 
 ### <a name='Provisioningproductionservers'></a>Provisioning production servers
 

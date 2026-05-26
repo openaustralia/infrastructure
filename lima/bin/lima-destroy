@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""Stop and delete Lima VMs defined in lima/hosts.yml.
+
+Usage:
+    lima/bin/lima-destroy                   # destroy every host in hosts.yml
+    lima/bin/lima-destroy mysql.test
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+try:
+    import yaml
+except ImportError:
+    sys.stderr.write(
+        "ERROR: PyYAML not installed. Run `make lima-requirements` first.\n"
+    )
+    sys.exit(1)
+
+ROOT = Path(__file__).resolve().parent.parent
+HOSTS_YML = ROOT / "hosts.yml"
+
+
+def lima_instance_for(host: str, spec: dict) -> str:
+    return spec.get("lima_instance") or host.replace(".", "-")
+
+
+def existing_instances() -> set[str]:
+    out = subprocess.run(
+        ["limactl", "list", "--json"], check=True, capture_output=True, text=True
+    ).stdout
+    names = set()
+    for line in out.splitlines():
+        line = line.strip()
+        if line:
+            names.add(json.loads(line)["name"])
+    return names
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("hosts", nargs="*")
+    ap.add_argument(
+        "-y", "--yes", action="store_true", help="Skip confirmation prompt."
+    )
+    args = ap.parse_args()
+
+    fleet = yaml.safe_load(HOSTS_YML.read_text())["hosts"]
+    if args.hosts:
+        unknown = [h for h in args.hosts if h not in fleet]
+        if unknown:
+            sys.stderr.write(f"ERROR: unknown host(s): {unknown}\n")
+            return 1
+        selected = {h: fleet[h] for h in args.hosts}
+    else:
+        selected = fleet
+
+    instances = sorted({lima_instance_for(h, s) for h, s in selected.items()})
+    extant = existing_instances()
+    to_delete = [i for i in instances if i in extant]
+    if not to_delete:
+        print("Nothing to destroy.")
+        return 0
+
+    print("Will destroy:")
+    for i in to_delete:
+        print(f"  - {i}")
+    if not args.yes and os.isatty(0):
+        ans = input("Proceed? [y/N] ").strip().lower()
+        if ans != "y":
+            print("Aborted.")
+            return 1
+
+    for i in to_delete:
+        subprocess.run(["limactl", "stop", "--force", i], check=False)
+        subprocess.run(["limactl", "delete", "--force", i], check=True)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

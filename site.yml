@@ -153,6 +153,15 @@
         - rds
       when: "(show_rds_debug | default(false) | bool) and (planningalerts_db_name is defined)"
 
+- hosts: development
+  name: "Write peer /etc/hosts entries on development VMs"
+  tags:
+    - dev-hosts
+    - facts
+  become: true
+  roles:
+    - internal/dev-hosts
+
 - hosts: all
   tags: base-server
   become: true

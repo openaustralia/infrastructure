@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+"""Add/refresh /etc/hosts entries on the *host* machine for live Lima VMs.
+
+This is the moral equivalent of the `vagrant-hostsupdater` plugin: it
+writes a marker-delimited block to /etc/hosts so the developer machine
+can resolve `mysql.test`, `web.planningalerts.test`, etc., to the right
+VM IPs.
+
+The script edits /etc/hosts with sudo. It's idempotent — re-running
+replaces the block in place.
+
+Usage:
+    sudo lima/bin/lima-hosts-sync       # write block from live VMs
+    sudo lima/bin/lima-hosts-sync -d    # remove the block (no entries)
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+try:
+    import yaml
+except ImportError:
+    sys.stderr.write(
+        "ERROR: PyYAML not installed. Run `make lima-requirements` first.\n"
+    )
+    sys.exit(1)
+
+ROOT = Path(__file__).resolve().parent.parent
+HOSTS_YML = ROOT / "hosts.yml"
+HOSTS_FILE = Path("/etc/hosts")
+BEGIN = "# BEGIN lima-managed (OAF infrastructure)"
+END = "# END lima-managed (OAF infrastructure)"
+
+
+def lima_instance_for(host: str, spec: dict) -> str:
+    return spec.get("lima_instance") or host.replace(".", "-")
+
+
+def list_instances() -> dict[str, dict]:
+    out = subprocess.run(
+        ["limactl", "list", "--json"], check=True, capture_output=True, text=True
+    ).stdout
+    return {
+        json.loads(line)["name"]: json.loads(line)
+        for line in out.splitlines()
+        if line.strip()
+    }
+
+
+def pick_ip(inst: dict) -> str | None:
+    for net in inst.get("network", []) or []:
+        if net.get("address"):
+            return net["address"]
+    for addr in inst.get("addresses", []) or []:
+        if not addr.startswith("127."):
+            return addr
+    return None
+
+
+def build_block(fleet: dict, instances: dict) -> str:
+    lines = [BEGIN]
+    for host, spec in fleet.items():
+        instance = lima_instance_for(host, spec)
+        inst = instances.get(instance)
+        ip = pick_ip(inst) if inst else None
+        if not ip:
+            lines.append(f"# (skipped) {host}: instance {instance} not running")
+            continue
+        names = " ".join([host, *(spec.get("aliases") or [])])
+        lines.append(f"{ip}\t{names}")
+    lines.append(END)
+    return "\n".join(lines) + "\n"
+
+
+def replace_block(content: str, new_block: str) -> str:
+    pattern = re.compile(rf"{re.escape(BEGIN)}.*?{re.escape(END)}\n?", re.S)
+    if pattern.search(content):
+        return pattern.sub(new_block, content)
+    if not content.endswith("\n"):
+        content += "\n"
+    return content + "\n" + new_block
+
+
+def remove_block(content: str) -> str:
+    pattern = re.compile(rf"\n?{re.escape(BEGIN)}.*?{re.escape(END)}\n?", re.S)
+    return pattern.sub("", content)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "-d", "--delete", action="store_true", help="Remove the managed block."
+    )
+    args = ap.parse_args()
+
+    if os.geteuid() != 0:
+        sys.stderr.write(
+            "ERROR: must be run as root (e.g. `sudo lima/bin/lima-hosts-sync`).\n"
+        )
+        return 1
+
+    current = HOSTS_FILE.read_text()
+    if args.delete:
+        new = remove_block(current)
+    else:
+        fleet = yaml.safe_load(HOSTS_YML.read_text())["hosts"]
+        new = replace_block(current, build_block(fleet, list_instances()))
+
+    if new == current:
+        print("No changes.")
+        return 0
+
+    backup = HOSTS_FILE.with_suffix(".lima.bak")
+    backup.write_text(current)
+    HOSTS_FILE.write_text(new)
+    print(f"Updated {HOSTS_FILE} (previous content saved to {backup}).")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

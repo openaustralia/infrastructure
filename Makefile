@@ -3,7 +3,9 @@
         check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
         check-rtk-prod check-rtk-staging check-theyvoteforyou check-target \
         scan-oaf scan-openaustralia scan-planningalerts \
-        clean clobber help install-linters keybase letsencrypt lint production retry roles \
+        clean clobber help install-linters keybase letsencrypt lint \
+        lima lima-requirements lima-up lima-provision lima-destroy lima-status lima-hosts-sync lima-clean \
+        production retry roles \
         show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target tf-init tf-plan \
         tf-plan-target update-github-ssh-keys vagrant venv yaml-lint
 
@@ -51,6 +53,12 @@ help:
 	@echo "  tf-apply                            Run terraform apply in the terraform directory"
 	@echo "  update-github-ssh-keys              Update SSH keys on all servers from GitHub"
 	@echo "  vagrant                             Install vagrant plugins and ensure requirements are present"
+	@echo "  lima                                Apple Silicon / amd64-via-Rosetta alternative to vagrant (see docs/local-dev-with-lima.md)"
+	@echo "  lima-up [HOSTS=a,b]                 Bring up Lima VMs from lima/hosts.yml"
+	@echo "  lima-provision [HOSTS=a,b]          Run site.yml against the Lima fleet"
+	@echo "  lima-destroy [HOSTS=a,b]            Stop and delete Lima VMs"
+	@echo "  lima-status                         Show status of Lima fleet"
+	@echo "  lima-hosts-sync                     Update macOS /etc/hosts for the live fleet (needs sudo)"
 	@echo ""
 	@echo "  clean                               Remove virtualenv, external roles, retry file, collections, keybase symlink"
 	@echo "  clobber                             clobber everything make all created (clean + removes .vagrant and log)"
@@ -101,6 +109,40 @@ keybase: .keybase
 	[ $$broken -eq 0 ]
 
 vagrant: .make/vagrant-plugins .make/certificates requirements
+
+# --- Lima (Apple Silicon / amd64-via-Rosetta alternative to Vagrant) -------
+# See docs/local-dev-with-lima.md for one-time setup (brew install lima
+# socket_vmnet, sudoers, etc).
+
+lima: lima-requirements lima-up lima-hosts-sync lima-provision
+
+lima-requirements: .make/certificates requirements
+	@command -v limactl >/dev/null || { echo "ERROR: limactl not found. See docs/local-dev-with-lima.md."; exit 1; }
+	@.venv/bin/python -c "import yaml" 2>/dev/null || .venv/bin/pip install pyyaml
+
+lima-up: lima-requirements
+	.venv/bin/python lima/bin/lima-up $(subst $(comma), ,$(HOSTS))
+
+lima-provision: lima-requirements
+	HOSTS="$(HOSTS)" TAGS="$(TAGS)" SKIP_TAGS="$(SKIP_TAGS)" ANSIBLE_VERBOSE="$(ANSIBLE_VERBOSE)" \
+	  lima/bin/lima-provision
+
+lima-destroy:
+	.venv/bin/python lima/bin/lima-destroy $(subst $(comma), ,$(HOSTS))
+
+lima-status:
+	.venv/bin/python lima/bin/lima-status
+
+lima-hosts-sync:
+	sudo .venv/bin/python lima/bin/lima-hosts-sync
+
+lima-clean: lima-destroy
+	sudo .venv/bin/python lima/bin/lima-hosts-sync -d || true
+	rm -rf lima/.state lima/inventory/lima-hosts
+
+# Helper to translate HOSTS=a,b on the command line into a space-separated list.
+comma := ,
+# ---------------------------------------------------------------------------
 
 generate-certificates: .make/certificates
 
