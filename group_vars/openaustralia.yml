@@ -87,12 +87,6 @@ logs:
      log_stream_name: "{{ inventory_hostname }}"
      timestamp_format: "%Y-%m-%d %H:%M:%S"
 
-ruby_manager: rbenv
-ruby_versions:
-  - ruby-3.4.9
-rbenv_extra_depends:
-  - libyaml-dev
-
 environments:
   - production
   - staging
