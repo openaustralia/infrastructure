@@ -85,7 +85,7 @@ help:
 	@echo "  ANSIBLE_VERBOSE  Ansible verbosity flag, e.g. ANSIBLE_VERBOSE=vvv"
 
 setup:
-	sudo apt install parallel
+	sudo apt install parallel jq direnv
 
 requirements: op-check terraform.pem .make/roles venv
 
