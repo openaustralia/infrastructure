@@ -48,6 +48,19 @@ chmod 700 "$tmpdir"
 old_pw="$tmpdir/old"
 new_pw="$tmpdir/new"
 
+# Each ansible-vault subprocess we spawn would otherwise inherit the
+# repo's ansible.cfg, whose `vault_identity_list` lists all four vault
+# ids served by bin/ansible-vault-client. That triggers an `op read`
+# per id per ansible-vault invocation (≈ 4× the work, plus a biometric
+# prompt cascade). Override with a minimal config that intentionally
+# omits vault_identity_list so each subprocess only uses the explicit
+# --vault-id we pass.
+cat > "$tmpdir/ansible.cfg" <<'CFG'
+[defaults]
+# Used during rotation to bypass the repo's vault_identity_list cascade.
+CFG
+export ANSIBLE_CONFIG="$tmpdir/ansible.cfg"
+
 # Rotation state — drives the EXIT trap below.
 #   pre       — nothing committed yet; safe to delete tmpdir
 #   op_done   — 1Password is updated but files are not; tmpdir must be
@@ -75,6 +88,9 @@ decrypt until you finish or roll back.
 OLD and NEW passphrases are preserved at:
   OLD: $tmpdir/old
   NEW: $tmpdir/new
+
+The recovery snippets below use process substitution (\`<(...)\`) and
+\`<<<\` here-strings, which require bash or zsh — not POSIX sh / dash.
 
 To roll 1Password back to OLD (recommended — start clean):
 
@@ -125,7 +141,14 @@ fi
 files=$(grep -rlE "$grep_pattern" group_vars host_vars 2>/dev/null || true)
 
 if [ -z "$files" ]; then
-  echo "  no files reference vault id '$vault_id' — nothing to rotate"
+  cat <<MSG
+  no files reference vault id '$vault_id' — nothing to rotate
+
+  If you want to retire or replace the 1Password passphrase anyway
+  (e.g. after deleting the last consumer of this vault id), edit the
+  item directly:
+    op item edit --account $OP_ACCOUNT $item_uuid --generate-password
+MSG
   state="complete"
   exit 0
 fi

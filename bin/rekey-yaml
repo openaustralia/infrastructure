@@ -25,6 +25,12 @@
 require "open3"
 require "optparse"
 
+# Preflight: ansible-vault must be reachable, otherwise the first
+# Open3 call below dies with a `No such file or directory` stack trace.
+unless system("command -v ansible-vault > /dev/null 2>&1")
+  abort "ansible-vault not found on PATH — run `make venv` and activate the venv (or install ansible-core)"
+end
+
 old_id = old_source = new_id = new_source = nil
 in_place = false
 
@@ -43,29 +49,36 @@ abort "Missing --vault-id ID@SRC" if old_id.nil? || old_source.nil?
 abort "Missing --new-vault-id ID@SRC" if new_id.nil? || new_source.nil?
 abort "No input files" if ARGV.empty?
 
-def shell(*cmd, stdin:)
+# `context` is a short string describing what failed (e.g. file path and
+# block header excerpt). It's surfaced in the abort message so rotation
+# failures don't need a separate detective phase.
+def shell(*cmd, stdin:, context:)
   out, err, status = Open3.capture3(*cmd, stdin_data: stdin)
-  abort "#{cmd.first} failed: #{err}" unless status.success?
+  unless status.success?
+    abort "#{cmd.first} failed (#{context}): #{err.strip}"
+  end
   out
 end
 
-def decrypt(blob, id, src)
-  shell("ansible-vault", "decrypt", "--vault-id", "#{id}@#{src}", stdin: blob)
+def decrypt(blob, id, src, context:)
+  shell("ansible-vault", "decrypt", "--vault-id", "#{id}@#{src}",
+        stdin: blob, context: "decrypt #{context}")
 end
 
-def encrypt(plain, id, src)
+def encrypt(plain, id, src, context:)
   shell(
     "ansible-vault", "encrypt",
     "--vault-id", "#{id}@#{src}",
     "--encrypt-vault-id", id,
-    stdin: plain
+    stdin: plain, context: "encrypt #{context}"
   )
 end
 
-def rekey(text, old_id, old_source, new_id, new_source)
+def rekey(text, old_id, old_source, new_id, new_source, path)
   lines = text.lines
   out = []
   i = 0
+  block_no = 0
   while i < lines.length
     line = lines[i]
     out << line
@@ -73,6 +86,7 @@ def rekey(text, old_id, old_source, new_id, new_source)
 
     # Look for "<anything> !vault |" line.
     next unless line =~ /!vault\s*\|\s*\z/
+    block_no += 1
 
     # Find body indent from the next non-blank line.
     j = i
@@ -98,10 +112,11 @@ def rekey(text, old_id, old_source, new_id, new_source)
     # — that's the effective vault id ansible assigns when none is tagged.
     # Without this, a `default` rotation would silently skip every 1.1 block.
     block_id = header.split(";")[3] || "default"
+    ctx = "#{path} block ##{block_no} (#{header})"
 
     if block_id == old_id
-      plain = decrypt(blob, old_id, old_source)
-      cipher = encrypt(plain, new_id, new_source)
+      plain = decrypt(blob, old_id, old_source, context: ctx)
+      cipher = encrypt(plain, new_id, new_source, context: ctx)
       cipher += "\n" unless cipher.end_with?("\n")
       out << cipher.lines.map { |l| indent + l }.join
     else
@@ -112,9 +127,19 @@ def rekey(text, old_id, old_source, new_id, new_source)
 end
 
 ARGV.each do |path|
-  rewritten = rekey(File.read(path), old_id, old_source, new_id, new_source)
+  rewritten = rekey(File.read(path), old_id, old_source, new_id, new_source, path)
   if in_place
-    File.write(path, rewritten)
+    # Write to a sibling temp file then rename, so a kill mid-write
+    # can't leave the YAML half-rewritten. Rename is atomic within
+    # the same filesystem.
+    tmp = "#{path}.tmp.#{Process.pid}"
+    begin
+      File.write(tmp, rewritten)
+      File.rename(tmp, path)
+    rescue StandardError
+      File.delete(tmp) if File.exist?(tmp)
+      raise
+    end
   else
     print rewritten
   end
