@@ -1,13 +1,7 @@
-# Note that currently there is duplication between these values and those stored
-# and used in ansible
+# Note that currently there is duplication between this value and the
+# one stored in ansible (group_vars/all.yml). The same secret is rendered
+# into terraform/secrets.auto.tfvars by `make tf-secrets` from 1Password.
 # TODO: Remove duplication
-
-variable "aws_access_key" {
-}
-
-variable "aws_secret_key" {
-  sensitive = true
-}
 
 variable "ec2_region" {
   # Sydney
@@ -15,19 +9,6 @@ variable "ec2_region" {
 }
 
 variable "rds_admin_password" {
-  sensitive = true
-}
-
-variable "theyvoteforyou_db_password" {
-  sensitive = true
-}
-
-# Note that this is different than one that was previously called cloudflare_token
-variable "cloudflare_api_token" {
-  sensitive = true
-}
-
-variable "linode_api_token" {
   sensitive = true
 }
 
