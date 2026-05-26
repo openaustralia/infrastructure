@@ -11,22 +11,55 @@
     shell: /bin/bash
     group: deploy
 
-
-
-## This will ensure that the listed keys are present
-## but it does not remove other keys. If we have a need to revoke
-## access we'll have to do something different.
-- name: Create authorized_keys files for local accounts
-  become: true
-  authorized_key:
-    user: "{{ item[0] }}"
-    key: https://github.com/{{ item[1] }}.keys
-    comment: "{{ item[1] }}"
+- name: Refuse to manage authorized_keys without a populated github_users list
+  ansible.builtin.assert:
+    that:
+      - github_users is defined
+      - github_users | length > 0
+    fail_msg: >-
+      github_users is empty or undefined. Refusing to apply exclusive
+      authorized_keys, which would lock everyone out of deploy/ubuntu/root.
   tags:
     - userkeys
-  with_nested:
-    - ['deploy', 'ubuntu', 'root']
-    - "{{ github_users }}"
+
+- name: Fetch SSH public keys from GitHub for permitted users
+  ansible.builtin.uri:
+    url: "https://github.com/{{ item }}.keys"
+    return_content: true
+  loop: "{{ github_users }}"
+  register: github_keys_fetched
+  check_mode: false
+  tags:
+    - userkeys
+
+- name: Derive terraform.pem public key
+  ansible.builtin.set_fact:
+    terraform_public_key: "{{ lookup('pipe', 'ssh-keygen -y -f ' + playbook_dir + '/terraform.pem') | trim }}"
+  tags:
+    - userkeys
+
+- name: Set authorized_keys for local accounts (only listed github_users + terraform)
+  become: true
+  authorized_key:
+    user: "{{ item }}"
+    exclusive: true
+    key: "{{ permitted_keys_for_account }}"
+  vars:
+    github_keys: |-
+      {% for result in github_keys_fetched.results -%}
+      {% for line in result.content.splitlines() if line | trim %}
+      {{ line }} {{ result.item }}
+      {% endfor %}
+      {% endfor %}
+    terraform_key_root: 'no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command="echo ''Please login as the user \"ubuntu\" rather than the user \"root\".'';echo;sleep 10;exit 142" {{ terraform_public_key }} terraform'
+    terraform_key_plain: "{{ terraform_public_key }} terraform"
+    permitted_keys_for_account: "{{ github_keys }}\n{{ terraform_key_root if item == 'root' else terraform_key_plain }}"
+  loop:
+    - deploy
+    - ubuntu
+    - root
+  tags:
+    - userkeys
   register: add_authorized_keys
 
 - name: Only allow ssh access with keys
