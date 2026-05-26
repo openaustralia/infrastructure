@@ -1,0 +1,121 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# bin/rekey-yaml — rewrite inline ansible-vault !vault blocks in YAML.
+#
+# Replaces the original rekey.rb. Used by bin/rotate-vault-passphrase to
+# re-encrypt every block tagged with a given vault id, but also handles
+# the migrate-between-ids case (the original rekey.rb's use case).
+#
+# Unlike rekey.rb this works in text mode (not via Psych), so comments,
+# key order, and surrounding whitespace are preserved — only the
+# !vault blocks themselves change.
+#
+# Usage:
+#   bin/rekey-yaml \
+#     --vault-id <old-id>@<old-source> \
+#     --new-vault-id <new-id>@<new-source> \
+#     [--in-place] \
+#     FILE [FILE ...]
+#
+# Blocks tagged with an id other than <old-id> are left untouched. If
+# --new-id differs from --old-id you'll migrate matching blocks to the
+# new id; if they're the same you'll rotate the passphrase in place.
+
+require "open3"
+require "optparse"
+
+old_id = old_source = new_id = new_source = nil
+in_place = false
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{$PROGRAM_NAME} --vault-id ID@SRC --new-vault-id ID@SRC [--in-place] FILE..."
+  opts.on("--vault-id ID@SRC", "Source for decrypting matching blocks") do |v|
+    old_id, old_source = v.split("@", 2)
+  end
+  opts.on("--new-vault-id ID@SRC", "Target id + source for re-encryption") do |v|
+    new_id, new_source = v.split("@", 2)
+  end
+  opts.on("--in-place", "Rewrite FILE in place (default: write to stdout)") { in_place = true }
+end.parse!
+
+abort "Missing --vault-id ID@SRC" if old_id.nil? || old_source.nil?
+abort "Missing --new-vault-id ID@SRC" if new_id.nil? || new_source.nil?
+abort "No input files" if ARGV.empty?
+
+def shell(*cmd, stdin:)
+  out, err, status = Open3.capture3(*cmd, stdin_data: stdin)
+  abort "#{cmd.first} failed: #{err}" unless status.success?
+  out
+end
+
+def decrypt(blob, id, src)
+  shell("ansible-vault", "decrypt", "--vault-id", "#{id}@#{src}", stdin: blob)
+end
+
+def encrypt(plain, id, src)
+  shell(
+    "ansible-vault", "encrypt",
+    "--vault-id", "#{id}@#{src}",
+    "--encrypt-vault-id", id,
+    stdin: plain
+  )
+end
+
+def rekey(text, old_id, old_source, new_id, new_source)
+  lines = text.lines
+  out = []
+  i = 0
+  while i < lines.length
+    line = lines[i]
+    out << line
+    i += 1
+
+    # Look for "<anything> !vault |" line.
+    next unless line =~ /!vault\s*\|\s*\z/
+
+    # Find body indent from the next non-blank line.
+    j = i
+    j += 1 while j < lines.length && lines[j].strip.empty?
+    break if j >= lines.length
+
+    indent = lines[j][/\A[ \t]+/]
+    break if indent.nil? || indent.empty?
+
+    # Collect body lines: must have the body indent and a non-whitespace
+    # character immediately after it. A blank line or a dedent terminates
+    # the block (matches how the inline !vault literal-block scalar is
+    # written in this repo: contiguous hex lines, no blanks inside).
+    body = []
+    while i < lines.length && lines[i] =~ /\A#{Regexp.escape(indent)}\S/
+      body << lines[i]
+      i += 1
+    end
+
+    blob = body.map { |l| l.start_with?(indent) ? l[indent.length..] : l }.join
+    header = blob.lines.first.to_s.strip
+    # Treat unlabeled 1.1 headers ($ANSIBLE_VAULT;1.1;AES256) as `default`
+    # — that's the effective vault id ansible assigns when none is tagged.
+    # Without this, a `default` rotation would silently skip every 1.1 block.
+    block_id = header.split(";")[3] || "default"
+
+    if block_id == old_id
+      plain = decrypt(blob, old_id, old_source)
+      cipher = encrypt(plain, new_id, new_source)
+      cipher += "\n" unless cipher.end_with?("\n")
+      out << cipher.lines.map { |l| indent + l }.join
+    else
+      out << body.join
+    end
+  end
+  out.join
+end
+
+ARGV.each do |path|
+  rewritten = rekey(File.read(path), old_id, old_source, new_id, new_source)
+  if in_place
+    File.write(path, rewritten)
+  else
+    print rewritten
+  end
+end

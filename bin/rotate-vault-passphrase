@@ -1,0 +1,176 @@
+#!/usr/bin/env bash
+# Rotate one of the four ansible-vault passphrases.
+#
+# Usage: bin/rotate-vault-passphrase <vault-id> [--dry-run]
+#
+# What it does, in this order:
+#   1. Read the CURRENT passphrase via bin/ansible-vault-client.
+#   2. Generate a fresh random passphrase.
+#   3. Update 1Password with the new passphrase.
+#   4. Re-encrypt every matching !vault block under group_vars/ and host_vars/.
+#
+# The 1Password write happens BEFORE any file rewrite so that a failure mid-flight
+# leaves the operator in a recoverable state: either roll 1Password back to the old
+# passphrase (still preserved in the temp dir) or retry the file rewrite. See the
+# EXIT trap below.
+
+set -euo pipefail
+
+here="$(cd "$(dirname "$0")" && pwd)"
+repo="$(cd "$here/.." && pwd)"
+OP_ACCOUNT="$(cat "$here/.op-account")"
+export OP_ACCOUNT
+
+vault_id="${1-}"
+dry_run=0
+shift || true
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run) dry_run=1 ;;
+    *) echo "unknown arg: $arg" >&2; exit 1 ;;
+  esac
+done
+
+case "$vault_id" in
+  default) op_item="op://nal3r3nlyo2sdqzegvdvlmvp5e/m2ccf6rvruxlyhevcovwher4cy" ;;
+  all)     op_item="op://nal3r3nlyo2sdqzegvdvlmvp5e/mpwsqfdmg7xinu46zmiqesn2yu" ;;
+  ec2)     op_item="op://nal3r3nlyo2sdqzegvdvlmvp5e/emvvhq7denilwx2nesg45fkwrm" ;;
+  rtk)     op_item="op://vya2dzj3feogihzs3xnkafwc3q/5u24ye7ixytg756okcpop36lam" ;;
+  *) echo "Usage: $0 <default|all|ec2|rtk> [--dry-run]" >&2; exit 1 ;;
+esac
+
+item_uuid="${op_item##*/}"
+
+cd "$repo"
+
+tmpdir="$(mktemp -d)"
+chmod 700 "$tmpdir"
+old_pw="$tmpdir/old"
+new_pw="$tmpdir/new"
+
+# Rotation state — drives the EXIT trap below.
+#   pre       — nothing committed yet; safe to delete tmpdir
+#   op_done   — 1Password is updated but files are not; tmpdir must be
+#               preserved so the operator can roll 1Password back to old
+#   complete  — both sides done; safe to delete tmpdir
+state="pre"
+
+cleanup() {
+  case "$state" in
+    pre|complete)
+      rm -rf "$tmpdir"
+      ;;
+    op_done)
+      cat >&2 <<RECOVERY
+
+═══════════════════════════════════════════════════════════════════════════
+ROTATION FAILED PARTWAY THROUGH — manual recovery required
+═══════════════════════════════════════════════════════════════════════════
+
+1Password now holds the NEW passphrase for vault id '$vault_id', but at
+least one YAML file could not be re-encrypted. Files on disk are still
+encrypted with the OLD passphrase, so other operators will fail to
+decrypt until you finish or roll back.
+
+OLD and NEW passphrases are preserved at:
+  OLD: $tmpdir/old
+  NEW: $tmpdir/new
+
+To roll 1Password back to OLD (recommended — start clean):
+
+  op item edit --account $OP_ACCOUNT $item_uuid \\
+      --template <(op item get $item_uuid --account $OP_ACCOUNT --format=json \\
+                   | jq --rawfile pw $tmpdir/old '.fields |= map(if .id == "password" then .value = (\$pw | rtrimstr("\n")) else . end)')
+
+  rm -rf $tmpdir
+  # then re-run bin/rotate-vault-passphrase $vault_id
+
+To instead finish the rewrite manually (NEW already in 1Password):
+  for f in \$(grep -rlE '<see script for pattern>' group_vars host_vars); do
+    bin/rekey-yaml --vault-id $vault_id@$tmpdir/old \\
+                   --new-vault-id $vault_id@$tmpdir/new --in-place "\$f"
+  done
+  rm -rf $tmpdir
+
+═══════════════════════════════════════════════════════════════════════════
+RECOVERY
+      ;;
+  esac
+}
+trap cleanup EXIT
+
+# 1. Read OLD passphrase via the dispatcher (works whether the current
+#    source is 1Password or Keybase).
+"$here/ansible-vault-client" --vault-id "$vault_id" > "$old_pw"
+
+# 2. Generate NEW. `python3 -m secrets` would be nice but the stdlib
+#    `secrets` module via -c is more portable. 48 chars from a 62-char
+#    alphabet = ~286 bits. No trailing newline.
+python3 -c '
+import secrets, string, sys
+alphabet = string.ascii_letters + string.digits
+sys.stdout.write("".join(secrets.choice(alphabet) for _ in range(48)))
+' > "$new_pw"
+
+echo "rotating vault id '$vault_id'..."
+
+# Find every file that contains a !vault block tagged with this vault id.
+# For `default`, also match unlabeled 1.1 blocks (`$ANSIBLE_VAULT;1.1;AES256`
+# with no `;<id>` suffix) — those are effectively default-tagged.
+if [ "$vault_id" = "default" ]; then
+  grep_pattern="^[[:space:]]+\\\$ANSIBLE_VAULT;[0-9.]+;AES256(;default)?[[:space:]]*\$"
+else
+  grep_pattern="^[[:space:]]+\\\$ANSIBLE_VAULT;[0-9.]+;AES256;${vault_id}[[:space:]]*\$"
+fi
+files=$(grep -rlE "$grep_pattern" group_vars host_vars 2>/dev/null || true)
+
+if [ -z "$files" ]; then
+  echo "  no files reference vault id '$vault_id' — nothing to rotate"
+  state="complete"
+  exit 0
+fi
+
+echo "  files that will be rewritten:"
+echo "$files" | sed 's/^/    /'
+
+# --- dry run path ---
+if [ "$dry_run" -eq 1 ]; then
+  echo "  --dry-run: verifying every matching block round-trips with the old passphrase"
+  while IFS= read -r f; do
+    "$here/rekey-yaml" --vault-id "$vault_id@$old_pw" --new-vault-id "$vault_id@$old_pw" "$f" >/dev/null
+  done <<<"$files"
+  echo "  dry-run OK"
+  state="complete"
+  exit 0
+fi
+
+# 3. Update 1Password FIRST (before touching any files) using a JSON
+#    template piped via stdin. The new passphrase never appears on a
+#    command line, so it can't be observed via `ps` / /proc/<pid>/cmdline.
+echo "  updating 1Password item ($op_item)..."
+op item get "$item_uuid" --account "$OP_ACCOUNT" --format=json \
+  | jq --rawfile pw "$new_pw" \
+       '.fields |= map(if .id == "password" then .value = ($pw | rtrimstr("\n")) else . end)' \
+  | op item edit "$item_uuid" --account "$OP_ACCOUNT" >/dev/null
+state="op_done"
+
+# 4. Re-encrypt every matching file. If anything fails here the EXIT
+#    trap preserves tmpdir and prints recovery instructions.
+echo "  re-encrypting !vault blocks in $(echo "$files" | wc -l | tr -d ' ') file(s)..."
+while IFS= read -r f; do
+  "$here/rekey-yaml" --vault-id "$vault_id@$old_pw" --new-vault-id "$vault_id@$new_pw" --in-place "$f"
+done <<<"$files"
+state="complete"
+
+cat <<MSG
+
+Rotation complete for vault id '$vault_id'.
+
+Next steps:
+  1. Review the diff (\`git diff group_vars host_vars\`) — only !vault
+     blocks tagged '$vault_id' (plus any 1.1 unlabeled ones, if
+     rotating 'default') should have changed.
+  2. While the Keybase fallback is still in use, also update the matching
+     Keybase file (see README "Rotating a vault passphrase").
+  3. Commit, get the change reviewed, and notify other operators.
+MSG

@@ -18,6 +18,7 @@
       - [CLI tools for credentials](#cli-tools-for-credentials)
     - [Environment setup](#environment-setup)
     - [Add the Ansible Vault password](#add-the-ansible-vault-password)
+      - [Rotating a vault passphrase](#rotating-a-vault-passphrase)
       - [Access to everything except right to know](#access-to-everything-except-right-to-know)
   - [Generating SSL certificates for development](#generating-ssl-certificates-for-development)
   - [Provisioning](#provisioning)
@@ -247,6 +248,17 @@ bin/ansible-vault-client --vault-id ec2 | wc -c   # should print the length of t
 If you set things up before this PR, your existing Keybase workflow keeps working unchanged — the dispatcher transparently uses the `.*-vault-pass` symlinks at the repo root when `op` isn't available. Run `make keybase` to verify the symlinks resolve. The Keybase fallback will be removed in a follow-up PR; please switch to 1Password when convenient.
 
 If you're on a headless system (WSL, headless VM) and need Keybase, there's a helper at [bin/headless-keybase.sh](bin/headless-keybase.sh) that brings the Keybase services up as user-space systemd units.
+
+#### <a name='Rotatingavaultpassphrase'></a>Rotating a vault passphrase
+
+Run:
+
+```bash
+bin/rotate-vault-passphrase <vault-id>           # one of: default, all, ec2, rtk
+bin/rotate-vault-passphrase <vault-id> --dry-run # check what would change without writing
+```
+
+The script reads the current passphrase via the dispatcher, generates a new one, walks `group_vars/` and `host_vars/` re-encrypting every `!vault` block tagged with that ID, and writes the new passphrase to 1Password. While the Keybase fallback still exists you'll also need to update the matching file in Keybase so contributors who haven't switched can keep working. Commit the resulting diff (only `!vault` blocks tagged with that ID should change) and notify other operators.
 
 #### Memory and CPU Usage
 
