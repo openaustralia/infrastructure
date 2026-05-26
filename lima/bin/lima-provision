@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Run site.yml against the Lima fleet inventory.
+#
+# Usage:
+#   lima/bin/lima-provision                       # all hosts
+#   lima/bin/lima-provision mysql.test            # subset (one or more)
+#   HOSTS=mysql.test,postgresql.test lima/bin/lima-provision  # subset via env
+#   TAGS=apache lima/bin/lima-provision           # tags forwarded to ansible-playbook
+#
+# Extra `ansible-playbook` arguments may be passed after `--`:
+#   lima/bin/lima-provision -- --diff --start-at-task='Install nginx'
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+INVENTORY="${ROOT}/lima/inventory/lima-hosts"
+
+if [ ! -s "${INVENTORY}" ]; then
+  echo "ERROR: ${INVENTORY} is missing or empty. Run lima/bin/lima-up first." >&2
+  exit 1
+fi
+
+ANSIBLE="${ROOT}/.venv/bin/ansible-playbook"
+if [ ! -x "${ANSIBLE}" ]; then
+  echo "ERROR: ${ANSIBLE} not found. Run 'make requirements' first." >&2
+  exit 1
+fi
+
+# Collect host subset from positional args or HOSTS env var.
+hosts_args=()
+if [ "$#" -gt 0 ] && [ "$1" != "--" ]; then
+  for h in "$@"; do
+    [ "$h" = "--" ] && break
+    hosts_args+=("$h")
+    shift
+  done
+fi
+if [ "${HOSTS:-}" != "" ]; then
+  IFS=',' read -ra extra <<< "${HOSTS}"
+  hosts_args+=("${extra[@]}")
+fi
+
+limit_arg=()
+if [ "${#hosts_args[@]}" -gt 0 ]; then
+  IFS=',' joined="${hosts_args[*]}"
+  limit_arg=(--limit "${joined}")
+fi
+
+# Drop leading -- if present so remaining "$@" is passthrough args.
+if [ "${1:-}" = "--" ]; then shift; fi
+
+opts=()
+if [ "${TAGS:-}" != "" ]; then
+  cleaned_tags=$(echo "${TAGS}" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//;s/,$//')
+  opts+=(--tags "${cleaned_tags},facts")
+  echo "INFO: TAGS=${cleaned_tags},facts"
+fi
+if [ "${SKIP_TAGS:-}" != "" ]; then
+  cleaned_skip=$(echo "${SKIP_TAGS}" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//;s/,$//')
+  opts+=(--skip-tags "${cleaned_skip}")
+  echo "INFO: SKIP_TAGS=${cleaned_skip}"
+fi
+if [ "${ANSIBLE_VERBOSE:-}" != "" ]; then
+  opts+=("-${ANSIBLE_VERBOSE}")
+fi
+
+cd "${ROOT}"
+exec "${ANSIBLE}" -i "${INVENTORY}" site.yml "${limit_arg[@]}" "${opts[@]}" --diff "$@"
