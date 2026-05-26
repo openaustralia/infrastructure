@@ -15,6 +15,7 @@
     - [2018-05-26](#2018-05-26)
   - [Requirements](#requirements)
     - [Prerequisites](#prerequisites)
+      - [CLI tools for credentials](#cli-tools-for-credentials)
     - [Environment setup](#environment-setup)
     - [Add the Ansible Vault password](#add-the-ansible-vault-password)
       - [Access to everything except right to know](#access-to-everything-except-right-to-know)
@@ -189,16 +190,27 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 - For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
 - In order to run Ansible, you'll need Python < 3.12 installed
   - 3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
-  - Secrets: Ansible looks at the four symlinks in the root of this repo and expects to find passphrases to unlock secrets used for production deployments. Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password). If Keybase isn't working for you, any technique you have to put the right value into the right file will be fine. You may need to update the `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location.
+  - Secrets: Ansible passphrases are read from the OAF 1Password account (with a Keybase fallback during the migration). See [Add the Ansible Vault password](#add-the-ansible-vault-password) below.
 - In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
 - For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
-- For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
-  - Terraform requires some extra secrets to access the S3 bucket we use to store Terraform's permanent state. You can put these in the usual place that AWS CLI tools look - `~/.aws/credentials`.
-  - Terraform requires some extra secrets in addition to those used by Ansible. Ask James about secrets.auto.tfvars
-    - Note that some of these secrets are the same secrets used as AWS credentials above, but they'll need to be provided again to populate the Terraform variables as well
-  - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use. `gcloud auth application-default login`
-  - Terraform runs `prepkey.sh` to grab your SSH public key to use as a deployer key in AWS. This script makes some simple assumptions: that `jq` is installed, and that your public key can be found at `~/.ssh/id_rsa.pub`.
-  - We host DNS on Cloudflare. An API key to manage these zones is one of the secrets you'll need to provide. To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
+- For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install). Terraform reads each cloud provider's credentials from your own CLI tooling — see [CLI tools for credentials](#cli-tools-for-credentials) below. The only shared secret is the RDS admin password, which `make tf-secrets` renders into `terraform/secrets.auto.tfvars` from 1Password.
+- Terraform also runs `prepkey.sh` to grab your SSH public key for use as the deployer key in AWS. It assumes `jq` is installed and that your public key is at `~/.ssh/id_rsa.pub`.
+
+#### <a name='CLItoolsforcredentials'></a>CLI tools for credentials
+
+We avoid storing each operator's credentials in this repo or in 1Password — each tool reads from your own CLI configuration. Install and configure the ones you need:
+
+- **1Password CLI (`op`)** — required to read the shared Ansible Vault passphrases and the RDS admin password.
+  - Install: `brew install --cask 1password-cli` on macOS, or the [official package](https://developer.1password.com/docs/cli/get-started) on Linux.
+  - The CLI normally inherits a session from the 1Password desktop app. If you're running headless, sign in once with `op signin --account oaforgau`.
+  - Ask an existing admin to add you to the **DevOps** vault (and the **RTK Devops** vault if you administer Right To Know).
+- **AWS CLI (`aws`)** — required for Terraform's AWS provider and for reading S3-backed Terraform state. Configure with whichever AWS auth method we're currently using (`aws configure sso`, `aws configure`, etc.).
+- **Google Cloud SDK (`gcloud`)** — required for Terraform's Google provider. After install, run `gcloud auth application-default login`.
+- **Linode CLI (`linode-cli`)** — required so Terraform's Linode provider can authenticate. Configure with `linode-cli configure --token`, then export the same token as `LINODE_TOKEN` (Terraform reads the env var directly).
+- **Cloudflare API token** — Cloudflare doesn't ship a "give me my token" CLI, so create a scoped token at <https://dash.cloudflare.com/profile/api-tokens> (or get one from an existing admin) and export it as `CLOUDFLARE_API_TOKEN`. Putting these env vars in `.envrc` with [direnv](https://direnv.net) is a good idea.
+- **Keybase** (optional, legacy) — only needed if you can't use 1Password yet. The team plans to remove the Keybase fallback in a follow-up PR.
+
+Run `make tf-env-check` to verify each of these is reachable from your shell before running Terraform.
 
 ### <a name='Environmentsetup'></a>Environment setup
 
@@ -216,29 +228,25 @@ make requirements vagrant
 
 ### <a name='AddtheAnsibleVaultpassword'></a>Add the Ansible Vault password
 
-Ansible Vault secrets are distributed via
-[Keybase](https://keybase.io). Before you can push to production
-servers, you'll need to be added to the appropriate teams.
+Each `ansible-vault` encrypted value in this repo is tagged with one of four vault IDs (`default`, `all`, `ec2`, `rtk`). Ansible reads the passphrase for each ID by invoking [bin/ansible-vault-client](bin/ansible-vault-client), which fetches it from the OAF 1Password account (and falls back to the legacy Keybase symlinks if 1Password isn't reachable).
 
-You'll need to have Keybase installed on the machine where you run
-ansible.
+#### Recommended: 1Password
 
-If this system has a gui, you'll need to enable "Finder integration"
-or the equivalent on your platform, under Settings -> Files.
+1. Install the 1Password CLI per [CLI tools for credentials](#cli-tools-for-credentials) above and sign in to the OAF account.
+2. Ask an existing admin to add you to the **DevOps** vault (and **RTK Devops** if you'll be administering Right To Know). The passphrase items already exist there.
+3. `make requirements` will detect that you're signed in and run the rest of the setup; no further action needed.
 
-If your system does _not_ have a GUI - for instance, it's a WSL instance on
-Windows; or a remote Ubuntu VM running headless - there's a helper script
-at `bin/headless-keybase.sh` which will help you run the Keybase services
-as user-space systemd units.
+Verify with:
 
-The first time you run `make` on a command that uses ansible, it will try to create the `.keybase`, symlinking it from the first
-common location for keybase that exists (on MacOS and Linux). It will fall back to actually asking keybase for its mountdir
-which requires keybase to be running. 
+```bash
+bin/ansible-vault-client --vault-id ec2 | wc -c   # should print the length of the ec2 passphrase
+```
 
-Use `make keybase` to check you have the required permissions.
+#### Legacy fallback: Keybase
 
-Once this is done, the symlinks to .*-vault-pass inside the repo
-should point to the password files. If this doesn't work you may need to update these files yourself.
+If you set things up before this PR, your existing Keybase workflow keeps working unchanged — the dispatcher transparently uses the `.*-vault-pass` symlinks at the repo root when `op` isn't available. Run `make keybase` to verify the symlinks resolve. The Keybase fallback will be removed in a follow-up PR; please switch to 1Password when convenient.
+
+If you're on a headless system (WSL, headless VM) and need Keybase, there's a helper at [bin/headless-keybase.sh](bin/headless-keybase.sh) that brings the Keybase services up as user-space systemd units.
 
 #### Memory and CPU Usage
 
