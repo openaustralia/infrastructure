@@ -1,0 +1,47 @@
+# File: roles/mise/tasks/main.yml
+---
+- name: Ensure curl is installed
+  apt:
+    name: curl
+    state: present
+    update_cache: yes
+
+- name: Create apt keyrings directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download mise GPG key
+  get_url:
+    url: https://mise.jdx.dev/gpg-key.pub
+    dest: /etc/apt/keyrings/mise-archive-keyring.asc
+    mode: '0644'
+
+- name: Add mise apt repository
+  apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.asc] https://mise.jdx.dev/deb stable main"
+    filename: mise
+    state: present
+
+- name: Install mise
+  apt:
+    name: mise
+    state: present
+    update_cache: yes
+
+- name: Install ruby versions via mise
+  become: yes
+  become_user: deploy
+  command: mise install ruby@{{ item }}
+  args:
+    creates: "/home/deploy/.local/share/mise/installs/ruby/{{ item }}"
+  loop: "{{ ruby_versions }}"
+
+- name: Install bundler for each ruby version
+  become: yes
+  become_user: deploy
+  command: mise exec ruby@{{ item }} -- gem install bundler --no-document
+  args:
+    creates: "/home/deploy/.local/share/mise/installs/ruby/{{ item }}/bin/bundle"
+  loop: "{{ ruby_versions }}"
