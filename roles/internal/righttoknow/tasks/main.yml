@@ -379,16 +379,6 @@
   notify: nginx restart
   when: "'righttoknow_production' in group_names"
 
-- name: Apply Alaveteli Storage Config (production)
-  template:
-    src: storage.yml.j2
-    dest: /srv/www/production/shared/
-    owner: deploy
-    group: deploy
-    mode: '0644'
-  notify: nginx restart
-  when: "'righttoknow_production' in group_names"
-
 - name: Apply Alaveteli config (staging)
   template:
     src: general.yml
