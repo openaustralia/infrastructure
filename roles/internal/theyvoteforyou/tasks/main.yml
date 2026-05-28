@@ -4,23 +4,34 @@
     name: apache2
     state: absent
 
-- name: Add key for passenger
-  apt_key:
-    url: "http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0xAC40B2F7"
-    state: present
+# Based on https://www.phusionpassenger.com/docs/advanced_guides/install_and_upgrade/standalone/install/oss/jammy.html
 
-- name: Apt via https
+- name: Add HTTPS support for APT
+  tags: passenger
   apt:
-    name: apt-transport-https
+    pkg:
+      - dirmngr
+      - gnupg
+      - apt-transport-https
+      - ca-certificates
+      - curl
     state: present
 
-- name: Apt add passenger to list
+- name: Add key for passenger
+  tags: passenger
+  ansible.builtin.get_url:
+    url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt
+    dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
+
+- name: Add passenger apt repository
+  tags: passenger
   apt_repository:
-    repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
+    repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
     update_cache: true
 
-- name: Install nginx and passenger
+- name: Install nginx and passenger packages
+  tags: passenger
   apt:
     pkg:
       - libnginx-mod-http-passenger
