@@ -189,3 +189,26 @@ apache_sites:
 swap_file_size_mb: '1024'
 # Prefer RAM but swap out genuinely idle processes under pressure
 swap_swappiness: '35'
+
+# *** OpenTelemetry Collector → Sentry ***
+# Local collector listens on 127.0.0.1:4318; PHP app + scripts send here.
+# Collector forwards to Sentry's OTLP/HTTP traces endpoint for project "twfy".
+# See roles/internal/otel-collector and roles/internal/openaustralia/templates/general.
+# Note this is host only part of the DSN!
+otel_collector_upstream_endpoint: "https://o4511341171310592.ingest.de.sentry.io/api/4511390767710288/otlp/"
+otel_collector_upstream_headers:
+  x-sentry-auth: "{{ otel_collector_sentry_auth_twfy }}"
+
+# Sentry OTLP auth header value (full "sentry_key=...,sentry_version=7" string)
+# for the twfy Sentry project. Vault-encrypted with the default vault id.
+otel_collector_sentry_auth_twfy: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          38646338323364336434373233623730336230306538653362313839646463353133343365653037
+          3563616135393466363561353231636435633735343037650a366464623638373166623461653130
+          37356365316137376366643937383264316633626139633830326533633064303533623339313939
+          3165666362323039310a373131343136313032373334323836396234343031353135373565633064
+          63656163313466393336636633366433336463323936646539366231373961656239643364643833
+          37623732343466316634333665316465363764306565666639343730396330656538653665646366
+          61333139616233613834623835373731373366653765333034366562343431383130333531346333
+          32383538373864323666306333363834336164646330336563626464323330376637393061633066
+          3734
