@@ -1,0 +1,95 @@
+# {{ ansible_managed }}
+# OpenTelemetry Collector config for {{ inventory_hostname }}.
+#
+# Receives OTLP from the local app on 127.0.0.1 and forwards to the upstream
+# OTLP/HTTP endpoint (e.g. Sentry). Never exposed off the box.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: {{ otel_collector_otlp_grpc_endpoint }}
+      http:
+        endpoint: {{ otel_collector_otlp_http_endpoint }}
+
+processors:
+  # Batch spans for efficient export. Tune timeout/size if you see drops.
+  batch:
+    timeout: 5s
+    send_batch_size: 512
+    send_batch_max_size: 1024
+
+  # Add / overwrite resource attributes on every span.
+  resource:
+    attributes:
+{% for k, v in otel_collector_resource_attributes.items() %}
+      - key: "{{ k }}"
+        value: "{{ v }}"
+        action: upsert
+{% endfor %}
+
+{% if otel_collector_sampling_ratio | float < 1.0 %}
+  # Head-based probability sampling. 1.0 keeps everything.
+  probabilistic_sampler:
+    sampling_percentage: {{ (otel_collector_sampling_ratio | float * 100) }}
+{% endif %}
+
+  # Don't let the collector blow up the box if memory gets tight.
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 50
+    spike_limit_percentage: 20
+
+exporters:
+{% if otel_collector_upstream_endpoint %}
+  otlphttp/upstream:
+    endpoint: {{ otel_collector_upstream_endpoint }}
+{% if otel_collector_upstream_headers %}
+    headers:
+{% for k, v in otel_collector_upstream_headers.items() %}
+      "{{ k }}": "{{ v }}"
+{% endfor %}
+{% endif %}
+    # Retry transient failures, then give up rather than buffering forever.
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 5m
+    sending_queue:
+      enabled: true
+      num_consumers: 2
+      queue_size: 1000
+{% else %}
+  # No upstream configured — drop received spans on the floor.
+  # Set otel_collector_upstream_endpoint to enable forwarding.
+  nop: {}
+{% endif %}
+
+  # Debug exporter (logs span summaries to journald). Useful for verifying
+  # the collector is receiving spans; remove or set verbosity: basic in prod
+  # if it's too noisy.
+  debug:
+    verbosity: basic
+
+service:
+  telemetry:
+    logs:
+      level: info
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors:
+        - memory_limiter
+        - resource
+{% if otel_collector_sampling_ratio | float < 1.0 %}
+        - probabilistic_sampler
+{% endif %}
+        - batch
+      exporters:
+{% if otel_collector_upstream_endpoint %}
+        - otlphttp/upstream
+{% else %}
+        - nop
+{% endif %}
+        - debug

@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: openaustralia
+  description: Installs the OpenTelemetry Collector (core distribution) as a systemd service that forwards OTLP traces to a configurable upstream (e.g. Sentry).
+  license: BSD-3-Clause
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+
+dependencies: []

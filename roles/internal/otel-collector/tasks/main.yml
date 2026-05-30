@@ -1,0 +1,61 @@
+---
+# Installs the OpenTelemetry Collector (core distribution) as a systemd service.
+# Listens on 127.0.0.1 only and forwards traces to a configurable OTLP/HTTP
+# endpoint (e.g. Sentry).
+
+- name: Check if otelcol is already installed
+  stat:
+    path: /usr/bin/otelcol
+  register: otelcol_installed
+
+- name: Check installed otelcol version
+  command: /usr/bin/otelcol --version
+  register: otelcol_installed_version
+  changed_when: false
+  failed_when: false
+  when: otelcol_installed.stat.exists
+
+- name: Create otel-collector temporary directory
+  tempfile:
+    state: directory
+    suffix: otelcol
+  register: otelcol_tmp
+  when: not otelcol_installed.stat.exists or otel_collector_version not in (otelcol_installed_version.stdout | default(''))
+
+- name: Download OpenTelemetry Collector deb
+  get_url:
+    url: "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_collector_version }}/otelcol_{{ otel_collector_version }}_linux_{{ otel_collector_arch }}.deb"
+    dest: "{{ otelcol_tmp.path }}/otelcol.deb"
+    mode: '0644'
+  when: not otelcol_installed.stat.exists or otel_collector_version not in (otelcol_installed_version.stdout | default(''))
+
+- name: Install OpenTelemetry Collector
+  apt:
+    deb: "{{ otelcol_tmp.path }}/otelcol.deb"
+  when: not otelcol_installed.stat.exists or otel_collector_version not in (otelcol_installed_version.stdout | default(''))
+  notify: restart otel-collector
+
+- name: Ensure otelcol config directory exists
+  file:
+    path: /etc/otelcol
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+# The deb installs a default /etc/otelcol/config.yaml. Replace it with ours.
+- name: Configure OpenTelemetry Collector
+  template:
+    src: config.yaml.j2
+    dest: /etc/otelcol/config.yaml
+    owner: root
+    # Group readable so otelcol (runs as the 'otelcol' user) can read it.
+    group: otelcol
+    mode: '0640'
+  notify: restart otel-collector
+
+- name: Enable and start otelcol systemd service
+  service:
+    name: otelcol
+    enabled: true
+    state: started

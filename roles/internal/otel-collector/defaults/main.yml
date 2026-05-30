@@ -1,0 +1,39 @@
+---
+# defaults file for otel-collector
+# Override in group_vars or host_vars as needed.
+
+# Version of the OpenTelemetry Collector to install (core distribution; contains
+# the otlphttp exporter which is all we need to ship spans to Sentry).
+# Check https://github.com/open-telemetry/opentelemetry-collector-releases/releases
+# before bumping.
+otel_collector_version: "0.111.0"
+
+# Architecture deb to download. amd64 covers the current t3 instances.
+otel_collector_arch: "amd64"
+
+# Where the collector listens for OTLP from the local app.
+# Bound to 127.0.0.1 only — never exposed off the box.
+otel_collector_otlp_http_endpoint: "127.0.0.1:4318"
+otel_collector_otlp_grpc_endpoint: "127.0.0.1:4317"
+
+# Upstream OTLP/HTTP endpoint (the Sentry project's OTLP traces URL).
+# Set this in group_vars/openaustralia.yml. Leave blank to keep the collector
+# running but with no upstream exporter (spans will be received and dropped).
+otel_collector_upstream_endpoint: ""
+
+# Headers sent with each export, e.g. Sentry auth.
+# Map of header name -> value. Vault-encrypt the secret values.
+# Example:
+#   otel_collector_upstream_headers:
+#     x-sentry-auth: "sentry sentry_key=abc..., sentry_version=7"
+otel_collector_upstream_headers: {}
+
+# Resource attributes attached to every span.
+# service.name and deployment.environment are usually overridden per host group.
+otel_collector_resource_attributes:
+  service.name: "twfy"
+  deployment.environment: "{{ env | default('production') }}"
+
+# Head-based probability sampling (0.0 - 1.0). 1.0 = keep everything.
+# Lower this if Sentry volume / quota becomes a concern.
+otel_collector_sampling_ratio: 1.0

@@ -1,0 +1,5 @@
+---
+- name: restart otel-collector
+  service:
+    name: otelcol
+    state: restarted
