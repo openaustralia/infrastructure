@@ -29,10 +29,13 @@ otel_collector_upstream_endpoint: ""
 otel_collector_upstream_headers: {}
 
 # Resource attributes attached to every span.
-# service.name and deployment.environment are usually overridden per host group.
+# Note: we do NOT set deployment.environment here because this collector
+# serves BOTH production and staging stages on the same host — the PHP app
+# injects deployment.environment itself per-stage (via OTEL_DEPLOYMENT_ENVIRONMENT
+# in conf/general). The resource processor uses 'insert' action so the app's
+# value is preserved; service.name is filled in only if missing.
 otel_collector_resource_attributes:
   service.name: "twfy"
-  deployment.environment: "{{ env | default('production') }}"
 
 # Head-based probability sampling (0.0 - 1.0). 1.0 = keep everything.
 # Lower this if Sentry volume / quota becomes a concern.
