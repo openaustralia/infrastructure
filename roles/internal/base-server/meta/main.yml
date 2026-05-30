@@ -1,17 +1,23 @@
 ---
 dependencies:
   - role: deploy-user
+    tags: [deploy-user]
   - role: MichaelRigart.aliases
+    tags: [aliases]
     aliases_list:
       - {user: deploy, alias: root}
       - {user: root, alias: web-administrators@openaustralia.org}
   - role: ANXS.ntp
+    tags: [ntp]
     # ietf has stopped providing the leap seconds file
     ntp_leapurl: https://hpiers.obspm.fr/iers/bul/bulc/ntp/leap-seconds.list
   - role: jnv.unattended-upgrades
+    tags: [unattended-upgrades]
     unattended_automatic_reboot: true
   - role: awscloudwatch
+    tags: [cloudwatch]
   - role: newrelic.newrelic-infra
+    tags: [newrelic]
     nrinfragent_config:
       license_key: "{{ newrelic_license_key }}"
       display_name: "{{ site_name }}"

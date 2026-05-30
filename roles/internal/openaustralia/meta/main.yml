@@ -149,6 +149,7 @@ dependencies:
       - backup
 
   - role: nickhammond.logrotate
+    tags: [logrotate]
     logrotate_scripts:
       - name: production
         path: "/srv/www/production/log/*.log"
@@ -158,6 +159,8 @@ dependencies:
           - compress
           - missingok
           - copytruncate
+          - delaycompress
+          - notifempty
       - name: staging
         path: "/srv/www/staging/shared/log/*.log"
         options:
@@ -166,3 +169,5 @@ dependencies:
           - compress
           - missingok
           - copytruncate
+          - delaycompress
+          - notifempty

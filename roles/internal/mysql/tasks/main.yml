@@ -6,6 +6,7 @@
   apt:
     pkg: mysql-server
     update_cache: true
+    cache_valid_time: 3600
 
 - name: Install dependency for following command
   apt: pkg=python3-mysqldb

@@ -9,14 +9,23 @@
     path: /data
     mode: '0755'
 
-# On EC2 we're using a seperate EBS volume to hold application data
+- name: Debug devices list in ansible_facts
+  debug:
+    var: ansible_facts['devices']
+
+# On EC2 we're using a separate EBS volume to hold application data
 - name: Create filesystem on attached block storage
   filesystem:
     fstype: ext4
     dev: /dev/nvme1n1
-  when: "'ec2' in group_names"
+  when:
+    - "'ec2' in group_names"
+    - "'nvme1n1' in ansible_facts['devices']"
+    - ansible_facts['devices']['nvme1n1']['partitions'] | length == 0
 
 - name: Mount /data filesystem
+  # Use SKIP_TAGS=mount_data to get past this point when checking
+  tags: mount_data
   mount:
     path: /data
     # Mount device by UUID because that's needed to run on AWS Nitro based instances (e.g. t3)
@@ -24,7 +33,10 @@
     src: "UUID={{ ansible_facts['devices']['nvme1n1']['links']['uuids'][0] }}"
     fstype: ext4
     state: mounted
-  when: "'ec2' in group_names"
+  when:
+  - "'ec2' in group_names"
+  - "'nvme1n1' in ansible_facts['devices']"
+  - "ansible_facts['devices']['nvme1n1']['links']['uuids'] | length > 0"
 
 - name: Create directories in /data
   file:
@@ -68,10 +80,12 @@
 
 # dependency for ansible mysql_db module handled in site.yml
 
-- name: Install MySQL client dev headers
+- name: Install MySQL client dev headers, updating cache as needed
   apt:
     name: libmysqlclient-dev
     state: present
+    update_cache: true
+    cache_valid_time: 3600
 
 - name: Install OpenSSL
   apt:
@@ -159,11 +173,13 @@
   tags: xapian
   apt_repository:
     repo: 'ppa:ondrej/php'
+    update_cache: true
 
 - name: Add xapian backports PPA for newer libxapian
   tags: xapian
   apt_repository:
     repo: 'ppa:xapian/backports'
+    update_cache: true
 
 - name: Install required packages
   tags: xapian
@@ -180,12 +196,12 @@
       - libsearch-xapian-perl
       - libxapian-dev
       - libxml-rss-perl
+      - libxml-simple-perl
       - libxml-twig-perl
       - libxslt1-dev
       - mysql-client
       - msmtp
       - xapian-tools
-    update_cache: true
 
 - name: Install required packages for php
   tags: xapian
@@ -263,7 +279,21 @@
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
-    creates: /usr/lib/php/20131226/xapian.so
+    creates: "/usr/lib/php/{{ php_api_version }}/xapian.so"
+  notify: reload apache
+
+- name: Create xapian mods-available ini
+  tags: xapian
+  copy:
+    content: "extension=xapian.so\n"
+    dest: /etc/php/{{ php_version }}/mods-available/xapian.ini
+    mode: '0644'
+
+- name: Enable xapian extension
+  tags: xapian
+  command: phpenmod xapian
+  args:
+    creates: /etc/php/{{ php_version }}/apache2/conf.d/20-xapian.ini
   notify: reload apache
 
 - name: Enable apache modules
@@ -287,10 +317,13 @@
     - cli
 
 - name: Copy test/test password
+  tags: htpasswd
   copy:
     src: htpasswd
     dest: /srv/www/{{ item }}/shared
-    mode: '0600'
+    mode: '0640'
+    owner: root
+    group: www-data
   with_items: "{{ environments }}"
   notify: reload apache
 
@@ -314,7 +347,31 @@
   when: item.key != '000-default'
   with_dict: "{{ apache_sites }}"
 
+- name: Find latest certbot live dir for each domain
+  tags: sites_available
+  shell: |
+    set -o pipefail
+    (ls -d /etc/letsencrypt/live/{{ item.value.domain }}-[0-9]* 2>/dev/null || echo /etc/letsencrypt/live/{{ item.value.domain }}) | tail -1
+  args:
+    executable: /bin/bash
+  register: certbot_live_dirs
+  changed_when: false
+  check_mode: no
+  with_dict: "{{ apache_sites }}"
+  when: item.key != '000-default'
+
+- name: Build certbot_live_dir_map fact
+  tags: sites_available
+  set_fact:
+    certbot_live_dir_map: >-
+      {{ certbot_live_dir_map | default({}) |
+         combine({item.item.value.domain: item.stdout | default('/etc/letsencrypt/live/' + item.item.value.domain)}) }}
+  check_mode: no
+  with_items: "{{ certbot_live_dirs.results }}"
+  when: item.skipped is not defined
+
 - name: Ensure each site has an apache configuration
+  tags: sites_available
   template:
     src: "apache/{{ item.value.template | default(item.key) }}.conf"
     dest: "/etc/apache2/sites-available/{{ item.key}}.conf"
@@ -368,6 +425,7 @@
   notify: reload apache
 
 - name: Copy across the parser config
+  tags: parser_config
   template:
     src: parser_configuration.yml
     dest: "/srv/www/{{ item }}/shared"
@@ -409,7 +467,7 @@
     user: deploy
     hour: 1
     minute: 37
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./dailyupdate 2>> /srv/www/{{ item }}/log/dailyupdate_log"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./dailyupdate 2>> /srv/www/{{ item }}/log/dailyupdate.log"
     state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
@@ -422,7 +480,7 @@
     hour: 4
     minute: 23
     weekday: 0
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./weeklyupdate 2>> /srv/www/{{ item }}/log/weeklyupdate_log"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v ./weeklyupdate 2>> /srv/www/{{ item }}/log/weeklyupdate.log"
     state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
@@ -435,7 +493,7 @@
     hour: 10
     minute: 0
     weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v php -q alertmailer.php 2>> /srv/www/{{ item }}/log/alertmailer_log"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && /usr/bin/time -v php -q alertmailer.php 2>> /srv/www/{{ item }}/log/alertmailer.log"
     state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
@@ -448,7 +506,7 @@
     hour: 9
     minute: 5
     weekday: "1-5"
-    job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true /usr/bin/time -v ./morningupdate 2>> /srv/www/{{ item }}/log/morningupdate_log"
+    job: "cd /srv/www/{{ item }}/current/twfy/scripts && VERBOSE=true /usr/bin/time -v ./morningupdate 2>> /srv/www/{{ item }}/log/morningupdate.log"
     state: "{{ cron_enabled_for[item] | ternary('present', 'absent')}}"
   with_items: "{{ environments }}"
 
