@@ -137,3 +137,11 @@ define('ADDTHIS_USERNAME', 'openaustralia');
 // Host to use when loading They Vote For You data
 define('PUBLICWHIP_HOST', 'https://theyvoteforyou.org.au');
 define('DISPLAY_VOTING_DATA', true);
+
+// *******************************************************************************
+// OpenTelemetry — send traces to the local OTel Collector, which forwards
+// to Sentry. See roles/internal/otel-collector.
+define('OTEL_SERVICE_NAME', 'twfy');
+define('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://127.0.0.1:4318');
+define('OTEL_EXPORTER_OTLP_HEADERS', '');
+define('OTEL_DEPLOYMENT_ENVIRONMENT', '{{ stage }}');
