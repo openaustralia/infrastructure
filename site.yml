@@ -279,6 +279,7 @@
   become: true
   roles:
     - openaustralia
+    - otel-collector
 
 - hosts: proxy
   name: "AU Proxy for morph scrapers"
