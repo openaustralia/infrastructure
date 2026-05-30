@@ -19,13 +19,14 @@ processors:
     send_batch_size: 512
     send_batch_max_size: 1024
 
-  # Add / overwrite resource attributes on every span.
+  # Fill in resource attributes only if the app didn't already set them.
+  # (Use 'insert' not 'upsert' so per-stage values from the app win.)
   resource:
     attributes:
 {% for k, v in otel_collector_resource_attributes.items() %}
       - key: "{{ k }}"
         value: "{{ v }}"
-        action: upsert
+        action: insert
 {% endfor %}
 
 {% if otel_collector_sampling_ratio | float < 1.0 %}
