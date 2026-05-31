@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+trap 'echo "ERROR: tag-provisioning failed at line $LINENO (exit $?)" >&2' ERR
+
+WIP=false
+if [ "${1:-}" = "--wip" ]; then
+  WIP=true
+  shift
+fi
+
+if [ $# -ne 4 ]; then
+  echo "Usage: bin/tag-provisioning [--wip] <target> <stage> <tags> <skip_tags>"
+  echo "       Use empty strings for unused args, eg: bin/tag-provisioning oaf \"\" \"\" \"\""
+  echo "       Intended to be called from make apply-* and tf-apply targets"
+  exit 1
+fi
+
+TARGET="$1"
+STAGE="$2"
+TAGS="$3"
+SKIP_TAGS="$4"
+
+mkdir -p tmp
+WIP_FILE="tmp/wip-tag-timestamp"
+
+HAS_REMOTE=$(git remote | grep -q origin && echo true || echo false)
+
+sanitize() {
+  echo "$1" | sed -e 's/[^A-Za-z0-9_]/-/g' -e 's/-\+/-/g' -e 's/^-//' -e 's/-$//'
+}
+
+build_tag() {
+  local tag="${TARGET}_${1}"
+  [ -n "$STAGE" ] && [ "$STAGE" != "all" ] && tag="${tag}_$(sanitize "$STAGE")"
+  [ -n "$TAGS" ]  && tag="${tag}-$(sanitize "$TAGS")"
+  [ -n "$SKIP_TAGS" ] && tag="${tag}-not-$(sanitize "$SKIP_TAGS")"
+  echo "$tag"
+}
+
+if $WIP; then
+  TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
+  if [ -f "$WIP_FILE" ]; then
+    echo "Discarding previous wip timestamp: $(cat "$WIP_FILE")"
+  fi
+  echo "$TIMESTAMP" > "$WIP_FILE"
+else
+  if [ ! -f "$WIP_FILE" ]; then
+    echo "Error: Missing $WIP_FILE with timestamp!"
+    exit 1
+  fi
+  TIMESTAMP=$(cat "$WIP_FILE")
+fi
+
+TAG=$(build_tag "$TIMESTAMP")
+WIP_TAG="wip-$TAG"
+if $WIP; then
+  TAG="$WIP_TAG"
+fi
+
+echo "Tagging: $TAG"
+git tag "$TAG"
+if $HAS_REMOTE; then
+  git push origin "$TAG"
+fi
+
+if ! $WIP; then
+  rm -f "$WIP_FILE"
+  echo "Removing: $WIP_TAG"
+  git tag -d "$WIP_TAG"
+  if $HAS_REMOTE; then
+    git push origin --delete "$WIP_TAG"
+  fi
+fi
+
