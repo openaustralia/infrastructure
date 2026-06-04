@@ -58,3 +58,20 @@ catch_mail_user: "{{ lookup('env', 'CATCH_MAIL_USER') | default('') }}"
 catch_mail_password: "{{ lookup('env', 'CATCH_MAIL_PASSWORD') | default('') }}"
 catch_mail_auth: "{{ lookup('env', 'CATCH_MAIL_AUTH') | default('plain') }}"
 
+# Sentry account
+sentry_host: !vault |
+  $ANSIBLE_VAULT;1.2;AES256;all
+  32313132373865396136653934666666663966313236653862323634643564373933346530313766
+  6536326364373061376234346536653965646131336631610a643931323466633836663738313066
+  37653237383237396365323265333432313530653735303062376235313763356562306139306539
+  3939653234313839660a333430363336376334643665373765326430346337386138303464333562
+  61663532643534333630373963393037396665316234383230303230353665316130353734623161
+  3837343363613462663761653430343939373031386663346533
+
+# Sentry dsn and endpoints (project and secret in group_vars)
+sentry_dsn: "https://{{ sentry_secret_key }}@{{ sentry_host }}/{{ sentry_project_id }}"
+
+sentry_otlp_endpoint: "https://{{ sentry_host }}/api/{{ sentry_project_id }}/integration/otlp"
+sentry_logs_endpoint: "{{ sentry_otlp_endpoint }}/v1/logs"
+sentry_traces_endpoint: "{{ sentry_otlp_endpoint }}/v1/traces"
+security_header_endpoint: "https://{{ sentry_host }}/api/{{ sentry_project_id }}/security/?sentry_key={{ sentry_secret_key }}"
