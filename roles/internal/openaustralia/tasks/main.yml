@@ -217,6 +217,17 @@
       - php{{ php_version }}-xml
       - php{{ php_version }}-zip
 
+# Composer is invoked by Capistrano during deploy (via the capistrano-composer
+# gem) to install the twfy app's PHP dependencies into release_path/twfy/vendor.
+# Without this the deploy fails at the composer:install step with
+# "composer: command not found".
+- name: Install composer (PHP dependency manager, used by Capistrano deploy)
+  apt:
+    name: composer
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
 - name: Set default PHP version
   tags: xapian
   community.general.alternatives:
