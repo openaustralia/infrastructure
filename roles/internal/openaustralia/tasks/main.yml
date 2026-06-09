@@ -252,8 +252,25 @@
 # xapian_version and xapian_bindings_sha256 are declared in
 # group_vars/openaustralia.yml and apply to both the apt install above
 # and the tarball download here.
+
+# Detect whether the PHP xapian extension is already installed at the
+# pinned version. If it is, skip the download/build/install cycle below.
+# Without this, get_url re-checks the upstream tarball every run, and -
+# more importantly - bumping xapian_version wouldn't trigger a reinstall
+# because the "creates" path on the install task is keyed on php_api_version,
+# not on xapian_version.
+- name: Check installed xapian PHP bindings version
+  tags: xapian
+  command: >
+    php -r 'echo extension_loaded("xapian") ? phpversion("xapian") : "";'
+  register: xapian_installed
+  changed_when: false
+  check_mode: false
+  failed_when: false
+
 - name: Download xapian bindings source
   tags: xapian
+  when: xapian_installed.stdout != xapian_version
   get_url:
     url: https://oligarchy.co.uk/xapian/{{ xapian_version }}/xapian-bindings-{{ xapian_version }}.tar.xz
     dest: /home/deploy
@@ -263,6 +280,7 @@
 
 - name: Unpack xapian bindings source
   tags: xapian
+  when: xapian_installed.stdout != xapian_version
   unarchive:
       src: /home/deploy/xapian-bindings-{{ xapian_version }}.tar.xz
       dest: /home/deploy
@@ -273,6 +291,7 @@
 
 - name: Configure xapian bindings
   tags: xapian
+  when: xapian_installed.stdout != xapian_version
   command: ./configure --with-php
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -281,6 +300,7 @@
 
 - name: Compile xapian bindings
   tags: xapian
+  when: xapian_installed.stdout != xapian_version
   command: make
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -289,10 +309,10 @@
 
 - name: Install xapian bindings
   tags: xapian
+  when: xapian_installed.stdout != xapian_version
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
-    creates: "/usr/lib/php/{{ php_api_version }}/xapian.so"
   notify: reload apache
 
 - name: Create xapian mods-available ini
