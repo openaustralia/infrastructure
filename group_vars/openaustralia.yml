@@ -99,6 +99,30 @@ environments:
 
 certbot_email: contact@oaf.org.au
 
+# Xapian pinning.
+#
+# We pin a single upstream version and use it for two things:
+#   1. apt installs libxapian-dev / libsearch-xapian-perl / xapian-tools
+#      from ppa:xapian/backports at this exact upstream version
+#      (the PPA's Debian-revision suffix varies by distro, hence the "*").
+#   2. the matching xapian-bindings tarball is downloaded from
+#      https://oligarchy.co.uk/xapian/<version>/ and verified against
+#      xapian_bindings_sha256.
+# Keeping these in lockstep avoids ABI mismatches between libxapian and
+# the PHP bindings.
+#
+# To bump to a new version:
+#   1. Check it's available from the PPA for the target distro:
+#        apt-cache madison libxapian-dev
+#   2. Confirm the upstream tarball exists:
+#        https://oligarchy.co.uk/xapian/<version>/xapian-bindings-<version>.tar.xz
+#   3. Compute its sha256:
+#        curl -sSL https://oligarchy.co.uk/xapian/<version>/xapian-bindings-<version>.tar.xz \
+#          | sha256sum
+#   4. Update both values below and commit.
+xapian_version: "1.4.22"
+xapian_bindings_sha256: "6b5454833ac52a3e32c0bb3a7290a5a2b50488d8918f2a45269557e4de9a31e5"
+
 # Disable backups for staging
 backup_profiles: []
 domains_for_certbot:
