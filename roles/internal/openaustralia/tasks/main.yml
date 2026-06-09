@@ -193,6 +193,7 @@
       - libmagickcore-dev
       - libmagickwand-dev
       - libmysqlclient-dev
+      - libsearch-xapian-perl
       - libxml-rss-perl
       - libxml-simple-perl
       - libxml-twig-perl
@@ -200,10 +201,14 @@
       - mysql-client
       - msmtp
 
-# Pin the xapian packages to the upstream version declared in
-# group_vars/openaustralia.yml. The "*" matches the PPA's Debian-revision
-# suffix (e.g. "-1.999jammy+1"), which varies by distro. See that file
-# for instructions on bumping the pin.
+# Pin the xapian library and tools to the upstream version declared in
+# group_vars/openaustralia.yml. We compile xapian-bindings from source
+# against these, so they must match the tarball version.
+#
+# Note: libsearch-xapian-perl is intentionally *not* pinned here. It
+# comes from Ubuntu's main repos (currently 1.2.25.4-1build1 on prod),
+# not from ppa:xapian/backports, and it's independent of the PHP
+# bindings we build from source.
 #
 # Why "=1.4.22*" rather than the full "=1.4.22-1.999jammy+1":
 # the PPA rebuilds the same upstream version with a different Debian
@@ -217,7 +222,6 @@
   apt:
     name:
       - "libxapian-dev={{ xapian_version }}*"
-      - "libsearch-xapian-perl={{ xapian_version }}*"
       - "xapian-tools={{ xapian_version }}*"
     state: present
 
