@@ -193,15 +193,33 @@
       - libmagickcore-dev
       - libmagickwand-dev
       - libmysqlclient-dev
-      - libsearch-xapian-perl
-      - libxapian-dev
       - libxml-rss-perl
       - libxml-simple-perl
       - libxml-twig-perl
       - libxslt1-dev
       - mysql-client
       - msmtp
-      - xapian-tools
+
+# Pin the xapian packages to the upstream version declared in
+# group_vars/openaustralia.yml. The "*" matches the PPA's Debian-revision
+# suffix (e.g. "-1.999jammy+1"), which varies by distro. See that file
+# for instructions on bumping the pin.
+#
+# Why "=1.4.22*" rather than the full "=1.4.22-1.999jammy+1":
+# the PPA rebuilds the same upstream version with a different Debian
+# revision per Ubuntu release (jammy, noble, ...). Pinning the full
+# revision would silently break if this playbook ran against a
+# host on a different distro. The glob pins only the upstream version
+# (the part that needs to match the bindings tarball) and lets apt pick
+# whatever revision the PPA published for the host's distro.
+- name: Install xapian packages at pinned version
+  tags: xapian
+  apt:
+    name:
+      - "libxapian-dev={{ xapian_version }}*"
+      - "libsearch-xapian-perl={{ xapian_version }}*"
+      - "xapian-tools={{ xapian_version }}*"
+    state: present
 
 - name: Install required packages for php
   tags: xapian
@@ -227,18 +245,9 @@
 
 # FIXME: Do we really need libpq-dev ??
 
-- name: Get installed libxapian-dev version
-  tags: xapian
-  command: dpkg-query -W -f='${Version}' libxapian-dev
-  register: libxapian_pkg_version
-  changed_when: false
-
-- name: Set xapian_version from installed libxapian-dev
-  tags: xapian
-  set_fact:
-    xapian_version: "{{ libxapian_pkg_version.stdout | regex_replace('^(\\d+\\.\\d+\\.\\d+).*$', '\\1') }}"
-
-# Matching the version number of libxapian-dev above
+# xapian_version and xapian_bindings_sha256 are declared in
+# group_vars/openaustralia.yml and apply to both the apt install above
+# and the tarball download here.
 - name: Download xapian bindings source
   tags: xapian
   get_url:
@@ -246,7 +255,7 @@
     dest: /home/deploy
     owner: deploy
     group: deploy
-    # FIXME: handle gpg checksum: checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
+    checksum: "sha256:{{ xapian_bindings_sha256 }}"
 
 - name: Unpack xapian bindings source
   tags: xapian
