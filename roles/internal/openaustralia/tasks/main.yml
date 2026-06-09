@@ -253,24 +253,25 @@
 # group_vars/openaustralia.yml and apply to both the apt install above
 # and the tarball download here.
 
-# Detect whether the PHP xapian extension is already installed at the
-# pinned version. If it is, skip the download/build/install cycle below.
-# Without this, get_url re-checks the upstream tarball every run, and -
-# more importantly - bumping xapian_version wouldn't trigger a reinstall
-# because the "creates" path on the install task is keyed on php_api_version,
-# not on xapian_version.
-- name: Check installed xapian PHP bindings version
+# Idempotency for the build-from-source chain below.
+#
+# We use a version-keyed stamp file rather than checking xapian.so or
+# phpversion("xapian"): the xapian PHP bindings don't report a useful
+# version string, and the .so path isn't version-keyed, so neither tells
+# us whether the *currently pinned* version is what's installed.
+#
+# First run on an existing host: the stamp won't exist, so a rebuild
+# will be triggered. To skip that one-off rebuild, ssh in and:
+#   sudo touch /var/lib/xapian-bindings-installed-{{ xapian_version }}
+- name: Stat xapian bindings install marker
   tags: xapian
-  command: >
-    php -r 'echo extension_loaded("xapian") ? phpversion("xapian") : "";'
-  register: xapian_installed
-  changed_when: false
-  check_mode: false
-  failed_when: false
+  stat:
+    path: "/var/lib/xapian-bindings-installed-{{ xapian_version }}"
+  register: xapian_stamp
 
 - name: Download xapian bindings source
   tags: xapian
-  when: xapian_installed.stdout != xapian_version
+  when: not xapian_stamp.stat.exists
   get_url:
     url: https://oligarchy.co.uk/xapian/{{ xapian_version }}/xapian-bindings-{{ xapian_version }}.tar.xz
     dest: /home/deploy
@@ -280,7 +281,7 @@
 
 - name: Unpack xapian bindings source
   tags: xapian
-  when: xapian_installed.stdout != xapian_version
+  when: not xapian_stamp.stat.exists
   unarchive:
       src: /home/deploy/xapian-bindings-{{ xapian_version }}.tar.xz
       dest: /home/deploy
@@ -289,9 +290,14 @@
       group: deploy
       creates: /home/deploy/xapian-bindings-{{ xapian_version }}/configure
 
+# The configure/compile/install tasks chdir into the unpacked source
+# directory, which doesn't exist during --check (unarchive only simulates).
+# Skip them in check mode rather than failing with "No such file or directory".
 - name: Configure xapian bindings
   tags: xapian
-  when: xapian_installed.stdout != xapian_version
+  when:
+    - not xapian_stamp.stat.exists
+    - not ansible_check_mode
   command: ./configure --with-php
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -300,7 +306,9 @@
 
 - name: Compile xapian bindings
   tags: xapian
-  when: xapian_installed.stdout != xapian_version
+  when:
+    - not xapian_stamp.stat.exists
+    - not ansible_check_mode
   command: make
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -309,11 +317,23 @@
 
 - name: Install xapian bindings
   tags: xapian
-  when: xapian_installed.stdout != xapian_version
+  when:
+    - not xapian_stamp.stat.exists
+    - not ansible_check_mode
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
   notify: reload apache
+
+- name: Record installed xapian bindings version
+  tags: xapian
+  when:
+    - not xapian_stamp.stat.exists
+    - not ansible_check_mode
+  copy:
+    dest: "/var/lib/xapian-bindings-installed-{{ xapian_version }}"
+    content: ""
+    mode: '0644'
 
 - name: Create xapian mods-available ini
   tags: xapian
