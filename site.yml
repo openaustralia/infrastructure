@@ -168,10 +168,10 @@
     - role: geerlingguy.swap
       when: swap_file_size_mb is defined or (swap_file_state | default('present')) == 'absent'
 
-- hosts: all
+- hosts: "all:!righttoknow" # Exclude RTK - Workaround for Issue #523
   name: "Remove unused ruby managers"
   become: true
-  tags: 
+  tags:
     - cleanup
     - ruby
   tasks:
@@ -187,20 +187,20 @@
     - name: Remove rvm
       import_role:
         name: internal/remove_rvm
-      tags: 
+      tags:
         - rvm
       when: "ruby_manager != 'rvm'"
     - name: Remove mise
       import_role:
         name: internal/remove_mise
-      tags: 
+      tags:
         - mise
       when: "ruby_manager != 'mise'"
 
-- hosts: all
+- hosts: "all:!righttoknow" # Exclude RTK - Workaround for Issue #523
   name: "Setup ruby managers and install versions"
   become: true
-  tags: 
+  tags:
     - ruby
   tasks:
     # NOTE: rbenv uses the latest bin/ruby-build so there will usually be changes if you are checking
