@@ -9,9 +9,9 @@
     path: /data
     mode: '0755'
 
-- name: Debug devices list in ansible_facts
-  debug:
-    var: ansible_facts['devices']
+# - name: Debug devices list in ansible_facts
+#   debug:
+#     var: ansible_facts['devices']
 
 # On EC2 we're using a separate EBS volume to hold application data
 - name: Create filesystem on attached block storage
