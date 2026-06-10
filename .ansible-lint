@@ -1,5 +1,10 @@
 exclude_paths:
   - roles/external
+  # Rails config/storage.yml-style ERB template (anchors mixed with
+  # <%= Rails.env %>). Valid Rails ERB, but ansible-lint's YAML parser
+  # can't handle it. It's a static payload copied to the host, not
+  # Ansible config, so there's nothing for the linter to check here.
+  - roles/internal/righttoknow/files/storage.yml
 # We are not publishing to Galaxy, so these don't matter
 skip_list:
   - meta-incorrect          # 28 occurrences - not required,
