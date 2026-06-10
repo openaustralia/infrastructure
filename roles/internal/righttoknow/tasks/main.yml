@@ -312,6 +312,7 @@
   when: "'righttoknow_production' in group_names"
 
 - name: Copy over database configuration for application
+  tags: alaveteli
   template:
     src: database.yml
     dest: "/srv/www/{{ item }}/shared/database.yml"
@@ -378,6 +379,7 @@
   notify: nginx reload
 
 - name: Apply Alaveteli config (production)
+  tags: alaveteli
   template:
     src: general.yml
     dest: /srv/www/production/shared/
@@ -400,17 +402,8 @@
   notify: nginx restart
   when: "'righttoknow_production' in group_names"
 
-- name: Apply Alaveteli Storage Config (production)
-  template:
-    src: storage.yml.j2
-    dest: /srv/www/production/shared/
-    owner: deploy
-    group: deploy
-    mode: '0644'
-  notify: nginx restart
-  when: "'righttoknow_production' in group_names"
-
 - name: Apply Alaveteli config (staging)
+  tags: alaveteli
   template:
     src: general.yml
     dest: /srv/www/staging/shared/
@@ -434,7 +427,8 @@
   when: "'righttoknow_staging' in group_names"
 
 - name: Apply Alaveteli Storage Config
-  template:
+  tags: alaveteli
+  copy:
     src: storage.yml
     dest: /srv/www/{{ item }}/shared/storage.yml
     owner: deploy
@@ -444,6 +438,7 @@
   notify: nginx restart
 
 - name: Apply user spam scorer config
+  tags: alaveteli
   template:
     src: user_spam_scorer.yml
     dest: "/srv/www/{{ item }}/shared/user_spam_scorer.yml"
@@ -454,6 +449,7 @@
   notify: nginx restart
 
 - name: Apply sidekiq config
+  tags: alaveteli
   copy:
     src: sidekiq.yml
     dest: "/srv/www/{{ item }}/shared/sidekiq.yml"
