@@ -2,6 +2,8 @@
 set -euo pipefail
 trap 'echo "ERROR: tag-provisioning failed at line $LINENO (exit $?)" >&2' ERR
 
+cd "$(dirname "$0")/.." || exit 1
+
 WIP=false
 if [ "${1:-}" = "--wip" ]; then
   WIP=true
