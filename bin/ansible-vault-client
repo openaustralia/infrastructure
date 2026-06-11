@@ -29,7 +29,7 @@ case "$vault_id" in
   default) op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/m2ccf6rvruxlyhevcovwher4cy/password"; kb=".vault_pass.txt" ;;
   all)     op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/mpwsqfdmg7xinu46zmiqesn2yu/password"; kb=".all-vault-pass" ;;
   ec2)     op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/emvvhq7denilwx2nesg45fkwrm/password"; kb=".ec2-vault-pass" ;;
-  rtk)     op_ref="op://vya2dzj3feogihzs3xnkafwc3q/5u24ye7ixytg756okcpop36lam/password"; kb=".rtk-vault-pass" ;;
+  rtk)     op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/pifybc4cdnm7ah2sjrgcpgibiy/password"; kb=".rtk-vault-pass" ;;
   *) echo "ansible-vault-client: unknown vault id '$vault_id'" >&2; exit 1 ;;
 esac
 

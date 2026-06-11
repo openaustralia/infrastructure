@@ -208,7 +208,7 @@ We avoid storing each operator's credentials in this repo or in 1Password — ea
 - **1Password CLI (`op`)** — required to read the shared Ansible Vault passphrases and the RDS admin password.
   - Install: `brew install --cask 1password-cli` on macOS, or the [official package](https://developer.1password.com/docs/cli/get-started) on Linux.
   - The CLI normally inherits a session from the 1Password desktop app. If you're running headless, sign in once with `op signin --account oaforgau`.
-  - Ask an existing admin to add you to the **DevOps** vault (and the **RTK Devops** vault if you administer Right To Know).
+  - Ask an existing admin to add you to the **DevOps** vault.
 - **AWS CLI (`aws`)** — required for Terraform's AWS provider and for reading S3-backed Terraform state. Configure with whichever AWS auth method we're currently using (`aws configure sso`, `aws configure`, etc.).
 - **Google Cloud SDK (`gcloud`)** — required for Terraform's Google provider. After install, run `gcloud auth application-default login`.
 - **Linode CLI (`linode-cli`)** — required so Terraform's Linode provider can authenticate. Configure with `linode-cli configure --token`, then export the same token as `LINODE_TOKEN` (Terraform reads the env var directly).
