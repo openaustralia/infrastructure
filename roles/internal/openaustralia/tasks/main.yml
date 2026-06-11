@@ -9,10 +9,6 @@
     path: /data
     mode: '0755'
 
-- name: Debug devices list in ansible_facts
-  debug:
-    var: ansible_facts['devices']
-
 # On EC2 we're using a separate EBS volume to hold application data
 - name: Create filesystem on attached block storage
   filesystem:
@@ -238,6 +234,17 @@
       - php{{ php_version }}-mbstring
       - php{{ php_version }}-xml
       - php{{ php_version }}-zip
+
+# Composer is invoked by Capistrano during deploy (via the capistrano-composer
+# gem) to install the twfy app's PHP dependencies into release_path/twfy/vendor.
+# Without this the deploy fails at the composer:install step with
+# "composer: command not found".
+- name: Install composer (PHP dependency manager, used by Capistrano deploy)
+  apt:
+    name: composer
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
 
 - name: Set default PHP version
   tags: xapian
