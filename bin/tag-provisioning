@@ -68,7 +68,7 @@ if ! $WIP; then
   echo "Removing: $WIP_TAG"
   git tag -d "$WIP_TAG" 2>/dev/null || true
   if $HAS_REMOTE; then
-    git push origin --delete "$WIP_TAG"
+    git push origin --delete "$WIP_TAG" 2>/dev/null || true
   fi
 fi
 
