@@ -10,6 +10,7 @@ fi
 
 if [ $# -ne 4 ]; then
   echo "Usage: bin/tag-provisioning [--wip] <target> <stage> <tags> <skip_tags>"
+  echo "       Should be called with --wip first, then do action then call without --wip to replace wip tag"
   echo "       Use empty strings for unused args, eg: bin/tag-provisioning oaf \"\" \"\" \"\""
   echo "       Intended to be called from make apply-* and tf-apply targets"
   exit 1
@@ -40,12 +41,12 @@ build_tag() {
 if $WIP; then
   TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
   if [ -f "$WIP_FILE" ]; then
-    echo "Discarding previous wip timestamp: $(cat "$WIP_FILE")"
+    echo "Discarding previous wip timestamp (presumably provisioning failed): $(cat "$WIP_FILE")"
   fi
   echo "$TIMESTAMP" > "$WIP_FILE"
 else
   if [ ! -f "$WIP_FILE" ]; then
-    echo "Error: Missing $WIP_FILE with timestamp!"
+    echo "Error: Missing $WIP_FILE with timestamp! Call with --wip before the actual provisioning command so attempts are tagged!"
     exit 1
   fi
   TIMESTAMP=$(cat "$WIP_FILE")
