@@ -1,11 +1,4 @@
 ---
-# Rails config/storage.yml-style ERB template (anchors mixed with
-# <%= Rails.env %>). Valid Rails ERB, but yamllint's parser can't handle
-# it. It's a static payload copied to the host, not Ansible config.
-# Also excluded from ansible-lint via .ansible-lint.
-ignore: |
-  roles/internal/righttoknow/files/storage.yml
-
 rules:
   # Updated to match rubocop: 120 chars, but don't fail if a line is longer
   # Use `rubocop --show-cops Layout/LineLength` to check
