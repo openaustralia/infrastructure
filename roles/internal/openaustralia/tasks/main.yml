@@ -9,10 +9,6 @@
     path: /data
     mode: '0755'
 
-- name: Debug devices list in ansible_facts
-  debug:
-    var: ansible_facts['devices']
-
 # On EC2 we're using a separate EBS volume to hold application data
 - name: Create filesystem on attached block storage
   filesystem:
@@ -194,14 +190,36 @@
       - libmagickwand-dev
       - libmysqlclient-dev
       - libsearch-xapian-perl
-      - libxapian-dev
       - libxml-rss-perl
       - libxml-simple-perl
       - libxml-twig-perl
       - libxslt1-dev
       - mysql-client
       - msmtp
-      - xapian-tools
+
+# Pin the xapian library and tools to the upstream version declared in
+# group_vars/openaustralia.yml. We compile xapian-bindings from source
+# against these, so they must match the tarball version.
+#
+# Note: libsearch-xapian-perl is intentionally *not* pinned here. It
+# comes from Ubuntu's main repos (currently 1.2.25.4-1build1 on prod),
+# not from ppa:xapian/backports, and it's independent of the PHP
+# bindings we build from source.
+#
+# Why "=1.4.22*" rather than the full "=1.4.22-1.999jammy+1":
+# the PPA rebuilds the same upstream version with a different Debian
+# revision per Ubuntu release (jammy, noble, ...). Pinning the full
+# revision would silently break if this playbook ran against a
+# host on a different distro. The glob pins only the upstream version
+# (the part that needs to match the bindings tarball) and lets apt pick
+# whatever revision the PPA published for the host's distro.
+- name: Install xapian packages at pinned version
+  tags: xapian
+  apt:
+    name:
+      - "libxapian-dev={{ xapian_version }}*"
+      - "xapian-tools={{ xapian_version }}*"
+    state: present
 
 - name: Install required packages for php
   tags: xapian
@@ -217,6 +235,17 @@
       - php{{ php_version }}-xml
       - php{{ php_version }}-zip
 
+# Composer is invoked by Capistrano during deploy (via the capistrano-composer
+# gem) to install the twfy app's PHP dependencies into release_path/twfy/vendor.
+# Without this the deploy fails at the composer:install step with
+# "composer: command not found".
+- name: Install composer (PHP dependency manager, used by Capistrano deploy)
+  apt:
+    name: composer
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
 - name: Set default PHP version
   tags: xapian
   community.general.alternatives:
@@ -227,29 +256,39 @@
 
 # FIXME: Do we really need libpq-dev ??
 
-- name: Get installed libxapian-dev version
-  tags: xapian
-  command: dpkg-query -W -f='${Version}' libxapian-dev
-  register: libxapian_pkg_version
-  changed_when: false
+# xapian_version and xapian_bindings_sha256 are declared in
+# group_vars/openaustralia.yml and apply to both the apt install above
+# and the tarball download here.
 
-- name: Set xapian_version from installed libxapian-dev
+# Idempotency for the build-from-source chain below.
+#
+# We use a version-keyed stamp file rather than checking xapian.so or
+# phpversion("xapian"): the xapian PHP bindings don't report a useful
+# version string, and the .so path isn't version-keyed, so neither tells
+# us whether the *currently pinned* version is what's installed.
+#
+# First run on an existing host: the stamp won't exist, so a rebuild
+# will be triggered. To skip that one-off rebuild, ssh in and:
+#   sudo touch /var/lib/xapian-bindings-installed-{{ xapian_version }}
+- name: Stat xapian bindings install marker
   tags: xapian
-  set_fact:
-    xapian_version: "{{ libxapian_pkg_version.stdout | regex_replace('^(\\d+\\.\\d+\\.\\d+).*$', '\\1') }}"
+  stat:
+    path: "/var/lib/xapian-bindings-installed-{{ xapian_version }}"
+  register: xapian_stamp
 
-# Matching the version number of libxapian-dev above
 - name: Download xapian bindings source
   tags: xapian
+  when: not xapian_stamp.stat.exists
   get_url:
     url: https://oligarchy.co.uk/xapian/{{ xapian_version }}/xapian-bindings-{{ xapian_version }}.tar.xz
     dest: /home/deploy
     owner: deploy
     group: deploy
-    # FIXME: handle gpg checksum: checksum: sha256:b15ca7984980a1d2aedd3378648ef5f3889cb39a047bac1522a8e5d04f0a8557
+    checksum: "sha256:{{ xapian_bindings_sha256 }}"
 
 - name: Unpack xapian bindings source
   tags: xapian
+  when: not xapian_stamp.stat.exists
   unarchive:
       src: /home/deploy/xapian-bindings-{{ xapian_version }}.tar.xz
       dest: /home/deploy
@@ -258,8 +297,14 @@
       group: deploy
       creates: /home/deploy/xapian-bindings-{{ xapian_version }}/configure
 
+# The configure/compile/install tasks chdir into the unpacked source
+# directory, which doesn't exist during --check (unarchive only simulates).
+# Skip them in check mode rather than failing with "No such file or directory".
 - name: Configure xapian bindings
   tags: xapian
+  when:
+    - not xapian_stamp.stat.exists
+    - not ansible_check_mode
   command: ./configure --with-php
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -268,6 +313,9 @@
 
 - name: Compile xapian bindings
   tags: xapian
+  when:
+    - not xapian_stamp.stat.exists
+    - not ansible_check_mode
   command: make
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
@@ -276,11 +324,23 @@
 
 - name: Install xapian bindings
   tags: xapian
+  when:
+    - not xapian_stamp.stat.exists
+    - not ansible_check_mode
   command: make install
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
-    creates: "/usr/lib/php/{{ php_api_version }}/xapian.so"
   notify: reload apache
+
+- name: Record installed xapian bindings version
+  tags: xapian
+  when:
+    - not xapian_stamp.stat.exists
+    - not ansible_check_mode
+  copy:
+    dest: "/var/lib/xapian-bindings-installed-{{ xapian_version }}"
+    content: ""
+    mode: '0644'
 
 - name: Create xapian mods-available ini
   tags: xapian

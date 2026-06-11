@@ -37,7 +37,8 @@ raw_emails_test: &raw_emails_test
   root: <%= Rails.root.join('tmp/storage/raw_emails') %>
 
 raw_emails:
-  <<: *raw_emails_<%= Rails.env %>
+  service: Disk
+  root: "<%= Rails.env.test? ? Rails.root.join('tmp/storage/raw_emails') : Rails.root.join('storage/raw_emails') %>"
 
 ## Attachments ##
 
@@ -56,4 +57,5 @@ attachments_test: &attachments_test
   root: <%= Rails.root.join('tmp/storage/attachments') %>
 
 attachments:
-  <<: *attachments_<%= Rails.env %>
+  service: Disk
+  root: "<%= Rails.env.test? ? Rails.root.join('tmp/storage/attachments') : Rails.root.join('storage/attachments') %>"
