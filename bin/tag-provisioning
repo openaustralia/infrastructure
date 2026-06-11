@@ -23,7 +23,7 @@ SKIP_TAGS="$4"
 mkdir -p tmp
 WIP_FILE="tmp/wip-tag-timestamp"
 
-HAS_REMOTE=$(git remote | grep -q origin && echo true || echo false)
+HAS_REMOTE=$(git remote | grep -xq origin && echo true || echo false)
 
 sanitize() {
   echo "$1" | sed -e 's/[^A-Za-z0-9_]/-/g' -e 's/-\+/-/g' -e 's/^-//' -e 's/-$//'
