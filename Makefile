@@ -3,9 +3,10 @@
         check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
         check-rtk-prod check-rtk-staging check-theyvoteforyou check-target \
         scan-oaf scan-openaustralia scan-planningalerts \
-        clean clobber help install-linters keybase letsencrypt lint production retry roles \
-        show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target tf-init tf-plan \
-        tf-plan-target update-github-ssh-keys vagrant venv yaml-lint
+        clean clobber help install-linters keybase letsencrypt lint op-check production retry roles \
+        show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target \
+        tf-env-check tf-init tf-plan tf-plan-target tf-secrets \
+        update-github-ssh-keys vagrant venv yaml-lint
 
 _STAGE := $(if $(filter-out all,$(STAGE)),_$(STAGE),)
 
@@ -32,8 +33,12 @@ help:
 	@echo "Available targets"
 	@echo "  help                                Output this help text"
 	@echo "  all                                 Run full site.yml playbook against all hosts"
-	@echo "  requirements                        Install requirements: venv, roles, collections and keybase symlink"
-	@echo "  keybase                             Set up Keybase symlink for MacOS or Linux and check perms"
+	@echo "  requirements                        Install requirements: venv, roles, collections, terraform.pem"
+	@echo "  op-check                            Warn if not signed into the OAF 1Password account"
+	@echo "  terraform.pem                       Materialise terraform.pem from 1Password (or use Keybase fallback)"
+	@echo "  tf-secrets                          Render terraform/secrets.auto.tfvars from 1Password via op inject"
+	@echo "  tf-env-check                        Warn if AWS/Cloudflare/Linode/gcloud credentials aren't reachable"
+	@echo "  keybase                             (Legacy fallback) Set up Keybase symlink and check perms"
 	@echo "  roles                               Install Ansible Galaxy external roles and collections"
 	@echo "  venv                                Create Python virtualenv and install requirements"
 	@echo "  generate-certificates               Generate certificates for the development *.test domains"
@@ -82,7 +87,51 @@ help:
 setup:
 	sudo apt install parallel jq direnv
 
-requirements: .keybase .make/roles venv
+requirements: op-check terraform.pem .make/roles venv
+
+# Warn (but don't fail) if the operator can't read the OAF 1Password
+# account. Non-fatal so contributors who still use Keybase symlinks can
+# run `make` without 1Password. We probe with `op vault list` rather
+# than `op whoami` because the latter doesn't recognise sessions
+# inherited from the 1Password desktop app integration.
+op-check:
+	@if command -v op >/dev/null 2>&1 && \
+	    op vault list --account "$$(cat bin/.op-account)" >/dev/null 2>&1; then \
+	  echo "OK: OAF 1Password reachable ($$(cat bin/.op-account))"; \
+	else \
+	  echo "WARN: OAF 1Password not reachable (account=$$(cat bin/.op-account)). Will fall back to Keybase symlinks where possible."; \
+	fi
+
+# Materialise terraform.pem from 1Password. The script is idempotent
+# (no-op if the file is already present, e.g. as the Keybase symlink),
+# so we name the file directly as the target — that way `rm terraform.pem`
+# correctly triggers a rebuild on the next `make`.
+terraform.pem:
+	bin/fetch-terraform-pem
+
+# Render terraform/secrets.auto.tfvars from the committed template via
+# `op inject`. Same reasoning as terraform.pem: target the real file
+# so deleting it forces a rebuild.
+tf-secrets: terraform/secrets.auto.tfvars
+terraform/secrets.auto.tfvars: terraform/secrets.auto.tfvars.tmpl bin/.op-account
+	OP_ACCOUNT="$$(cat bin/.op-account)" op inject --account "$$(cat bin/.op-account)" \
+	    -i terraform/secrets.auto.tfvars.tmpl -o terraform/secrets.auto.tfvars
+	chmod 600 terraform/secrets.auto.tfvars
+
+# Advisory check that the per-operator credentials terraform needs are reachable.
+# Non-fatal: print warnings and continue; terraform itself will fail loudly if
+# anything is truly missing.
+tf-env-check:
+	@aws sts get-caller-identity >/dev/null 2>&1 \
+	    || echo "WARN: 'aws sts get-caller-identity' failed — sign into AWS (e.g. \`aws sso login\`)"
+	@gcloud auth application-default print-access-token >/dev/null 2>&1 \
+	    || echo "WARN: gcloud application-default credentials missing — run \`gcloud auth application-default login\`"
+	@[ -n "$$CLOUDFLARE_API_TOKEN" ] \
+	    || echo "WARN: CLOUDFLARE_API_TOKEN is unset — export it (e.g. in .envrc)"
+	@[ -n "$$LINODE_TOKEN" ] \
+	    || echo "WARN: LINODE_TOKEN is unset — export it (e.g. in .envrc)"
+
+# --- Legacy Keybase fallback (kept until the follow-up cleanup PR) ---
 
 # Configure .keybase for MacOS or Linux
 .keybase:
@@ -166,6 +215,10 @@ show-rds-facts: check-host requirements
 clean:
 	rm -rf .venv roles/external site.retry collections .keybase .make
 	rm -rf terraform/.terraform
+	rm -f terraform/secrets.auto.tfvars
+	@# Only remove terraform.pem if it's a real file (i.e. materialised from
+	@# 1Password). If it's the Keybase symlink, leave it alone.
+	@if [ -f terraform.pem ] && [ ! -L terraform.pem ]; then rm -f terraform.pem; fi
 
 clobber: clean
 	vagrant destroy --force || echo "WARNING: Ignoring vagrant error!"
@@ -175,21 +228,21 @@ clobber: clean
 	# TODO: Should we delete terraform/terraform.tfstate.* ?
 
 # Terraform
-tf-init: .make/terraform
+tf-init: tf-secrets .make/terraform
 
 .make/terraform: terraform/*.tf terraform/*/*.tf | .make
 	terraform -chdir=terraform init
 	touch .make/terraform
 
-tf-plan: .make/terraform
+tf-plan: tf-secrets tf-env-check .make/terraform
 	terraform -chdir=terraform plan
-tf-apply: .make/terraform
+tf-apply: tf-secrets tf-env-check .make/terraform
 	terraform -chdir=terraform apply
 tf-validate: tf-check-fmt .make/terraform
-	terraform -chdir=terraform validate 
+	terraform -chdir=terraform validate
 	@echo "PASSED tf-validate!"
 tf-check-fmt:
-	terraform -chdir=terraform fmt -check 
+	terraform -chdir=terraform fmt -check
 	@echo "PASSED tf-check-fmt!"
 
 check-target:
@@ -199,10 +252,10 @@ ifndef TARGET
 	@exit 1
 endif
 
-tf-plan-target: check-target .make/terraform
+tf-plan-target: check-target tf-secrets tf-env-check .make/terraform
 	terraform -chdir=terraform plan -target=module.$(TARGET)
 
-tf-apply-target: check-target .make/terraform
+tf-apply-target: check-target tf-secrets tf-env-check .make/terraform
 	terraform -chdir=terraform apply -target=module.$(TARGET)
 
 stage_required:

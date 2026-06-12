@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Ansible vault-id "client" dispatcher.
+#
+# Invoked by ansible as: bin/ansible-vault-client --vault-id <id>
+# Prints the matching passphrase on stdout (no trailing newline).
+#
+# Reads from the OAF 1Password account when available; falls back to the
+# Keybase symlinks in the repo root so contributors who have not yet
+# switched to 1Password keep working. The Keybase fallback will be
+# removed in a follow-up PR.
+
+set -euo pipefail
+
+here="$(cd "$(dirname "$0")" && pwd)"
+repo="$(cd "$here/.." && pwd)"
+OP_ACCOUNT="$(cat "$here/.op-account")"
+export OP_ACCOUNT
+
+vault_id="default"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --vault-id) vault_id="$2"; shift 2 ;;
+    --vault-id=*) vault_id="${1#*=}"; shift ;;
+    *) shift ;;
+  esac
+done
+
+case "$vault_id" in
+  default) op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/m2ccf6rvruxlyhevcovwher4cy/password"; kb=".vault_pass.txt" ;;
+  all)     op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/mpwsqfdmg7xinu46zmiqesn2yu/password"; kb=".all-vault-pass" ;;
+  ec2)     op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/emvvhq7denilwx2nesg45fkwrm/password"; kb=".ec2-vault-pass" ;;
+  rtk)     op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/pifybc4cdnm7ah2sjrgcpgibiy/password"; kb=".rtk-vault-pass" ;;
+  *) echo "ansible-vault-client: unknown vault id '$vault_id'" >&2; exit 1 ;;
+esac
+
+if command -v op >/dev/null 2>&1 \
+   && op read -n --account "$OP_ACCOUNT" "$op_ref" 2>/dev/null; then
+  exit 0
+fi
+
+if [ -r "$repo/$kb" ]; then
+  tr -d '\n' < "$repo/$kb"
+  exit 0
+fi
+
+cat >&2 <<MSG
+ansible-vault-client: could not read passphrase for vault id '$vault_id'.
+  Tried 1Password (account=$OP_ACCOUNT, ref=$op_ref) and Keybase fallback ($kb).
+  Either sign into the OAF 1Password account (\`op signin --account $OP_ACCOUNT\`)
+  or restore the Keybase symlinks (\`make keybase\`).
+MSG
+exit 1

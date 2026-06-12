@@ -1,7 +1,11 @@
+# Provider credentials come from each operator's CLI tooling, not tfvars:
+#   AWS         — `~/.aws/credentials`, AWS_PROFILE, AWS SSO, instance profile
+#   Cloudflare  — CLOUDFLARE_API_TOKEN env var
+#   Linode      — LINODE_TOKEN env var
+#   Google      — `gcloud auth application-default login`
+
 provider "aws" {
-  access_key = var.aws_access_key
-  secret_key = var.aws_secret_key
-  region     = var.ec2_region
+  region = var.ec2_region
 }
 
 provider "aws" {
@@ -14,12 +18,8 @@ provider "aws" {
   region = "ap-southeast-1"
 }
 
-provider "cloudflare" {
-  api_token = var.cloudflare_api_token
-}
+provider "cloudflare" {}
 
-# To use this provider we authenticate with:
-# gcloud auth application-default login
 provider "google" {
   project               = "planningalerts-214303"
   region                = "australia-southeast1"
@@ -28,6 +28,4 @@ provider "google" {
   billing_project       = "planningalerts-214303"
 }
 
-provider "linode" {
-  token = var.linode_api_token
-}
+provider "linode" {}

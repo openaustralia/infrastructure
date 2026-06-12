@@ -15,8 +15,12 @@
     - [2018-05-26](#2018-05-26)
   - [Requirements](#requirements)
     - [Prerequisites](#prerequisites)
+      - [CLI tools for credentials](#cli-tools-for-credentials)
     - [Environment setup](#environment-setup)
     - [Add the Ansible Vault password](#add-the-ansible-vault-password)
+      - [Recommended: 1Password](#recommended-1password)
+      - [Legacy fallback: Keybase](#legacy-fallback-keybase)
+      - [Rotating a vault passphrase](#rotating-a-vault-passphrase)
       - [Memory and CPU Usage](#memory-and-cpu-usage)
       - [Access to everything except right to know](#access-to-everything-except-right-to-know)
   - [Generating SSL certificates for development](#generating-ssl-certificates-for-development)
@@ -188,6 +192,31 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 
 ### <a name='Prerequisites'></a>Prerequisites
 
+- For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
+- In order to run Ansible, you'll need Python < 3.12 installed
+  - 3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
+  - Secrets: Ansible passphrases are read from the OAF 1Password account (with a Keybase fallback during the migration). See [Add the Ansible Vault password](#add-the-ansible-vault-password) below.
+- In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
+- For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
+- For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install). Terraform reads each cloud provider's credentials from your own CLI tooling — see [CLI tools for credentials](#cli-tools-for-credentials) below. The only shared secret is the RDS admin password, which `make tf-secrets` renders into `terraform/secrets.auto.tfvars` from 1Password.
+- Terraform also runs `prepkey.sh` to grab your SSH public key for use as the deployer key in AWS. It assumes `jq` is installed and that your public key is at `~/.ssh/id_rsa.pub`.
+
+#### <a name='CLItoolsforcredentials'></a>CLI tools for credentials
+
+We avoid storing each operator's credentials in this repo or in 1Password — each tool reads from your own CLI configuration. Install and configure the ones you need:
+
+- **1Password CLI (`op`)** — required to read the shared Ansible Vault passphrases and the RDS admin password.
+  - Install: `brew install --cask 1password-cli` on macOS, or the [official package](https://developer.1password.com/docs/cli/get-started) on Linux.
+  - The CLI normally inherits a session from the 1Password desktop app. If you're running headless, sign in once with `op signin --account oaforgau`.
+  - Ask an existing admin to add you to the **DevOps** vault.
+- **AWS CLI (`aws`)** — required for Terraform's AWS provider and for reading S3-backed Terraform state. Configure with whichever AWS auth method we're currently using (`aws configure sso`, `aws configure`, etc.).
+- **Google Cloud SDK (`gcloud`)** — required for Terraform's Google provider. After install, run `gcloud auth application-default login`.
+- **Linode CLI (`linode-cli`)** — required so Terraform's Linode provider can authenticate. Configure with `linode-cli configure --token`, then export the same token as `LINODE_TOKEN` (Terraform reads the env var directly).
+- **Cloudflare API token** — Cloudflare doesn't ship a "give me my token" CLI, so create a scoped token at <https://dash.cloudflare.com/profile/api-tokens> (or get one from an existing admin) and export it as `CLOUDFLARE_API_TOKEN`. Putting these env vars in `.envrc` with [direnv](https://direnv.net) is a good idea.
+- **Keybase** (optional, legacy) — only needed if you can't use 1Password yet. The team plans to remove the Keybase fallback in a follow-up PR.
+
+Run `make tf-env-check` to verify each of these is reachable from your shell before running Terraform.
+
 - For starting local VMs for testing, you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
 
 Use `make setup` to install packages on Ubuntu for development.
@@ -195,6 +224,7 @@ Use `make setup` to install packages on Ubuntu for development.
 Use `mise install` to install the ruby and python versions required - see [mise](https://mise.jdx.dev/) for further details.
 
 Run `make requirements` to install the requirements for python and ansible.
+
 
 **Ansible**
 
@@ -213,9 +243,15 @@ Run `make requirements` to install the requirements for python and ansible.
 - Consider using the direnv command and setting
   `export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"`
   in your `.envrc` file if you don't have all the perms required.
+  or list just the files you have access to.
+- Consider using the direnv command and setting
+  `export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"`
+  in your `.envrc` file if you don't have all the perms required.
 
 **Capsitrano (in project repos)**
+**Capsitrano (in project repos)**
 
+- In order to run Capistrano, you'll need a version of Ruby installed;
 - In order to run Capistrano, you'll need a version of Ruby installed;
   - Consider installing [mise](https://mise.jdx.dev/) so that you're able to install and swap between multiple versions of Ruby, python and php.
 - For deploying code onto dev/test/prod machines, you'll need to install [capistrano](http://capistranorb.com/) using `bundle install`
@@ -224,15 +260,22 @@ Run `make requirements` to install the requirements for python and ansible.
 
 For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
 
+
 - Install [the gCloud CLI](https://cloud.google.com/sdk/docs/install) and configur with authentication credentials
+-
 -
   which requires some extra secrets than ansible needs:
   - Copy `terraform/secrets.auto.tfvars.template` to `terraform/secrets.auto.tfvars`
     - Note that some of these secrets are the same secrets used as AWS credentials above,
+  - Copy `terraform/secrets.auto.tfvars.template` to `terraform/secrets.auto.tfvars`
+    - Note that some of these secrets are the same secrets used as AWS credentials above,
       but they'll need to be provided again to populate the Terraform variables as well
+  - Ask James of Ben for the extra details, including:
   - Ask James of Ben for the extra details, including:
   - **AWS** - You need an account with the same permissions as the `ansible` user (from ansible vault) or better
     - to access the S3 bucket we use to store Terraform's permanent state.
+  - The `rds_admin_password`
+  - The `theyvoteforyou_db_password`
   - The `rds_admin_password`
   - The `theyvoteforyou_db_password`
   - The `cloudflare_api_token` - at least `Zone / Zone / Read` perms for planning, and `Zone / Zone / Write` for updating
@@ -243,8 +286,13 @@ For a few things, including major PlanningAlerts deployments, you'll need [Terra
     This script requires `jq` to have been installed.
     The script looks for public keys
     - from GitHuib if GITHUB_USER if set
+    This script requires `jq` to have been installed.
+    The script looks for public keys
+    - from GitHuib if GITHUB_USER if set
     - from `$SSH_PUBLIC_KEY_FILE` if set
     - from `~/.ssh/` id*pub keys with open*au and oaf in upper and lower case
+    - Lastly falls back to `~/.ssh/id_{ed25519,rsa}.pub`.
+  - We host DNS on Cloudflare.
     - Lastly falls back to `~/.ssh/id_{ed25519,rsa}.pub`.
   - We host DNS on Cloudflare.
     An API key to manage these zones is one of the secrets you'll need to provide.
@@ -266,34 +314,46 @@ make requirements vagrant
 
 ### <a name='AddtheAnsibleVaultpassword'></a>Add the Ansible Vault password
 
-Ansible Vault secrets are distributed via
-[Keybase](https://keybase.io). Before you can push to production
-servers, you'll need to be added to the appropriate teams.
+Each `ansible-vault` encrypted value in this repo is tagged with one of four vault IDs (`default`, `all`, `ec2`, `rtk`). Ansible reads the passphrase for each ID by invoking [bin/ansible-vault-client](bin/ansible-vault-client), which fetches it from the OAF 1Password account (and falls back to the legacy Keybase symlinks if 1Password isn't reachable).
 
-You'll need to have Keybase installed on the machine where you run
-ansible.
+#### Recommended: 1Password
 
-If this system has a gui, you'll need to enable "Finder integration"
-or the equivalent on your platform, under Settings -> Files.
+1. Install the 1Password CLI per [CLI tools for credentials](#cli-tools-for-credentials) above and sign in to the OAF account.
+2. Ask an existing admin to add you to the **DevOps** vault (and **RTK Devops** if you'll be administering Right To Know). The passphrase items already exist there.
+3. `make requirements` will detect that you're signed in and run the rest of the setup; no further action needed.
 
-If your system does _not_ have a GUI - for instance, it's a WSL instance on
-Windows; or a remote Ubuntu VM running headless - there's a helper script
-at `bin/headless-keybase.sh` which will help you run the Keybase services
-as user-space systemd units.
+Verify with:
 
-The first time you run `make` on a command that uses ansible, it will try to create the `.keybase`, symlinking it from the first
-common location for keybase that exists (on MacOS and Linux). It will fall back to actually asking keybase for its mountdir
-which requires keybase to be running.
+```bash
+bin/ansible-vault-client --vault-id ec2 | wc -c   # should print the length of the ec2 passphrase
+```
 
-Use `make keybase` to check you have the required permissions.
+#### Legacy fallback: Keybase
 
-Once this is done, the symlinks to .*-vault-pass inside the repo
-should point to the password files. If this doesn't work you may need to update these files yourself.
+If you set things up before this PR, your existing Keybase workflow keeps working unchanged — the dispatcher transparently uses the `.*-vault-pass` symlinks at the repo root when `op` isn't available. Run `make keybase` to verify the symlinks resolve. The Keybase fallback will be removed in a follow-up PR; please switch to 1Password when convenient.
+
+If you're on a headless system (WSL, headless VM) and need Keybase, there's a helper at [bin/headless-keybase.sh](bin/headless-keybase.sh) that brings the Keybase services up as user-space systemd units.
+
+#### <a name='Rotatingavaultpassphrase'></a>Rotating a vault passphrase
+
+Run:
+
+```bash
+bin/rotate-vault-passphrase <vault-id>           # one of: default, all, ec2, rtk
+bin/rotate-vault-passphrase <vault-id> --dry-run # check what would change without writing
+```
+
+The script reads the current passphrase via the dispatcher, generates a new one, walks `group_vars/` and `host_vars/` re-encrypting every `!vault` block tagged with that ID, and writes the new passphrase to 1Password. While the Keybase fallback still exists you'll also need to update the matching file in Keybase so contributors who haven't switched can keep working. Commit the resulting diff (only `!vault` blocks tagged with that ID should change) and notify other operators.
 
 #### Memory and CPU Usage
 
 Vagrant will allocate 2 GB of RAM and 2 CPU cores per VM by default, which can be overridden.
+Vagrant will allocate 2 GB of RAM and 2 CPU cores per VM by default, which can be overridden.
 When tested with provisioning openaustralia from scratch (YMMV) compared to default settings:
+- `VAGRANT_MEMORY=4096` was 9% faster if you have enough host memory (2 x memory)
+- `VAGRANT_CPUS=1 VAGRANT_MEMORY=3072` for running many VMs (12% slower with 1/2 cores and 1.5 x memory)
+- `VAGRANT_CPUS=1` minimum (20% slower with 1/2 cores)
+
 - `VAGRANT_MEMORY=4096` was 9% faster if you have enough host memory (2 x memory)
 - `VAGRANT_CPUS=1 VAGRANT_MEMORY=3072` for running many VMs (12% slower with 1/2 cores and 1.5 x memory)
 - `VAGRANT_CPUS=1` minimum (20% slower with 1/2 cores)
@@ -305,13 +365,20 @@ FYI These production systems have more than 2 CPUs and/or 2 GiB memory:
 - morph - linode 32 GB, 8 cpu, 2 GB swap
 - theyvoteforyou - t3.xlarge - 4 vCPUs, 16 GiB memory
 
+- planningalerts - 2x t3.medium, 4 GiB RAM
+- righttoknow - t3.large 8 GiB memory, (staging t3.medium, 4 GiB RAM)
+- morph - linode 32 GB, 8 cpu, 2 GB swap
+- theyvoteforyou - t3.xlarge - 4 vCPUs, 16 GiB memory
+
 #### Access to everything except right to know
 
 If the `.rtk-vault-pass` symlink is broken, then use `.envrc` (and `direnv` package) to set the following whenever you cd to this dir:
 
+
 ```bash
 export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"
 ```
+
 
 This will allow you to work on everything except right to know.
 
@@ -392,7 +459,12 @@ the top of `update-ssl-certs.yaml`.
 You can also set:
 
 - STAGE: to a group suffix eg `STAGE=staging make apply-righttoknow` would apply changes only to `righttoknow_staging`
+- STAGE: to a group suffix eg `STAGE=staging make apply-righttoknow` would apply changes only to `righttoknow_staging`
   group in `inventory/ec2-hosts` which only contains `staging.openaustralia.org.au`
+- `ANSIBLE_TAGS` - limits to tasks / roles that have one of the comma-separated roles
+- `ANSIBLE_SKIP_TAGS` - skips tasks / roles that have one of the comma-separated roles
+- `ANSIBLE_VERBOSE` - set to one to four 'v's eg `ANSIBLE_VERBOSE=vvv make apply-openaustralia` will show a lot of diagnostic information from ansible
+- `ANSIBLE_START_TASK` - set to part of the task description to have ansible skip to that task, which allows you to quickly debug after a failure
 - `ANSIBLE_TAGS` - limits to tasks / roles that have one of the comma-separated roles
 - `ANSIBLE_SKIP_TAGS` - skips tasks / roles that have one of the comma-separated roles
 - `ANSIBLE_VERBOSE` - set to one to four 'v's eg `ANSIBLE_VERBOSE=vvv make apply-openaustralia` will show a lot of diagnostic information from ansible
@@ -573,22 +645,29 @@ There are two ways an openaustralia server is configured to catch emails.
 One is to be in the group `catch_all_mail`. This
 - disables sending email to the real world in msmtp,
 - configuires php.ini to send email to `/usr/local/bin/log_not_sendmail`
+One is to be in the group `catch_all_mail`. This
+- disables sending email to the real world in msmtp,
+- configuires php.ini to send email to `/usr/local/bin/log_not_sendmail`
 
 ### `log_not_sendmail`
 
 The `log_not_sendmail` command logs emails to ~/log/mail/DATE-TIME.log, keeping it to
+The `log_not_sendmail` command logs emails to ~/log/mail/DATE-TIME.log, keeping it to
 
+To send email to a mail catcher on openaustralia, update the `/etc/msmstprc` file,
 To send email to a mail catcher on openaustralia, update the `/etc/msmstprc` file,
 keeping a copy as the ansible `internal/openaustralia` role will overwite it!
 
 Note: This will affect BOTH the production and staging environments on that server!
 If you ONLY want to change staging, then add the following to the `/etc/apache2/sites-enabled` config file for staging:
 
+
 ```
     php_admin_value sendmail_path "msmtp --read-envelope-from -t -a mailpit"
 ```
 
 You will want to add a mailpit entry:
+
 
 ```
 account mailpit
@@ -602,6 +681,7 @@ host plannies-mate.thesite.info
 ```
 
 Change the default if you want both production and staging to be changed:
+
 
 ```
 account default : mailpit

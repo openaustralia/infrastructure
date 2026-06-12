@@ -10,7 +10,7 @@ BASE_DOMAIN = "test"
 IP_NETWORK = "192.168.56"
 STANDARD_ALIASES = %w[www test www.test]
 
-unless File.exist?(".venv/bin/ansible") && Dir.exist?(".keybase") && Dir.exist?("roles/external") && File.exist?(".make/vagrant-plugins")
+unless File.exist?(".venv/bin/ansible") && File.exist?("terraform.pem") && Dir.exist?("roles/external") && File.exist?(".make/vagrant-plugins")
   warn "WARNING: Run `make vagrant` first to install requirements."
 end
 
