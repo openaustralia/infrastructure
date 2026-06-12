@@ -184,7 +184,9 @@ tf-init: .make/terraform
 tf-plan: .make/terraform
 	terraform -chdir=terraform plan
 tf-apply: .make/terraform
+	bin/tag-provisioning --wip terraform "" "" ""
 	terraform -chdir=terraform apply
+	bin/tag-provisioning terraform "" "" ""
 tf-validate: tf-check-fmt .make/terraform
 	terraform -chdir=terraform validate 
 	@echo "PASSED tf-validate!"
@@ -226,17 +228,29 @@ check-metabase: requirements # stage_required
 
 # These make changes 
 apply-righttoknow: requirements stage_required
+	bin/tag-provisioning --wip righttoknow "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --diff
+	bin/tag-provisioning righttoknow "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-planningalerts: requirements # stage_required
+	bin/tag-provisioning --wip planningalerts "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --diff
+	bin/tag-provisioning planningalerts "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-theyvoteforyou: requirements # stage_required
+	bin/tag-provisioning --wip theyvoteforyou "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --diff
+	bin/tag-provisioning theyvoteforyou "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-oaf: requirements # stage_required
+	bin/tag-provisioning --wip oaf "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --diff
+	bin/tag-provisioning oaf "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-openaustralia: requirements # stage_required
+	bin/tag-provisioning --wip openaustralia "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --diff
+	bin/tag-provisioning openaustralia "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-metabase: requirements # stage_required
+	bin/tag-provisioning --wip metabase "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
+	bin/tag-provisioning metabase "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 
 # Update ssh keys on all servers
 update-github-ssh-keys: requirements
