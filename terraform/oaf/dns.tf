@@ -166,6 +166,13 @@ resource "cloudflare_record" "domainkey_cuttlefish" {
   value = "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7fLXgEr26+qIswukULxl1OIPfz2CZ1iPcy4+LsveWZKGi1mU4jcy2vregS8FOm1B/V2nI354jBxlEi4XLxElcThq7zrFcDLXPNkrCg7yyPCF3qBnISlWDF/EwB0wOE1VF3QcwcILdR9vzRHP2yo0uTkz+stZpzVgthfM4FAOd5vDQ+cYxCwKTtXyCBUHH+/c2KUYnKiAOEXmuOUfwdo7uAPdClyg8mPAqYzjEQtPlktulD3rLQp3bom5lkGVLzklfiD77JVK1PD1a9C2OItG55KYbie3EPrXLkecGMob1ulhvz7ml/bSx3bqDUcbelnVLlT9VjeRiEUWoSYzJxXoMwIDAQAB"
 }
 
+resource "cloudflare_record" "slack-domain-verification" {
+  zone_id = var.oaf_org_au_zone_id
+  name    = "oaf.org.au"
+  type    = "TXT"
+  value   = "slack-domain-verification=JfbPnX8KjSbj2pDWCfKEJud0IjhrhH6WiMqTDRYH"
+}
+
 # DMARC record for email authentication and reporting
 # Reports are sent to both Suped (for monitoring) and Postmark (legacy weekly reports)
 # Suped provides ongoing monitoring and analysis
