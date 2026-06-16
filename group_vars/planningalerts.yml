@@ -90,3 +90,19 @@ sentry_project_id: !vault |
   66666432303135393731343734653961346534626364613064646637623836303834
 
 
+# Sized to cover (approximate figures):
+#  1,480 MB Puma workers anon (3 workers x ~500 MB)
+#           -> working set, must stay in RAM for performance
+#    260 MB Sidekiq anon (fresh restart ~250 MB, capped at 500 MB by systemd)
+#           -> working set, must stay in RAM for performance
+#    290 MB Idle processes (snapd, cloudwatch, newrelic, postfix, ssm-agent etc)
+#           -> can swap with negligible impact
+#     30 MB Puma master + skylightd + memcached
+#  --------
+#  2,060 MB Physical RAM (3,836 MB available, ~1,780 MB headroom)
+
+# If we need more than this, we need to upgrade the ec2 instance size!
+swap_file_size_mb: '512'
+# Strongly prefer RAM - only swap genuinely idle processes under pressure
+# Puma and Sidekiq working sets must not be swapped
+swap_swappiness: '10'
