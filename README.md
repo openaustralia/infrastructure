@@ -198,12 +198,12 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
   - Secrets: Ansible passphrases are read from the OAF 1Password account (with a Keybase fallback during the migration). See [Add the Ansible Vault password](#add-the-ansible-vault-password) below.
 - In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
 - For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
-- For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install). Terraform reads each cloud provider's credentials from your own CLI tooling — see [CLI tools for credentials](#cli-tools-for-credentials) below. The only shared secret is the RDS admin password, which `make tf-secrets` renders into `terraform/secrets.auto.tfvars` from 1Password.
+- For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install). Terraform reads its AWS and Google credentials from your own CLI tooling — see [CLI tools for credentials](#cli-tools-for-credentials) below. The shared secrets — the RDS admin password and the Cloudflare and Linode API tokens — are rendered into `terraform/secrets.auto.tfvars` from 1Password by `make tf-secrets`.
 - Terraform also runs `prepkey.sh` to grab your SSH public key for use as the deployer key in AWS. It assumes `jq` is installed and that your public key is at `~/.ssh/id_rsa.pub`.
 
 #### <a name='CLItoolsforcredentials'></a>CLI tools for credentials
 
-We avoid storing each operator's credentials in this repo or in 1Password — each tool reads from your own CLI configuration. Install and configure the ones you need:
+Operator credentials (AWS, Google) aren't stored in this repo or 1Password — each tool reads from your own CLI configuration. The Cloudflare and Linode provider tokens are the exception: they're shared service tokens kept in the **DevOps** 1Password vault and rendered by `make tf-secrets`. Install and configure the ones you need:
 
 - **1Password CLI (`op`)** — required to read the shared Ansible Vault passphrases and the RDS admin password.
   - Install: `brew install --cask 1password-cli` on macOS, or the [official package](https://developer.1password.com/docs/cli/get-started) on Linux.
@@ -211,8 +211,7 @@ We avoid storing each operator's credentials in this repo or in 1Password — ea
   - Ask an existing admin to add you to the **DevOps** vault.
 - **AWS CLI (`aws`)** — required for Terraform's AWS provider and for reading S3-backed Terraform state. Configure with whichever AWS auth method we're currently using (`aws configure sso`, `aws configure`, etc.).
 - **Google Cloud SDK (`gcloud`)** — required for Terraform's Google provider. After install, run `gcloud auth application-default login`.
-- **Linode CLI (`linode-cli`)** — required so Terraform's Linode provider can authenticate. Configure with `linode-cli configure --token`, then export the same token as `LINODE_TOKEN` (Terraform reads the env var directly).
-- **Cloudflare API token** — Cloudflare doesn't ship a "give me my token" CLI, so create a scoped token at <https://dash.cloudflare.com/profile/api-tokens> (or get one from an existing admin) and export it as `CLOUDFLARE_API_TOKEN`. Putting these env vars in `.envrc` with [direnv](https://direnv.net) is a good idea.
+- **Cloudflare and Linode API tokens** — no per-operator setup. These are shared service tokens stored in the **DevOps** 1Password vault (item _Terraform DB Passwords_); `make tf-secrets` renders them into `terraform/secrets.auto.tfvars` and the providers read them from there. You no longer need to export `CLOUDFLARE_API_TOKEN` or `LINODE_TOKEN`.
 - **Keybase** (optional, legacy) — only needed if you can't use 1Password yet. The team plans to remove the Keybase fallback in a follow-up PR.
 
 Run `make tf-env-check` to verify each of these is reachable from your shell before running Terraform.
