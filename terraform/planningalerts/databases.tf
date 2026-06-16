@@ -35,7 +35,7 @@ resource "aws_db_instance" "main" {
   # Using general purpose SSD
   storage_type   = "gp3"
   engine         = "postgres"
-  engine_version = "15.12"
+  engine_version = "15.17"
   # We can't specify iops when creating the database
   # This is the baseline for storage less than 400 GB
   iops = 3000
