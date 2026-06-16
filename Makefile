@@ -114,7 +114,7 @@ terraform.pem:
 # so deleting it forces a rebuild.
 tf-secrets: terraform/secrets.auto.tfvars
 terraform/secrets.auto.tfvars: terraform/secrets.auto.tfvars.tmpl bin/.op-account
-	OP_ACCOUNT="$$(cat bin/.op-account)" op inject --account "$$(cat bin/.op-account)" \
+	OP_ACCOUNT="$$(cat bin/.op-account)" op inject --force --account "$$(cat bin/.op-account)" \
 	    -i terraform/secrets.auto.tfvars.tmpl -o terraform/secrets.auto.tfvars
 	chmod 600 terraform/secrets.auto.tfvars
 
@@ -126,10 +126,6 @@ tf-env-check:
 	    || echo "WARN: 'aws sts get-caller-identity' failed — sign into AWS (e.g. \`aws sso login\`)"
 	@gcloud auth application-default print-access-token >/dev/null 2>&1 \
 	    || echo "WARN: gcloud application-default credentials missing — run \`gcloud auth application-default login\`"
-	@[ -n "$$CLOUDFLARE_API_TOKEN" ] \
-	    || echo "WARN: CLOUDFLARE_API_TOKEN is unset — export it (e.g. in .envrc)"
-	@[ -n "$$LINODE_TOKEN" ] \
-	    || echo "WARN: LINODE_TOKEN is unset — export it (e.g. in .envrc)"
 
 # --- Legacy Keybase fallback (kept until the follow-up cleanup PR) ---
 
