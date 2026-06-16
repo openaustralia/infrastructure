@@ -426,6 +426,10 @@ or where there are multiple servers, specify which one you want to provision:
 
 To provision all stages, just specify `STAGE=all`
 
+The repo will be tagged `wip-TARGET_UTC-TIME[_STAGE][-TAGS][-not-SKIP_TAGS]` before the command starts,
+which will be replaced with `TARGET_UTC-TIME[_STAGE][-TAGS][-not-SKIP_TAGS]` upon success.
+With tags pushed to origin, so everyone can see what was changed on servers.
+
 ### <a name='ForciblyrenewingLetsEncryptcertificatesonproductionservers'></a>Forcibly renewing LetsEncrypt certificates on production servers
 
 When first provisioning a server, Ansible will check to see if
