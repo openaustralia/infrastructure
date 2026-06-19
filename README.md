@@ -173,7 +173,6 @@ This repo is being used to setup and configure servers on EC2 for:
   - openaustraliafoundation.org.au
   - CiviCRM
 - opengovernment.org.au (decommissioned)
-- electionleaflets.org.au (decommissioned)
 
 On Linode running as separate VMs with automated server configuration:
 
