@@ -214,8 +214,6 @@ Operator credentials (AWS, Google) aren't stored in this repo or 1Password — e
 
 Run `make tf-env-check` to verify each of these is reachable from your shell before running Terraform.
 
-- For starting local VMs for testing, you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
-
 Use `make setup` to install packages on Ubuntu for development.
 
 Use `mise install` to install the ruby and python versions required - see [mise](https://mise.jdx.dev/) for further details.
@@ -232,10 +230,8 @@ Run `make requirements` to install the requirements for python and ansible.
 
 - Ansible reads each vault passphrase from the OAF 1Password account via [bin/ansible-vault-client](bin/ansible-vault-client). See [Add the Ansible Vault password](#add-the-ansible-vault-password) below.
 
-**Capsitrano (in project repos)**
-**Capsitrano (in project repos)**
+**Capistrano (in project repos)**
 
-- In order to run Capistrano, you'll need a version of Ruby installed;
 - In order to run Capistrano, you'll need a version of Ruby installed;
   - Consider installing [mise](https://mise.jdx.dev/) so that you're able to install and swap between multiple versions of Ruby, python and php.
 - For deploying code onto dev/test/prod machines, you'll need to install [capistrano](http://capistranorb.com/) using `bundle install`
@@ -245,38 +241,21 @@ Run `make requirements` to install the requirements for python and ansible.
 For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
 
 
-- Install [the gCloud CLI](https://cloud.google.com/sdk/docs/install) and configur with authentication credentials
--
--
+- Install [the gCloud CLI](https://cloud.google.com/sdk/docs/install) and configure with authentication credentials,
   which requires some extra secrets than ansible needs:
-  - Copy `terraform/secrets.auto.tfvars.template` to `terraform/secrets.auto.tfvars`
-    - Note that some of these secrets are the same secrets used as AWS credentials above,
-  - Copy `terraform/secrets.auto.tfvars.template` to `terraform/secrets.auto.tfvars`
-    - Note that some of these secrets are the same secrets used as AWS credentials above,
-      but they'll need to be provided again to populate the Terraform variables as well
-  - Ask James of Ben for the extra details, including:
-  - Ask James of Ben for the extra details, including:
+  - Run `make tf-secrets` to render `terraform/secrets.auto.tfvars` from 1Password — this provides the `rds_admin_password`, `cloudflare_api_token`, and `linode_api_token` (see [CLI tools for credentials](#cli-tools-for-credentials) above).
   - **AWS** - You need an account with the same permissions as the `ansible` user (from ansible vault) or better
     - to access the S3 bucket we use to store Terraform's permanent state.
-  - The `rds_admin_password`
-  - The `theyvoteforyou_db_password`
-  - The `rds_admin_password`
-  - The `theyvoteforyou_db_password`
-  - The `cloudflare_api_token` - at least `Zone / Zone / Read` perms for planning, and `Zone / Zone / Write` for updating
-  - The `linode_api_token` - at least read access for planning and full acces for updating
+  - The `cloudflare_api_token` needs at least `Zone / Zone / Read` perms for planning, and `Zone / Zone / Write` for updating
+  - The `linode_api_token` needs at least read access for planning and full access for updating
   - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use
     - run `gcloud auth application-default login`
   - Terraform runs `terraform/prepkey.sh` to grab your SSH public key to use as a deployer key in AWS.
     This script requires `jq` to have been installed.
     The script looks for public keys
-    - from GitHuib if GITHUB_USER if set
-    This script requires `jq` to have been installed.
-    The script looks for public keys
-    - from GitHuib if GITHUB_USER if set
+    - from GitHub if GITHUB_USER is set
     - from `$SSH_PUBLIC_KEY_FILE` if set
     - from `~/.ssh/` id*pub keys with open*au and oaf in upper and lower case
-    - Lastly falls back to `~/.ssh/id_{ed25519,rsa}.pub`.
-  - We host DNS on Cloudflare.
     - Lastly falls back to `~/.ssh/id_{ed25519,rsa}.pub`.
   - We host DNS on Cloudflare.
     An API key to manage these zones is one of the secrets you'll need to provide.
@@ -326,22 +305,12 @@ The script reads the current passphrase via the dispatcher, generates a new one,
 #### Memory and CPU Usage
 
 Vagrant will allocate 2 GB of RAM and 2 CPU cores per VM by default, which can be overridden.
-Vagrant will allocate 2 GB of RAM and 2 CPU cores per VM by default, which can be overridden.
 When tested with provisioning openaustralia from scratch (YMMV) compared to default settings:
 - `VAGRANT_MEMORY=4096` was 9% faster if you have enough host memory (2 x memory)
 - `VAGRANT_CPUS=1 VAGRANT_MEMORY=3072` for running many VMs (12% slower with 1/2 cores and 1.5 x memory)
 - `VAGRANT_CPUS=1` minimum (20% slower with 1/2 cores)
 
-- `VAGRANT_MEMORY=4096` was 9% faster if you have enough host memory (2 x memory)
-- `VAGRANT_CPUS=1 VAGRANT_MEMORY=3072` for running many VMs (12% slower with 1/2 cores and 1.5 x memory)
-- `VAGRANT_CPUS=1` minimum (20% slower with 1/2 cores)
-
 FYI These production systems have more than 2 CPUs and/or 2 GiB memory:
-
-- planningalerts - 2x t3.medium, 4 GiB RAM
-- righttoknow - t3.large 8 GiB memory, (staging t3.medium, 4 GiB RAM)
-- morph - linode 32 GB, 8 cpu, 2 GB swap
-- theyvoteforyou - t3.xlarge - 4 vCPUs, 16 GiB memory
 
 - planningalerts - 2x t3.medium, 4 GiB RAM
 - righttoknow - t3.large 8 GiB memory, (staging t3.medium, 4 GiB RAM)
@@ -441,12 +410,7 @@ the top of `update-ssl-certs.yaml`.
 You can also set:
 
 - STAGE: to a group suffix eg `STAGE=staging make apply-righttoknow` would apply changes only to `righttoknow_staging`
-- STAGE: to a group suffix eg `STAGE=staging make apply-righttoknow` would apply changes only to `righttoknow_staging`
   group in `inventory/ec2-hosts` which only contains `staging.openaustralia.org.au`
-- `ANSIBLE_TAGS` - limits to tasks / roles that have one of the comma-separated roles
-- `ANSIBLE_SKIP_TAGS` - skips tasks / roles that have one of the comma-separated roles
-- `ANSIBLE_VERBOSE` - set to one to four 'v's eg `ANSIBLE_VERBOSE=vvv make apply-openaustralia` will show a lot of diagnostic information from ansible
-- `ANSIBLE_START_TASK` - set to part of the task description to have ansible skip to that task, which allows you to quickly debug after a failure
 - `ANSIBLE_TAGS` - limits to tasks / roles that have one of the comma-separated roles
 - `ANSIBLE_SKIP_TAGS` - skips tasks / roles that have one of the comma-separated roles
 - `ANSIBLE_VERBOSE` - set to one to four 'v's eg `ANSIBLE_VERBOSE=vvv make apply-openaustralia` will show a lot of diagnostic information from ansible
@@ -626,17 +590,12 @@ There are two ways an openaustralia server is configured to catch emails.
 
 One is to be in the group `catch_all_mail`. This
 - disables sending email to the real world in msmtp,
-- configuires php.ini to send email to `/usr/local/bin/log_not_sendmail`
-One is to be in the group `catch_all_mail`. This
-- disables sending email to the real world in msmtp,
-- configuires php.ini to send email to `/usr/local/bin/log_not_sendmail`
+- configures php.ini to send email to `/usr/local/bin/log_not_sendmail`
 
 ### `log_not_sendmail`
 
 The `log_not_sendmail` command logs emails to ~/log/mail/DATE-TIME.log, keeping it to
-The `log_not_sendmail` command logs emails to ~/log/mail/DATE-TIME.log, keeping it to
 
-To send email to a mail catcher on openaustralia, update the `/etc/msmstprc` file,
 To send email to a mail catcher on openaustralia, update the `/etc/msmstprc` file,
 keeping a copy as the ansible `internal/openaustralia` role will overwite it!
 
