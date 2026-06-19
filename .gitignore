@@ -1,6 +1,5 @@
 
 .vagrant
-.keybase
 roles/external
 collections/
 test.pem
@@ -15,8 +14,7 @@ ubuntu-xenial-16.04-cloudimg-console.log
 *.retry
 
 # terraform.pem is materialised at runtime by `make terraform.pem`
-# (from 1Password, with a Keybase symlink fallback). It is never
-# checked in.
+# (from 1Password). It is never checked in.
 /terraform.pem
 
 # Ignore Make sentinel files

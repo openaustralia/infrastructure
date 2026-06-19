@@ -3,7 +3,7 @@
         check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
         check-rtk-prod check-rtk-staging check-theyvoteforyou check-target \
         scan-oaf scan-openaustralia scan-planningalerts \
-        clean clobber help install-linters keybase letsencrypt lint op-check production retry roles \
+        clean clobber help install-linters letsencrypt lint op-check production retry roles \
         show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target \
         tf-env-check tf-init tf-plan tf-plan-target tf-secrets \
         update-github-ssh-keys vagrant venv yaml-lint
@@ -34,11 +34,10 @@ help:
 	@echo "  help                                Output this help text"
 	@echo "  all                                 Run full site.yml playbook against all hosts"
 	@echo "  requirements                        Install requirements: venv, roles, collections, terraform.pem"
-	@echo "  op-check                            Warn if not signed into the OAF 1Password account"
-	@echo "  terraform.pem                       Materialise terraform.pem from 1Password (or use Keybase fallback)"
+	@echo "  op-check                            Fail if not signed into the OAF 1Password account"
+	@echo "  terraform.pem                       Materialise terraform.pem from 1Password"
 	@echo "  tf-secrets                          Render terraform/secrets.auto.tfvars from 1Password via op inject"
 	@echo "  tf-env-check                        Warn if AWS/Cloudflare/Linode/gcloud credentials aren't reachable"
-	@echo "  keybase                             (Legacy fallback) Set up Keybase symlink and check perms"
 	@echo "  roles                               Install Ansible Galaxy external roles and collections"
 	@echo "  venv                                Create Python virtualenv and install requirements"
 	@echo "  generate-certificates               Generate certificates for the development *.test domains"
@@ -57,7 +56,7 @@ help:
 	@echo "  update-github-ssh-keys              Update SSH keys on all servers from GitHub"
 	@echo "  vagrant                             Install vagrant plugins and ensure requirements are present"
 	@echo ""
-	@echo "  clean                               Remove virtualenv, external roles, retry file, collections, keybase symlink"
+	@echo "  clean                               Remove virtualenv, external roles, retry file, collections"
 	@echo "  clobber                             clobber everything make all created (clean + removes .vagrant and log)"
 	@echo ""
 	@echo "  check-righttoknow STAGE=<stage>     Dry-run Ansible for righttoknow production/staging/all host/s"
@@ -89,23 +88,26 @@ setup:
 
 requirements: op-check terraform.pem .make/roles venv
 
-# Warn (but don't fail) if the operator can't read the OAF 1Password
-# account. Non-fatal so contributors who still use Keybase symlinks can
-# run `make` without 1Password. We probe with `op vault list` rather
-# than `op whoami` because the latter doesn't recognise sessions
+# Fail if the operator can't read the OAF 1Password account. 1Password
+# is the sole source for the Ansible Vault passphrases, the RDS admin
+# password and terraform.pem, so failing fast here gives a clear error
+# instead of a cryptic one downstream. We probe with `op vault list`
+# rather than `op whoami` because the latter doesn't recognise sessions
 # inherited from the 1Password desktop app integration.
 op-check:
 	@if command -v op >/dev/null 2>&1 && \
 	    op vault list --account "$$(cat bin/.op-account)" >/dev/null 2>&1; then \
 	  echo "OK: OAF 1Password reachable ($$(cat bin/.op-account))"; \
 	else \
-	  echo "WARN: OAF 1Password not reachable (account=$$(cat bin/.op-account)). Will fall back to Keybase symlinks where possible."; \
+	  echo "ERROR: OAF 1Password not reachable (account=$$(cat bin/.op-account))." >&2; \
+	  echo "  Install the 1Password CLI and sign in: op signin --account $$(cat bin/.op-account)" >&2; \
+	  exit 1; \
 	fi
 
 # Materialise terraform.pem from 1Password. The script is idempotent
-# (no-op if the file is already present, e.g. as the Keybase symlink),
-# so we name the file directly as the target — that way `rm terraform.pem`
-# correctly triggers a rebuild on the next `make`.
+# (no-op if the file is already present), so we name the file directly
+# as the target — that way `rm terraform.pem` correctly triggers a
+# rebuild on the next `make`.
 terraform.pem:
 	bin/fetch-terraform-pem
 
@@ -126,24 +128,6 @@ tf-env-check:
 	    || echo "WARN: 'aws sts get-caller-identity' failed — sign into AWS (e.g. \`aws sso login\`)"
 	@gcloud auth application-default print-access-token >/dev/null 2>&1 \
 	    || echo "WARN: gcloud application-default credentials missing — run \`gcloud auth application-default login\`"
-
-# --- Legacy Keybase fallback (kept until the follow-up cleanup PR) ---
-
-# Configure .keybase for MacOS or Linux
-.keybase:
-	@for p in /Volumes/Keybase /keybase /run/keybase /var/lib/keybase "$$(keybase config get -d -b mountdir 2>/dev/null)"; do \
-	  [ -d "$$p" ] && echo "ln -nsf $$p .keybase" && ln -nsf "$$p" .keybase && exit 0; \
-	done; \
-	echo "Keybase mount not found" && exit 1
-
-# Check keybase exists and user has required permissions
-keybase: .keybase
-	@[ -d .keybase ] && echo "OK: .keybase exists and is linked to a directory"
-	@broken=0; \
-	for f in .all-vault-pass .ec2-vault-pass .rtk-vault-pass terraform.pem .vault_pass.txt; do \
-      [ -f "$$f" ] && echo "OK: $$f exists" || { echo "BROKEN: $$f (permission missing?)"; broken=1; }; \
-	done; \
-	[ $$broken -eq 0 ]
 
 vagrant: .make/vagrant-plugins .make/certificates requirements
 
@@ -209,12 +193,9 @@ show-rds-facts: check-host requirements
 
 # Delete all files that are normally created by running make goals
 clean:
-	rm -rf .venv roles/external site.retry collections .keybase .make
+	rm -rf .venv roles/external site.retry collections .make
 	rm -rf terraform/.terraform
-	rm -f terraform/secrets.auto.tfvars
-	@# Only remove terraform.pem if it's a real file (i.e. materialised from
-	@# 1Password). If it's the Keybase symlink, leave it alone.
-	@if [ -f terraform.pem ] && [ ! -L terraform.pem ]; then rm -f terraform.pem; fi
+	rm -f terraform/secrets.auto.tfvars terraform.pem
 
 clobber: clean
 	vagrant destroy --force || echo "WARNING: Ignoring vagrant error!"

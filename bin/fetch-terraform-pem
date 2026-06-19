@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # Materialise terraform.pem at the repo root from 1Password.
 #
-# If the file is already present and readable (e.g. it's the Keybase
-# symlink), leaves it alone so the existing fallback workflow keeps
-# working. Otherwise reads the SSH key out of the OAF DevOps vault and
+# Idempotent: if the file is already present and readable, leaves it
+# alone. Otherwise reads the SSH key out of the OAF DevOps vault and
 # writes it as a 0600 regular file.
 
 set -euo pipefail
@@ -20,8 +19,8 @@ if [ -r "$target" ]; then
 fi
 
 if ! command -v op >/dev/null 2>&1; then
-  echo "fetch-terraform-pem: 'op' not installed and no Keybase fallback at $target." >&2
-  echo "  Install the 1Password CLI or run 'make keybase' to restore the symlinks." >&2
+  echo "fetch-terraform-pem: 'op' (1Password CLI) is not installed." >&2
+  echo "  Install it: https://developer.1password.com/docs/cli/get-started" >&2
   exit 1
 fi
 

@@ -19,7 +19,6 @@
     - [Environment setup](#environment-setup)
     - [Add the Ansible Vault password](#add-the-ansible-vault-password)
       - [Recommended: 1Password](#recommended-1password)
-      - [Legacy fallback: Keybase](#legacy-fallback-keybase)
       - [Rotating a vault passphrase](#rotating-a-vault-passphrase)
       - [Memory and CPU Usage](#memory-and-cpu-usage)
       - [Access to everything except right to know](#access-to-everything-except-right-to-know)
@@ -195,7 +194,7 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 - For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
 - In order to run Ansible, you'll need Python < 3.12 installed
   - 3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
-  - Secrets: Ansible passphrases are read from the OAF 1Password account (with a Keybase fallback during the migration). See [Add the Ansible Vault password](#add-the-ansible-vault-password) below.
+  - Secrets: Ansible passphrases are read from the OAF 1Password account. See [Add the Ansible Vault password](#add-the-ansible-vault-password) below.
 - In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
 - For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
 - For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install). Terraform reads its AWS and Google credentials from your own CLI tooling — see [CLI tools for credentials](#cli-tools-for-credentials) below. The shared secrets — the RDS admin password and the Cloudflare and Linode API tokens — are rendered into `terraform/secrets.auto.tfvars` from 1Password by `make tf-secrets`.
@@ -212,7 +211,6 @@ Operator credentials (AWS, Google) aren't stored in this repo or 1Password — e
 - **AWS CLI (`aws`)** — required for Terraform's AWS provider and for reading S3-backed Terraform state. Configure with whichever AWS auth method we're currently using (`aws configure sso`, `aws configure`, etc.).
 - **Google Cloud SDK (`gcloud`)** — required for Terraform's Google provider. After install, run `gcloud auth application-default login`.
 - **Cloudflare and Linode API tokens** — no per-operator setup. These are shared service tokens stored in the **DevOps** 1Password vault (item _Terraform DB Passwords_); `make tf-secrets` renders them into `terraform/secrets.auto.tfvars` and the providers read them from there. You no longer need to export `CLOUDFLARE_API_TOKEN` or `LINODE_TOKEN`.
-- **Keybase** (optional, legacy) — only needed if you can't use 1Password yet. The team plans to remove the Keybase fallback in a follow-up PR.
 
 Run `make tf-env-check` to verify each of these is reachable from your shell before running Terraform.
 
@@ -232,20 +230,7 @@ Run `make requirements` to install the requirements for python and ansible.
 
 **Secrets**
 
-- Ansible looks at the four symlinks in the root of this repo which symlink to paths under `.keybase` to exist and contain passphrases to decrypt secrets used for production deployments.
-  - `make .keybase` will look for the keybase mount point in various places and symlink it to `.keybase`
-    - Our usual method of distributing these files is documented [below](#add-the-ansible-vault-password).
-  - Alternately symlink from your own copy of the keybase files
-    - If Keybase isn't working for you, any technique you have to put the right value into the right file will be fine,
-- You may override `vault_identity_list` in [ansible.cfg](https://github.com/openaustralia/infrastructure/blob/master/ansible.cfg) to point at your new location,
-  or list just the files you have access to.
-- Consider using the direnv command and setting
-  `export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"`
-  in your `.envrc` file if you don't have all the perms required.
-  or list just the files you have access to.
-- Consider using the direnv command and setting
-  `export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"`
-  in your `.envrc` file if you don't have all the perms required.
+- Ansible reads each vault passphrase from the OAF 1Password account via [bin/ansible-vault-client](bin/ansible-vault-client). See [Add the Ansible Vault password](#add-the-ansible-vault-password) below.
 
 **Capsitrano (in project repos)**
 **Capsitrano (in project repos)**
@@ -313,7 +298,7 @@ make requirements vagrant
 
 ### <a name='AddtheAnsibleVaultpassword'></a>Add the Ansible Vault password
 
-Each `ansible-vault` encrypted value in this repo is tagged with one of four vault IDs (`default`, `all`, `ec2`, `rtk`). Ansible reads the passphrase for each ID by invoking [bin/ansible-vault-client](bin/ansible-vault-client), which fetches it from the OAF 1Password account (and falls back to the legacy Keybase symlinks if 1Password isn't reachable).
+Each `ansible-vault` encrypted value in this repo is tagged with one of four vault IDs (`default`, `all`, `ec2`, `rtk`). Ansible reads the passphrase for each ID by invoking [bin/ansible-vault-client](bin/ansible-vault-client), which fetches it from the OAF 1Password account.
 
 #### Recommended: 1Password
 
@@ -327,12 +312,6 @@ Verify with:
 bin/ansible-vault-client --vault-id ec2 | wc -c   # should print the length of the ec2 passphrase
 ```
 
-#### Legacy fallback: Keybase
-
-If you set things up before this PR, your existing Keybase workflow keeps working unchanged — the dispatcher transparently uses the `.*-vault-pass` symlinks at the repo root when `op` isn't available. Run `make keybase` to verify the symlinks resolve. The Keybase fallback will be removed in a follow-up PR; please switch to 1Password when convenient.
-
-If you're on a headless system (WSL, headless VM) and need Keybase, there's a helper at [bin/headless-keybase.sh](bin/headless-keybase.sh) that brings the Keybase services up as user-space systemd units.
-
 #### <a name='Rotatingavaultpassphrase'></a>Rotating a vault passphrase
 
 Run:
@@ -342,7 +321,7 @@ bin/rotate-vault-passphrase <vault-id>           # one of: default, all, ec2, rt
 bin/rotate-vault-passphrase <vault-id> --dry-run # check what would change without writing
 ```
 
-The script reads the current passphrase via the dispatcher, generates a new one, walks `group_vars/` and `host_vars/` re-encrypting every `!vault` block tagged with that ID, and writes the new passphrase to 1Password. While the Keybase fallback still exists you'll also need to update the matching file in Keybase so contributors who haven't switched can keep working. Commit the resulting diff (only `!vault` blocks tagged with that ID should change) and notify other operators.
+The script reads the current passphrase via the dispatcher, generates a new one, walks `group_vars/` and `host_vars/` re-encrypting every `!vault` block tagged with that ID, and writes the new passphrase to 1Password. Commit the resulting diff (only `!vault` blocks tagged with that ID should change) and notify other operators.
 
 #### Memory and CPU Usage
 
@@ -371,11 +350,11 @@ FYI These production systems have more than 2 CPUs and/or 2 GiB memory:
 
 #### Access to everything except right to know
 
-If the `.rtk-vault-pass` symlink is broken, then use `.envrc` (and `direnv` package) to set the following whenever you cd to this dir:
+If you don't have access to the Right To Know passphrase in 1Password (the `rtk` vault id), use `.envrc` (and the `direnv` package) to set the following whenever you cd to this dir, listing only the vault ids you can read:
 
 
 ```bash
-export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"
+export ANSIBLE_VAULT_IDENTITY_LIST="default@bin/ansible-vault-client,ec2@bin/ansible-vault-client,all@bin/ansible-vault-client"
 ```
 
 

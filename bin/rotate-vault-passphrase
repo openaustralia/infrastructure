@@ -115,8 +115,7 @@ RECOVERY
 }
 trap cleanup EXIT
 
-# 1. Read OLD passphrase via the dispatcher (works whether the current
-#    source is 1Password or Keybase).
+# 1. Read OLD passphrase via the dispatcher (from 1Password).
 "$here/ansible-vault-client" --vault-id "$vault_id" > "$old_pw"
 
 # 2. Generate NEW. `python3 -m secrets` would be nice but the stdlib
@@ -193,7 +192,5 @@ Next steps:
   1. Review the diff (\`git diff group_vars host_vars\`) — only !vault
      blocks tagged '$vault_id' (plus any 1.1 unlabeled ones, if
      rotating 'default') should have changed.
-  2. While the Keybase fallback is still in use, also update the matching
-     Keybase file (see README "Rotating a vault passphrase").
-  3. Commit, get the change reviewed, and notify other operators.
+  2. Commit, get the change reviewed, and notify other operators.
 MSG
