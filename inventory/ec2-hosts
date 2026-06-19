@@ -16,7 +16,7 @@
 
 [ec2]
 # NOTE: The planning alerts servers are NOT in ec2!
-theyvoteforyou.org.au
+srv.theyvoteforyou.org.au
 openaustralia.org.au
 staging.righttoknow.org.au
 prod.righttoknow.org.au
@@ -75,5 +75,5 @@ prod.righttoknow.org.au
 staging.righttoknow.org.au
 
 [theyvoteforyou]
-theyvoteforyou.org.au
+srv.theyvoteforyou.org.au
 
