@@ -78,8 +78,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                       box: "ubuntu/jammy64",
                       groups: ["postgresql"] },
     "au.proxy" => { node: 12,
-                        box: "ubuntu/xenial64",
-                        groups: ["proxy"] },
+                    box: "ubuntu/xenial64",
+                    groups: ["proxy"] },
     "redis" => { node: 13,
                  box: "ubuntu/jammy64",
                  groups: ["redis"] },
@@ -87,29 +87,29 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Servers
     "web.metabase.oaf" => { node: 20,
                             box: "ubuntu/jammy64",
-                            groups: ["metabase", "requires_postgresql"] },
+                            groups: %w[metabase requires_postgresql] },
     "oaf" => { node: 21,
                box: "ubuntu/bionic64",
                groups: ["oaf"] },
     "openaustralia" => { node: 22,
                          box: "ubuntu/jammy64",
-                         aliases: STANDARD_ALIASES + ["data", "software"],
-                         groups: ["openaustralia", "requires_mysql"] },
+                         aliases: STANDARD_ALIASES + %w[data software],
+                         groups: %w[openaustralia requires_mysql] },
     "web.planningalerts" => { node: 24,
                               box: "ubuntu/jammy64",
-                              groups: ["planningalerts", "requires_postgresql"] },
+                              groups: %w[planningalerts requires_postgresql] },
     "staging.righttoknow" => { node: 25,
                                box: "ubuntu/bionic64",
                                aliases: STANDARD_ALIASES,
-                               groups: ["righttoknow", "righttoknow_staging", "requires_postgresql"] },
+                               groups: %w[righttoknow righttoknow_staging requires_postgresql] },
     "prod.righttoknow" => { node: 25,
                             box: "ubuntu/bionic64",
                             aliases: STANDARD_ALIASES,
-                            groups: ["righttoknow", "righttoknow_production", "requires_postgresql"] },
+                            groups: %w[righttoknow righttoknow_production requires_postgresql] },
     "theyvoteforyou" => { node: 26,
                           box: "ubuntu/focal64",
                           aliases: STANDARD_ALIASES,
-                          groups: ["theyvoteforyou", "requires_mysql"] },
+                          groups: %w[theyvoteforyou requires_mysql] },
     # FIXME: Has not been constructed, and is not in any (extra) group
     # "vpn.oaf" => { node: 27,
     #                       box: "ubuntu/jammy64",
@@ -117,7 +117,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     "openvpn" => { node: 28,
                    box: "ubuntu/jammy64",
-                   groups: ["openvpn"] },
+                   groups: ["openvpn"] }
 
   }
 
@@ -130,8 +130,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.verbose = "vv"
 
     ansible.groups = {
-      "development" => [ ],
-      "catch_all_mail" => [ ],
+      "development" => [],
+      "catch_all_mail" => [],
 
       # Empty list just so ansible doesn't complain it doesn't know about these cloud servers
       "ec2" => [],
@@ -150,7 +150,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
     tags = ENV["TAGS"].to_s.gsub(/[^A-Z0-9_]+/i, ",").split(",").reject { |s| s.to_s == "" }
     if tags.any?
-      tags = tags + ["facts"]
+      tags += ["facts"]
       puts "INFO: Only running TAGS: #{tags.inspect}"
       ansible.tags = tags if tags.any?
     end
@@ -158,8 +158,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider "virtualbox" do |v|
     # Middle ground - see README.md for tuning
-    v.memory = (ENV['VAGRANT_MEMORY'] || 2048).to_i
-    v.cpus   = (ENV['VAGRANT_CPUS'] || 2).to_i
+    v.memory = (ENV["VAGRANT_MEMORY"] || 2048).to_i
+    v.cpus   = (ENV["VAGRANT_CPUS"] || 2).to_i
   end
 
   # Use this so that you don't need to give the machine name for all vagrant
