@@ -137,8 +137,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "ec2" => [],
 
       # TODO: Consider adding hosts for these Server groups (that are used)
-      "openvpn" => [],
-      "plausible" => []
+      "openvpn" => []
     }
     hosts.each do |hostname, details|
       hostname = "#{hostname}.#{BASE_DOMAIN}"
