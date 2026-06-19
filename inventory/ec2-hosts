@@ -27,12 +27,6 @@ vpn.oaf.org.au
 [catch_all_mail:children]
 righttoknow_staging
 
-# We've decided to use the hosted version at plausible.io for the time
-# being because it was just a little too much work to get a decent
-# production worthy setup going. That could of course change and we always
-# have to option to switch because it's open-source.
-# web.plausible.oaf.org.au
-
 [metabase]
 web.metabase.oaf.org.au
 
@@ -45,10 +39,6 @@ openaustralia.org.au
 [planningalerts]
 ec2-3-27-58-54.ap-southeast-2.compute.amazonaws.com
 ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
-
-[plausible]
-# See comment above
-# web.plausible.oaf.org.au
 
 [proxy]
 au.proxy.oaf.org.au
