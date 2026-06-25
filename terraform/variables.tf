@@ -65,7 +65,7 @@ variable "ubuntu_24_ami" {
   default = "ami-001f2488b35ca8aad"
 }
 
-# AMI for Ubuntu 22.04 LTS (used by OpenVPN server), locked to a specific version 
+# AMI for Ubuntu 22.04 LTS (used by OpenVPN server), locked to a specific version
 # so that we don't keep re-provisioning the servers when the AMI gets updated
 variable "ubuntu_22_openvpn_ami" {
   # Created by: Canonical
@@ -98,12 +98,6 @@ variable "righttoknow_cloudflare_only" {
 
 variable "openaustralia_cloudflare_only" {
   description = "Add Cloudflare IP rules to openaustralia security group"
-  type        = bool
-  default     = false
-}
-
-variable "opengovernment_cloudflare_only" {
-  description = "Add Cloudflare IP rules to opengovernment security group"
   type        = bool
   default     = false
 }
