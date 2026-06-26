@@ -22,7 +22,6 @@ The Terraform configuration already supports Cloudflare-only mode for each servi
 variable "theyvoteforyou_cloudflare_only" { default = false }
 variable "righttoknow_cloudflare_only"    { default = false }
 variable "openaustralia_cloudflare_only"  { default = false }
-variable "opengovernment_cloudflare_only" { default = false }
 variable "planningalerts_cloudflare_only" { default = false }
 ```
 
