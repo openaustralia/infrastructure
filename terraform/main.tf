@@ -24,7 +24,7 @@ module "planningalerts" {
   vpc                           = aws_default_vpc.default
   availability_zones            = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
   cloudflare_account_id         = var.cloudflare_account_id
-  instance_count = 2
+  instance_count                = 2
   # blue environment setup
   blue_enabled  = true
   blue_weight   = 1
