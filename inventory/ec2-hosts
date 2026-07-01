@@ -21,6 +21,7 @@ openaustralia.org.au
 staging.righttoknow.org.au
 prod.righttoknow.org.au
 au.proxy.oaf.org.au
+au2.proxy.oaf.org.au
 web.metabase.oaf.org.au
 vpn.oaf.org.au
 
@@ -52,6 +53,7 @@ ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 
 [proxy]
 au.proxy.oaf.org.au
+au2.proxy.oaf.org.au
 
 # Group for all sites that use and thus need information on the MySQL 8.x RDS instance
 [requires_mysql:children]
