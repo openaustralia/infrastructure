@@ -1,7 +1,11 @@
+# Provider credentials:
+#   AWS         — `~/.aws/credentials`, AWS_PROFILE, AWS SSO, instance profile, or AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env vars
+#   Google      — `gcloud auth application-default login`
+#   Cloudflare  — var.cloudflare_api_token, rendered into secrets.auto.tfvars from 1Password by `make tf-secrets`
+#   Linode      — var.linode_api_token, rendered into secrets.auto.tfvars from 1Password by `make tf-secrets`
+
 provider "aws" {
-  access_key = var.aws_access_key
-  secret_key = var.aws_secret_key
-  region     = var.ec2_region
+  region = var.ec2_region
 }
 
 provider "aws" {
@@ -18,8 +22,6 @@ provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
 
-# To use this provider we authenticate with:
-# gcloud auth application-default login
 provider "google" {
   project               = "planningalerts-214303"
   region                = "australia-southeast1"

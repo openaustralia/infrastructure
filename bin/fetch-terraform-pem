@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Materialise terraform.pem at the repo root from 1Password.
+#
+# Idempotent: if the file is already present and readable, leaves it
+# alone. Otherwise reads the SSH key out of the OAF DevOps vault and
+# writes it as a 0600 regular file.
+
+set -euo pipefail
+
+here="$(cd "$(dirname "$0")" && pwd)"
+repo="$(cd "$here/.." && pwd)"
+OP_ACCOUNT="$(cat "$here/.op-account")"
+export OP_ACCOUNT
+
+target="$repo/terraform.pem"
+
+if [ -r "$target" ]; then
+  exit 0
+fi
+
+if ! command -v op >/dev/null 2>&1; then
+  echo "fetch-terraform-pem: 'op' (1Password CLI) is not installed." >&2
+  echo "  Install it: https://developer.1password.com/docs/cli/get-started" >&2
+  exit 1
+fi
+
+tmp="$(mktemp "$target.XXXXXX")"
+trap 'rm -f "$tmp"' EXIT
+
+if ! op read --account "$OP_ACCOUNT" \
+       "op://nal3r3nlyo2sdqzegvdvlmvp5e/kger6vus7mqy3zwkhwmik4usxa/terraform.pem" \
+       > "$tmp" 2>/dev/null; then
+  echo "fetch-terraform-pem: failed to read terraform.pem from 1Password" >&2
+  echo "  Sign into the OAF account: op signin --account $OP_ACCOUNT" >&2
+  exit 1
+fi
+
+chmod 600 "$tmp"
+mv "$tmp" "$target"
+trap - EXIT

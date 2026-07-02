@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Ansible vault-id "client" dispatcher.
+#
+# Invoked by ansible as: bin/ansible-vault-client --vault-id <id>
+# Prints the matching passphrase on stdout (no trailing newline).
+#
+# Reads the passphrase from the OAF 1Password account.
+
+set -euo pipefail
+
+here="$(cd "$(dirname "$0")" && pwd)"
+OP_ACCOUNT="$(cat "$here/.op-account")"
+export OP_ACCOUNT
+
+if [ $# -eq 0 ]; then
+  echo "ansible-vault-client: no vault id given (expected --vault-id <default|all|ec2|rtk>)" >&2
+  exit 1
+else
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --vault-id) vault_id="$2"; shift 2 ;;
+      --vault-id=*) vault_id="${1#*=}"; shift ;;
+      *) vault_id+=$1; break ;;
+    esac
+  done
+fi
+
+case "$vault_id" in
+  default) op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/m2ccf6rvruxlyhevcovwher4cy/password" ;;
+  all)     op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/mpwsqfdmg7xinu46zmiqesn2yu/password" ;;
+  ec2)     op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/emvvhq7denilwx2nesg45fkwrm/password" ;;
+  rtk)     op_ref="op://nal3r3nlyo2sdqzegvdvlmvp5e/33howvcuao7gomvqpivs7dtzoy/password" ;;
+  *) echo "ansible-vault-client: unknown vault id '$vault_id'" >&2; exit 1 ;;
+esac
+
+if command -v op >/dev/null 2>&1 \
+   && op read -n --account "$OP_ACCOUNT" "$op_ref" 2>/dev/null; then
+  exit 0
+fi
+
+cat >&2 <<MSG
+ansible-vault-client: could not read passphrase for vault id '$vault_id'.
+  Tried 1Password (account=$OP_ACCOUNT, ref=$op_ref).
+  Sign into the OAF 1Password account: \`op signin --account $OP_ACCOUNT\`
+MSG
+exit 1

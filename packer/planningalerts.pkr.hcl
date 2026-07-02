@@ -49,9 +49,9 @@ build {
     extra_arguments = [
       // Useful for debugging
       // "-vv",
-      "--vault-id", "../.vault_pass.txt",
-      "--vault-id", "ec2@../.ec2-vault-pass",
-      "--vault-id", "all@../.all-vault-pass"
+      "--vault-id", "default@../bin/ansible-vault-client",
+      "--vault-id", "ec2@../bin/ansible-vault-client",
+      "--vault-id", "all@../bin/ansible-vault-client"
     ]
     groups              = ["ec2", "planningalerts"]
     inventory_directory = ".."
