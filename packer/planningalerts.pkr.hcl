@@ -49,7 +49,7 @@ build {
     extra_arguments = [
       // Useful for debugging
       // "-vv",
-      "--vault-id", "../bin/ansible-vault-client",
+      "--vault-id", "default@../bin/ansible-vault-client",
       "--vault-id", "ec2@../bin/ansible-vault-client",
       "--vault-id", "all@../bin/ansible-vault-client"
     ]
