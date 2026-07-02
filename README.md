@@ -281,7 +281,7 @@ Each `ansible-vault` encrypted value in this repo is tagged with one of four vau
 #### Recommended: 1Password
 
 1. Install the 1Password CLI per [CLI tools for credentials](#cli-tools-for-credentials) above and sign in to the OAF account.
-2. Ask an existing admin to add you to the **DevOps** vault (and **RTK Devops** if you'll be administering Right To Know). The passphrase items already exist there.
+2. Ask an existing admin to add you to the **DevOps** vault. The passphrase items already exist there — including the `rtk` one, which lives in DevOps for now rather than the separate **RTK Devops** vault.
 3. `make requirements` will detect that you're signed in and run the rest of the setup; no further action needed.
 
 Verify with:
@@ -318,7 +318,7 @@ FYI These production systems have more than 2 CPUs and/or 2 GiB memory:
 
 #### Access to everything except right to know
 
-If you don't have access to the Right To Know passphrase in 1Password (the `rtk` vault id), use `.envrc` (and the `direnv` package) to set the following whenever you cd to this dir, listing only the vault ids you can read:
+All four passphrases currently live in the same **DevOps** 1Password vault, so DevOps membership grants read access to `rtk` too — there's no separate vault-level restriction today. If that changes (e.g. `rtk` moves to its own vault, or you're given access to only some of the four items), use `.envrc` (and the `direnv` package) to set the following whenever you cd to this dir, listing only the vault ids you can read:
 
 
 ```bash
