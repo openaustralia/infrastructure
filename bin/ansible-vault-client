@@ -13,7 +13,8 @@ OP_ACCOUNT="$(cat "$here/.op-account")"
 export OP_ACCOUNT
 
 if [ $# -eq 0 ]; then
-  vault_id="default"
+  echo "ansible-vault-client: no vault id given (expected --vault-id <default|all|ec2|rtk>)" >&2
+  exit 1
 else
   while [ $# -gt 0 ]; do
     case "$1" in

@@ -88,13 +88,22 @@ def rekey(text, old_id, old_source, new_id, new_source, path)
     next unless line =~ /!vault\s*\|\s*\z/
     block_no += 1
 
-    # Find body indent from the next non-blank line.
+    # Find body indent from the next non-blank line. If there's no
+    # properly-indented body this line isn't a real !vault block (the
+    # regex above false-matched) — skip it and keep copying the rest of
+    # the file. Using `break` here would drop everything after this point.
     j = i
     j += 1 while j < lines.length && lines[j].strip.empty?
-    break if j >= lines.length
+    if j >= lines.length
+      warn "rekey-yaml: #{path} block ##{block_no}: '!vault |' with no body — skipping"
+      next
+    end
 
     indent = lines[j][/\A[ \t]+/]
-    break if indent.nil? || indent.empty?
+    if indent.nil? || indent.empty?
+      warn "rekey-yaml: #{path} block ##{block_no}: '!vault |' body is not indented — skipping"
+      next
+    end
 
     # Collect body lines: must have the body indent and a non-whitespace
     # character immediately after it. A blank line or a dedent terminates

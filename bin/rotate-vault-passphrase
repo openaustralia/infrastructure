@@ -35,7 +35,7 @@ case "$vault_id" in
   default) op_item="op://nal3r3nlyo2sdqzegvdvlmvp5e/m2ccf6rvruxlyhevcovwher4cy" ;;
   all)     op_item="op://nal3r3nlyo2sdqzegvdvlmvp5e/mpwsqfdmg7xinu46zmiqesn2yu" ;;
   ec2)     op_item="op://nal3r3nlyo2sdqzegvdvlmvp5e/emvvhq7denilwx2nesg45fkwrm" ;;
-  rtk)     op_item="op://vya2dzj3feogihzs3xnkafwc3q/5u24ye7ixytg756okcpop36lam" ;;
+  rtk)     op_item="op://nal3r3nlyo2sdqzegvdvlmvp5e/33howvcuao7gomvqpivs7dtzoy" ;;
   *) echo "Usage: $0 <default|all|ec2|rtk> [--dry-run]" >&2; exit 1 ;;
 esac
 
