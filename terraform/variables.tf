@@ -1,13 +1,7 @@
-# Note that currently there is duplication between these values and those stored
-# and used in ansible
+# Note that currently there is duplication between this value and the
+# one stored in ansible (group_vars/all.yml). The same secret is rendered
+# into terraform/secrets.auto.tfvars by `make tf-secrets` from 1Password.
 # TODO: Remove duplication
-
-variable "aws_access_key" {
-}
-
-variable "aws_secret_key" {
-  sensitive = true
-}
 
 variable "ec2_region" {
   # Sydney
@@ -18,11 +12,8 @@ variable "rds_admin_password" {
   sensitive = true
 }
 
-variable "theyvoteforyou_db_password" {
-  sensitive = true
-}
-
-# Note that this is different than one that was previously called cloudflare_token
+# External service tokens, rendered into secrets.auto.tfvars from 1Password by
+# `make tf-secrets` and consumed by the cloudflare and linode providers.
 variable "cloudflare_api_token" {
   sensitive = true
 }
@@ -74,7 +65,7 @@ variable "ubuntu_24_ami" {
   default = "ami-001f2488b35ca8aad"
 }
 
-# AMI for Ubuntu 22.04 LTS (used by OpenVPN server), locked to a specific version 
+# AMI for Ubuntu 22.04 LTS (used by OpenVPN server), locked to a specific version
 # so that we don't keep re-provisioning the servers when the AMI gets updated
 variable "ubuntu_22_openvpn_ami" {
   # Created by: Canonical
@@ -107,12 +98,6 @@ variable "righttoknow_cloudflare_only" {
 
 variable "openaustralia_cloudflare_only" {
   description = "Add Cloudflare IP rules to openaustralia security group"
-  type        = bool
-  default     = false
-}
-
-variable "opengovernment_cloudflare_only" {
-  description = "Add Cloudflare IP rules to opengovernment security group"
   type        = bool
   default     = false
 }

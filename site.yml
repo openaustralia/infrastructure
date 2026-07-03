@@ -1,8 +1,9 @@
-# FIRST: check the `vault_identity_list` in `ansible.cfg` using
-# `ls -ld .*pass*`
-# and make sure you have all the password files you need.
-# If you are missing some, then you can override the list using a `.envrc` entry, e.g.:
-# export ANSIBLE_VAULT_IDENTITY_LIST=".vault_pass.txt,ec2@.ec2-vault-pass,all@.all-vault-pass"
+# FIRST: make sure you can read the vault passphrases. They come from the
+# OAF 1Password account via bin/ansible-vault-client (see `vault_identity_list`
+# in `ansible.cfg`). Sign in with: op signin --account oaforgau
+# If you only have access to some vault ids, override the list using a `.envrc`
+# entry listing just those ids, e.g.:
+# export ANSIBLE_VAULT_IDENTITY_LIST="default@bin/ansible-vault-client,ec2@bin/ansible-vault-client,all@bin/ansible-vault-client"
 
 ## THEN
 
