@@ -3,9 +3,10 @@
         check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
         check-rtk-prod check-rtk-staging check-theyvoteforyou check-target \
         scan-oaf scan-openaustralia scan-planningalerts \
-        clean clobber help install-linters keybase letsencrypt lint production retry roles \
-        show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target tf-init tf-plan \
-        tf-plan-target update-github-ssh-keys vagrant venv yaml-lint
+        clean clobber help install-linters letsencrypt lint op-check production retry roles \
+        show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target \
+        tf-env-check tf-init tf-plan tf-plan-target tf-secrets \
+        update-github-ssh-keys vagrant venv yaml-lint
 
 _STAGE := $(if $(filter-out all,$(STAGE)),_$(STAGE),)
 
@@ -32,8 +33,11 @@ help:
 	@echo "Available targets"
 	@echo "  help                                Output this help text"
 	@echo "  all                                 Run full site.yml playbook against all hosts"
-	@echo "  requirements                        Install requirements: venv, roles, collections and keybase symlink"
-	@echo "  keybase                             Set up Keybase symlink for MacOS or Linux and check perms"
+	@echo "  requirements                        Install requirements: venv, roles, collections, terraform.pem"
+	@echo "  op-check                            Fail if not signed into the OAF 1Password account"
+	@echo "  terraform.pem                       Materialise terraform.pem from 1Password"
+	@echo "  tf-secrets                          Render terraform/secrets.auto.tfvars from 1Password via op inject"
+	@echo "  tf-env-check                        Warn if AWS/Cloudflare/Linode/gcloud credentials aren't reachable"
 	@echo "  roles                               Install Ansible Galaxy external roles and collections"
 	@echo "  venv                                Create Python virtualenv and install requirements"
 	@echo "  generate-certificates               Generate certificates for the development *.test domains"
@@ -52,7 +56,7 @@ help:
 	@echo "  update-github-ssh-keys              Update SSH keys on all servers from GitHub"
 	@echo "  vagrant                             Install vagrant plugins and ensure requirements are present"
 	@echo ""
-	@echo "  clean                               Remove virtualenv, external roles, retry file, collections, keybase symlink"
+	@echo "  clean                               Remove virtualenv, external roles, retry file, collections"
 	@echo "  clobber                             clobber everything make all created (clean + removes .vagrant and log)"
 	@echo ""
 	@echo "  check-righttoknow STAGE=<stage>     Dry-run Ansible for righttoknow production/staging/all host/s"
@@ -82,23 +86,48 @@ help:
 setup:
 	sudo apt install parallel jq direnv
 
-requirements: .keybase .make/roles venv
+requirements: op-check terraform.pem .make/roles venv
 
-# Configure .keybase for MacOS or Linux
-.keybase:
-	@for p in /Volumes/Keybase /keybase /run/keybase /var/lib/keybase "$$(keybase config get -d -b mountdir 2>/dev/null)"; do \
-	  [ -d "$$p" ] && echo "ln -nsf $$p .keybase" && ln -nsf "$$p" .keybase && exit 0; \
-	done; \
-	echo "Keybase mount not found" && exit 1
+# Fail if the operator can't read the OAF 1Password account. 1Password
+# is the sole source for the Ansible Vault passphrases, the RDS admin
+# password and terraform.pem, so failing fast here gives a clear error
+# instead of a cryptic one downstream. We probe with `op vault list`
+# rather than `op whoami` because the latter doesn't recognise sessions
+# inherited from the 1Password desktop app integration.
+op-check:
+	@if command -v op >/dev/null 2>&1 && \
+	    op vault list --account "$$(cat bin/.op-account)" >/dev/null 2>&1; then \
+	  echo "OK: OAF 1Password reachable ($$(cat bin/.op-account))"; \
+	else \
+	  echo "ERROR: OAF 1Password not reachable (account=$$(cat bin/.op-account))." >&2; \
+	  echo "  Install the 1Password CLI and sign in: op signin --account $$(cat bin/.op-account)" >&2; \
+	  exit 1; \
+	fi
 
-# Check keybase exists and user has required permissions
-keybase: .keybase
-	@[ -d .keybase ] && echo "OK: .keybase exists and is linked to a directory"
-	@broken=0; \
-	for f in .all-vault-pass .ec2-vault-pass .rtk-vault-pass terraform.pem .vault_pass.txt; do \
-      [ -f "$$f" ] && echo "OK: $$f exists" || { echo "BROKEN: $$f (permission missing?)"; broken=1; }; \
-	done; \
-	[ $$broken -eq 0 ]
+# Materialise terraform.pem from 1Password. The script is idempotent
+# (no-op if the file is already present), so we name the file directly
+# as the target — that way `rm terraform.pem` correctly triggers a
+# rebuild on the next `make`.
+terraform.pem:
+	bin/fetch-terraform-pem
+
+# Render terraform/secrets.auto.tfvars from the committed template via
+# `op inject`. Same reasoning as terraform.pem: target the real file
+# so deleting it forces a rebuild.
+tf-secrets: terraform/secrets.auto.tfvars
+terraform/secrets.auto.tfvars: terraform/secrets.auto.tfvars.tmpl bin/.op-account
+	OP_ACCOUNT="$$(cat bin/.op-account)" op inject --force --account "$$(cat bin/.op-account)" \
+	    -i terraform/secrets.auto.tfvars.tmpl -o terraform/secrets.auto.tfvars
+	chmod 600 terraform/secrets.auto.tfvars
+
+# Advisory check that the per-operator credentials terraform needs are reachable.
+# Non-fatal: print warnings and continue; terraform itself will fail loudly if
+# anything is truly missing.
+tf-env-check:
+	@aws sts get-caller-identity >/dev/null 2>&1 \
+	    || echo "WARN: 'aws sts get-caller-identity' failed — sign into AWS (e.g. \`aws sso login\`)"
+	@gcloud auth application-default print-access-token >/dev/null 2>&1 \
+	    || echo "WARN: gcloud application-default credentials missing — run \`gcloud auth application-default login\`"
 
 vagrant: .make/vagrant-plugins .make/certificates requirements
 
@@ -164,8 +193,9 @@ show-rds-facts: check-host requirements
 
 # Delete all files that are normally created by running make goals
 clean:
-	rm -rf .venv roles/external site.retry collections .keybase .make
+	rm -rf .venv roles/external site.retry collections .make
 	rm -rf terraform/.terraform
+	rm -f terraform/secrets.auto.tfvars terraform.pem
 
 clobber: clean
 	vagrant destroy --force || echo "WARNING: Ignoring vagrant error!"
@@ -175,23 +205,23 @@ clobber: clean
 	# TODO: Should we delete terraform/terraform.tfstate.* ?
 
 # Terraform
-tf-init: .make/terraform
+tf-init: tf-secrets .make/terraform
 
 .make/terraform: terraform/*.tf terraform/*/*.tf | .make
 	terraform -chdir=terraform init
 	touch .make/terraform
 
-tf-plan: .make/terraform
+tf-plan: tf-secrets tf-env-check .make/terraform
 	terraform -chdir=terraform plan
-tf-apply: .make/terraform
+tf-apply: tf-secrets tf-env-check .make/terraform
 	bin/tag-provisioning --wip terraform "" "" ""
 	terraform -chdir=terraform apply
 	bin/tag-provisioning terraform "" "" ""
 tf-validate: tf-check-fmt .make/terraform
-	terraform -chdir=terraform validate 
+	terraform -chdir=terraform validate
 	@echo "PASSED tf-validate!"
 tf-check-fmt:
-	terraform -chdir=terraform fmt -check 
+	terraform -chdir=terraform fmt -check
 	@echo "PASSED tf-check-fmt!"
 
 check-target:
@@ -201,10 +231,10 @@ ifndef TARGET
 	@exit 1
 endif
 
-tf-plan-target: check-target .make/terraform
+tf-plan-target: check-target tf-secrets tf-env-check .make/terraform
 	terraform -chdir=terraform plan -target=module.$(TARGET)
 
-tf-apply-target: check-target .make/terraform
+tf-apply-target: check-target tf-secrets tf-env-check .make/terraform
 	terraform -chdir=terraform apply -target=module.$(TARGET)
 
 stage_required:
@@ -226,7 +256,7 @@ check-openaustralia: requirements # stage_required
 check-metabase: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --check --diff
 
-# These make changes 
+# These make changes
 apply-righttoknow: requirements stage_required
 	bin/tag-provisioning --wip righttoknow "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --diff
@@ -282,11 +312,11 @@ scan-planningalerts: venv log
 	.venv/bin/linkchecker --check-extern --no-warnings --threads 5 -F html/utf-8/$$log $$url
 
 yaml-lint: venv
-	.venv/bin/yamllint roles/internal/ roles/*.yml site.yml 
+	.venv/bin/yamllint roles/internal/ roles/*.yml site.yml
 	@echo "PASSED yamllint!"
 
 ansible-lint: venv roles
-	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/ roles/*.yml site.yml 
+	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/ roles/*.yml site.yml
 	@echo "PASSED ansible-lint!"
 
 lint: yaml-lint ansible-lint tf-check-fmt tf-validate

@@ -233,6 +233,7 @@
       - php{{ php_version }}-mysql
       - php{{ php_version }}-mbstring
       - php{{ php_version }}-xml
+      - php{{ php_version }}-intl
       - php{{ php_version }}-zip
 
 # Composer is invoked by Capistrano during deploy (via the capistrano-composer
