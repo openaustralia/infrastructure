@@ -25,8 +25,7 @@ module "planningalerts" {
   vpc                           = aws_default_vpc.default
   availability_zones            = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
   cloudflare_account_id         = var.cloudflare_account_id
-  # plausible_lb_target_group     = module.plausible.lb_target_group
-  instance_count = 2
+  instance_count                = 2
   # blue environment setup
   blue_enabled  = true
   blue_weight   = 1
@@ -74,20 +73,6 @@ module "metabase" {
   vpc                      = aws_default_vpc.default
   listener_https           = aws_lb_listener.main-https
 }
-
-# We're using hosted plausible.io for the time being
-# module "plausible" {
-#   source = "./plausible"
-#   # At the moment we need to upgrade Ansible to make ubuntu 24.04 work I think
-#   # TODO: Fix this
-#   ami                      = var.ubuntu_22_ami
-#   security_group_behind_lb = aws_security_group.planningalerts
-#   instance_profile         = aws_iam_instance_profile.logging
-#   zone_id                  = cloudflare_zone.oaf_org_au.id
-#   load_balancer            = aws_lb.main
-#   vpc                      = aws_default_vpc.default
-#   listener_https           = aws_lb_listener.main-https
-# }
 
 module "openaustralia" {
   source                   = "./openaustralia"
