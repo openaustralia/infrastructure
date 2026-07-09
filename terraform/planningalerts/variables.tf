@@ -49,4 +49,3 @@ variable "availability_zones" {
   type = list(string)
 }
 variable "cloudflare_account_id" {}
-# variable "plausible_lb_target_group" {}
