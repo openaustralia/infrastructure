@@ -1,4 +1,5 @@
-## Contains the DNS records for handbook.oaf.org.au, our new internal documentation site. This is a separate module from the main terraform module because it is not hosted on AWS, but rather on mintlify.
+## Contains the DNS records for handbook.oaf.org.au, our new internal documentation site.
+## This is a separate module from the main terraform module because it is not hosted on AWS, but rather on mintlify.
 
 terraform {
   required_providers {
@@ -22,7 +23,7 @@ resource "cloudflare_record" "acme_challenge" {
   zone_id = var.zone_id
   name    = "_acme-challenge.handbook.oaf.org.au"
   type    = "TXT"
-    value   = "_acme-challenge.handbook.oaf.org.au"
+    value   = "xGOXm9GVbIeebdkTXhFElSIJFKfvQNAu0VPCc3RxM60"
   }
 
   resource "cloudflare_record" "custom_hostname" {
