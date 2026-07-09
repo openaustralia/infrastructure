@@ -3,6 +3,12 @@ module "cuttlefish" {
   zone_id = cloudflare_zone.oaf_org_au.id
 }
 
+module "docs-internal" {
+  source  = "./docs-internal"
+  zone_id = cloudflare_zone.oaf_org_au.id
+}
+
+
 module "planningalerts" {
   source           = "./planningalerts"
   instance_profile = aws_iam_instance_profile.logging
