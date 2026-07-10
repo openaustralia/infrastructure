@@ -1,9 +1,9 @@
 .PHONY: all ansible-lint apply-metabase apply-oaf requirements apply-openaustralia \
-        apply-planningalerts apply-righttoknow apply-rtk-prod apply-rtk-staging apply-theyvoteforyou \
+        apply-planningalerts apply-righttoknow  apply-theyvoteforyou \
         check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
-        check-rtk-prod check-rtk-staging check-theyvoteforyou check-target \
+        check-theyvoteforyou check-target \
         scan-oaf scan-openaustralia scan-planningalerts \
-        clean clobber help install-linters letsencrypt lint op-check production retry roles \
+        clean clobber help letsencrypt lint op-check retry roles \
         show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target \
         tf-env-check tf-init tf-plan tf-plan-target tf-secrets \
         update-github-ssh-keys vagrant venv yaml-lint
@@ -43,16 +43,22 @@ help:
 	@echo "  generate-certificates               Generate certificates for the development *.test domains"
 	@echo "Independent targets (not required by all):"
 	@echo "  letsencrypt                         Renew/update SSL certificates"
-	@echo "  lint                                Run yamllint and ansible-lint on roles and site.yml"
+	@echo "  lint                                Run the following lint targets:"
+	@echo "    yaml-lint                         Run yamllint on roles and site.yml only"
+	@echo "    ansible-lint                      Run ansible-lint on roles and site.yml only"
+	@echo "    tf-check-fmt                      Check terraform files are correctly formatted"
+	@echo "    tf-validate                       Check terraform formatting and validate config"
 	@echo "  retry                               Re-run site.yml limited to hosts from last failed run"
 	@echo "  setup                               Install ubuntu packages required for development"
 	@echo "  show-inventory                      List all hosts in the EC2 inventory"
-	@echo "  show-vars host=<host>               Show all Ansible variables for a host"
-	@echo "  show-facts host=<host>              Show all Ansible facts for a host"
-	@echo "  show-rds-facts host=<host>          Show RDS debug facts for a host"
+	@echo "  show-vars HOST=<host>               Show all Ansible variables for a host"
+	@echo "  show-facts HOST=<host>              Show all Ansible facts for a host"
+	@echo "  show-rds-facts HOST=<host>          Show RDS debug facts for a host"
 	@echo "  tf-init                             Run terraform init in the terraform directory"
 	@echo "  tf-plan                             Run terraform plan in the terraform directory"
 	@echo "  tf-apply                            Run terraform apply in the terraform directory"
+	@echo "  tf-plan-target TARGET=<module>       Run terraform plan scoped to a single module"
+	@echo "  tf-apply-target TARGET=<module>      Run terraform apply scoped to a single module"
 	@echo "  update-github-ssh-keys              Update SSH keys on all servers from GitHub"
 	@echo "  vagrant                             Install vagrant plugins and ensure requirements are present"
 	@echo ""
@@ -78,10 +84,12 @@ help:
 	@echo "  scan-planningalerts                 Scan planningalerts.org.au for broken links (1 hour)"
 	@echo ""
 	@echo "Extra vars:"
-	@echo "  STAGE          Target stage, e.g. STAGE=new or old or staging or '' (required by check-*/apply-* targets)"
-	@echo "  TAGS           Only run plays/tasks tagged with these (space or comma separated)"
-	@echo "  SKIP_TAGS      Skip plays/tasks with these tags (space or comma separated)"
 	@echo "  ANSIBLE_VERBOSE  Ansible verbosity flag, e.g. ANSIBLE_VERBOSE=vvv"
+	@echo "  HOST           Ansible host pattern (required by show-* targets, will list inventory host names if not supplied)"
+	@echo "  SKIP_TAGS      Skip plays/tasks with these tags (optional, space or comma separated)"
+	@echo "  STAGE          Target stage, e.g. STAGE=new or old or staging or '' (required by some check-*/apply-* targets)"
+	@echo "  TAGS           Only run plays/tasks tagged with these (optional, space or comma separated)"
+	@echo "  TARGET         Terraform module name (required by tf-plan-target/tf-apply-target, will list options if not supplied)"
 
 setup:
 	sudo apt install parallel jq direnv
@@ -173,8 +181,8 @@ retry: requirements site.retry
 	.venv/bin/ansible-playbook site.yml -l @site.retry
 
 check-host:
-ifndef host
-	@echo "ERROR: host is not set! Add host=<value> using a host from inventory:\n"
+ifndef HOST
+	@echo "ERROR: host is not set! Add HOST=<value> using a host from inventory:\n"
 	@$(MAKE) show-inventory
 	@exit 1
 endif
@@ -183,13 +191,13 @@ show-inventory: requirements
 	.venv/bin/ansible-inventory -i ./inventory/ec2-hosts --graph
 
 show-vars: check-host requirements
-	.venv/bin/ansible -i ./inventory/ec2-hosts $(host) -m debug -a "var=hostvars[inventory_hostname]"
+	.venv/bin/ansible -i ./inventory/ec2-hosts $(HOST) -m debug -a "var=hostvars[inventory_hostname]"
 
 show-facts: check-host requirements
-	.venv/bin/ansible -i ./inventory/ec2-hosts $(host) -m setup
+	.venv/bin/ansible -i ./inventory/ec2-hosts $(HOST) -m setup
 
 show-rds-facts: check-host requirements
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml --limit $(host) --tags facts -e "show_rds_debug=true"
+	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml --limit $(HOST) --tags facts -e "show_rds_debug=true"
 
 # Delete all files that are normally created by running make goals
 clean:
