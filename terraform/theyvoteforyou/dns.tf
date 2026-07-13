@@ -112,12 +112,13 @@ resource "cloudflare_record" "mx" {
 
 # TXT records
 
-# TODO: I think this spf record needs to include cuttlefish (like planningalerts)
+# Note: this spf record never included cuttlefish (an old TODO); postal
+# fixes that properly via its include
 resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.org_au.id
   name    = "theyvoteforyou.org.au"
   type    = "TXT"
-  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com -all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com include:spf.postal.oaf.org.au -all"
 }
 
 # TODO: Remove this once the one below is up and running
