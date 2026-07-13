@@ -189,16 +189,13 @@ resource "cloudflare_record" "slack-domain-verification" {
   value   = "slack-domain-verification=JfbPnX8KjSbj2pDWCfKEJud0IjhrhH6WiMqTDRYH"
 }
 
-# DMARC record for email authentication and reporting
-# Reports are sent to both Suped (for monitoring) and Postmark (legacy weekly reports)
-# Suped provides ongoing monitoring and analysis
-# Postmark generates a weekly DMARC report which gets sent by email on Monday mornings
-# Report goes to webmaster@oaf.org.au
+# DMARC delegated to Suped via CNAME (https://suped.com/).
+# Record content and policy (p=) are managed in the Suped dashboard, not here.
 resource "cloudflare_record" "dmarc" {
   zone_id = var.oaf_org_au_zone_id
   name    = "_dmarc.oaf.org.au"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ff2eamlrqpn@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+  type    = "CNAME"
+  value   = "oaf.org.au.dmarc.dns.suped.com"
 }
 
 # SPF include record containing all A records for OAF services
@@ -279,12 +276,11 @@ resource "cloudflare_record" "alt_domainkey_google" {
 # For the time being we're just using DMARC records to get some data on what's
 # happening with email that we're sending (and whether anyone else is impersonating
 # us).
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
-# Report goes to webmaster@openaustraliafoundation.org.au
+# DMARC delegated to Suped via CNAME (https://suped.com/).
+# Record content and policy (p=) are managed in the Suped dashboard, not here.
 resource "cloudflare_record" "alt_dmarc" {
   zone_id = var.openaustraliafoundation_org_au_zone_id
   name    = "_dmarc.openaustraliafoundation.org.au"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; pct=100; rua=mailto:re+tziobvarown@dmarc.postmarkapp.com; sp=none; aspf=r;"
+  type    = "CNAME"
+  value   = "openaustraliafoundation.org.au.dmarc.dns.suped.com"
 }
