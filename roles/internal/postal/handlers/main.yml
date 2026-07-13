@@ -1,0 +1,20 @@
+---
+- name: Persist iptables rules
+  command: netfilter-persistent save
+
+- name: Restart mariadb
+  service:
+    name: mariadb
+    state: restarted
+
+- name: Restart postal
+  command: /usr/bin/postal restart
+  # Postal isn't running on first provision; `postal start` later in the run
+  # brings it up with the new config
+  failed_when: false
+
+- name: Restart caddy
+  command: docker restart postal-caddy
+  # Caddy isn't running on first provision; the docker_container task later
+  # in the run starts it with the new Caddyfile
+  failed_when: false

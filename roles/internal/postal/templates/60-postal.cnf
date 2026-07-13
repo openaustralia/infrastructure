@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+
+[mysqld]
+# Only postal on this host talks to mariadb
+bind-address = 127.0.0.1
+
+# Postal requires this to be at least 10x the maximum message size
+# https://docs.postalserver.io/getting-started/prerequisites
+innodb_log_file_size = {{ postal_mariadb_innodb_log_file_size }}

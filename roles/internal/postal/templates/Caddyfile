@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+#
+# TLS termination for the Postal web interface. Caddy obtains and renews
+# Let's Encrypt certificates automatically.
+
+{{ postal_web_hostname }} {
+  reverse_proxy 127.0.0.1:5000
+}

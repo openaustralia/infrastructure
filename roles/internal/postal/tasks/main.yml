@@ -1,0 +1,248 @@
+---
+# Docker (same source as the metabase role, keyed on the actual release)
+
+- name: Ensure that we have the Docker repository key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+
+- name: Ensure that we have the Docker repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+
+- name: Install docker
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+
+# MariaDB (native install; jammy ships 10.6, Postal's minimum)
+
+- name: Install mariadb and the python bindings ansible needs to manage it
+  apt:
+    name:
+      - mariadb-server
+      - python3-pymysql
+
+- name: Configure mariadb for postal
+  template:
+    src: 60-postal.cnf
+    dest: /etc/mysql/mariadb.conf.d/60-postal.cnf
+    mode: "0644"
+  notify: Restart mariadb
+
+- name: Ensure mariadb is running
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+
+# Root access uses unix socket authentication (the Ubuntu default), so no
+# root password is needed; mariadb only listens on 127.0.0.1
+- name: Create the postal database
+  mysql_db:
+    name: postal
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Create the postal database user
+  mysql_user:
+    name: "{{ postal_db_username }}"
+    password: "{{ postal_db_password }}"
+    host: "{{ item }}"
+    # Postal creates a separate `postal-server-*` database per mail server,
+    # so it needs rights on the postal-% pattern as well
+    priv: "postal.*:ALL/postal-%.*:ALL"
+    login_unix_socket: /run/mysqld/mysqld.sock
+  loop:
+    - localhost
+    - 127.0.0.1
+
+# Postal installation helper (provides the docker-compose file and the
+# `postal` CLI wrapper)
+
+- name: Clone the postal install helper repository
+  git:
+    repo: "{{ postal_install_repo }}"
+    dest: /opt/postal/install
+    version: "{{ postal_install_version }}"
+
+- name: Symlink the postal command
+  file:
+    src: /opt/postal/install/bin/postal
+    dest: /usr/bin/postal
+    state: link
+
+- name: Set the number of postal worker replicas
+  copy:
+    content: "{{ postal_worker_replicas }}\n"
+    dest: /opt/postal/install/worker-replicas
+    mode: "0644"
+
+- name: Check which postal version the docker-compose file is set to
+  command: grep -q "postal:{{ postal_version }}" /opt/postal/install/docker-compose.yml
+  register: postal_compose_version
+  changed_when: false
+  failed_when: false
+
+# `postal set-version` renders templates/docker-compose.v3.yml with the
+# requested image tag. Database schema upgrades between versions are a
+# manual step (`postal upgrade`, see the README), so this only pins what a
+# fresh install will run.
+- name: Pin the postal version in the docker-compose file
+  command: /usr/bin/postal set-version {{ postal_version }}
+  when: postal_compose_version.rc != 0
+
+# Postal configuration
+
+- name: Create the postal config directory
+  file:
+    path: /opt/postal/config
+    state: directory
+    mode: "0700"
+
+- name: Copy across the postal configuration
+  template:
+    src: postal.yml
+    dest: /opt/postal/config/postal.yml
+    mode: "0600"
+  notify: Restart postal
+
+- name: Copy across the signing key
+  copy:
+    content: "{{ postal_signing_key }}"
+    dest: /opt/postal/config/signing.key
+    mode: "0600"
+  notify: Restart postal
+
+# The SMTP listener needs a TLS certificate for STARTTLS before Caddy has
+# obtained the real one, so create a self-signed placeholder. The
+# sync-smtp-certificate script replaces it with Caddy's Let's Encrypt
+# certificate once that exists.
+- name: Check for an SMTP TLS certificate
+  stat:
+    path: /opt/postal/config/smtp.cert
+  register: postal_smtp_cert
+
+- name: Create a self-signed placeholder SMTP TLS certificate
+  command: >-
+    openssl req -x509 -newkey rsa:2048 -nodes
+    -keyout /opt/postal/config/smtp.key
+    -out /opt/postal/config/smtp.cert
+    -days 3650
+    -subj "/CN={{ postal_web_hostname }}"
+  when: not postal_smtp_cert.stat.exists
+
+- name: Copy across the script that syncs Caddy's certificate to the SMTP listener
+  template:
+    src: sync-smtp-certificate.sh
+    dest: /usr/local/bin/sync-smtp-certificate
+    mode: "0755"
+
+- name: Sync Caddy's certificate to the SMTP listener daily
+  cron:
+    name: Sync postal SMTP TLS certificate from Caddy
+    special_time: daily
+    job: /usr/local/bin/sync-smtp-certificate
+
+# Redirect the legacy Cuttlefish submission port to the real SMTP listener
+# so client apps don't need to change their port configuration
+
+- name: Install iptables-persistent so the redirect survives reboots
+  apt:
+    name:
+      - iptables-persistent
+      - netfilter-persistent
+
+- name: Redirect the legacy submission port to the SMTP listener
+  iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: tcp
+    destination_port: "{{ postal_legacy_submission_port }}"
+    jump: REDIRECT
+    to_ports: "{{ postal_smtp_port }}"
+  notify: Persist iptables rules
+
+# Initialise and run postal
+
+- name: Initialise the postal database schema
+  command: /usr/bin/postal initialize
+  args:
+    creates: /opt/postal/config/.initialized
+
+- name: Record that the database schema has been initialised
+  file:
+    path: /opt/postal/config/.initialized
+    state: touch
+    mode: "0644"
+    modification_time: preserve
+    access_time: preserve
+
+- name: Check whether postal is running
+  command: docker ps --filter name=postal-web --quiet
+  register: postal_running
+  changed_when: false
+
+- name: Start postal
+  command: /usr/bin/postal start
+  when: postal_running.stdout | length == 0
+
+- name: Check whether an admin user exists
+  community.mysql.mysql_query:
+    login_db: postal
+    query: SELECT COUNT(*) AS user_count FROM users
+    login_unix_socket: /run/mysqld/mysqld.sock
+  register: postal_users
+  # The users table only exists after `postal initialize` has run
+  failed_when: false
+
+- name: Explain how to create the first admin user
+  debug:
+    msg: >-
+      No postal admin user exists yet. SSH to the server and run
+      `postal make-user` to create one (it is interactive, so ansible
+      can't do it for you). See roles/internal/postal/README.md.
+  when: postal_users.query_result is not defined or postal_users.query_result[0][0].user_count == 0
+
+# Caddy terminates TLS for the web interface and gets certificates from
+# Let's Encrypt automatically
+
+- name: Copy across the Caddyfile
+  template:
+    src: Caddyfile
+    dest: /opt/postal/config/Caddyfile
+    mode: "0644"
+  notify: Restart caddy
+
+- name: Run caddy
+  docker_container:
+    name: postal-caddy
+    image: caddy:2
+    network_mode: host
+    restart_policy: unless-stopped
+    volumes:
+      - /opt/postal/config/Caddyfile:/etc/caddy/Caddyfile
+      - /opt/postal/caddy-data:/data
+
+# Backups: nightly database dump into /opt/postal/backup, which restic (see
+# meta/main.yml) then ships offsite along with the postal config
+
+- name: Create the backup directory
+  file:
+    path: /opt/postal/backup
+    state: directory
+    mode: "0700"
+
+- name: Copy across the database backup script
+  template:
+    src: backup-postal-database.sh
+    dest: /usr/local/bin/backup-postal-database
+    mode: "0755"
+
+- name: Dump the postal database nightly
+  cron:
+    name: Dump postal database for backup
+    minute: "30"
+    hour: "2"
+    job: /usr/local/bin/backup-postal-database

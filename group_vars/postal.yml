@@ -1,0 +1,44 @@
+# Postal (postal.oaf.org.au) - transactional mail server replacing cuttlefish
+# See docs/postal-migration.md and roles/internal/postal/README.md
+
+site_name: postal.oaf.org.au
+
+# A mail server that queues messages in mariadb appreciates some headroom on
+# a 4GB instance
+swap_file_size_mb: "2048"
+
+postal_version: "3.3.7"
+postal_web_hostname: postal.oaf.org.au
+
+# TODO(before first apply): generate and vault the secrets below. Each one:
+#
+#   .venv/bin/ansible-vault encrypt_string --encrypt-vault-id default --name NAME SECRET
+#
+# postal_signing_key: the installation's DKIM/webhook signing key. Generate
+# once and keep forever (a rebuilt server keeps its identity):
+#   openssl genrsa 2048
+# Vault the full PEM (use encrypt_string with stdin: --stdin-name postal_signing_key)
+#
+# postal_db_password: mariadb password for the postal user
+#   openssl rand -hex 32
+#
+# postal_rails_secret_key: rails session secret for the postal web interface
+#   openssl rand -hex 128
+#
+# restic_password: encryption password for the offsite backups (also save it
+# somewhere outside this repo; without it backups are unrecoverable)
+#   openssl rand -hex 32
+#
+# newrelic_license_key: copy the vaulted value from group_vars/ec2.yml
+#
+# postal_signing_key: !vault |
+# postal_db_password: !vault |
+# postal_rails_secret_key: !vault |
+# restic_password: !vault |
+# newrelic_license_key: !vault |
+
+# Postal sends its own notification mail (user invites, DNS warnings) through
+# itself. Fill these in with an SMTP credential from the postal web interface
+# once the oaf.org.au domain is verified (see the role README), then re-apply.
+# postal_management_smtp_username:
+# postal_management_smtp_password:

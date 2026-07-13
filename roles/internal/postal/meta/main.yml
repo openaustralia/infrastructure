@@ -1,0 +1,14 @@
+dependencies:
+  - role: oaf.restic
+    restic_profiles:
+      - name: postal_data
+        schedule: "0 3 * * *"
+        source: /opt/postal
+        exclude:
+          - /opt/postal/caddy-data
+        repository: "s3:s3.amazonaws.com/oaf-backups/postal/{{ inventory_hostname }}/restic"
+        password: "{{ restic_password }}"
+        aws_access_key_id: "{{ backup_target_user }}"
+        aws_secret_access_key: "{{ backup_target_pass }}"
+    tags:
+      - backup
