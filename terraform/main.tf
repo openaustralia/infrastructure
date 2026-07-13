@@ -8,6 +8,8 @@ module "postal" {
   source         = "./postal"
   zone_id        = cloudflare_zone.oaf_org_au.id
   authorized_key = data.external.id_rsa.result["id_rsa"]
+  # TODO(postal setup): set from `postal default-dkim-record` on the box
+  # return_path_dkim_record = "k=rsa; p=..."
 }
 
 module "docs-internal" {
@@ -33,6 +35,10 @@ module "planningalerts" {
   availability_zones            = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
   cloudflare_account_id         = var.cloudflare_account_id
   instance_count                = 2
+  # TODO(postal cutover): set from the postal web interface once the
+  # planningalerts.org.au domain is added there
+  # postal_dkim_record_name  = "postal-<tag>._domainkey.planningalerts.org.au"
+  # postal_dkim_record_value = "k=rsa; p=..."
   # blue environment setup
   blue_enabled  = true
   blue_weight   = 1
@@ -51,6 +57,10 @@ module "theyvoteforyou" {
   security_group_service = aws_security_group.theyvoteforyou
   instance_profile       = aws_iam_instance_profile.logging
   cloudflare_account_id  = var.cloudflare_account_id
+  # TODO(postal cutover): set from the postal web interface once the
+  # theyvoteforyou.org.au domain is added there
+  # postal_dkim_record_name  = "postal-<tag>._domainkey.theyvoteforyou.org.au"
+  # postal_dkim_record_value = "k=rsa; p=..."
 }
 
 module "righttoknow" {
@@ -68,6 +78,10 @@ module "righttoknow" {
 module "morph" {
   source                = "./morph"
   cloudflare_account_id = var.cloudflare_account_id
+  # TODO(postal cutover): set from the postal web interface once the
+  # morph.io domain is added there
+  # postal_dkim_record_name  = "postal-<tag>._domainkey.morph.io"
+  # postal_dkim_record_value = "k=rsa; p=..."
 }
 
 module "metabase" {
@@ -90,6 +104,10 @@ module "openaustralia" {
   ubuntu_22_ami            = var.ubuntu_22_ami
   ubuntu_24_ami            = var.ubuntu_24_ami
   cloudflare_account_id    = var.cloudflare_account_id
+  # TODO(postal cutover): set from the postal web interface once the
+  # openaustralia.org domain is added there
+  # postal_dkim_record_name  = "postal-<tag>._domainkey.openaustralia.org"
+  # postal_dkim_record_value = "k=rsa; p=..."
 }
 
 module "oaf" {
@@ -101,6 +119,10 @@ module "oaf" {
   righttoknow_production_ip              = module.righttoknow.production_public_ip
   righttoknow_staging_ip                 = module.righttoknow.staging_public_ip
   cuttlefish_ip                          = module.cuttlefish.ipv4_address
+  # TODO(postal cutover): set from the postal web interface once the
+  # oaf.org.au domain is added there (wordpress mail)
+  # postal_dkim_record_name  = "postal-<tag>._domainkey.oaf.org.au"
+  # postal_dkim_record_value = "k=rsa; p=..."
 }
 
 module "campaign-monitor" {
