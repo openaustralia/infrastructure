@@ -167,14 +167,13 @@ resource "cloudflare_record" "tvfy_domainkey_google" {
 # For the time being we're just using DMARC records to get some data on what's
 # happening with email that we're sending (and whether anyone else is impersonating
 # us).
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
-# Report goes to webmaster@theyvoteforyou.org.au
+# DMARC delegated to Suped via CNAME (https://suped.com/).
+# Record content and policy (p=) are managed in the Suped dashboard, not here.
 resource "cloudflare_record" "tvfy_dmarc" {
   zone_id = cloudflare_zone.org_au.id
   name    = "_dmarc.theyvoteforyou.org.au"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ldnqce6nisu@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+  type    = "CNAME"
+  value   = "theyvoteforyou.org.au.dmarc.dns.suped.com"
 }
 
 ## theyvoteforyou.org
@@ -198,14 +197,13 @@ resource "cloudflare_record" "alt1_www" {
 # For the time being we're just using DMARC records to get some data on what's
 # happening with email that we're sending (and whether anyone else is impersonating
 # us).
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
-# Report goes to webmaster@theyvoteforyou.org
+# DMARC delegated to Suped via CNAME (https://suped.com/).
+# Record content and policy (p=) are managed in the Suped dashboard, not here.
 resource "cloudflare_record" "tvfy_alt1_dmarc" {
   zone_id = cloudflare_zone.org.id
   name    = "_dmarc.theyvoteforyou.org"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+qbce7gaoklg@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+  type    = "CNAME"
+  value   = "theyvoteforyou.org.dmarc.dns.suped.com"
 }
 
 ## theyvoteforyou.com.au
@@ -229,12 +227,11 @@ resource "cloudflare_record" "alt2_www" {
 # For the time being we're just using DMARC records to get some data on what's
 # happening with email that we're sending (and whether anyone else is impersonating
 # us).
-# We're using a free service provided by https://dmarc.postmarkapp.com/
-# This generates a weekly DMARC report which gets sent by email on Monday mornings
-# Report goes to webmaster@theyvoteforyou.com.au
+# DMARC delegated to Suped via CNAME (https://suped.com/).
+# Record content and policy (p=) are managed in the Suped dashboard, not here.
 resource "cloudflare_record" "tvfy_alt2_dmarc" {
   zone_id = cloudflare_zone.com_au.id
   name    = "_dmarc.theyvoteforyou.com.au"
-  type    = "TXT"
-  value   = "v=DMARC1; p=none; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+ffljniarmuh@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+  type    = "CNAME"
+  value   = "theyvoteforyou.com.au.dmarc.dns.suped.com"
 }

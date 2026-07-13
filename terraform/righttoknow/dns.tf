@@ -129,16 +129,15 @@ resource "cloudflare_record" "google_domainkey" {
 }
 
 ## 2024-09-02 - Set DMARC to quarantine emails that don't meet the DMARC requirements.
-# DMARC record for email authentication and reporting
-# Reports are sent to both Suped (for monitoring) and Postmark (legacy weekly reports)
-# Suped provides ongoing monitoring and analysis
-# Postmark generates a weekly DMARC report which gets sent by email on Monday mornings
-# Report goes to webmaster@righttoknow.org.au
+# DMARC delegated to Suped via CNAME (https://suped.com/).
+# Record content and policy (p=) are managed in the Suped dashboard, not here.
+# IMPORTANT: this domain runs p=quarantine (not the p=none default) - the
+# quarantine policy must be set in Suped or enforcement silently downgrades.
 resource "cloudflare_record" "dmarc" {
   zone_id = cloudflare_zone.main.id
   name    = "_dmarc.righttoknow.org.au"
-  type    = "TXT"
-  value   = "v=DMARC1; p=quarantine; rua=mailto:dmarc.dpdztvxlz24gajbdj6yz@mail.suped.com,mailto:re+aysyay6u9ct@dmarc.postmarkapp.com; pct=100; adkim=r; aspf=r; fo=1; ri=86400"
+  type    = "CNAME"
+  value   = "righttoknow.org.au.dmarc.dns.suped.com"
 }
 
 # Staging environment DNS records
