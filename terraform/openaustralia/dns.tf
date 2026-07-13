@@ -105,11 +105,12 @@ resource "cloudflare_record" "mx" {
 }
 
 # TXT records
+# The app sends from contact@openaustralia.org (this zone, not .org.au)
 resource "cloudflare_record" "spf" {
   zone_id = cloudflare_zone.org.id
   name    = "openaustralia.org"
   type    = "TXT"
-  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com ~all"
+  value   = "v=spf1 include:_spf1.oaf.org.au include:_spf.google.com include:spf.postal.oaf.org.au ~all"
 }
 
 resource "cloudflare_record" "google_site_verification_postmaster_tools" {
