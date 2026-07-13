@@ -47,6 +47,15 @@ morph_api_key: !vault |
           37623834323437363632616438633663666564313730363362653064363539306634386663396638
           3166633336663738350a313937326333383535316666656335653137366330626337633138323937
           34333461663732616665663737623565383231663263646566393630616336313165
+# TODO(before merge): create an SMTP credential on the openaustralia mail
+# server in the postal web interface (roles/internal/postal/README.md), set
+# postal_username to it and vault the password:
+#   .venv/bin/ansible-vault encrypt_string --encrypt-vault-id default --name postal_password SECRET
+# postal_username:
+# postal_password: !vault |
+
+# The cuttlefish credentials are kept until decommission so this can be
+# rolled back by reverting the msmtprc template (docs/postal-migration.md)
 cuttlefish_username: php_14
 cuttlefish_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
