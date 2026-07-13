@@ -1,0 +1,54 @@
+# {{ ansible_managed }}
+#
+# Based on https://github.com/postalserver/install/blob/main/examples/postal.v3.yml
+# Full list of options: https://docs.postalserver.io/other/config-options
+
+version: 2
+
+postal:
+  web_hostname: {{ postal_web_hostname }}
+  web_protocol: https
+  smtp_hostname: {{ postal_web_hostname }}
+
+main_db:
+  host: 127.0.0.1
+  username: {{ postal_db_username }}
+  password: {{ postal_db_password }}
+  database: postal
+
+message_db:
+  host: 127.0.0.1
+  username: {{ postal_db_username }}
+  password: {{ postal_db_password }}
+  prefix: postal
+
+smtp_server:
+  default_bind_address: "::"
+  default_port: {{ postal_smtp_port }}
+  tls_enabled: true
+  # /config inside the containers is /opt/postal/config on the host
+  tls_certificate_path: /config/smtp.cert
+  tls_private_key_path: /config/smtp.key
+
+dns:
+  # These records are managed in terraform/postal/dns.tf
+  mx_records:
+    - {{ postal_web_hostname }}
+  spf_include: spf.{{ postal_web_hostname }}
+  return_path_domain: rp.{{ postal_web_hostname }}
+  route_domain: routes.{{ postal_web_hostname }}
+  track_domain: track.{{ postal_web_hostname }}
+
+smtp:
+  # Postal sends its own mail (user invites, DNS warnings) through itself.
+  # Talks directly to the listener port; the 2525 redirect is only for
+  # external clients.
+  host: 127.0.0.1
+  port: {{ postal_smtp_port }}
+  username: {{ postal_management_smtp_username | default('') }}
+  password: {{ postal_management_smtp_password | default('') }}
+  from_name: {{ postal_smtp_from_name }}
+  from_address: {{ postal_smtp_from_address }}
+
+rails:
+  secret_key: {{ postal_rails_secret_key }}

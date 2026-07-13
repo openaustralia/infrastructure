@@ -1,0 +1,30 @@
+# Defaults for the postal role. Secrets and host-specific overrides live in
+# group_vars/postal.yml.
+
+# Version of the Postal application (docker image tag, without the "v")
+postal_version: "3.3.7"
+
+# Pinned commit of https://github.com/postalserver/install, which provides
+# the docker-compose template and the `postal` CLI wrapper
+postal_install_repo: https://github.com/postalserver/install
+postal_install_version: 451926cc78a1056e9f16dad6ec5c62d4f76d2445
+
+postal_web_hostname: postal.oaf.org.au
+
+# Port the Postal SMTP listener binds to. Must be 25 so that remote MTAs can
+# deliver bounces to the return-path domain. Client apps submit on 2525 (the
+# old Cuttlefish port), which an nftables rule redirects to 25.
+postal_smtp_port: 25
+postal_legacy_submission_port: 2525
+
+postal_worker_replicas: 1
+
+# From address for mail Postal sends about itself (user invites, DNS alerts)
+postal_smtp_from_name: Postal
+postal_smtp_from_address: postal@oaf.org.au
+
+postal_db_username: postal
+
+# Postal requires innodb_log_file_size to be at least 10x the maximum
+# message size (default max message size is 14MB)
+postal_mariadb_innodb_log_file_size: 256M

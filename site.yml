@@ -294,6 +294,12 @@
   roles:
     - metabase
 
+- hosts: postal
+  tags: postal
+  become: true
+  roles:
+    - internal/postal
+
 - hosts: openvpn
   tags: openvpn
   become: true

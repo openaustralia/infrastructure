@@ -1,6 +1,6 @@
 .PHONY: all ansible-lint apply-metabase apply-oaf requirements apply-openaustralia \
-        apply-planningalerts apply-righttoknow  apply-theyvoteforyou \
-        check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
+        apply-planningalerts apply-postal apply-righttoknow  apply-theyvoteforyou \
+        check-host check-metabase check-oaf check-openaustralia check-planningalerts check-postal check-righttoknow \
         check-theyvoteforyou check-target \
         scan-oaf scan-openaustralia scan-planningalerts \
         clean clobber help letsencrypt lint op-check retry roles \
@@ -71,6 +71,7 @@ help:
 	@echo "  check-oaf                           Dry-run Ansible for oaf host"
 	@echo "  check-openaustralia                 Dry-run Ansible for openaustralia new/old/all host/s"
 	@echo "  check-metabase                      Dry-run Ansible for metabase host"
+	@echo "  check-postal                        Dry-run Ansible for postal host"
 	@echo ""
 	@echo "  apply-righttoknow STAGE=<stage>     Apply Ansible changes to righttoknow production/staging/all host/s"
 	@echo "  apply-planningalerts                Apply Ansible changes to planningalerts hosts"
@@ -78,6 +79,7 @@ help:
 	@echo "  apply-oaf                           Apply Ansible changes to oaf host"
 	@echo "  apply-openaustralia                 Apply Ansible changes to openaustralia new/old/all host/s"
 	@echo "  apply-metabase                      Apply Ansible changes to metabase host"
+	@echo "  apply-postal                        Apply Ansible changes to postal host"
 	@echo ""
 	@echo "  scan-oaf                            Scan oaf.org.au for broken links (1/2 hour)"
 	@echo "  scan-openaustralia                  Scan openaustralia.org.au for broken links (2-3 hours)"
@@ -265,6 +267,8 @@ check-openaustralia: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --check --diff
 check-metabase: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --check --diff
+check-postal: requirements
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l postal --check --diff
 
 # These make changes
 apply-righttoknow: requirements stage_required
@@ -291,6 +295,10 @@ apply-metabase: requirements # stage_required
 	bin/tag-provisioning --wip metabase "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
 	bin/tag-provisioning metabase "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
+apply-postal: requirements
+	bin/tag-provisioning --wip postal "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l postal --diff
+	bin/tag-provisioning postal "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 
 # Update ssh keys on all servers
 update-github-ssh-keys: requirements
