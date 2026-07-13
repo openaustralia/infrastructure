@@ -9,33 +9,38 @@ resource "aws_iam_user" "oaf-backups-orpington" {
   name = "oaf-backups-orpington"
 }
 
+data "aws_iam_policy_document" "oaf-backups-orpington" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+      "s3:GetBucketLocation",
+    ]
+
+    resources = [
+      "arn:aws:s3:::oaf-backups-orpington",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:DeleteObject",
+    ]
+
+    resources = [
+      "arn:aws:s3:::oaf-backups-orpington/*",
+    ]
+  }
+}
+
 resource "aws_iam_policy" "oaf-backups-orpington" {
   name   = "oaf-backups-orpington"
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:ListBucket",
-                "s3:GetBucketLocation"
-            ],
-            "Resource": "arn:aws:s3:::oaf-backups-orpington"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:PutObject",
-                "s3:GetObject",
-                "s3:DeleteObject"
-            ],
-            "Resource": "arn:aws:s3:::oaf-backups-orpington/*"
-        }
-    ]
-}
-EOF
-
+  policy = data.aws_iam_policy_document.oaf-backups-orpington.json
 }
 
 resource "aws_iam_user_policy_attachment" "oaf-backups-orpington" {
