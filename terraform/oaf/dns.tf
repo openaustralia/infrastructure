@@ -151,13 +151,13 @@ resource "cloudflare_record" "github_challenge2" {
   value   = "209f2b7179"
 }
 
-# Gitlab Domain Verification
-resource "cloudflare_record" "gitlab_verification" {
-  zone_id = var.oaf_org_au_zone_id
-  name    = "_gitlab-pages-verification-code.oaf.org.au"
-  type    = "TXT"
-  value   = "gitlab-pages-verification-code=fcb94ff091fea3d91d027677d3c35e9e"
-}
+# # Gitlab Domain Verification
+# resource "cloudflare_record" "gitlab_verification" {
+#   zone_id = var.oaf_org_au_zone_id
+#   name    = "_gitlab-pages-verification-code.oaf.org.au"
+#   type    = "TXT"
+#   value   = "gitlab-pages-verification-code=fcb94ff091fea3d91d027677d3c35e9e"
+# }
 
 # Apple for Business Verification
 resource "cloudflare_record" "apple_business_verification" {
