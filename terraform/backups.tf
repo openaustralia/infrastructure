@@ -2,40 +2,50 @@ resource "aws_iam_user" "oaf-backups" {
   name = "oaf-backups"
 }
 
+data "aws_iam_policy_document" "oaf-backups" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListAllMyBuckets",
+    ]
+
+    resources = [
+      "arn:aws:s3:::*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+      "s3:GetBucketLocation",
+    ]
+
+    resources = [
+      "arn:aws:s3:::oaf-backups",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:DeleteObject",
+    ]
+
+    resources = [
+      "arn:aws:s3:::oaf-backups/*",
+    ]
+  }
+}
+
 resource "aws_iam_policy" "oaf-backups" {
   name   = "S3BucketAccessTo_oaf-backups"
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:ListAllMyBuckets"
-            ],
-            "Resource": "arn:aws:s3:::*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:ListBucket",
-                "s3:GetBucketLocation"
-            ],
-            "Resource": "arn:aws:s3:::oaf-backups"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:PutObject",
-                "s3:GetObject",
-                "s3:DeleteObject"
-            ],
-            "Resource": "arn:aws:s3:::oaf-backups/*"
-        }
-    ]
-}
-EOF
-
+  policy = data.aws_iam_policy_document.oaf-backups.json
 }
 
 resource "aws_iam_user_policy_attachment" "oaf-backups" {

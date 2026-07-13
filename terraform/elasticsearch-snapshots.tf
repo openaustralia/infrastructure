@@ -6,26 +6,24 @@ resource "aws_iam_user" "oaf-elasticsearch-snapshots" {
   name = "oaf-elasticsearch-snapshots"
 }
 
+data "aws_iam_policy_document" "oaf-elasticsearch-snapshots" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:*",
+    ]
+
+    resources = [
+      "arn:aws:s3:::${aws_s3_bucket.oaf-elasticsearch-snapshots.id}",
+      "arn:aws:s3:::${aws_s3_bucket.oaf-elasticsearch-snapshots.id}/*",
+    ]
+  }
+}
+
 resource "aws_iam_policy" "oaf-elasticsearch-snapshots" {
   name   = "S3BucketAccessTo_oaf-elasticsearch-snapshots"
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "s3:*"
-      ],
-      "Effect": "Allow",
-      "Resource": [
-        "arn:aws:s3:::${aws_s3_bucket.oaf-elasticsearch-snapshots.id}",
-        "arn:aws:s3:::${aws_s3_bucket.oaf-elasticsearch-snapshots.id}/*"
-      ]
-    }
-  ]
-}
-EOF
-
+  policy = data.aws_iam_policy_document.oaf-elasticsearch-snapshots.json
 }
 
 resource "aws_iam_user_policy_attachment" "oaf-elasticsearch-snapshots" {
