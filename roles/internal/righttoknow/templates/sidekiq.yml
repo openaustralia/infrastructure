@@ -7,6 +7,12 @@ production:
 :queues:
   - default
   - xapian
+{% if stage == 'staging' %}
+  - low
+{% endif %}
 
 :limits:
   xapian: 1
+{% if stage == 'staging' %}
+  low: 1
+{% endif %}
