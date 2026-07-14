@@ -197,7 +197,21 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 - In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
 - For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
 - For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install). Terraform reads its AWS and Google credentials from your own CLI tooling — see [CLI tools for credentials](#cli-tools-for-credentials) below. The shared secrets — the RDS admin password and the Cloudflare and Linode API tokens — are rendered into `terraform/secrets.auto.tfvars` from 1Password by `make tf-secrets`.
-- Terraform also runs `prepkey.sh` to grab your SSH public key for use as the deployer key in AWS. It assumes `jq` is installed and that your public key is at `~/.ssh/id_rsa.pub`.
+- `jq` must be installed for `terraform/prepkey.sh`
+- The key found by the `terraform/prepkey.sh` script should be
+  - registered as an ssh key in your GitHub account,
+  - used by ssh for the hostnames in `inventory/ec2-hosts`
+    - add entries to your `~/.ssh/config` if not using the default `~/.ssh/id_{ed25519,rsa}.pub` files
+- The `terraform/prepkey.sh` looks for public keys from
+  - First GitHub key if `$GITHUB_USER` is set
+  - `${SSH_PUBLIC_KEY_FILE:-}` if set
+  - `~/.ssh/id_{ed25519,rsa}*oaf*.pub`
+  - `~/.ssh/id_{ed25519,rsa}*OAF*.pub`
+  - `~/.ssh/id_{ed25519,rsa}*open*au*.pub`
+  - `~/.ssh/id_{ed25519,rsa}*OPEN*AU*.pub`
+  - `~/.ssh/id_{ed25519,rsa}.pub`
+- Note the ansible `internal/deploy-user` role replaces the authorized list from the keys registered for `github_users`
+  when run by anyone so mismatches will cause connection problems!
 
 #### <a name='CLItoolsforcredentials'></a>CLI tools for credentials
 
@@ -239,26 +253,23 @@ Run `make requirements` to install the requirements for python and ansible.
 
 For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
 
-
 - Install [the gCloud CLI](https://cloud.google.com/sdk/docs/install) and configure with authentication credentials,
   which requires some extra secrets than ansible needs:
-  - Run `make tf-secrets` to render `terraform/secrets.auto.tfvars` from 1Password — this provides the `rds_admin_password`, `cloudflare_api_token`, and `linode_api_token` (see [CLI tools for credentials](#cli-tools-for-credentials) above).
-  - **AWS** - You need an account with the same permissions as the `ansible` user (from ansible vault) or better
-    - to access the S3 bucket we use to store Terraform's permanent state.
-  - The `cloudflare_api_token` needs at least `Zone / Zone / Read` perms for planning, and `Zone / Zone / Write` for updating
-  - The `linode_api_token` needs at least read access for planning and full access for updating
-  - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use
-    - run `gcloud auth application-default login`
-  - Terraform runs `terraform/prepkey.sh` to grab your SSH public key to use as a deployer key in AWS.
-    This script requires `jq` to have been installed.
-    The script looks for public keys
-    - from GitHub if GITHUB_USER is set
-    - from `$SSH_PUBLIC_KEY_FILE` if set
-    - from `~/.ssh/` id*pub keys with open*au and oaf in upper and lower case
-    - Lastly falls back to `~/.ssh/id_{ed25519,rsa}.pub`.
-  - We host DNS on Cloudflare.
-    An API key to manage these zones is one of the secrets you'll need to provide.
-    To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
+- Run `make tf-secrets` to render `terraform/secrets.auto.tfvars` from 1Password — this provides the `rds_admin_password`, `cloudflare_api_token`, and `linode_api_token` (see [CLI tools for credentials](#cli-tools-for-credentials) above).
+- **AWS** - You need an account with the same permissions as the `ansible` user (from ansible vault) or better
+  - to access the S3 bucket we use to store Terraform's permanent state.
+- The `cloudflare_api_token` needs at least `Zone / Zone / Read` perms for planning, and `Zone / Zone / Write` for updating
+- The `linode_api_token` needs at least read access for planning and full access for updating
+- Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use
+  - run `gcloud auth application-default login`
+- See the notes on `terraform/prepkey.sh` in the prerequisites section for how new instances are initially configured with (only) your ssh key.
+  - terraform will replace aws_key_pair.deployer to update the value if someone else applied the last changes,
+    this is to be expected and is not a concern.
+- You should run Ansible on all new EC2 instances so the `internal/deploy-user` role can instead grant access to the ssh keys of everyone
+  listed in `github_users` (defined in `group_vars/all.yml`).
+- We host DNS on Cloudflare.
+  - An API key to manage these zones is one of the secrets you'll need to provide.
+  - To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
 
 ### <a name='Environmentsetup'></a>Environment setup
 
