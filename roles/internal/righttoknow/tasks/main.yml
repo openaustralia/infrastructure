@@ -450,12 +450,14 @@
 
 - name: Apply sidekiq config
   tags: alaveteli
-  copy:
+  template:
     src: sidekiq.yml
     dest: "/srv/www/{{ item }}/shared/sidekiq.yml"
     owner: deploy
     group: deploy
     mode: '0644'
+  vars:
+    stage: "{{ item }}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: restart sidekiq
 
