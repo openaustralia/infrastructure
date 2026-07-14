@@ -13,7 +13,7 @@ postal_web_hostname: postal.oaf.org.au
 
 # Port the Postal SMTP listener binds to. Must be 25 so that remote MTAs can
 # deliver bounces to the return-path domain. Client apps submit on 2525 (the
-# old Cuttlefish port), which an nftables rule redirects to 25.
+# old Cuttlefish port), which an iptables rule redirects to 25.
 postal_smtp_port: 25
 postal_legacy_submission_port: 2525
 

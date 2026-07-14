@@ -39,7 +39,7 @@ resource "linode_rdns" "ipv6" {
 
 # Provider-level firewall, the Linode equivalent of the AWS security groups
 # used elsewhere in this repo. 2525 is the legacy Cuttlefish submission port
-# that clients keep using; an nftables rule on the host redirects it to 25.
+# that clients keep using; an iptables rule on the host redirects it to 25.
 resource "linode_firewall" "main" {
   label = "postal"
 
