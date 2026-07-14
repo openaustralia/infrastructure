@@ -180,6 +180,7 @@ DEFAULT_LOCALE: 'en'
 # ---
 USE_DEFAULT_BROWSER_LANGUAGE: true
 
+{% if stage != 'staging' %}
 # Normally, Alaveteli will put the locale into its URLs, like this
 # www.example.com/en/body/list/all. If you don't want this behaviour whenever
 # the locale is the default one, set INCLUDE_DEFAULT_LOCALE_IN_URLS to false.
@@ -193,6 +194,7 @@ USE_DEFAULT_BROWSER_LANGUAGE: true
 # ---
 INCLUDE_DEFAULT_LOCALE_IN_URLS: true
 
+{% endif %}
 # Are authorities required to respond by law?
 #
 # AUTHORITY_MUST_RESPOND: Boolean (default: true)
@@ -1193,6 +1195,25 @@ STRIPE_SECRET_KEY: '{{ stripe_secret_key }}'
 # ---
 STRIPE_NAMESPACE: 'RTK'
 
+{% if stage == 'staging' %}
+# Maps Stripe Price IDs to internal plan names. Alaveteli 0.45.0.0 migrated
+# Stripe from Plans to Prices and made this key required for Pro pricing.
+# Staging-only for now (0.45.8.0); production still runs 0.44.3.0.
+#
+# IMPORTANT (billing-sensitive): the value below is the documented default
+# placeholder and is very likely the WRONG mapping for Right to Know. The hash
+# key is the Stripe Price ID, so confirm the real test-mode Price IDs from the
+# RTK Stripe account before exercising Pro checkout on staging. The app still
+# boots without a correct value, but Pro checkout breaks. Flag any billing
+# change to the team before it reaches production.
+#
+# STRIPE_PRICES - Hash (default: { pro: 'pro' })
+#
+# ---
+STRIPE_PRICES:
+  pro: 'pro'
+
+{% endif %}
 # Stripe.com webhook secret. Only required for Alaveteli Pro.
 #
 # STRIPE_WEBHOOK_SECRET: - String (default: '')
