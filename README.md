@@ -269,7 +269,7 @@ For a few things, including major PlanningAlerts deployments, you'll need [Terra
   listed in `github_users` (defined in `group_vars/all.yml`).
 - We host DNS on Cloudflare.
   - An API key to manage these zones is one of the secrets you'll need to provide.
-  - To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
+  - To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Ben or James for details
 
 ### <a name='Environmentsetup'></a>Environment setup
 
