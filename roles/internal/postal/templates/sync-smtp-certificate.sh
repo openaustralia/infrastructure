@@ -8,21 +8,28 @@
 
 set -e
 
-CADDY_CERT_DIR="/opt/postal/caddy-data/caddy/certificates/acme-v02.api.letsencrypt.org-directory/{{ postal_web_hostname }}"
+CADDY_CERT_BASE="/opt/postal/caddy-data/caddy/certificates"
 CONFIG_DIR="/opt/postal/config"
 
-# Caddy may not have obtained a certificate yet (e.g. on first provision
-# before DNS has propagated). That's fine; try again on the next run.
-if [ ! -f "$CADDY_CERT_DIR/{{ postal_web_hostname }}.crt" ]; then
+# Caddy files certificates under a per-issuer directory (Let's Encrypt normally,
+# ZeroSSL as a fallback), so match whichever issuer actually holds our cert
+# rather than hardcoding the issuer. Caddy may also not have obtained a
+# certificate yet (e.g. on first provision before DNS has propagated); that's
+# fine, try again on the next run.
+shopt -s nullglob
+certs=("$CADDY_CERT_BASE"/*/"{{ postal_web_hostname }}"/"{{ postal_web_hostname }}".crt)
+CERT_FILE="${certs[0]-}"
+if [ -z "$CERT_FILE" ]; then
+  exit 0
+fi
+KEY_FILE="${CERT_FILE%.crt}.key"
+
+if cmp -s "$CERT_FILE" "$CONFIG_DIR/smtp.cert"; then
   exit 0
 fi
 
-if cmp -s "$CADDY_CERT_DIR/{{ postal_web_hostname }}.crt" "$CONFIG_DIR/smtp.cert"; then
-  exit 0
-fi
-
-cp "$CADDY_CERT_DIR/{{ postal_web_hostname }}.crt" "$CONFIG_DIR/smtp.cert"
-cp "$CADDY_CERT_DIR/{{ postal_web_hostname }}.key" "$CONFIG_DIR/smtp.key"
+cp "$CERT_FILE" "$CONFIG_DIR/smtp.cert"
+cp "$KEY_FILE" "$CONFIG_DIR/smtp.key"
 chmod 600 "$CONFIG_DIR/smtp.cert" "$CONFIG_DIR/smtp.key"
 
 /usr/bin/postal dc "restart smtp"
