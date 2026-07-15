@@ -76,15 +76,15 @@ resource "aws_security_group" "webserver" {
 
   # Open VPN changes
   ingress {
-    cidr_blocks      = ["10.8.0.0/24"]
-    description      = "SSH from VPN clients only"
-    from_port        = 22
+    cidr_blocks = ["10.8.0.0/24"]
+    description = "SSH from VPN clients only"
+    from_port   = 22
     # ipv6_cidr_blocks = []
     # prefix_list_ids  = []
-    protocol         = "tcp"
+    protocol = "tcp"
     # security_groups  = []
-    self             = false
-    to_port          = 22
+    self    = false
+    to_port = 22
   }
 }
 
@@ -194,14 +194,14 @@ resource "aws_security_group" "planningalerts" {
 
   # Open VPN changes
   ingress {
-    cidr_blocks      = ["10.8.0.0/24"]
-    description      = "SSH from VPN clients only"
-    from_port        = 22
+    cidr_blocks = ["10.8.0.0/24"]
+    description = "SSH from VPN clients only"
+    from_port   = 22
     # ipv6_cidr_blocks = []
     # prefix_list_ids  = []
-    protocol         = "tcp"
+    protocol = "tcp"
     # security_groups  = []
-    self             = false
-    to_port          = 22
+    self    = false
+    to_port = 22
   }
 }
