@@ -23,12 +23,12 @@ resource "cloudflare_record" "acme_challenge" {
   zone_id = var.zone_id
   name    = "_acme-challenge.handbook.oaf.org.au"
   type    = "TXT"
-    value   = "xGOXm9GVbIeebdkTXhFElSIJFKfvQNAu0VPCc3RxM60"
-  }
+  value   = "xGOXm9GVbIeebdkTXhFElSIJFKfvQNAu0VPCc3RxM60"
+}
 
-  resource "cloudflare_record" "custom_hostname" {
-    zone_id = var.zone_id
-    name    = "_cf-custom-hostname.handbook.oaf.org.au"
-    type    = "TXT"
-    value   = "7d3c04c3-2a65-4d09-99dd-ac61add178f8"
-  }
+resource "cloudflare_record" "custom_hostname" {
+  zone_id = var.zone_id
+  name    = "_cf-custom-hostname.handbook.oaf.org.au"
+  type    = "TXT"
+  value   = "7d3c04c3-2a65-4d09-99dd-ac61add178f8"
+}
