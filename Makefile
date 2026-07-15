@@ -229,7 +229,7 @@ tf-validate: tf-check-fmt .make/terraform
 	terraform -chdir=terraform validate
 	@echo "PASSED tf-validate!"
 tf-check-fmt:
-	terraform -chdir=terraform fmt -check
+	terraform -chdir=terraform fmt -check -recursive -diff
 	@echo "PASSED tf-check-fmt!"
 
 check-target:
