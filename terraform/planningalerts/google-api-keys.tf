@@ -64,7 +64,7 @@ resource "google_apikeys_key" "google_maps_key" {
 resource "google_apikeys_key" "google_maps_server_key" {
   display_name = "PlanningAlerts Server-Side API Key (google_maps_server_key)"
   name         = "e401e298-4aa7-4ee8-a53e-06b6da107b2a"
-  
+
   restrictions {
     server_key_restrictions {
       allowed_ips = concat(module.blue.public_ips, module.green.public_ips)
