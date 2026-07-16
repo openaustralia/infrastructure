@@ -131,6 +131,20 @@ stripe_webhook_secret_production: !vault |
           3936363131303362380a393963333964363664666563613362313031653566646364376636396366
           61373662656333356466376232613362643939613835653833363134613331326334326537623861
           6233383136376237666337613538666534333265353263306533
+
+# Stripe Price IDs mapped to Alaveteli Pro URL slugs (STRIPE_PRICES). These are
+# public identifiers (they appear in client-side checkout and URLs), not secrets,
+# so they are stored in plaintext like the publishable keys above - not vaulted.
+# Keys are the Stripe Price IDs; values are the URL slugs used in plan_path.
+# staging uses the RTK Stripe account in TEST mode (acct_15Ser7DXjniQjO8Y);
+# stripe_secret_key_test must be that account's test-mode key.
+stripe_prices_test:
+  price_1ScdLJDXjniQjO8YsjtZ6QYq: pro
+  price_1TthbLDXjniQjO8YclWV5JEQ: pro-annual-billing
+# production uses the same account in LIVE mode; wired at the 0.45 cutover.
+stripe_prices_live:
+  RTK-pro: pro
+  price_1TthX2DXjniQjO8YeJfDzO35: pro-annual-billing
 pro_referral_coupon_staging: !vault |
           $ANSIBLE_VAULT;1.2;AES256;rtk
           33643831373562316637303935393334633339633663376362373562373637306637323432313465

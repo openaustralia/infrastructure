@@ -1196,22 +1196,21 @@ STRIPE_SECRET_KEY: '{{ stripe_secret_key }}'
 STRIPE_NAMESPACE: 'RTK'
 
 {% if stage == 'staging' %}
-# Maps Stripe Price IDs to internal plan names. Alaveteli 0.45.0.0 migrated
+# Maps Stripe Price IDs to Alaveteli Pro URL slugs. Alaveteli 0.45.0.0 migrated
 # Stripe from Plans to Prices and made this key required for Pro pricing.
 # Staging-only for now (0.45.8.0); production still runs 0.44.3.0.
 #
-# IMPORTANT (billing-sensitive): the value below is the documented default
-# placeholder and is very likely the WRONG mapping for Right to Know. The hash
-# key is the Stripe Price ID, so confirm the real test-mode Price IDs from the
-# RTK Stripe account before exercising Pro checkout on staging. The app still
-# boots without a correct value, but Pro checkout breaks. Flag any billing
-# change to the team before it reaches production.
+# The hash KEY is the Stripe Price ID; the VALUE is the URL slug used in
+# plan_path. Values come from the stripe_prices_test group_var (Stripe sandbox
+# account). Price IDs are public identifiers, not secrets.
 #
 # STRIPE_PRICES - Hash (default: { pro: 'pro' })
 #
 # ---
 STRIPE_PRICES:
-  pro: 'pro'
+{% for price_id, slug in stripe_prices.items() %}
+  {{ price_id }}: {{ slug }}
+{% endfor %}
 
 {% endif %}
 # Stripe.com webhook secret. Only required for Alaveteli Pro.

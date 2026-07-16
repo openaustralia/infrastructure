@@ -420,6 +420,7 @@
     stripe_publishable_key: "{{ stripe_publishable_key_test }}"
     stripe_secret_key: "{{ stripe_secret_key_test }}"
     stripe_webhook_secret: "{{ stripe_webhook_secret_staging }}"
+    stripe_prices: "{{ stripe_prices_test }}"
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
