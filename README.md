@@ -191,40 +191,64 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 
 ### <a name='Prerequisites'></a>Prerequisites
 
-- For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
+- For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our
+  instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
 - In order to run Ansible, you'll need Python < 3.12 installed
-  - 3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
-  - Secrets: Ansible passphrases are read from the OAF 1Password account. See [Add the Ansible Vault password](#add-the-ansible-vault-password) below.
-- In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
+    - 3.12 dropped some deprecated language features which
+      cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
+    - Secrets: Ansible passphrases are read from the OAF 1Password account.
+      See [Add the Ansible Vault password](#add-the-ansible-vault-password) below.
+- In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/)
+  so that you're able to manage multiple versions of Ruby.
 - For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
-- For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install). Terraform reads its AWS and Google credentials from your own CLI tooling — see [CLI tools for credentials](#cli-tools-for-credentials) below. The shared secrets — the RDS admin password and the Cloudflare and Linode API tokens — are rendered into `terraform/secrets.auto.tfvars` from 1Password by `make tf-secrets`.
+- For a few things, including major PlanningAlerts deployments, you'll
+  need [Terraform](https://developer.hashicorp.com/terraform/install). Terraform reads its AWS and Google credentials
+  from your own CLI tooling — see [CLI tools for credentials](#cli-tools-for-credentials) below. The shared secrets —
+  the RDS admin password and the Cloudflare and Linode API tokens — are rendered into `terraform/secrets.auto.tfvars`
+  from 1Password by `make tf-secrets`.
+- For AWS's SSM Session Manager access (replacing SSH), you'll need
+  the [Session Manager plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html).
 - `jq` must be installed for `terraform/prepkey.sh`
 - The key found by the `terraform/prepkey.sh` script should be
-  - registered as an ssh key in your GitHub account,
-  - used by ssh for the hostnames in `inventory/ec2-hosts`
-    - add entries to your `~/.ssh/config` if not using the default `~/.ssh/id_{ed25519,rsa}.pub` files
+    - registered as an ssh key in your GitHub account,
+    - used by ssh for the hostnames in `inventory/ec2-hosts`
+        - add entries to your `~/.ssh/config` if not using the default `~/.ssh/id_{ed25519,rsa}.pub` files
 - The `terraform/prepkey.sh` looks for public keys from
-  - First GitHub key if `$GITHUB_USER` is set
-  - `${SSH_PUBLIC_KEY_FILE:-}` if set
-  - `~/.ssh/id_{ed25519,rsa}*oaf*.pub`
-  - `~/.ssh/id_{ed25519,rsa}*OAF*.pub`
-  - `~/.ssh/id_{ed25519,rsa}*open*au*.pub`
-  - `~/.ssh/id_{ed25519,rsa}*OPEN*AU*.pub`
-  - `~/.ssh/id_{ed25519,rsa}.pub`
+    - First GitHub key if `$GITHUB_USER` is set
+    - `${SSH_PUBLIC_KEY_FILE:-}` if set
+    - `~/.ssh/id_{ed25519,rsa}*oaf*.pub`
+    - `~/.ssh/id_{ed25519,rsa}*OAF*.pub`
+    - `~/.ssh/id_{ed25519,rsa}*open*au*.pub`
+    - `~/.ssh/id_{ed25519,rsa}*OPEN*AU*.pub`
+    - `~/.ssh/id_{ed25519,rsa}.pub`
 - Note the ansible `internal/deploy-user` role replaces the authorized list from the keys registered for `github_users`
   when run by anyone so mismatches will cause connection problems!
+- See the following section for cli tools prerequisites.
 
 #### <a name='CLItoolsforcredentials'></a>CLI tools for credentials
 
-Operator credentials (AWS, Google) aren't stored in this repo or 1Password — each tool reads from your own CLI configuration. The Cloudflare and Linode provider tokens are the exception: they're shared service tokens kept in the **DevOps** 1Password vault and rendered by `make tf-secrets`. Install and configure the ones you need:
+Operator credentials (AWS, Google) aren't stored in this repo or 1Password — each tool reads from your own CLI
+configuration. The Cloudflare and Linode provider tokens are the exception: they're shared service tokens kept in the *
+*DevOps** 1Password vault and rendered by `make tf-secrets`. Install and configure the ones you need:
 
 - **1Password CLI (`op`)** — required to read the shared Ansible Vault passphrases and the RDS admin password.
-  - Install: `brew install --cask 1password-cli` on macOS, or the [official package](https://developer.1password.com/docs/cli/get-started) on Linux.
-  - The CLI normally inherits a session from the 1Password desktop app. If you're running headless, sign in once with `op signin --account oaforgau`.
-  - Ask an existing admin to add you to the **DevOps** vault.
-- **AWS CLI (`aws`)** — required for Terraform's AWS provider and for reading S3-backed Terraform state. Configure with whichever AWS auth method we're currently using (`aws configure sso`, `aws configure`, etc.).
-- **Google Cloud SDK (`gcloud`)** — required for Terraform's Google provider. After install, run `gcloud auth application-default login`.
-- **Cloudflare and Linode API tokens** — no per-operator setup. These are shared service tokens stored in the **DevOps** 1Password vault (item _Terraform DB Passwords_); `make tf-secrets` renders them into `terraform/secrets.auto.tfvars` and the providers read them from there. You no longer need to export `CLOUDFLARE_API_TOKEN` or `LINODE_TOKEN`.
+    - Install: `brew install --cask 1password-cli` on macOS, or
+      the [official package](https://developer.1password.com/docs/cli/get-started) on Linux.
+    - The CLI normally inherits a session from the 1Password desktop app. If you're running headless, sign in once with
+      `op signin --account oaforgau`.
+    - Ask an existing admin to add you to the **DevOps** vault.
+- **AWS CLI (`aws`)** — required for Terraform's AWS provider, for reading S3-backed Terraform state and ansible's
+  access via SSM to servers.
+  Install using the
+  official [Installing or updating to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+  instructions.
+  Configure with whichever AWS auth method we're currently using (`aws configure sso`, `aws configure`, AWS vars in
+  dotenv's .envrc file etc.).
+- **Google Cloud SDK (`gcloud`)** — required for Terraform's Google provider. After install, run
+  `gcloud auth application-default login`.
+- **Cloudflare and Linode API tokens** — no per-operator setup. These are shared service tokens stored in the **DevOps**
+  1Password vault (item _Terraform DB Passwords_); `make tf-secrets` renders them into `terraform/secrets.auto.tfvars`
+  and the providers read them from there. You no longer need to export `CLOUDFLARE_API_TOKEN` or `LINODE_TOKEN`.
 
 Run `make tf-env-check` to verify each of these is reachable from your shell before running Terraform.
 
