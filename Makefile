@@ -36,7 +36,7 @@ help:
 	@echo "  all                                 Run full site.yml playbook against all hosts"
 	@echo "  requirements                        Install requirements: venv, roles, collections, terraform.pem"
 	@echo "  op-check                            Fail if not signed into the OAF 1Password account"
-	@echo "  aws-check                           Fail if aws-cli or the Session Manager plugin aren't installed"
+	@echo "  aws-check                           Fail if aws-cli or the Session Manager plugin aren't installed and recent enough"
 	@echo "  terraform.pem                       Materialise terraform.pem from 1Password"
 	@echo "  tf-secrets                          Render terraform/secrets.auto.tfvars from 1Password via op inject"
 	@echo "  tf-env-check                        Warn if AWS/Cloudflare/Linode/gcloud credentials aren't reachable"
@@ -123,7 +123,12 @@ op-check:
 # without the CLI, and reporting the more fundamental problem first is clearer.
 aws-check:
 	@if command -v aws >/dev/null 2>&1; then \
-	  echo "OK: aws CLI found ($$(aws --version 2>&1))"; \
+      if aws --version 2>&1 | grep -qE 'aws-cli/2\.(3[2-9]|[4-9][0-9]|[1-9][0-9][0-9])'; then \
+	    echo "OK: recent aws CLI found ($$(aws --version 2>&1))"; \
+	  else \
+        echo "ERROR: Require aws CLI version 2.32.0 or higher to support 'aws login' (currently $$(aws --version 2>&1))" >&2; \
+        exit 1; \
+	  fi \
 	else \
 	  echo "ERROR: aws CLI not found." >&2; \
 	  echo "  Install: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" >&2; \
