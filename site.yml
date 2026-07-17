@@ -1,6 +1,6 @@
 # FIRST: make sure you can read the vault passphrases. They come from the
 # OAF 1Password account via bin/ansible-vault-client (see `vault_identity_list`
-# in `ansible.cfg`). Sign in with: op signin --account oaforgau
+# in `ansible.cfg`). Sign in with: eval $(op signin --account oaforgau)
 # If you only have access to some vault ids, override the list using a `.envrc`
 # entry listing just those ids, e.g.:
 # export ANSIBLE_VAULT_IDENTITY_LIST="default@bin/ansible-vault-client,ec2@bin/ansible-vault-client,all@bin/ansible-vault-client"

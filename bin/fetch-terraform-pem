@@ -31,7 +31,7 @@ if ! op read --account "$OP_ACCOUNT" \
        "op://nal3r3nlyo2sdqzegvdvlmvp5e/kger6vus7mqy3zwkhwmik4usxa/terraform.pem" \
        > "$tmp" 2>/dev/null; then
   echo "fetch-terraform-pem: failed to read terraform.pem from 1Password" >&2
-  echo "  Sign into the OAF account: op signin --account $OP_ACCOUNT" >&2
+  echo "  Sign into the OAF account: eval \$(op signin --account $OP_ACCOUNT)" >&2
   exit 1
 fi
 

@@ -235,7 +235,7 @@ configuration. The Cloudflare and Linode provider tokens are the exception: they
     - Install: `brew install --cask 1password-cli` on macOS, or
       the [official package](https://developer.1password.com/docs/cli/get-started) on Linux.
     - The CLI normally inherits a session from the 1Password desktop app. If you're running headless, sign in once with
-      `op signin --account oaforgau`.
+      `eval $(op signin --account oaforgau)`.
     - Ask an existing admin to add you to the **DevOps** vault.
 - **AWS CLI (`aws`)** — required for Terraform's AWS provider, for reading S3-backed Terraform state and ansible's
   access via SSM to servers.

@@ -41,6 +41,6 @@ fi
 cat >&2 <<MSG
 ansible-vault-client: could not read passphrase for vault id '$vault_id'.
   Tried 1Password (account=$OP_ACCOUNT, ref=$op_ref).
-  Sign into the OAF 1Password account: \`op signin --account $OP_ACCOUNT\`
+  Sign into the OAF 1Password account: eval \$(op signin --account $OP_ACCOUNT)
 MSG
 exit 1
