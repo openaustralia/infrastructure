@@ -96,7 +96,7 @@ help:
 setup:
 	sudo apt install parallel jq direnv
 
-requirements: op-check terraform.pem .make/roles venv
+requirements: aws-check op-check terraform.pem .make/roles venv
 
 # Fail if the operator can't read the OAF 1Password account. 1Password
 # is the sole source for the Ansible Vault passphrases, the RDS admin
@@ -110,7 +110,7 @@ op-check:
 	  echo "OK: OAF 1Password reachable ($$(cat bin/.op-account))"; \
 	else \
 	  echo "ERROR: OAF 1Password not reachable (account=$$(cat bin/.op-account))." >&2; \
-	  echo "  Install the 1Password CLI and sign in: op signin --account $$(cat bin/.op-account)" >&2; \
+	  echo "  Install the 1Password CLI and sign in: eval \$$(op signin --account $$(cat bin/.op-account))" >&2; \
 	  exit 1; \
 	fi
 
