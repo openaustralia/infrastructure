@@ -224,10 +224,13 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
     - `~/.ssh/id_{ed25519,rsa}.pub`
 - Note the ansible `internal/deploy-user` role replaces the authorized list from the keys registered for `github_users`
   when run by anyone so mismatches will cause connection problems!
+- See the following section for cli tools prerequisites.
 
 #### <a name='CLItoolsforcredentials'></a>CLI tools for credentials
 
-Operator credentials (AWS, Google) aren't stored in this repo or 1Password — each tool reads from your own CLI configuration. The Cloudflare and Linode provider tokens are the exception: they're shared service tokens kept in the **DevOps** 1Password vault and rendered by `make tf-secrets`. Install and configure the ones you need:
+Operator credentials (AWS, Google) aren't stored in this repo or 1Password — each tool reads from your own CLI
+configuration. The Cloudflare and Linode provider tokens are the exception: they're shared service tokens kept in the *
+*DevOps** 1Password vault and rendered by `make tf-secrets`. Install and configure the ones you need:
 
 - **1Password CLI (`op`)** — required to read the shared Ansible Vault passphrases and the RDS admin password.
     - Install: `brew install --cask 1password-cli` on macOS, or
@@ -237,6 +240,9 @@ Operator credentials (AWS, Google) aren't stored in this repo or 1Password — e
     - Ask an existing admin to add you to the **DevOps** vault.
     - Note: enable App > Developer > Settings > "Integrate with 1Password CLI", otherwise you need to run `eval $(op signin --account oaforgau)` instead.
 - **AWS CLI (`aws`)** — required for Terraform's AWS provider and for reading S3-backed Terraform state.
+  Install using the official
+  [Installing or updating to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+  instructions.
     - We recommend you sign in with [`aws login`](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sign-in.html)
       which uses a browser-based authentication flow (supporting MFA) to provide temporary credentials.
     - Terraform doesn't understand its `login_session` credentials directly yet, so bridge them by editing
