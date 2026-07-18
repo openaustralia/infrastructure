@@ -198,6 +198,7 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 - In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
 - For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
 - For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install). Terraform reads its AWS and Google credentials from your own CLI tooling — see [CLI tools for credentials](#cli-tools-for-credentials) below. The shared secrets — the RDS admin password and the Cloudflare and Linode API tokens — are rendered into `terraform/secrets.auto.tfvars` from 1Password by `make tf-secrets`.
+- For AWS's SSM Session Manager access (replacing SSH), you'll need the [Session Manager plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html). Run `make aws-check` to confirm it and the AWS CLI are both installed.
 - `jq` must be installed for `terraform/prepkey.sh`
 - The key found by the `terraform/prepkey.sh` script should be
   - registered as an ssh key in your GitHub account,
