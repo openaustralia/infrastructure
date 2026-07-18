@@ -24,8 +24,11 @@ resource "aws_instance" "production" {
     var.security_group_incoming_email.id,
   ]
 
-  availability_zone    = aws_ebs_volume.production_data.availability_zone
-  iam_instance_profile = var.instance_profile.name
+  availability_zone = aws_ebs_volume.production_data.availability_zone
+  # FIXME: pinned to the old profile while we test cloudwatch_logging_and_ssm on
+  # staging. Revert to the following (commented out) line once tested.
+  #  iam_instance_profile = var.instance_profile.name
+  iam_instance_profile = "logging"
 
   # Disable termination to protect production
   disable_api_termination = true

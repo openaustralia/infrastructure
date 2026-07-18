@@ -22,6 +22,7 @@ resource "aws_iam_role" "openvpn" {
   }
 }
 
+# Attach inline policy to role to grant permissions directly (no other reference needed)
 resource "aws_iam_role_policy" "openvpn_auth" {
   name = "openvpn-authentication"
   role = aws_iam_role.openvpn.id
