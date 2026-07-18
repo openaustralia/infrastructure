@@ -34,7 +34,7 @@ help:
 	@echo "Available targets"
 	@echo "  help                                Output this help text"
 	@echo "  all                                 Run full site.yml playbook against all hosts"
-	@echo "  requirements                        Install requirements: venv, roles, collections, terraform.pem"
+	@echo "  requirements                        Install requirements: venv, roles, collections, terraform.pem and check required commands"
 	@echo "  op-check                            Fail if not signed into the OAF 1Password account"
 	@echo "  aws-check                           Fail if aws-cli or the Session Manager plugin aren't installed and recent enough"
 	@echo "  terraform.pem                       Materialise terraform.pem from 1Password"
@@ -96,7 +96,7 @@ help:
 setup:
 	sudo apt install parallel jq direnv
 
-requirements: op-check terraform.pem .make/roles venv
+requirements: op-check terraform.pem .make/roles venv aws-check
 
 # Fail if the operator can't read the OAF 1Password account. 1Password
 # is the sole source for the Ansible Vault passphrases, the RDS admin
