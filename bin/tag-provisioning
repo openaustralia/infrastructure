@@ -40,6 +40,19 @@ build_tag() {
   echo "$tag"
 }
 
+build_description() {
+  local desc=""
+  if [ "$1" = "true" ]; then
+    desc="Provisioning ${TARGET}"
+  else
+    desc="Provisioned ${TARGET}"
+  fi
+  [ -n "$STAGE" ] && [ "$STAGE" != "all" ] && desc="${desc} $(sanitize "$STAGE")"
+  [ -n "$TAGS" ] && desc="${desc} for $(sanitize "$TAGS")"
+  [ -n "$SKIP_TAGS" ] && desc="${desc} not for $(sanitize "$SKIP_TAGS")"
+  echo "$desc"
+}
+
 if $WIP; then
   TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
   if [ -f "$WIP_FILE" ]; then
@@ -59,9 +72,10 @@ WIP_TAG="wip-$TAG"
 if $WIP; then
   TAG="$WIP_TAG"
 fi
+DESC=$(build_description "$WIP")
 
-echo "Tagging: $TAG"
-git tag "$TAG"
+echo "Tagging: $TAG - $DESC"
+git tag -m "$DESC" "$TAG"
 if $HAS_REMOTE; then
   git push origin "$TAG"
 fi
