@@ -1,5 +1,6 @@
 .PHONY: all ansible-lint apply-metabase apply-oaf requirements apply-openaustralia \
         apply-planningalerts apply-righttoknow  apply-theyvoteforyou \
+        aws-check \
         check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
         check-theyvoteforyou check-target \
         scan-oaf scan-openaustralia scan-planningalerts \
@@ -33,8 +34,9 @@ help:
 	@echo "Available targets"
 	@echo "  help                                Output this help text"
 	@echo "  all                                 Run full site.yml playbook against all hosts"
-	@echo "  requirements                        Install requirements: venv, roles, collections, terraform.pem"
+	@echo "  requirements                        Install requirements: venv, roles, collections, terraform.pem and check required commands"
 	@echo "  op-check                            Fail if not signed into the OAF 1Password account"
+	@echo "  aws-check                           Fail if aws-cli or the Session Manager plugin aren't installed and recent enough"
 	@echo "  terraform.pem                       Materialise terraform.pem from 1Password"
 	@echo "  tf-secrets                          Render terraform/secrets.auto.tfvars from 1Password via op inject"
 	@echo "  tf-env-check                        Warn if AWS/Cloudflare/Linode/gcloud credentials aren't reachable"
@@ -94,7 +96,7 @@ help:
 setup:
 	sudo apt install parallel jq direnv
 
-requirements: op-check terraform.pem .make/roles venv
+requirements: op-check terraform.pem .make/roles venv aws-check
 
 # Fail if the operator can't read the OAF 1Password account. 1Password
 # is the sole source for the Ansible Vault passphrases, the RDS admin
@@ -109,6 +111,34 @@ op-check:
 	else \
 	  echo "ERROR: OAF 1Password not reachable (account=$$(cat bin/.op-account))." >&2; \
 	  echo "  Install the 1Password CLI and sign in: op signin --account $$(cat bin/.op-account)" >&2; \
+	  exit 1; \
+	fi
+
+# Fail if aws-cli or the Session Manager plugin aren't on PATH. The plugin is
+# needed for `aws ssm start-session` and the SSH-over-SSM ProxyCommand
+# Capistrano will use once a host is SSM-managed:
+#   ssh -o ProxyCommand="aws ssm start-session --target %h \
+#     --document-name AWS-StartSSHSession --parameters 'portNumber=%p'" ...
+# Checked in this order (aws first, plugin second) since the plugin is useless
+# without the CLI, and reporting the more fundamental problem first is clearer.
+aws-check:
+	@if command -v aws >/dev/null 2>&1; then \
+      if aws --version 2>&1 | grep -qE 'aws-cli/2\.(3[2-9]|[4-9][0-9]|[1-9][0-9][0-9])'; then \
+	    echo "OK: recent aws CLI found ($$(aws --version 2>&1))"; \
+	  else \
+        echo "ERROR: Require aws CLI version 2.32.0 or higher to support 'aws login' (currently $$(aws --version 2>&1))" >&2; \
+        exit 1; \
+	  fi \
+	else \
+	  echo "ERROR: aws CLI not found." >&2; \
+	  echo "  Install: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" >&2; \
+	  exit 1; \
+	fi
+	@if command -v session-manager-plugin >/dev/null 2>&1; then \
+	  echo "OK: session-manager-plugin found ($$(session-manager-plugin --version 2>&1))"; \
+	else \
+	  echo "ERROR: session-manager-plugin not found." >&2; \
+	  echo "  Install: https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html" >&2; \
 	  exit 1; \
 	fi
 
