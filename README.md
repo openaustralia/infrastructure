@@ -41,6 +41,7 @@
       - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
       - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
   - [Backups](#backups)
+  - [Git Tags](#gittags)
   - [Mail Catching](#mail-catching)
     - [`log_not_sendmail`](#log_not_sendmail)
 
@@ -77,7 +78,7 @@ we ended up (from memory) rebuilding the server once again by hand as a giant
 monolithic server.
 
 In the years since then, things have become a little more complicated. We had
-a second small VM running on Octopus which runs oaf.org.au, CiviCRM and
+a second small VM running on Octopus which runs oaf.org.au, CiviCRM, and
 elasticsearch. All of these had to run on a separate VM because they required
 a more recent version of the operating system.
 
@@ -89,7 +90,7 @@ undermining the email reputation of kedumba. So, we hosted it elsewhere.
 
 Fast forward to early 2018. After many years of support Andrew Snow decided
 to close Octopus computing. We had a couple of months to find a new hosting
-provider, migrate all our services and shut down everything on Octopus.
+provider, migrate all our services, and shut down everything on Octopus.
 
 So, we picked up the work that we started in 2015 with, at a high level,
 a very similar approach.
@@ -101,7 +102,7 @@ a very similar approach.
 - Make it easy for different servers / services to be maintained by different
   people.
 - Centralise the databases - a central database is easier to backup, easier
-  to scale and easier to manage.
+  to scale, and easier to manage.
 - Use AWS but don't lock ourselves in. Make the architecture transferrable to
   any hosting provider.
 - Spend a bit more money on hosting if it means less maintenance.
@@ -111,7 +112,7 @@ a very similar approach.
 To get a completely working server and service up and running requires a number
 of different tools. We use different tools for different things.
 
-- Terraform: To spin up servers, manage DNS and IP addresses and setting up any
+- Terraform: To spin up servers, manage DNS and IP addresses, and setting up any
   related AWS infrastructure
 - Ansible: To configure individual servers - install packages, create directory
   structures, install SSL certificates, configure cron jobs, create databases,
@@ -247,7 +248,7 @@ Run `make requirements` to install the requirements for python and ansible.
 **Capistrano (in project repos)**
 
 - In order to run Capistrano, you'll need a version of Ruby installed;
-  - Consider installing [mise](https://mise.jdx.dev/) so that you're able to install and swap between multiple versions of Ruby, python and php.
+  - Consider installing [mise](https://mise.jdx.dev/) so that you're able to install and swap between multiple versions of Ruby, python, and php.
 - For deploying code onto dev/test/prod machines, you'll need to install [capistrano](http://capistranorb.com/) using `bundle install`
 
 **Terraform**
@@ -594,6 +595,25 @@ Data directories of servers are backed up to S3 using Duply.
 Using the `data_directory` profile as an example, to run a backup manually you'd log in as root and run `duply data_directory backup`.
 
 To restore the latest backup to `/mnt/restore` you'd run `duply data_directory restore /mnt/restore`.
+
+## <a name='gittags'></a>Git Tags
+
+The make `apply-*` and `tf-apply*` targets create a git tag before and after the command to actually change the
+infrastructure is called so it is clear what has and hasn't been fully actioned. A `wip-*` tag that sticks around
+indicates a failed provisioning command.
+
+The `bin/tag-provisioning` command is called to tag the latest commit. Specifically it:
+
+1. creates a git tag with `wip-` prefix to indicate that changes to infrastructure had been started and pushes it to GitHub;
+2. runs the requested command;
+3. creates the git tag without the `wip-` prefix and pushes it to GitHub;
+4. removes the wip git tag locally and on GitHub, so it is clear the command succeeded.
+
+Terraform tags (from `make tf-apply`) will start with `[wip-]terraform` and then have the timestamp, eg
+`terraform_20260717125154`.
+
+Ansible tags (from `make apply-*`) will start with the service being targetted, and then have the timestamp, followed
+by the `STAGE`, `TAGS`, and `SKIP_TAGS` values, if set.
 
 ## <a name='MailCatching'></a>Mail Catching
 

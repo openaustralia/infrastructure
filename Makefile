@@ -243,7 +243,9 @@ tf-plan-target: check-target tf-secrets tf-env-check .make/terraform
 	terraform -chdir=terraform plan -target=module.$(TARGET)
 
 tf-apply-target: check-target tf-secrets tf-env-check .make/terraform
+	bin/tag-provisioning --wip terraform "$(TARGET)" "" ""
 	terraform -chdir=terraform apply -target=module.$(TARGET)
+	bin/tag-provisioning terraform "$(TARGET)" "" ""
 
 stage_required:
 ifndef STAGE
