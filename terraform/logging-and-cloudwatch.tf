@@ -37,6 +37,7 @@ data "aws_iam_policy_document" "logging" {
   }
 }
 
+# Attach inline policy to role to grant logs:* permissions directly (no other reference needed)
 resource "aws_iam_role_policy" "logging" {
   role   = aws_iam_role.logging.name
   name   = "logging"
