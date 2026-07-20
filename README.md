@@ -220,6 +220,7 @@ Operator credentials (AWS, Google) aren't stored in this repo or 1Password — e
 - **1Password CLI (`op`)** — required to read the shared Ansible Vault passphrases and the RDS admin password.
   - Install: `brew install --cask 1password-cli` on macOS, or the [official package](https://developer.1password.com/docs/cli/get-started) on Linux.
   - The CLI normally inherits a session from the 1Password desktop app. If you're running headless, sign in once with `op signin --account oaforgau`.
+    - Note: enable App > Developer > Settings > "Integrate with 1Password CLI", otherwise you need to run `eval $(op signin --account oaforgau)` instead.
   - Ask an existing admin to add you to the **DevOps** vault.
 - **AWS CLI (`aws`)** — required for Terraform's AWS provider and for reading S3-backed Terraform state. Configure with whichever AWS auth method we're currently using (`aws configure sso`, `aws configure`, etc.).
 - **Google Cloud SDK (`gcloud`)** — required for Terraform's Google provider. After install, run `gcloud auth application-default login`.
