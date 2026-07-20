@@ -41,6 +41,7 @@
       - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
       - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
   - [Backups](#backups)
+  - [Git Tags](#gittags)
   - [Mail Catching](#mail-catching)
     - [`log_not_sendmail`](#log_not_sendmail)
 
@@ -77,7 +78,7 @@ we ended up (from memory) rebuilding the server once again by hand as a giant
 monolithic server.
 
 In the years since then, things have become a little more complicated. We had
-a second small VM running on Octopus which runs oaf.org.au, CiviCRM and
+a second small VM running on Octopus which runs oaf.org.au, CiviCRM, and
 elasticsearch. All of these had to run on a separate VM because they required
 a more recent version of the operating system.
 
@@ -89,7 +90,7 @@ undermining the email reputation of kedumba. So, we hosted it elsewhere.
 
 Fast forward to early 2018. After many years of support Andrew Snow decided
 to close Octopus computing. We had a couple of months to find a new hosting
-provider, migrate all our services and shut down everything on Octopus.
+provider, migrate all our services, and shut down everything on Octopus.
 
 So, we picked up the work that we started in 2015 with, at a high level,
 a very similar approach.
@@ -101,7 +102,7 @@ a very similar approach.
 - Make it easy for different servers / services to be maintained by different
   people.
 - Centralise the databases - a central database is easier to backup, easier
-  to scale and easier to manage.
+  to scale, and easier to manage.
 - Use AWS but don't lock ourselves in. Make the architecture transferrable to
   any hosting provider.
 - Spend a bit more money on hosting if it means less maintenance.
@@ -111,7 +112,7 @@ a very similar approach.
 To get a completely working server and service up and running requires a number
 of different tools. We use different tools for different things.
 
-- Terraform: To spin up servers, manage DNS and IP addresses and setting up any
+- Terraform: To spin up servers, manage DNS and IP addresses, and setting up any
   related AWS infrastructure
 - Ansible: To configure individual servers - install packages, create directory
   structures, install SSL certificates, configure cron jobs, create databases,
@@ -197,7 +198,21 @@ If it makes sense we might move cuttlefish and morph.io to AWS as well.
 - In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/) so that you're able to manage multiple versions of Ruby.
 - For deploying code onto dev/test/prod machines, you'll need [capistrano](http://capistranorb.com/)
 - For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install). Terraform reads its AWS and Google credentials from your own CLI tooling — see [CLI tools for credentials](#cli-tools-for-credentials) below. The shared secrets — the RDS admin password and the Cloudflare and Linode API tokens — are rendered into `terraform/secrets.auto.tfvars` from 1Password by `make tf-secrets`.
-- Terraform also runs `prepkey.sh` to grab your SSH public key for use as the deployer key in AWS. It assumes `jq` is installed and that your public key is at `~/.ssh/id_rsa.pub`.
+- `jq` must be installed for `terraform/prepkey.sh`
+- The key found by the `terraform/prepkey.sh` script should be
+  - registered as an ssh key in your GitHub account,
+  - used by ssh for the hostnames in `inventory/ec2-hosts`
+    - add entries to your `~/.ssh/config` if not using the default `~/.ssh/id_{ed25519,rsa}.pub` files
+- The `terraform/prepkey.sh` looks for public keys from
+  - First GitHub key if `$GITHUB_USER` is set
+  - `${SSH_PUBLIC_KEY_FILE:-}` if set
+  - `~/.ssh/id_{ed25519,rsa}*oaf*.pub`
+  - `~/.ssh/id_{ed25519,rsa}*OAF*.pub`
+  - `~/.ssh/id_{ed25519,rsa}*open*au*.pub`
+  - `~/.ssh/id_{ed25519,rsa}*OPEN*AU*.pub`
+  - `~/.ssh/id_{ed25519,rsa}.pub`
+- Note the ansible `internal/deploy-user` role replaces the authorized list from the keys registered for `github_users`
+  when run by anyone so mismatches will cause connection problems!
 
 #### <a name='CLItoolsforcredentials'></a>CLI tools for credentials
 
@@ -206,6 +221,7 @@ Operator credentials (AWS, Google) aren't stored in this repo or 1Password — e
 - **1Password CLI (`op`)** — required to read the shared Ansible Vault passphrases and the RDS admin password.
   - Install: `brew install --cask 1password-cli` on macOS, or the [official package](https://developer.1password.com/docs/cli/get-started) on Linux.
   - The CLI normally inherits a session from the 1Password desktop app. If you're running headless, sign in once with `op signin --account oaforgau`.
+    - Note: enable App > Developer > Settings > "Integrate with 1Password CLI", otherwise you need to run `eval $(op signin --account oaforgau)` instead.
   - Ask an existing admin to add you to the **DevOps** vault.
 - **AWS CLI (`aws`)** — required for Terraform's AWS provider and for reading S3-backed Terraform state. Configure with whichever AWS auth method we're currently using (`aws configure sso`, `aws configure`, etc.).
 - **Google Cloud SDK (`gcloud`)** — required for Terraform's Google provider. After install, run `gcloud auth application-default login`.
@@ -232,33 +248,30 @@ Run `make requirements` to install the requirements for python and ansible.
 **Capistrano (in project repos)**
 
 - In order to run Capistrano, you'll need a version of Ruby installed;
-  - Consider installing [mise](https://mise.jdx.dev/) so that you're able to install and swap between multiple versions of Ruby, python and php.
+  - Consider installing [mise](https://mise.jdx.dev/) so that you're able to install and swap between multiple versions of Ruby, python, and php.
 - For deploying code onto dev/test/prod machines, you'll need to install [capistrano](http://capistranorb.com/) using `bundle install`
 
 **Terraform**
 
 For a few things, including major PlanningAlerts deployments, you'll need [Terraform](https://developer.hashicorp.com/terraform/install)
 
-
 - Install [the gCloud CLI](https://cloud.google.com/sdk/docs/install) and configure with authentication credentials,
   which requires some extra secrets than ansible needs:
-  - Run `make tf-secrets` to render `terraform/secrets.auto.tfvars` from 1Password — this provides the `rds_admin_password`, `cloudflare_api_token`, and `linode_api_token` (see [CLI tools for credentials](#cli-tools-for-credentials) above).
-  - **AWS** - You need an account with the same permissions as the `ansible` user (from ansible vault) or better
-    - to access the S3 bucket we use to store Terraform's permanent state.
-  - The `cloudflare_api_token` needs at least `Zone / Zone / Read` perms for planning, and `Zone / Zone / Write` for updating
-  - The `linode_api_token` needs at least read access for planning and full access for updating
-  - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use
-    - run `gcloud auth application-default login`
-  - Terraform runs `terraform/prepkey.sh` to grab your SSH public key to use as a deployer key in AWS.
-    This script requires `jq` to have been installed.
-    The script looks for public keys
-    - from GitHub if GITHUB_USER is set
-    - from `$SSH_PUBLIC_KEY_FILE` if set
-    - from `~/.ssh/` id*pub keys with open*au and oaf in upper and lower case
-    - Lastly falls back to `~/.ssh/id_{ed25519,rsa}.pub`.
-  - We host DNS on Cloudflare.
-    An API key to manage these zones is one of the secrets you'll need to provide.
-    To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Matthew or James for details
+- Run `make tf-secrets` to render `terraform/secrets.auto.tfvars` from 1Password — this provides the `rds_admin_password`, `cloudflare_api_token`, and `linode_api_token` (see [CLI tools for credentials](#cli-tools-for-credentials) above).
+- **AWS** - You need an account with the same permissions as the `ansible` user (from ansible vault) or better
+  - to access the S3 bucket we use to store Terraform's permanent state.
+- The `cloudflare_api_token` needs at least `Zone / Zone / Read` perms for planning, and `Zone / Zone / Write` for updating
+- The `linode_api_token` needs at least read access for planning and full access for updating
+- Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use
+  - run `gcloud auth application-default login`
+- See the notes on `terraform/prepkey.sh` in the prerequisites section for how new instances are initially configured with (only) your ssh key.
+  - terraform will replace aws_key_pair.deployer to update the value if someone else applied the last changes,
+    this is to be expected and is not a concern.
+- You should run Ansible on all new EC2 instances so the `internal/deploy-user` role can instead grant access to the ssh keys of everyone
+  listed in `github_users` (defined in `group_vars/all.yml`).
+- We host DNS on Cloudflare.
+  - An API key to manage these zones is one of the secrets you'll need to provide.
+  - To get access to the configs in the [Cloudflare dashboard](https://dash.cloudflare.com), you'll need access to the organisation - see Ben or James for details
 
 ### <a name='Environmentsetup'></a>Environment setup
 
@@ -582,6 +595,25 @@ Data directories of servers are backed up to S3 using Duply.
 Using the `data_directory` profile as an example, to run a backup manually you'd log in as root and run `duply data_directory backup`.
 
 To restore the latest backup to `/mnt/restore` you'd run `duply data_directory restore /mnt/restore`.
+
+## <a name='gittags'></a>Git Tags
+
+The make `apply-*` and `tf-apply*` targets create a git tag before and after the command to actually change the
+infrastructure is called so it is clear what has and hasn't been fully actioned. A `wip-*` tag that sticks around
+indicates a failed provisioning command.
+
+The `bin/tag-provisioning` command is called to tag the latest commit. Specifically it:
+
+1. creates a git tag with `wip-` prefix to indicate that changes to infrastructure had been started and pushes it to GitHub;
+2. runs the requested command;
+3. creates the git tag without the `wip-` prefix and pushes it to GitHub;
+4. removes the wip git tag locally and on GitHub, so it is clear the command succeeded.
+
+Terraform tags (from `make tf-apply`) will start with `[wip-]terraform` and then have the timestamp, eg
+`terraform_20260717125154`.
+
+Ansible tags (from `make apply-*`) will start with the service being targetted, and then have the timestamp, followed
+by the `STAGE`, `TAGS`, and `SKIP_TAGS` values, if set.
 
 ## <a name='MailCatching'></a>Mail Catching
 
