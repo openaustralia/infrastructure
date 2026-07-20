@@ -131,6 +131,10 @@
         - rds
       when: "(show_rds_debug | default(false) | bool) and (db_name is defined)"
 
+- hosts: ec2
+  become: true
+  name: "RDS_planningalerts facts"
+  tasks:
     - name: Get information about the planningalerts RDS instance
       rds:
         aws_access_key: "{{ aws_access_key }}"
@@ -185,12 +189,15 @@
         rbenv_users:
           - deploy
       when: "ruby_manager != 'rbenv'"
+
     - name: Remove rvm
+      tags: 
+        - rvm
       import_role:
         name: internal/remove_rvm
-      tags:
-        - rvm
       when: "ruby_manager != 'rvm'"
+
+
     - name: Remove mise
       import_role:
         name: internal/remove_mise
@@ -206,6 +213,8 @@
   tasks:
     # NOTE: rbenv uses the latest bin/ruby-build so there will usually be changes if you are checking
     - name: Install rbenv
+      tags: 
+        - rbenv
       import_role:
         name: external/zzet.rbenv
       vars:
@@ -217,7 +226,10 @@
         rbenv_users:
           - deploy
       when: "ruby_manager == 'rbenv'"
+
     - name: Install rvm
+      tags: 
+        - rvm
       import_role:
         name: external/rvm.ruby
       vars:
@@ -235,13 +247,17 @@
     - name: Add deploy user to rvm group
       import_role:
         name: internal/rvm.group
+      tags:
+        - rvm
       when: "ruby_manager == 'rvm'"
 
-#    - role: install_mise
-#    - name: Install mise
-#      import_role:
-#        name: internal/mise
-#      when: "ruby_manager == 'mise'"
+    - name: "Install mise"
+      import_role:
+        name: internal/mise
+      tags:
+        - ruby
+        - mise
+      when: "ruby_manager == 'mise'"
 
 - hosts: mysql
   name: "Vagrant MySQL Server to mimic AWS RDS"
