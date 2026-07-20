@@ -139,6 +139,7 @@ aws-check:
 	else \
 	  echo "ERROR: session-manager-plugin not found." >&2; \
 	  echo "  Install: https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html" >&2; \
+	  echo "For MacOS users, install using brew: brew install session-manager-plugin" >&2; \
 	  exit 1; \
 	fi
 
