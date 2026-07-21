@@ -382,7 +382,7 @@
   tags: alaveteli
   template:
     src: general.yml.j2
-    dest: /srv/www/production/shared/
+    dest: /srv/www/production/shared/general.yml
     owner: deploy
     group: deploy
     mode: '0644'
