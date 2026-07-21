@@ -26,7 +26,7 @@
 
 - name: Configure CloudWatch
   template:
-    src: config.json
+    src: config.json.j2
     dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
     mode: '0644'
   when: "'ec2' in group_names"
