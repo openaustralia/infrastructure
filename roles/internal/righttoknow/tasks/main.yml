@@ -381,7 +381,7 @@
 - name: Apply Alaveteli config (production)
   tags: alaveteli
   template:
-    src: general.yml
+    src: general.yml.j2
     dest: /srv/www/production/shared/
     owner: deploy
     group: deploy
@@ -405,7 +405,7 @@
 - name: Apply Alaveteli config (staging)
   tags: alaveteli
   template:
-    src: general.yml
+    src: general.yml.j2
     dest: /srv/www/staging/shared/
     owner: deploy
     group: deploy
