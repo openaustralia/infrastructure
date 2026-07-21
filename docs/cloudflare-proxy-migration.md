@@ -65,8 +65,8 @@ Several services have IP-based deny rules in their nginx configurations:
 
 | Service | Deny Rules | Location |
 |---------|-----------|----------|
-| theyvoteforyou | 563 | `roles/internal/theyvoteforyou/templates/production` |
-| righttoknow | 29 | `roles/internal/righttoknow/templates/nginx/stage` |
+| theyvoteforyou | 563 | `roles/internal/theyvoteforyou/templates/production.j2` |
+| righttoknow | 29 | `roles/internal/righttoknow/templates/nginx/stage.j2` |
 
 These block:
 - Known bot/scraper networks (SEMrush, aggressive crawlers)
