@@ -6,7 +6,7 @@
         clean clobber help letsencrypt lint op-check retry roles \
         show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target \
         tf-env-check tf-init tf-plan tf-plan-target tf-secrets \
-        update-github-ssh-keys vagrant venv yaml-lint
+        update-github-ssh-keys vagrant venv yaml-lint template-check
 
 _STAGE := $(if $(filter-out all,$(STAGE)),_$(STAGE),)
 
@@ -325,8 +325,17 @@ yaml-lint: venv
 	.venv/bin/yamllint roles/internal/ roles/*.yml site.yml
 	@echo "PASSED yamllint!"
 
+template-check:
+	@bad=$$(find roles/internal -path '*/templates/*' -type f ! -name '*.j2'); \
+	if [ -n "$$bad" ]; then \
+		echo "ERROR: Jinja2 templates must use the .j2 extension. Rename these, or move static files to the role's files/ dir and use copy:"; \
+		echo "$$bad"; \
+		exit 1; \
+	fi
+	@echo "PASSED template-check!"
+
 ansible-lint: venv roles
 	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/ roles/*.yml site.yml
 	@echo "PASSED ansible-lint!"
 
-lint: yaml-lint ansible-lint tf-check-fmt tf-validate
+lint: yaml-lint template-check ansible-lint tf-check-fmt tf-validate

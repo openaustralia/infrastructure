@@ -26,6 +26,13 @@ jobs:
       - run: make venv
       - run: make yaml-lint
 
+  template-check:
+    name: "Template extension check"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make template-check
+
   tf-lint:
     name: "Terraform check format"
     runs-on: ubuntu-latest
