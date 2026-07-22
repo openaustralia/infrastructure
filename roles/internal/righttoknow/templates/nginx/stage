@@ -94,6 +94,23 @@ server {
   {% if password_protect | bool -%}
   auth_basic "{{ stage }}";
   auth_basic_user_file htpasswd;
+
+  # Stripe delivers webhooks without HTTP basic auth credentials, so exempt the
+  # Pro webhook endpoint from the staging password protection. Exact-match
+  # location so only this path is exempt. Mirrors the proxy settings from
+  # `location /` (X-Forwarded-Proto https is required, otherwise FORCE_SSL
+  # would 301 the POST and Stripe treats redirects as delivery failures).
+  location = /pro/subscriptions/stripe-webhook {
+    auth_basic off;
+
+    proxy_pass  http://127.0.0.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_redirect off;
+    client_max_body_size 100m;
+  }
   {% endif %}
 
   location / {

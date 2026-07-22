@@ -7,8 +7,14 @@ righttoknow_domain: staging.righttoknow.org.au
 domain: staging.righttoknow.org.au
 server_hostname: staging.righttoknow.org.au
 
+# Configure the stage for this server. This is used to determine which
+# tasks are run against this server. For example, the staging server will run the
+# "staging" tasks, while the production server will run the "production" tasks.
+stage: staging
+
+
 # Cron enable/disable switch for staging
-cron_enabled: true
+cron_enabled: false
 
 # Staging-specific settings
 # Both staging and production environments run in Rails production mode

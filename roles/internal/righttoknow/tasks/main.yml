@@ -381,8 +381,8 @@
 - name: Apply Alaveteli config (production)
   tags: alaveteli
   template:
-    src: general.yml
-    dest: /srv/www/production/shared/
+    src: general.yml.j2
+    dest: /srv/www/production/shared/general.yml
     owner: deploy
     group: deploy
     mode: '0644'
@@ -405,8 +405,8 @@
 - name: Apply Alaveteli config (staging)
   tags: alaveteli
   template:
-    src: general.yml
-    dest: /srv/www/staging/shared/
+    src: general.yml.j2
+    dest: /srv/www/staging/shared/general.yml
     owner: deploy
     group: deploy
     mode: '0644'
@@ -420,6 +420,7 @@
     stripe_publishable_key: "{{ stripe_publishable_key_test }}"
     stripe_secret_key: "{{ stripe_secret_key_test }}"
     stripe_webhook_secret: "{{ stripe_webhook_secret_staging }}"
+    stripe_prices: "{{ stripe_prices_test }}"
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
@@ -450,12 +451,14 @@
 
 - name: Apply sidekiq config
   tags: alaveteli
-  copy:
+  template:
     src: sidekiq.yml
     dest: "/srv/www/{{ item }}/shared/sidekiq.yml"
     owner: deploy
     group: deploy
     mode: '0644'
+  vars:
+    stage: "{{ item }}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: restart sidekiq
 
