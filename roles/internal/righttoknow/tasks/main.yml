@@ -339,7 +339,7 @@
 - name: Generate nginx config
   copy:
     src: "nginx/{{ item }}"
-    dest: /etc/nginx
+    dest: /etc/nginx/{{ item }}
     mode: '0644'
   with_items:
     - nginx.conf
