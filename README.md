@@ -148,8 +148,10 @@ un-rendered template.
 - If a file has no Jinja2 (`{{ ... }}` / `{% ... %}`) it is not a template. Put it in
   the role's `files/` directory and use `copy:` instead.
 
-`make template-check` enforces this - it fails if any file under a role's
-`templates/` directory does not end in `.j2`, and it runs in CI.
+`make template-check` enforces this - it fails if any file under an internal
+role's `templates/` directory does not end in `.j2`, and it runs in CI.
+Third-party roles under `roles/external/` are not checked, as we don't control
+their layout.
 
 ## <a name='Updates'></a>Updates
 
