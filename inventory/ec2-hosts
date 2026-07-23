@@ -36,6 +36,11 @@ openaustralia.org.au
 [openvpn]
 52.64.33.12 ansible_user=ubuntu ansible_ssh_private_key_file=terraform.pem
 
+# NOTE: postal is a Linode instance, not EC2, so it is deliberately not in
+# the [ec2] group (which gates RDS facts and the AWS CloudWatch agent)
+[postal]
+postal.oaf.org.au
+
 [planningalerts]
 ec2-3-27-58-54.ap-southeast-2.compute.amazonaws.com
 ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
