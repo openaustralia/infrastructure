@@ -1,6 +1,6 @@
 [Makefile]
 indent_style = tab
 
-[*.json,*.yml,*.json.j2,*.yml.j2]
+[*.{json,yml,json.j2,yml.j2}]
 indent_style = space
 indent_size = 2
