@@ -27,6 +27,12 @@ mysql_production_password_readonly: !vault |
           3833353337613239370a393331333332633763313439623064346639373635666230303937303235
           63663633613265643862613664633834656230333933343433386338623765623539
 cron_enabled: true
+
+# Chrome for Testing supplies the headless browser and a guaranteed-matched chromedriver used by the
+# card screenshotter. We track the latest Stable channel; set the channel to a fixed version to pin both.
+chrome_for_testing_channel: Stable
+chrome_for_testing_manifest_url: "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"
+chrome_for_testing_install_dir: /opt/chrome-for-testing
 skylight_authentication: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           61623935353735333363316638306661333038396431396364333738653533326138303033323032
