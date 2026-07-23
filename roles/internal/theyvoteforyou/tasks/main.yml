@@ -310,32 +310,10 @@
     value: web-administrators@openaustralia.org,j1u3z8i7h9w0q8o4@oaf.slack.com
   when: "'ec2' in group_names"
 
-# The browser and chromedriver used by the card screenshotter come from Chrome for Testing (installed
-# further down). A single manifest entry ships a guaranteed-matched chrome + chromedriver pair, so the
-# two can never drift out of sync. We install the latest Stable version and only download again when the
-# version actually changes; pinning is a one-line change to chrome_for_testing_channel.
-#
-# The Google apt repo + google-chrome-stable install below is the previous approach and is retired in a
-# follow-up change; it no longer provides the browser we use (the Chrome for Testing symlinks take
-# precedence on PATH).
-
-- name: Get Google key for install Chrome
-  become: true
-  apt_key:
-    url: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
-    state: present
-
-- name: Apt Google repository
-  apt_repository:
-    repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
-    state: present
-    update_cache: true
-
-- name: Install latest Chrome # noqa: package-latest
-  apt:
-    pkg: google-chrome-stable
-    # We want to make sure we're always running the latest version
-    state: latest
+# The browser and chromedriver used by the card screenshotter come from Chrome for Testing. A single
+# manifest entry ships a guaranteed-matched chrome + chromedriver pair, so the two can never drift out
+# of sync. We install the latest Stable version and only download again when the version actually
+# changes; pinning is a one-line change to chrome_for_testing_channel.
 
 # Chrome for Testing ships only the binaries, so install the shared libraries the browser needs to run
 # (these used to be pulled in transitively by the google-chrome-stable deb), plus unzip to extract the
@@ -425,6 +403,32 @@
     src: "{{ chrome_for_testing_install_dir }}/{{ chrome_for_testing_version }}/chromedriver-linux64/chromedriver"
     dest: /usr/local/bin/chromedriver
     force: true
+
+# Remove the previous apt-managed Chrome. Earlier deploys installed google-chrome-stable from Google's
+# apt repo; it auto-updated via its own daily cron and its apt source reappeared on every run, causing
+# persistent config drift. Chrome for Testing (above) fully replaces it. autoremove is disabled so the
+# shared libraries installed above are kept. Removing the package also removes its own
+# /etc/cron.daily/google-chrome auto-update job and /etc/default/google-chrome.
+- name: Remove apt-managed google-chrome-stable
+  apt:
+    pkg: google-chrome-stable
+    state: absent
+    autoremove: false
+
+- name: Remove the Google Chrome apt repository
+  apt_repository:
+    repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+    state: absent
+
+- name: Remove Chrome's self-added apt source
+  file:
+    path: /etc/apt/sources.list.d/google-chrome.list
+    state: absent
+
+- name: Remove the Google apt signing key
+  apt_key:
+    id: EB4C1BFD4F042F6DDDCCEC917721F63BD38B4796
+    state: absent
 
 # We want this directory to exist in development too so that
 # things are as consistent as possible
