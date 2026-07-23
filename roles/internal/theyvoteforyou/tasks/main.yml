@@ -310,10 +310,14 @@
     value: web-administrators@openaustralia.org,j1u3z8i7h9w0q8o4@oaf.slack.com
   when: "'ec2' in group_names"
 
-# A version of chromedriver works with only a version of chrome. As far as I know it's not possible to install a
-# specific version of chrome easily. So, instead we will take the strategy of installing the latest chrome
-# and chromedriver and ensure on every run that the latest ones are installed. That way hopefully everything
-# will hopefully stay in sync at the risk of chrome updating when not necessarily expected.
+# The browser and chromedriver used by the card screenshotter come from Chrome for Testing (installed
+# further down). A single manifest entry ships a guaranteed-matched chrome + chromedriver pair, so the
+# two can never drift out of sync. We install the latest Stable version and only download again when the
+# version actually changes; pinning is a one-line change to chrome_for_testing_channel.
+#
+# The Google apt repo + google-chrome-stable install below is the previous approach and is retired in a
+# follow-up change; it no longer provides the browser we use (the Chrome for Testing symlinks take
+# precedence on PATH).
 
 - name: Get Google key for install Chrome
   become: true
@@ -333,20 +337,94 @@
     # We want to make sure we're always running the latest version
     state: latest
 
-- name: Get latest version number for chromedriver
-  uri:
-    url: "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"
-    return_content: true
-    headers:
-      Content-Type: "text/plain"
-  register: latest_chromedriver
+# Chrome for Testing ships only the binaries, so install the shared libraries the browser needs to run
+# (these used to be pulled in transitively by the google-chrome-stable deb), plus unzip to extract the
+# downloaded archives.
+- name: Install Chrome for Testing dependencies
+  apt:
+    pkg:
+      - unzip
+      - libasound2
+      - libatk-bridge2.0-0
+      - libatk1.0-0
+      - libatspi2.0-0
+      - libcups2
+      - libdbus-1-3
+      - libdrm2
+      - libgbm1
+      - libgtk-3-0
+      - libnspr4
+      - libnss3
+      - libpango-1.0-0
+      - libxcomposite1
+      - libxdamage1
+      - libxfixes3
+      - libxkbcommon0
+      - libxrandr2
+      - libxshmfence1
+      - libxss1
+      - libvulkan1
+      - fonts-liberation
+      - libu2f-udev
 
-- name: Download and install chromedriver
+# check_mode: false so the read-only manifest fetch still runs during --check; the tasks below depend on
+# the version it resolves.
+- name: Get Chrome for Testing manifest
+  uri:
+    url: "{{ chrome_for_testing_manifest_url }}"
+    return_content: true
+  register: chrome_for_testing_manifest
+  check_mode: false
+
+- name: Resolve Chrome for Testing version and download URLs
+  set_fact:
+    chrome_for_testing_version: "{{ channel.version }}"
+    chrome_for_testing_chrome_url: "{{ (channel.downloads.chrome | selectattr('platform', 'equalto', 'linux64') | first).url }}"
+    chrome_for_testing_chromedriver_url: "{{ (channel.downloads.chromedriver | selectattr('platform', 'equalto', 'linux64') | first).url }}"
+  vars:
+    channel: "{{ chrome_for_testing_manifest.json.channels[chrome_for_testing_channel] }}"
+
+- name: Create Chrome for Testing version directory
+  file:
+    path: "{{ chrome_for_testing_install_dir }}/{{ chrome_for_testing_version }}"
+    state: directory
+    mode: "0755"
+
+# creates: makes this idempotent - we only download and extract when this exact version isn't installed.
+# Skipped in check mode: the version directory above isn't actually created then, and unarchive requires
+# an existing dest.
+- name: Download and extract Chrome for Testing browser
   unarchive:
-    src: "https://chromedriver.storage.googleapis.com/{{ latest_chromedriver.content|trim }}/chromedriver_linux64.zip"
-    dest: /usr/local/bin
+    src: "{{ chrome_for_testing_chrome_url }}"
+    dest: "{{ chrome_for_testing_install_dir }}/{{ chrome_for_testing_version }}"
     remote_src: true
+    creates: "{{ chrome_for_testing_install_dir }}/{{ chrome_for_testing_version }}/chrome-linux64/chrome"
   when: not ansible_check_mode
+
+- name: Download and extract matching chromedriver
+  unarchive:
+    src: "{{ chrome_for_testing_chromedriver_url }}"
+    dest: "{{ chrome_for_testing_install_dir }}/{{ chrome_for_testing_version }}"
+    remote_src: true
+    creates: "{{ chrome_for_testing_install_dir }}/{{ chrome_for_testing_version }}/chromedriver-linux64/chromedriver"
+  when: not ansible_check_mode
+
+# The card screenshotter relies on Selenium's default discovery, which finds google-chrome and
+# chromedriver on PATH. /usr/local/bin is on PATH (including cron, see above) and precedes /usr/bin.
+# force: true replaces the legacy chromedriver binary that the previous approach left in /usr/local/bin.
+- name: Symlink Chrome for Testing browser onto PATH
+  file:
+    state: link
+    src: "{{ chrome_for_testing_install_dir }}/{{ chrome_for_testing_version }}/chrome-linux64/chrome"
+    dest: /usr/local/bin/google-chrome
+    force: true
+
+- name: Symlink matching chromedriver onto PATH
+  file:
+    state: link
+    src: "{{ chrome_for_testing_install_dir }}/{{ chrome_for_testing_version }}/chromedriver-linux64/chromedriver"
+    dest: /usr/local/bin/chromedriver
+    force: true
 
 # We want this directory to exist in development too so that
 # things are as consistent as possible
