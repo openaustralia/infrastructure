@@ -126,7 +126,7 @@
 
 - name: Copy application database configuration
   template:
-    src: "database-{{ item }}.yml"
+    src: "database-{{ item }}.yml.j2"
     dest: "/srv/www/{{ item }}/shared/config/database.yml"
     owner: deploy
     group: deploy
@@ -138,7 +138,7 @@
 
 - name: Copy rails master key for production
   template:
-    src: production.key
+    src: production.key.j2
     dest: "/srv/www/{{ item }}/shared/config/credentials/production.key"
     owner: deploy
     group: deploy
@@ -150,8 +150,8 @@
 
 - name: Copy application newrelic configuration
   template:
-    src: newrelic.yml
-    dest: "/srv/www/{{ item }}/shared/config/"
+    src: newrelic.yml.j2
+    dest: "/srv/www/{{ item }}/shared/config/newrelic.yml"
     owner: deploy
     group: deploy
     mode: '0644'
@@ -162,8 +162,8 @@
 
 - name: Copy application skylight.io configuration
   template:
-    src: skylight.yml
-    dest: "/srv/www/{{ item }}/shared/config/"
+    src: skylight.yml.j2
+    dest: "/srv/www/{{ item }}/shared/config/skylight.yml"
     owner: deploy
     group: deploy
     mode: '0644'
@@ -244,8 +244,8 @@
 
 - name: Copy nginx site configuration
   template:
-    src: "{{ item }}"
-    dest: /etc/nginx/sites-available/
+    src: "{{ item }}.j2"
+    dest: /etc/nginx/sites-available/{{ item }}
     mode: '0644'
   with_items:
     - default
