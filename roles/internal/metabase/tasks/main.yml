@@ -58,8 +58,8 @@
 
 - name: Copy across docker-compose.yml
   template:
-    src: docker-compose.yml
-    dest: /srv/www
+    src: docker-compose.yml.j2
+    dest: /srv/www/docker-compose.yml
     mode: '0644'
 
 - name: Run metabase
