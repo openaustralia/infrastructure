@@ -265,9 +265,9 @@
   notify: nginx reload
 
 - name: Allow deploy user to control application services
-  copy:
+  template:
     src: theyvoteforyou_foreman
-    dest: /etc/sudoers.d/
+    dest: /etc/sudoers.d/theyvoteforyou_foreman
     mode: '0440'
     validate: visudo -cf %s
   # notify: sudo reload
