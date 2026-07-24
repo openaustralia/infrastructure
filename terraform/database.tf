@@ -62,9 +62,6 @@ resource "aws_db_instance" "maindb" {
   engine_version = "8.4.6"
 
   # Required by AWS to perform a major version upgrade (8.0 -> 8.4) in place.
-  # TODO: Remove this (or set back to false) once the upgrade has completed,
-  # so an accidental engine_version bump in future can't trigger a surprise
-  # major version upgrade.
   allow_major_version_upgrade = false
 
   instance_class      = "db.t3.small"
