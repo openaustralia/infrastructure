@@ -104,14 +104,20 @@ resource "aws_db_instance" "postgresql" {
   deletion_protection    = true
 }
 
-# New maindb MySQL 8.0 instance
+# maindb MySQL 8.4 instance
 resource "aws_db_instance" "maindb" {
   allocated_storage = 50
 
   # Using general purpose SSD
   storage_type   = "gp2"
   engine         = "mysql"
-  engine_version = "8.0.44"
+  engine_version = "8.4.6"
+
+  # Required by AWS to perform a major version upgrade (8.0 -> 8.4) in place.
+  # TODO: Remove this (or set back to false) once the upgrade has completed,
+  # so an accidental engine_version bump in future can't trigger a surprise
+  # major version upgrade.
+  allow_major_version_upgrade = true
 
   instance_class      = "db.t3.small"
   identifier          = "maindb"
@@ -139,7 +145,7 @@ resource "aws_db_instance" "maindb" {
   apply_immediately          = false
   skip_final_snapshot        = true
   vpc_security_group_ids     = [aws_security_group.main_database.id]
-  parameter_group_name       = "default.mysql8.0"
+  parameter_group_name       = "default.mysql8.4"
   deletion_protection        = false
   copy_tags_to_snapshot      = true
 }
