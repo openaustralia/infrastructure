@@ -117,7 +117,7 @@ resource "aws_db_instance" "maindb" {
   # TODO: Remove this (or set back to false) once the upgrade has completed,
   # so an accidental engine_version bump in future can't trigger a surprise
   # major version upgrade.
-  allow_major_version_upgrade = true
+  allow_major_version_upgrade = false
 
   instance_class      = "db.t3.small"
   identifier          = "maindb"
@@ -150,37 +150,3 @@ resource "aws_db_instance" "maindb" {
   copy_tags_to_snapshot      = true
 }
 
-resource "aws_db_parameter_group" "mysql_default" {
-  name        = "mysql-default"
-  description = "Our default for mysql 5.6"
-  family      = "mysql5.6"
-
-  # Allow triggers on mysql
-  parameter {
-    name         = "log_bin_trust_function_creators"
-    value        = 1
-    apply_method = "pending-reboot"
-  }
-
-  # To use utf8mb4 with mysql 5.6 we need to enable innodb_large_prefix. See
-  # https://edgeguides.rubyonrails.org/configuring.html#configuring-a-mysql-or-mariadb-database
-  parameter {
-    name  = "innodb_large_prefix"
-    value = 1
-  }
-
-  # Setting the innodb_large_prefix (above) only works when using the newer
-  # row formats DYNAMIC or COMPRESSED. These row formats are only supported
-  # in the newer Barracuda file format
-  parameter {
-    name  = "innodb_file_format"
-    value = "Barracuda"
-  }
-  # See https://dev.mysql.com/doc/refman/5.7/en/charset-unicode-conversion.html
-  # This is actually already set by default on RDS. So just confuses things
-  # to set it explicitly
-  # parameter {
-  #   name = "innodb_file_per_table"
-  #   value = 1
-  # }
-}
