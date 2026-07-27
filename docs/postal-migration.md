@@ -69,6 +69,9 @@ UI for stragglers (it was historically open to the civic tech community):
 
 ## Where things live
 
+Some of these arrive after the terraform foundation, so they may not exist
+yet depending on how far through the migration we are:
+
 - Server + firewall + per-server DNS: `terraform/postal/`
 - Provisioning: `roles/internal/postal/` (see its README for the
   application setup runbook, upgrades, backup/restore)
