@@ -28,10 +28,19 @@ if cmp -s "$CERT_FILE" "$CONFIG_DIR/smtp.cert"; then
   exit 0
 fi
 
-cp "$CERT_FILE" "$CONFIG_DIR/smtp.cert"
-cp "$KEY_FILE" "$CONFIG_DIR/smtp.key"
-# cp leaves these owned by root, but the smtp container reads them as uid 999
-chown {{ postal_container_uid }}:{{ postal_container_gid }} "$CONFIG_DIR/smtp.cert" "$CONFIG_DIR/smtp.key"
-chmod 640 "$CONFIG_DIR/smtp.cert" "$CONFIG_DIR/smtp.key"
+# The check above compares only the certificate, so the certificate is written
+# last and acts as the commit point: if the key fails to land, the old
+# certificate stays put and the next run tries again. Writing the certificate
+# first would leave a new certificate paired with a stale key, and every later
+# run would match on the certificate and skip over the mismatch.
+#
+# install sets the ownership and mode in one step, because the smtp container
+# reads these as uid 999 rather than root. Writing to a temporary name and
+# renaming means the SMTP listener never sees a half-written file.
+install -o {{ postal_container_uid }} -g {{ postal_container_gid }} -m 640 "$KEY_FILE" "$CONFIG_DIR/smtp.key.tmp"
+mv "$CONFIG_DIR/smtp.key.tmp" "$CONFIG_DIR/smtp.key"
+
+install -o {{ postal_container_uid }} -g {{ postal_container_gid }} -m 640 "$CERT_FILE" "$CONFIG_DIR/smtp.cert.tmp"
+mv "$CONFIG_DIR/smtp.cert.tmp" "$CONFIG_DIR/smtp.cert"
 
 /usr/bin/postal dc "restart smtp"
