@@ -1,6 +1,9 @@
 
 terraform {
-  required_version = ">= 0.13"
+  # 1.9 is the first release where a variable validation condition may refer
+  # to another variable, which the paired postal_dkim_record_name /
+  # postal_dkim_record_value checks rely on
+  required_version = ">= 1.9"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
