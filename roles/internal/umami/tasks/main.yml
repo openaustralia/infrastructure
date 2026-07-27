@@ -56,19 +56,11 @@
 # On the shared RDS instance, so it inherits that instance's backups. Umami
 # applies its own schema migrations on startup.
 #
-# The role is created first so the database can be owned by it. That matters on
-# PostgreSQL 15 (what the RDS instance runs): the public schema is owned by
-# pg_database_owner and no longer writable by everyone, so a role that merely
-# has ALL on the database still cannot create tables and the migrations fail.
-
-- name: Create the umami postgresql role
-  community.postgresql.postgresql_user:
-    login_host: "{{ db_host }}"
-    login_user: root
-    login_password: "{{ rds_admin_password }}"
-    name: "{{ umami_db_user }}"
-    password: "{{ db_password }}"
-    no_password_changes: true
+# Follows roles/internal/planningalerts/tasks/database.yml. Why the database is
+# not owned by the umami role, and why both grants below are needed for
+# different reasons, is documented in this role's README under "Database
+# grants". Order matters here: the role is created second because that task
+# connects to the umami database, which has to exist first.
 
 - name: Create the umami database
   community.postgresql.postgresql_db:
@@ -76,7 +68,37 @@
     login_user: root
     login_password: "{{ rds_admin_password }}"
     name: "{{ umami_db_name }}"
-    owner: "{{ umami_db_user }}"
+
+- name: Create the umami postgresql role
+  community.postgresql.postgresql_user:
+    login_host: "{{ db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "{{ umami_db_name }}"
+    name: "{{ umami_db_user }}"
+    password: "{{ db_password }}"
+    no_password_changes: true
+
+- name: Give the umami role access to the database
+  community.postgresql.postgresql_privs:
+    login_host: "{{ db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "{{ umami_db_name }}"
+    roles: "{{ umami_db_user }}"
+    privs: ALL
+    type: database
+
+- name: Give the umami role access to the public schema
+  community.postgresql.postgresql_privs:
+    login_host: "{{ db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "{{ umami_db_name }}"
+    roles: "{{ umami_db_user }}"
+    privs: ALL
+    type: schema
+    objs: public
 
 # =============================================================================
 # nginx and TLS
@@ -122,7 +144,14 @@
 # Umami
 # =============================================================================
 
+# no_log because docker_container returns the container's full inspect output,
+# including Config.Env, which holds the database password and APP_SECRET. That
+# return value is not suppressed by diff mode, so it leaks at -v and to any
+# callback that logs results. diff is off as well so that the diff path stays
+# closed if someone flips no_log off to debug a failure here; if you need to,
+# prefer `docker logs umami` first.
 - name: Run umami
+  no_log: true
   community.docker.docker_container:
     name: umami
     image: "{{ umami_docker_image }}"
@@ -131,11 +160,31 @@
     env:
       DATABASE_URL: "{{ umami_database_url }}"
       APP_SECRET: "{{ umami_app_secret }}"
-      # Cloudflare puts the visitor's address here. Umami would find it anyway
-      # by walking its own list of headers, but being explicit means a
-      # misconfigured proxy fails loudly instead of silently recording the
-      # wrong IP against every session.
+      # nginx sets this on every proxied request from $remote_addr, which
+      # cloudflare_realip has already resolved to the visitor's address. If it
+      # were missing Umami would fall back to walking its own header list
+      # (x-forwarded-for and friends) rather than failing, so the point of
+      # setting it is to make the answer deterministic, not to catch mistakes.
       CLIENT_IP_HEADER: cf-connecting-ip
       DISABLE_TELEMETRY: "1"
+    # Nothing else rotates these: the box's own logs are handled by logrotate,
+    # but a container's are not, and this one gets a request per pageview.
+    log_driver: json-file
+    log_options:
+      max-size: 10m
+      max-file: '3'
+    # Both of these match upstream's own docker-compose.yml. init reaps zombies
+    # for the Node process; /api/heartbeat is an unauthenticated endpoint, and
+    # the image installs curl for exactly this purpose.
+    init: true
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/heartbeat || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # Umami runs its prisma migrations at startup, so don't count failures
+      # until those have had time to finish on a fresh database.
+      start_period: 60s
     restart_policy: always
     state: started
+  diff: false
