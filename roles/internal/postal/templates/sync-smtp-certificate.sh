@@ -30,6 +30,8 @@ fi
 
 cp "$CERT_FILE" "$CONFIG_DIR/smtp.cert"
 cp "$KEY_FILE" "$CONFIG_DIR/smtp.key"
-chmod 600 "$CONFIG_DIR/smtp.cert" "$CONFIG_DIR/smtp.key"
+# cp leaves these owned by root, but the smtp container reads them as uid 999
+chown {{ postal_container_uid }}:{{ postal_container_gid }} "$CONFIG_DIR/smtp.cert" "$CONFIG_DIR/smtp.key"
+chmod 640 "$CONFIG_DIR/smtp.cert" "$CONFIG_DIR/smtp.key"
 
 /usr/bin/postal dc "restart smtp"

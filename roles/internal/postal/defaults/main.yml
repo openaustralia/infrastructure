@@ -11,6 +11,13 @@ postal_install_version: 451926cc78a1056e9f16dad6ec5c62d4f76d2445
 
 postal_web_hostname: postal.oaf.org.au
 
+# The postal images run as USER postal (uid/gid 999) and /opt/postal/config is
+# bind mounted into them as /config, so anything in there has to be readable
+# by that uid. Bind mounts keep the host's ownership and mode, so root-only
+# files would leave the containers unable to read their own configuration.
+postal_container_uid: 999
+postal_container_gid: 999
+
 # Port the Postal SMTP listener binds to. Must be 25 so that remote MTAs can
 # deliver bounces to the return-path domain. Client apps submit on 2525 (the
 # old Cuttlefish port), which an iptables rule redirects to 25.

@@ -99,20 +99,29 @@
   file:
     path: /opt/postal/config
     state: directory
-    mode: "0700"
+    owner: "{{ postal_container_uid }}"
+    group: "{{ postal_container_gid }}"
+    mode: "0750"
 
 - name: Copy across the postal configuration
   template:
     src: postal.yml
     dest: /opt/postal/config/postal.yml
-    mode: "0600"
+    owner: "{{ postal_container_uid }}"
+    group: "{{ postal_container_gid }}"
+    mode: "0640"
   notify: Restart postal
 
 - name: Copy across the signing key
   copy:
     content: "{{ postal_signing_key }}"
     dest: /opt/postal/config/signing.key
-    mode: "0600"
+    owner: "{{ postal_container_uid }}"
+    group: "{{ postal_container_gid }}"
+    mode: "0640"
+  # The whole file content is the DKIM private key, and both check-postal and
+  # apply-postal run with --diff
+  no_log: true
   notify: Restart postal
 
 # The SMTP listener needs a TLS certificate for STARTTLS before Caddy has
@@ -132,6 +141,21 @@
     -days 3650
     -subj "/CN={{ postal_web_hostname }}"
   when: not postal_smtp_cert.stat.exists
+
+# openssl writes these as root under the default umask, but the smtp container
+# reads them as uid 999
+- name: Make the SMTP TLS certificate readable by the postal containers
+  file:
+    path: "/opt/postal/config/{{ item }}"
+    owner: "{{ postal_container_uid }}"
+    group: "{{ postal_container_gid }}"
+    mode: "0640"
+  loop:
+    - smtp.cert
+    - smtp.key
+  # In check mode on a fresh host the openssl task above is skipped, so there
+  # is nothing to chown yet
+  when: postal_smtp_cert.stat.exists or not ansible_check_mode
 
 - name: Copy across the script that syncs Caddy's certificate to the SMTP listener
   template:
