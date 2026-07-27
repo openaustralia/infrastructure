@@ -116,25 +116,25 @@
   when: "'righttoknow_staging' in group_names"
 
 - name: Another Aleveteli config to force production environment
-  template:
+  copy:
     src: rails_env.rb
-    dest: /srv/www/{{ item }}/shared
+    dest: /srv/www/{{ item }}/shared/rails_env.rb
     mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Add newrelic configuration to disable agent
   template:
-    src: newrelic.yml
-    dest: /srv/www/{{ item }}/shared/
+    src: newrelic.yml.j2
+    dest: /srv/www/{{ item }}/shared/newrelic.yml
     mode: '0644'
   vars:
     newrelic_app_name: "Right To Know{{ (item == 'production') | ternary('', ' Staging') }}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Install wrapper script for setting correct version of ruby in path
-  template:
+  copy:
     src: run.sh
-    dest: /srv/www/{{ item }}/shared
+    dest: /srv/www/{{ item }}/shared/run.sh
     # Make it executable
     mode: 0755
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
@@ -216,7 +216,7 @@
 
 - name: Install sidekiq systemd unit (staging)
   template:
-    src: sidekiq.service
+    src: sidekiq.service.j2
     dest: /etc/systemd/system/sidekiq.service
     mode: "0644"
   vars:
@@ -238,7 +238,7 @@
 
 - name: Install sidekiq systemd unit (Production)
   template:
-    src: sidekiq.service
+    src: sidekiq.service.j2
     dest: /etc/systemd/system/sidekiq.service
     mode: "0644"
   vars:
@@ -314,7 +314,7 @@
 - name: Copy over database configuration for application
   tags: alaveteli
   template:
-    src: database.yml
+    src: database.yml.j2
     dest: "/srv/www/{{ item }}/shared/database.yml"
     owner: deploy
     group: deploy
@@ -327,7 +327,7 @@
 
 - name: Copy init scripts
   template:
-    src: "init/{{ item[1] }}"
+    src: "init/{{ item[1] }}.j2"
     dest: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
     mode: 0755
   vars:
@@ -337,9 +337,9 @@
     - ['send-notifications', 'foi-alert-tracks', 'alaveteli']
 
 - name: Generate nginx config
-  template:
+  copy:
     src: "nginx/{{ item }}"
-    dest: /etc/nginx
+    dest: /etc/nginx/{{ item }}
     mode: '0644'
   with_items:
     - nginx.conf
@@ -348,8 +348,8 @@
 
 - name: Copy nginx config for the app redirects
   template:
-    src: nginx/default
-    dest: /etc/nginx/sites-available
+    src: nginx/default.j2
+    dest: /etc/nginx/sites-available/default
     owner: root
     group: root
     mode: "0644"
@@ -358,7 +358,7 @@
 
 - name: Copy nginx config for the app
   template:
-    src: nginx/stage
+    src: nginx/stage.j2
     dest: /etc/nginx/sites-available/{{ item }}
     owner: root
     group: root
@@ -381,8 +381,8 @@
 - name: Apply Alaveteli config (production)
   tags: alaveteli
   template:
-    src: general.yml
-    dest: /srv/www/production/shared/
+    src: general.yml.j2
+    dest: /srv/www/production/shared/general.yml
     owner: deploy
     group: deploy
     mode: '0644'
@@ -405,8 +405,8 @@
 - name: Apply Alaveteli config (staging)
   tags: alaveteli
   template:
-    src: general.yml
-    dest: /srv/www/staging/shared/
+    src: general.yml.j2
+    dest: /srv/www/staging/shared/general.yml
     owner: deploy
     group: deploy
     mode: '0644'
@@ -439,7 +439,7 @@
 
 - name: Apply user spam scorer config
   tags: alaveteli
-  template:
+  copy:
     src: user_spam_scorer.yml
     dest: "/srv/www/{{ item }}/shared/user_spam_scorer.yml"
     owner: deploy
@@ -535,15 +535,15 @@
 
 - name: Update opendkim configuration
   template:
-    src: "opendkim.conf"
-    dest: /etc
+    src: "opendkim.conf.j2"
+    dest: /etc/opendkim.conf
     mode: '0644'
   notify: restart opendkim
 
 - name: Update postfix configuration
   template:
-    src: "postfix/{{ item }}"
-    dest: /etc/postfix
+    src: "postfix/{{ item }}.j2"
+    dest: /etc/postfix/{{ item }}
     mode: '0644'
   with_items:
     - master.cf
@@ -554,7 +554,7 @@
 
 - name: Set mailname for outbound mail
   template:
-    src: mailname
+    src: mailname.j2
     dest: /etc/mailname
     mode: '0644'
   notify: restart postfix
