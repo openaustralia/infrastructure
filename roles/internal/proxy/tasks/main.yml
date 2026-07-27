@@ -31,7 +31,7 @@
   when: tinyproxy_configure is changed
 
 - name: Tinyproxy startup script
-  template:
+  copy:
     src: init.sh
     dest: /etc/init.d/tinyproxy
     mode: "0755"
@@ -46,8 +46,8 @@
 
 - name: Tinyproxy configuration
   template:
-    src: tinyproxy.conf
-    dest: /usr/local/etc/tinyproxy/
+    src: tinyproxy.conf.j2
+    dest: /usr/local/etc/tinyproxy/tinyproxy.conf
     mode: "0644"
   notify: restart tinyproxy
 
