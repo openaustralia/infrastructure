@@ -207,3 +207,51 @@ resource "aws_security_group_rule" "planningalerts_https_cloudflare_ipv6" {
   security_group_id = aws_security_group.load-balancer.id
   description       = "HTTPS from Cloudflare IPv6"
 }
+
+# =============================================================================
+# analytics - Cloudflare Rules
+# =============================================================================
+
+resource "aws_security_group_rule" "analytics_http_cloudflare_ipv4" {
+  count             = var.analytics_cloudflare_only ? length(local.cloudflare_ipv4_cidrs) : 0
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = [local.cloudflare_ipv4_cidrs[count.index]]
+  security_group_id = aws_security_group.analytics.id
+  description       = "HTTP from Cloudflare"
+}
+
+resource "aws_security_group_rule" "analytics_https_cloudflare_ipv4" {
+  count             = var.analytics_cloudflare_only ? length(local.cloudflare_ipv4_cidrs) : 0
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = [local.cloudflare_ipv4_cidrs[count.index]]
+  security_group_id = aws_security_group.analytics.id
+  description       = "HTTPS from Cloudflare"
+}
+
+resource "aws_security_group_rule" "analytics_http_cloudflare_ipv6" {
+  count             = var.analytics_cloudflare_only ? length(local.cloudflare_ipv6_cidrs) : 0
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  ipv6_cidr_blocks  = [local.cloudflare_ipv6_cidrs[count.index]]
+  security_group_id = aws_security_group.analytics.id
+  description       = "HTTP from Cloudflare IPv6"
+}
+
+resource "aws_security_group_rule" "analytics_https_cloudflare_ipv6" {
+  count             = var.analytics_cloudflare_only ? length(local.cloudflare_ipv6_cidrs) : 0
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  ipv6_cidr_blocks  = [local.cloudflare_ipv6_cidrs[count.index]]
+  security_group_id = aws_security_group.analytics.id
+  description       = "HTTPS from Cloudflare IPv6"
+}

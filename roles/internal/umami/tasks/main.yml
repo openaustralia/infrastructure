@@ -1,0 +1,141 @@
+---
+# tasks file for umami
+#
+# Umami (https://umami.is) is a privacy-focused analytics platform. It runs as
+# a single container against the shared RDS PostgreSQL instance, with nginx in
+# front terminating TLS. The public name is proxied by Cloudflare.
+
+- name: Install nginx and the postgresql client library
+  apt:
+    pkg:
+      - nginx
+      - python3-psycopg2
+    state: present
+
+# =============================================================================
+# Docker
+# =============================================================================
+# Installed from Docker's own apt repository using a signed-by keyring. Note
+# that community.docker is pinned at 1.2.2 by ansible 2.10, which has no
+# docker_compose_v2, and docker-compose v1 no longer installs cleanly from pip.
+# Umami is a single container, so docker_container avoids both problems.
+
+- name: Create the apt keyrings directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Add the Docker apt signing key
+  get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: '0644'
+
+- name: Add the Docker apt repository
+  apt_repository:
+    repo: >-
+      deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc]
+      https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    filename: docker
+    update_cache: true
+
+- name: Install docker
+  apt:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      # How docker_container talks to the daemon
+      - python3-docker
+    state: present
+
+# =============================================================================
+# Database
+# =============================================================================
+# On the shared RDS instance, so it inherits that instance's backups. Umami
+# applies its own schema migrations on startup.
+#
+# The role is created first so the database can be owned by it. That matters on
+# PostgreSQL 15 (what the RDS instance runs): the public schema is owned by
+# pg_database_owner and no longer writable by everyone, so a role that merely
+# has ALL on the database still cannot create tables and the migrations fail.
+
+- name: Create the umami postgresql role
+  community.postgresql.postgresql_user:
+    login_host: "{{ db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    name: "{{ umami_db_user }}"
+    password: "{{ db_password }}"
+    no_password_changes: true
+
+- name: Create the umami database
+  community.postgresql.postgresql_db:
+    login_host: "{{ db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    name: "{{ umami_db_name }}"
+    owner: "{{ umami_db_user }}"
+
+# =============================================================================
+# nginx and TLS
+# =============================================================================
+
+- name: Restore real client IPs from the Cloudflare proxy
+  include_role:
+    name: cloudflare_realip
+  vars:
+    cloudflare_webserver: nginx
+
+- name: Create the certbot webroot
+  file:
+    path: "{{ umami_certbot_webroot }}/.well-known/acme-challenge"
+    state: directory
+    mode: '0755'
+
+- name: Configure the nginx site
+  include_tasks: nginx-site.yml
+
+# certbot validates over HTTP, so nginx has to be serving the challenge
+# directory before we ask for a certificate
+- name: Reload nginx before requesting a certificate
+  meta: flush_handlers
+
+- name: Install certificate using certbot
+  include_role:
+    name: oaf.certbot
+  vars:
+    certbot_certs:
+      - email: "{{ umami_certbot_email }}"
+        domains:
+          - "{{ umami_domain }}"
+  when: "'ec2' in group_names"
+
+# Second pass: the TLS server block is only rendered once the certificate
+# exists, so re-running this is what completes a first run on a fresh box
+- name: Reconfigure the nginx site now the certificate exists
+  include_tasks: nginx-site.yml
+  when: "'ec2' in group_names"
+
+# =============================================================================
+# Umami
+# =============================================================================
+
+- name: Run umami
+  community.docker.docker_container:
+    name: umami
+    image: "{{ umami_docker_image }}"
+    ports:
+      - "127.0.0.1:{{ umami_port }}:3000"
+    env:
+      DATABASE_URL: "{{ umami_database_url }}"
+      APP_SECRET: "{{ umami_app_secret }}"
+      # Cloudflare puts the visitor's address here. Umami would find it anyway
+      # by walking its own list of headers, but being explicit means a
+      # misconfigured proxy fails loudly instead of silently recording the
+      # wrong IP against every session.
+      CLIENT_IP_HEADER: cf-connecting-ip
+      DISABLE_TELEMETRY: "1"
+    restart_policy: always
+    state: started

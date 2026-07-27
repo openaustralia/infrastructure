@@ -1,0 +1,26 @@
+---
+site_name: analytics.oaf.org.au
+
+certbot_webserver: nginx
+# certonly --webroot, so certbot never rewrites the nginx config this role
+# manages. Kept in step with the directory the umami role creates and nginx
+# serves: if the two ever diverged, renewals would fail silently at 60 days.
+certbot_webroot: "{{ umami_certbot_webroot }}"
+
+# See roles/internal/umami/README.md for the upgrade procedure
+umami_docker_image: ghcr.io/umami-software/umami:3.2.0
+
+# Password for the "umami" role on the shared RDS PostgreSQL instance.
+# Generate and encrypt with:
+#   openssl rand -hex 32
+#   ansible-vault encrypt_string --encrypt-vault-id default --name db_password
+# db_password: !vault |
+#   ...
+
+# Signs Umami's authentication tokens. Regenerating it logs everyone out and
+# invalidates outstanding sessions, so set it once and leave it alone.
+# Generate and encrypt with:
+#   openssl rand -hex 32
+#   ansible-vault encrypt_string --encrypt-vault-id default --name umami_app_secret
+# umami_app_secret: !vault |
+#   ...

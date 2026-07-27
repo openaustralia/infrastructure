@@ -108,3 +108,9 @@ variable "planningalerts_cloudflare_only" {
   default     = false
 }
 
+variable "analytics_cloudflare_only" {
+  description = "Add Cloudflare IP rules to analytics security group"
+  type        = bool
+  default     = false
+}
+

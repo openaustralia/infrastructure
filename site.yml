@@ -294,6 +294,13 @@
   roles:
     - metabase
 
+- hosts: analytics
+  name: "Self-hosted Umami web analytics"
+  tags: analytics
+  become: true
+  roles:
+    - internal/umami
+
 - hosts: openvpn
   tags: openvpn
   become: true
