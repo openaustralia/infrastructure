@@ -1,14 +1,27 @@
 ---
 site_name: analytics.oaf.org.au
+umami_domain: "{{ site_name }}"
 
 certbot_webserver: nginx
 # certonly --webroot, so certbot never rewrites the nginx config this role
 # manages. Kept in step with the directory the umami role creates and nginx
 # serves: if the two ever diverged, renewals would fail silently at 60 days.
 certbot_webroot: "{{ umami_certbot_webroot }}"
+umami_certbot_webroot: /var/www/letsencrypt
+umami_certbot_email: contact@oaf.org.au
 
-# See roles/internal/umami/README.md for the upgrade procedure
+# Pinned deliberately rather than tracking :postgresql-latest, so an upgrade is
+# a reviewable change. Upstream tags stable releases as bare semver (3.2.0, 3.2,
+# 3) since v2; the postgresql-vX.Y.Z tags stopped at v2. Upgrade procedure is in
+# roles/internal/umami/README.md.
 umami_docker_image: ghcr.io/umami-software/umami:3.2.0
+
+# Umami listens on 3000 in the container. Only nginx talks to it, so it is
+# published on the loopback interface rather than a public one.
+umami_port: 3000
+
+umami_db_name: umami
+umami_db_user: umami
 
 # Password for the "umami" role on the shared RDS PostgreSQL instance.
 # Generate and encrypt with:

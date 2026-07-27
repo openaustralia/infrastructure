@@ -101,17 +101,21 @@ migration goes wrong: rolling the image back does not roll the schema back.
 
 ## Role variables
 
+Configuration lives in `group_vars/analytics.yml`, as it does for the other
+service roles, not in the role's `defaults/`.
+
 | Variable | Where | Notes |
 | --- | --- | --- |
-| `umami_docker_image` | defaults | Pinned image tag |
-| `umami_domain` | defaults | Defaults to `site_name` |
-| `umami_db_name`, `umami_db_user` | defaults | Both `umami` |
-| `umami_port` | defaults | Loopback port nginx proxies to |
-| `umami_certbot_webroot` | defaults | Where ACME challenges are served from |
-| `umami_certbot_email` | defaults | Registration address for Let's Encrypt |
+| `umami_docker_image` | `group_vars/analytics.yml` | Pinned image tag |
+| `umami_domain` | `group_vars/analytics.yml` | Tied to `site_name` |
+| `umami_db_name`, `umami_db_user` | `group_vars/analytics.yml` | Both `umami` |
+| `umami_port` | `group_vars/analytics.yml` | Loopback port nginx proxies to |
+| `umami_certbot_webroot` | `group_vars/analytics.yml` | Where ACME challenges are served from; `certbot_webroot` is tied to it |
+| `umami_certbot_email` | `group_vars/analytics.yml` | Registration address for Let's Encrypt |
 | `db_password` | `group_vars/analytics.yml` | Vaulted; the PostgreSQL role's password |
 | `umami_app_secret` | `group_vars/analytics.yml` | Vaulted; **do not regenerate**, see below |
 | `db_host`, `rds_admin_password` | `group_vars/ec2.yml`, `all.yml` | Shared RDS |
+| `umami_database_url` | `vars/main.yml` | Derived, not configured |
 
 `umami_app_secret` signs authentication tokens. Changing it logs every user out
 and invalidates outstanding sessions, so treat it as fixed once set.

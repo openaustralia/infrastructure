@@ -1,28 +1,5 @@
 ---
 # defaults file for umami
-
-# Pinned deliberately rather than tracking :postgresql-latest, so that an
-# upgrade is a reviewable change. Upstream tags stable releases as bare semver
-# (3.2.0, 3.2, 3) since v2; the postgresql-vX.Y.Z tags stopped at v2.
-umami_docker_image: ghcr.io/umami-software/umami:3.2.0
-
-# The public hostname. site_name is set per-host in group_vars and is also what
-# base-server reports to New Relic, so the two should not drift apart.
-umami_domain: "{{ site_name }}"
-
-umami_db_name: umami
-umami_db_user: umami
-
-# Jinja's urlencode treats "/" as safe, but an unescaped slash in the userinfo
-# part of a connection URI starts the path, so escape it as well.
-umami_db_credentials: "{{ umami_db_user }}:{{ db_password | urlencode | replace('/', '%2F') }}"
-umami_database_url: "postgresql://{{ umami_db_credentials }}@{{ db_host }}:5432/{{ umami_db_name }}?sslmode=require"
-
-# Umami listens on 3000 in the container. Only nginx talks to it, so it is
-# published on the loopback interface rather than a public one.
-umami_port: 3000
-
-# Where certbot writes ACME challenges and nginx serves them from
-umami_certbot_webroot: /var/www/letsencrypt
-
-umami_certbot_email: contact@oaf.org.au
+#
+# Configuration lives in group_vars/analytics.yml, following metabase and the
+# other service roles. The derived connection string is in vars/main.yml.

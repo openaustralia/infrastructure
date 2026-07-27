@@ -1,0 +1,10 @@
+---
+# vars file for umami
+#
+# Derived from the group_vars settings rather than configured, so it lives here
+# instead of group_vars/analytics.yml.
+
+# Jinja's urlencode treats "/" as safe, but an unescaped slash in the userinfo
+# part of a connection URI starts the path, so escape it as well.
+umami_db_credentials: "{{ umami_db_user }}:{{ db_password | urlencode | replace('/', '%2F') }}"
+umami_database_url: "postgresql://{{ umami_db_credentials }}@{{ db_host }}:5432/{{ umami_db_name }}?sslmode=require"
