@@ -21,6 +21,12 @@ server {
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
+    # Umami reads country, region and city from these. See "Location data" in
+    # this role's README: only CF-IPCountry arrives by default, and without the
+    # other two Umami reports country and leaves region and city empty.
+    proxy_set_header CF-IPCountry $http_cf_ipcountry;
+    proxy_set_header CF-Region-Code $http_cf_region_code;
+    proxy_set_header CF-IPCity $http_cf_ipcity;
     proxy_set_header CF-Connecting-IP $remote_addr;
   }
 {% endif %}
@@ -45,6 +51,12 @@ server {
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
+    # Umami reads country, region and city from these. See "Location data" in
+    # this role's README: only CF-IPCountry arrives by default, and without the
+    # other two Umami reports country and leaves region and city empty.
+    proxy_set_header CF-IPCountry $http_cf_ipcountry;
+    proxy_set_header CF-Region-Code $http_cf_region_code;
+    proxy_set_header CF-IPCity $http_cf_ipcity;
     # cloudflare_realip has already resolved $remote_addr to the visitor's
     # address for requests that came through the proxy. Setting the header
     # here rather than passing the client's through means a request that
