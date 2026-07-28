@@ -41,6 +41,14 @@ server {
     add_header Cache-Control public;
   }
 
+  # Browsers request /favicon.ico unprompted, but the file lives in
+  # app/assets/images rather than public/, so the bare path would fall through to
+  # Rails and 404. Adopted from Alaveteli 0.45's nginx examples. The non-digest
+  # path exists because the deploy runs assets:link_non_digest after precompile.
+  location = /favicon.ico {
+    rewrite ^ /assets/favicon.ico last;
+  }
+
   # TODO: Serve attachments directly from the cache, if possible.
   # See example apache config with alaveteli
 
