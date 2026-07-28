@@ -381,3 +381,17 @@
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
+# Once an hour. Silent unless a Sidekiq queue holds pending jobs that no worker
+# is configured to process. Alaveteli 0.45.x added a `low` queue, and a queue
+# missing from sidekiq.yml fails silently rather than erroring, so this is the
+# only thing that would surface it. The script ships with the theme.
+- name: Add alaveteli crontab - check-orphaned-sidekiq-queues
+  cron:
+    user: deploy
+    name: "check-orphaned-sidekiq-queues"
+    minute: "47"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production bundle exec rails runner lib/themes/righttoknow/script/check_orphaned_queues.rb'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
