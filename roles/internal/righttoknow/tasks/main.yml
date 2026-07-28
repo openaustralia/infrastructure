@@ -140,15 +140,7 @@
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
-#
-# Previously pinned to 1.14.6 for a corrupt Gemfile.lock in Alaveteli 0.28.0.10.
-# That pin was long obsolete and, worse, latently broken: the `creates:` glob
-# matched ANY bundler version, so on an existing server the task was skipped
-# (staging in fact runs 2.4.19), but a rebuilt server would have got 1.14.6 -
-# which cannot install 0.45.8.0's Bundler 2.x lockfile for Rails 8 on Ruby 3.2.
-#
-# Now tracks bundler_version, with a version-specific `creates:` so raising the
-# variable actually reinstalls instead of silently doing nothing.
+
 - name: Install bundler gem (production)
   command: bash -lc "rbenv shell {{ ruby_version_production }}; gem install bundler --version {{ bundler_version }}"
   args:
