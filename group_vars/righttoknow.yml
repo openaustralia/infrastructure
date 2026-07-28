@@ -146,7 +146,7 @@ stripe_prices_test:
 # STRIPE_PRICES setting and ignores the key. RTK-pro is a legacy plan ID and so
 # carries the STRIPE_NAMESPACE prefix, per upstream guidance on historical IDs.
 stripe_prices_live:
-  RTK-pro: pro
+  price_1Ty5E7DXjniQjO8YnPyv0BUZ: pro
   price_1TthX2DXjniQjO8YeJfDzO35: pro-annual-billing
 pro_referral_coupon_staging: !vault |
           $ANSIBLE_VAULT;1.2;AES256;rtk
