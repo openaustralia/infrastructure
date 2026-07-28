@@ -150,7 +150,6 @@
   when: "'righttoknow_production' in group_names"
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
-# See the production task above for why the old 1.14.6 pin was removed.
 - name: Install bundler gem (staging)
   command: bash -lc "rbenv shell {{ ruby_version_staging }}; gem install bundler --version {{ bundler_version }}"
   args:
