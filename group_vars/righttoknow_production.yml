@@ -1,8 +1,7 @@
 # Right to Know Standalone Production Server
 # Most values are inherited from the existing righttoknow.yml
 
-# TODO: Unify this with the domain. It's currently only used to name
-# things on New Relic.
+# This is currently only used to name things on New Relic.
 site_name: prod.righttoknow.org.au
 
 # Domain configuration for standalone production server

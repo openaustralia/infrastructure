@@ -41,7 +41,7 @@
 
 - name: Copy rails master key for production
   template:
-    src: "production.key"
+    src: "production.key.j2"
     dest: "/srv/www/production/shared/config/credentials/production.key"
     owner: deploy
     group: deploy
@@ -49,7 +49,7 @@
 
 - name: Allow deploy user to control services
   template:
-    src: deploy_service_control
+    src: deploy_service_control.j2
     dest: /etc/sudoers.d/deploy_service_control
     mode: '0440'
     validate: visudo -cf %s
@@ -58,20 +58,24 @@
   apt:
     pkg: postfix
 
-- name: Update postfix configuration
-  template:
-    src: "{{ item }}"
-    dest: /etc/postfix
+- name: Update postfix transport map
+  copy:
+    src: transport
+    dest: /etc/postfix/transport
     mode: '0644'
-  with_items:
-    - transport
-    - virtual_alias
+  notify: restart postfix
+
+- name: Update postfix virtual alias configuration
+  template:
+    src: virtual_alias.j2
+    dest: /etc/postfix/virtual_alias
+    mode: '0644'
   notify: restart postfix
 
 - name: Install script to handle incoming email
   template:
-    src: incoming-email.sh
-    dest: /usr/local/bin
+    src: incoming-email.sh.j2
+    dest: /usr/local/bin/incoming-email.sh
     # Make it executable
     mode: 0755
 

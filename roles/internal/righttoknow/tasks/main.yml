@@ -116,47 +116,44 @@
   when: "'righttoknow_staging' in group_names"
 
 - name: Another Aleveteli config to force production environment
-  template:
+  copy:
     src: rails_env.rb
-    dest: /srv/www/{{ item }}/shared
+    dest: /srv/www/{{ item }}/shared/rails_env.rb
     mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Add newrelic configuration to disable agent
   template:
-    src: newrelic.yml
-    dest: /srv/www/{{ item }}/shared/
+    src: newrelic.yml.j2
+    dest: /srv/www/{{ item }}/shared/newrelic.yml
     mode: '0644'
   vars:
     newrelic_app_name: "Right To Know{{ (item == 'production') | ternary('', ' Staging') }}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Install wrapper script for setting correct version of ruby in path
-  template:
+  copy:
     src: run.sh
-    dest: /srv/www/{{ item }}/shared
+    dest: /srv/www/{{ item }}/shared/run.sh
     # Make it executable
     mode: 0755
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
-# We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
-# we use a later version of bundler it will complain and not deploy
+
 - name: Install bundler gem (production)
-  command: bash -lc "rbenv shell {{ ruby_version_production }}; gem install bundler --version 1.14.6"
+  command: bash -lc "rbenv shell {{ ruby_version_production }}; gem install bundler --version {{ bundler_version }}"
   args:
-    creates: "/home/deploy/.rbenv/versions/{{ ruby_version_production }}/lib/ruby/gems/*/gems/bundler-*"
+    creates: "/home/deploy/.rbenv/versions/{{ ruby_version_production }}/lib/ruby/gems/*/gems/bundler-{{ bundler_version }}"
   become: true
   become_user: deploy
   when: "'righttoknow_production' in group_names"
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
-# We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
-# we use a later version of bundler it will complain and not deploy
 - name: Install bundler gem (staging)
-  command: bash -lc "rbenv shell {{ ruby_version_staging }}; gem install bundler --version 1.14.6"
+  command: bash -lc "rbenv shell {{ ruby_version_staging }}; gem install bundler --version {{ bundler_version }}"
   args:
-    creates: "/home/deploy/.rbenv/versions/{{ ruby_version_staging }}/lib/ruby/gems/*/gems/bundler-*"
+    creates: "/home/deploy/.rbenv/versions/{{ ruby_version_staging }}/lib/ruby/gems/*/gems/bundler-{{ bundler_version }}"
   become: true
   become_user: deploy
   when: "'righttoknow_staging' in group_names"
@@ -216,7 +213,7 @@
 
 - name: Install sidekiq systemd unit (staging)
   template:
-    src: sidekiq.service
+    src: sidekiq.service.j2
     dest: /etc/systemd/system/sidekiq.service
     mode: "0644"
   vars:
@@ -238,7 +235,7 @@
 
 - name: Install sidekiq systemd unit (Production)
   template:
-    src: sidekiq.service
+    src: sidekiq.service.j2
     dest: /etc/systemd/system/sidekiq.service
     mode: "0644"
   vars:
@@ -314,7 +311,7 @@
 - name: Copy over database configuration for application
   tags: alaveteli
   template:
-    src: database.yml
+    src: database.yml.j2
     dest: "/srv/www/{{ item }}/shared/database.yml"
     owner: deploy
     group: deploy
@@ -327,7 +324,7 @@
 
 - name: Copy init scripts
   template:
-    src: "init/{{ item[1] }}"
+    src: "init/{{ item[1] }}.j2"
     dest: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
     mode: 0755
   vars:
@@ -337,9 +334,9 @@
     - ['send-notifications', 'foi-alert-tracks', 'alaveteli']
 
 - name: Generate nginx config
-  template:
+  copy:
     src: "nginx/{{ item }}"
-    dest: /etc/nginx
+    dest: /etc/nginx/{{ item }}
     mode: '0644'
   with_items:
     - nginx.conf
@@ -348,8 +345,8 @@
 
 - name: Copy nginx config for the app redirects
   template:
-    src: nginx/default
-    dest: /etc/nginx/sites-available
+    src: nginx/default.j2
+    dest: /etc/nginx/sites-available/default
     owner: root
     group: root
     mode: "0644"
@@ -358,7 +355,7 @@
 
 - name: Copy nginx config for the app
   template:
-    src: nginx/stage
+    src: nginx/stage.j2
     dest: /etc/nginx/sites-available/{{ item }}
     owner: root
     group: root
@@ -378,11 +375,45 @@
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['default','production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx reload
 
+# Nothing in front of Alaveteli authenticates /pro/subscriptions/stripe-webhook:
+# production runs no HTTP basic auth at all, and staging exempts that one path
+# from it (see templates/nginx/stage.j2) because Stripe does not send
+# credentials. In both stages the Stripe signature is the only thing separating
+# a real webhook from a forged one, and Alaveteli can only check it with a
+# populated STRIPE_WEBHOOK_SECRET. Alaveteli defaults the setting to an empty
+# string, so fail loudly here rather than quietly rendering a general.yml that
+# leaves the endpoint unauthenticated.
+- name: Refuse to write Pro config without a Stripe webhook secret (production)
+  tags: alaveteli
+  ansible.builtin.assert:
+    that:
+      - stripe_webhook_secret_production is defined
+      - stripe_webhook_secret_production | trim | length > 0
+    fail_msg: >-
+      stripe_webhook_secret_production is empty or undefined. Refusing to render
+      production's general.yml: the Stripe webhook endpoint is reachable without
+      any credentials, and an empty STRIPE_WEBHOOK_SECRET would leave it
+      accepting unsigned requests.
+  when: "'righttoknow_production' in group_names"
+
+- name: Refuse to write Pro config without a Stripe webhook secret (staging)
+  tags: alaveteli
+  ansible.builtin.assert:
+    that:
+      - stripe_webhook_secret_staging is defined
+      - stripe_webhook_secret_staging | trim | length > 0
+    fail_msg: >-
+      stripe_webhook_secret_staging is empty or undefined. Refusing to render
+      staging's general.yml: nginx exempts the Stripe webhook endpoint from basic
+      auth, and an empty STRIPE_WEBHOOK_SECRET would leave it accepting unsigned
+      requests.
+  when: "'righttoknow_staging' in group_names"
+
 - name: Apply Alaveteli config (production)
   tags: alaveteli
   template:
-    src: general.yml
-    dest: /srv/www/production/shared/
+    src: general.yml.j2
+    dest: /srv/www/production/shared/general.yml
     owner: deploy
     group: deploy
     mode: '0644'
@@ -396,6 +427,7 @@
     stripe_publishable_key: "{{ stripe_publishable_key_live }}"
     stripe_secret_key: "{{ stripe_secret_key_live }}"
     stripe_webhook_secret: "{{ stripe_webhook_secret_production }}"
+    stripe_prices: "{{ stripe_prices_live }}"
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_production }}"
@@ -405,8 +437,8 @@
 - name: Apply Alaveteli config (staging)
   tags: alaveteli
   template:
-    src: general.yml
-    dest: /srv/www/staging/shared/
+    src: general.yml.j2
+    dest: /srv/www/staging/shared/general.yml
     owner: deploy
     group: deploy
     mode: '0644'
@@ -420,6 +452,7 @@
     stripe_publishable_key: "{{ stripe_publishable_key_test }}"
     stripe_secret_key: "{{ stripe_secret_key_test }}"
     stripe_webhook_secret: "{{ stripe_webhook_secret_staging }}"
+    stripe_prices: "{{ stripe_prices_test }}"
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
@@ -439,7 +472,7 @@
 
 - name: Apply user spam scorer config
   tags: alaveteli
-  template:
+  copy:
     src: user_spam_scorer.yml
     dest: "/srv/www/{{ item }}/shared/user_spam_scorer.yml"
     owner: deploy
@@ -450,12 +483,14 @@
 
 - name: Apply sidekiq config
   tags: alaveteli
-  copy:
-    src: sidekiq.yml
+  template:
+    src: sidekiq.yml.j2
     dest: "/srv/www/{{ item }}/shared/sidekiq.yml"
     owner: deploy
     group: deploy
     mode: '0644'
+  vars:
+    stage: "{{ item }}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: restart sidekiq
 
@@ -535,15 +570,15 @@
 
 - name: Update opendkim configuration
   template:
-    src: "opendkim.conf"
-    dest: /etc
+    src: "opendkim.conf.j2"
+    dest: /etc/opendkim.conf
     mode: '0644'
   notify: restart opendkim
 
 - name: Update postfix configuration
   template:
-    src: "postfix/{{ item }}"
-    dest: /etc/postfix
+    src: "postfix/{{ item }}.j2"
+    dest: /etc/postfix/{{ item }}
     mode: '0644'
   with_items:
     - master.cf
@@ -554,7 +589,7 @@
 
 - name: Set mailname for outbound mail
   template:
-    src: mailname
+    src: mailname.j2
     dest: /etc/mailname
     mode: '0644'
   notify: restart postfix

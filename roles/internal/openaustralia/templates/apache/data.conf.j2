@@ -12,6 +12,9 @@
     RedirectMatch permanent ^/(.*) http://{{ domain }}/$1
     ErrorLog "/srv/www/production/log/data_redirect_error.log"
     CustomLog "/srv/www/production/log/data_redirect_access.log" combined
+    RewriteEngine on
+    RewriteCond %{SERVER_NAME} =data.openaustralia.org
+    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 </VirtualHost>
 {% endif %}
 
@@ -30,14 +33,17 @@
 
         Require all granted
     </Directory>
+    RewriteEngine on
+    RewriteCond %{SERVER_NAME} =data.openaustralia.org.au
+    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 </VirtualHost>
 
 <IfModule mod_ssl.c>
     {% if server_aliases %}
     <VirtualHost *:443>
         ServerName {{ server_aliases[0] }}
-        {% for alias in server_aliases[1:] %}
-        ServerAlias {{ alias }}
+        {% for alias in server_aliases[1:] -%}
+            ServerAlias {{ alias }}
         {% endfor %}
 
         RedirectMatch permanent ^/(.*) https://{{ domain }}/$1
@@ -45,6 +51,7 @@
         SSLEngine on
         SSLCertificateKeyFile    {{ certbot_live_dir_map[domain] }}/privkey.pem
         SSLCertificateFile       {{ certbot_live_dir_map[domain] }}/fullchain.pem
+        Include /etc/letsencrypt/options-ssl-apache.conf
 
         ErrorLog "/srv/www/production/log/data_redirect_error.log"
         CustomLog "/srv/www/production/log/data_redirect_access.log" combined
@@ -67,8 +74,9 @@
             Require all granted
         </Directory>
 
-       SSLEngine on
-       SSLCertificateKeyFile    {{ certbot_live_dir_map[domain] }}/privkey.pem
-       SSLCertificateFile       {{ certbot_live_dir_map[domain] }}/fullchain.pem
+        SSLEngine on
+        Include /etc/letsencrypt/options-ssl-apache.conf
+        SSLCertificateKeyFile    {{ certbot_live_dir_map[domain] }}/privkey.pem
+        SSLCertificateFile       {{ certbot_live_dir_map[domain] }}/fullchain.pem
     </VirtualHost>
 </IfModule>
