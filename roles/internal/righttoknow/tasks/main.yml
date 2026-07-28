@@ -396,6 +396,7 @@
     stripe_publishable_key: "{{ stripe_publishable_key_live }}"
     stripe_secret_key: "{{ stripe_secret_key_live }}"
     stripe_webhook_secret: "{{ stripe_webhook_secret_production }}"
+    stripe_prices: "{{ stripe_prices_live }}"
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_production }}"
@@ -452,7 +453,7 @@
 - name: Apply sidekiq config
   tags: alaveteli
   template:
-    src: sidekiq.yml
+    src: sidekiq.yml.j2
     dest: "/srv/www/{{ item }}/shared/sidekiq.yml"
     owner: deploy
     group: deploy
