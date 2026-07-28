@@ -100,6 +100,9 @@ server {
   # location so only this path is exempt. Mirrors the proxy settings from
   # `location /` (X-Forwarded-Proto https is required, otherwise FORCE_SSL
   # would 301 the POST and Stripe treats redirects as delivery failures).
+  # The `deny` list from `location /` is deliberately not carried over: the
+  # endpoint is protected by Stripe signature verification, and Stripe delivers
+  # from ranges we don't want to have to track here.
   location = /pro/subscriptions/stripe-webhook {
     auth_basic off;
 
