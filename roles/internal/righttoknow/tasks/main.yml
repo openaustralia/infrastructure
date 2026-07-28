@@ -376,12 +376,14 @@
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['default','production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx reload
 
-# The nginx config exempts /pro/subscriptions/stripe-webhook from HTTP basic
-# auth (see templates/nginx/stage.j2) because Stripe does not send credentials.
-# That is only safe while Alaveteli verifies the Stripe signature, which it can
-# only do with a populated STRIPE_WEBHOOK_SECRET. Alaveteli defaults the setting
-# to an empty string, so fail loudly here rather than quietly rendering a
-# general.yml that leaves the endpoint unauthenticated.
+# Nothing in front of Alaveteli authenticates /pro/subscriptions/stripe-webhook:
+# production runs no HTTP basic auth at all, and staging exempts that one path
+# from it (see templates/nginx/stage.j2) because Stripe does not send
+# credentials. In both stages the Stripe signature is the only thing separating
+# a real webhook from a forged one, and Alaveteli can only check it with a
+# populated STRIPE_WEBHOOK_SECRET. Alaveteli defaults the setting to an empty
+# string, so fail loudly here rather than quietly rendering a general.yml that
+# leaves the endpoint unauthenticated.
 - name: Refuse to write Pro config without a Stripe webhook secret (production)
   tags: alaveteli
   ansible.builtin.assert:
@@ -390,9 +392,9 @@
       - stripe_webhook_secret_production | trim | length > 0
     fail_msg: >-
       stripe_webhook_secret_production is empty or undefined. Refusing to render
-      production's general.yml: nginx exempts the Stripe webhook endpoint from
-      basic auth, and an empty STRIPE_WEBHOOK_SECRET would leave it accepting
-      unsigned requests.
+      production's general.yml: the Stripe webhook endpoint is reachable without
+      any credentials, and an empty STRIPE_WEBHOOK_SECRET would leave it
+      accepting unsigned requests.
   when: "'righttoknow_production' in group_names"
 
 - name: Refuse to write Pro config without a Stripe webhook secret (staging)
