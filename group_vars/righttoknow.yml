@@ -141,7 +141,10 @@ stripe_webhook_secret_production: !vault |
 stripe_prices_test:
   price_1ScdLJDXjniQjO8YsjtZ6QYq: pro
   price_1TthbLDXjniQjO8YclWV5JEQ: pro-annual-billing
-# production uses the same account in LIVE mode; wired at the 0.45 cutover.
+# production uses the same account in LIVE mode. Rendered into production's
+# general.yml now, but inert until production moves to 0.45.x - 0.44.3.0 has no
+# STRIPE_PRICES setting and ignores the key. RTK-pro is a legacy plan ID and so
+# carries the STRIPE_NAMESPACE prefix, per upstream guidance on historical IDs.
 stripe_prices_live:
   RTK-pro: pro
   price_1TthX2DXjniQjO8YeJfDzO35: pro-annual-billing
