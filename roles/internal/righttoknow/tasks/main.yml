@@ -140,8 +140,13 @@
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
-# We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
-# we use a later version of bundler it will complain and not deploy
+#
+# TODO: this 1.14.6 pin is almost certainly obsolete. It was added for a corrupt
+# Gemfile.lock in Alaveteli 0.28.0.10; 0.45.8.0 ships a Bundler 2.x lockfile for
+# Rails 8 on Ruby 3.2, which Bundler 1.14.6 cannot install. Note the `creates:`
+# glob matches ANY bundler version, so this task is skipped once any bundler
+# exists and raising the pin alone would not reinstall. Check `bundle --version`
+# on the host before changing it - see RTK issue #999.
 - name: Install bundler gem (production)
   command: bash -lc "rbenv shell {{ ruby_version_production }}; gem install bundler --version 1.14.6"
   args:
@@ -151,8 +156,13 @@
   when: "'righttoknow_production' in group_names"
 
 # Installing via bash so that rbenv is used. Otherwise would install gems for default system ruby
-# We need to use 1.14.6 because the Gemfile.lock file is corrupted in Alaveteli 0.28.0.10 and if
-# we use a later version of bundler it will complain and not deploy
+#
+# TODO: this 1.14.6 pin is almost certainly obsolete. It was added for a corrupt
+# Gemfile.lock in Alaveteli 0.28.0.10; 0.45.8.0 ships a Bundler 2.x lockfile for
+# Rails 8 on Ruby 3.2, which Bundler 1.14.6 cannot install. Note the `creates:`
+# glob matches ANY bundler version, so this task is skipped once any bundler
+# exists and raising the pin alone would not reinstall. Check `bundle --version`
+# on the host before changing it - see RTK issue #999.
 - name: Install bundler gem (staging)
   command: bash -lc "rbenv shell {{ ruby_version_staging }}; gem install bundler --version 1.14.6"
   args:
@@ -377,6 +387,38 @@
     state: link
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['default','production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx reload
+
+# The nginx config exempts /pro/subscriptions/stripe-webhook from HTTP basic
+# auth (see templates/nginx/stage.j2) because Stripe does not send credentials.
+# That is only safe while Alaveteli verifies the Stripe signature, which it can
+# only do with a populated STRIPE_WEBHOOK_SECRET. Alaveteli defaults the setting
+# to an empty string, so fail loudly here rather than quietly rendering a
+# general.yml that leaves the endpoint unauthenticated.
+- name: Refuse to write Pro config without a Stripe webhook secret (production)
+  tags: alaveteli
+  ansible.builtin.assert:
+    that:
+      - stripe_webhook_secret_production is defined
+      - stripe_webhook_secret_production | trim | length > 0
+    fail_msg: >-
+      stripe_webhook_secret_production is empty or undefined. Refusing to render
+      production's general.yml: nginx exempts the Stripe webhook endpoint from
+      basic auth, and an empty STRIPE_WEBHOOK_SECRET would leave it accepting
+      unsigned requests.
+  when: "'righttoknow_production' in group_names"
+
+- name: Refuse to write Pro config without a Stripe webhook secret (staging)
+  tags: alaveteli
+  ansible.builtin.assert:
+    that:
+      - stripe_webhook_secret_staging is defined
+      - stripe_webhook_secret_staging | trim | length > 0
+    fail_msg: >-
+      stripe_webhook_secret_staging is empty or undefined. Refusing to render
+      staging's general.yml: nginx exempts the Stripe webhook endpoint from basic
+      auth, and an empty STRIPE_WEBHOOK_SECRET would leave it accepting unsigned
+      requests.
+  when: "'righttoknow_staging' in group_names"
 
 - name: Apply Alaveteli config (production)
   tags: alaveteli
