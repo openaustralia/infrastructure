@@ -20,6 +20,14 @@
 #   project: ''
 #   bucket: ''
 
+# Alaveteli's models attach to the named :raw_emails and :attachments services
+# below, but config.active_storage.service in config/environments/production.rb
+# is :local, and Active Storage resolves that key eagerly when
+# ActiveStorage::Blob loads. It must exist or the app fails to boot.
+local:
+  service: Disk
+  root: <%= Rails.root.join('storage/local') %>
+
 ## Raw Emails ##
 
 raw_emails_disk: &raw_emails_disk
