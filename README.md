@@ -132,6 +132,27 @@ A little note on terminology:
 - "provisioning" - we use this to mean configuring the server with Ansible.
 - "deployment" - we use to mean installing or updating the web application with Capistrano.
 
+## <a name='Templates'></a>Templates
+
+Every file rendered through Ansible's `template:` module **must** use a `.j2`
+extension (for example `general.yml.j2`, `nginx.conf.j2`, `sidekiq.service.j2`).
+This keeps Jinja2 templates visually distinct from finished config files and keeps
+them out of the YAML/JSON linters, which would otherwise try to parse the
+un-rendered template.
+
+- Give the template file its content extension followed by `.j2`
+  (`database.yml` becomes `database.yml.j2`). The `src:` in the task must match; the
+  `dest:` keeps the real filename with no `.j2`. When `dest:` is a directory, name the
+  file explicitly (`dest: /srv/www/production/shared/general.yml`) - Ansible does not
+  strip `.j2` for you.
+- If a file has no Jinja2 (`{{ ... }}` / `{% ... %}`) it is not a template. Put it in
+  the role's `files/` directory and use `copy:` instead.
+
+`make template-check` enforces this - it fails if any file under an internal
+role's `templates/` directory does not end in `.j2`, and it runs in CI.
+Third-party roles under `roles/external/` are not checked, as we don't control
+their layout.
+
 ## <a name='Updates'></a>Updates
 
 ### <a name=''></a>2025-05-27
