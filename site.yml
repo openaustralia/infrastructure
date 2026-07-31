@@ -99,7 +99,11 @@
     - name: Install boto3 which is required for EC2 stuff (Python 3)
       tags: python
       pip: name=boto3
-      when: ansible_python_version is version('3', '>=')
+      # Not 3.0: pip 8.x on Ubuntu 16.04 ignores Requires-Python, so it happily
+      # installs py3.8+ only wheels (urllib3 2.x) that fail to even parse on
+      # python3.5. That shadows the distro urllib3 and breaks every module
+      # importing ansible.module_utils.urls, apt included.
+      when: ansible_python_version is version('3.7', '>=')
 
 - hosts: ec2
   name: "Gather RDS facts"
