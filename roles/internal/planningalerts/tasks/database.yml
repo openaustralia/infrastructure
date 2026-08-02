@@ -5,7 +5,7 @@
     pkg: python3-psycopg2
 
 - name: "Create planningalerts database on postgres"
-  postgresql_db:
+  community.postgresql.postgresql_db:
     login_host: "{{ planningalerts_db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
@@ -13,7 +13,7 @@
   run_once: true
 
 - name: "Create planningalerts postgresql role"
-  postgresql_user:
+  community.postgresql.postgresql_user:
     login_host: "{{ planningalerts_db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
@@ -35,7 +35,7 @@
   run_once: true
 
 - name: "Give planningalerts roles access to the public schema"
-  postgresql_privs:
+  community.postgresql.postgresql_privs:
     login_host: "{{ planningalerts_db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
@@ -47,7 +47,7 @@
   run_once: true
 
 - name: Create posgresql user pa-production-readonly for metabase
-  postgresql_user:
+  community.postgresql.postgresql_user:
     login_host: "{{ planningalerts_db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
@@ -59,7 +59,7 @@
 # Note that this gives access to the CURRENT tables in the database. Any new tables won't be included.
 # This needs to get run again to include any new tables. I know... very far from ideal.
 - name: Give the user pa-production-readonly readonly access to the production planningalerts database
-  postgresql_privs:
+  community.postgresql.postgresql_privs:
     login_host: "{{ planningalerts_db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"

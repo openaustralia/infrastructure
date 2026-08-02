@@ -19,7 +19,7 @@
   notify: mysql restart
 
 - name: Create admin user
-  mysql_user:
+  ansible.mysql.mysql_user:
     name: admin
     password: "{{ rds_admin_password }}"
     priv: '*.*:ALL,GRANT'

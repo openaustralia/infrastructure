@@ -55,7 +55,7 @@
 # =============================================================================
 
 - name: Enable apache remoteip module
-  apache2_module:
+  community.general.apache2_module:
     name: remoteip
     state: present
   notify: reload apache

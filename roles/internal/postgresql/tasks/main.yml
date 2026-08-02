@@ -34,7 +34,7 @@
     pkg: python3-psycopg2
 
 - name: Create root user
-  postgresql_user:
+  community.postgresql.postgresql_user:
     name: root
     password: "{{ rds_admin_password }}"
     role_attr_flags: CREATEDB,CREATEROLE
