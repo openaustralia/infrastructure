@@ -1,21 +1,18 @@
 ---
 # tasks file for base-server
-- name: Ensure git is installed
-  apt:
-    pkg: git
-
-# Setup timezone stuff
-
-- name: Install tzdata package
-  apt: pkg=tzdata state=present
-
-- name: Install ACL (required for Ansible to work)
-  apt: pkg=acl state=present
+- name: Ensure packages are installed
+  ansible.builtin.apt:
+    name:
+    - git
+    - tzdata
+    - acl
+    state: present
+    update_cache: yes
 
 # We have to do it like this for Ubuntu 16.04
 # See https://bugs.launchpad.net/ubuntu/+source/tzdata/+bug/1554806
 - name: Link to correct timezone
-  file:
+  ansible.builtin.file:
     src: /usr/share/zoneinfo/Australia/Sydney
     dest: /etc/localtime
     state: link
@@ -23,3 +20,4 @@
 
 # TODO: Add byobu and enable it by default
 # TODO: Install htop because it's awesome
+# Dane: "I think btop is better than htop"

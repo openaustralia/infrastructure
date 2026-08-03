@@ -1,11 +1,11 @@
 - name: Ensure we have a deploy group
   become: true
-  group:
+  ansible.builtin.group:
     name: deploy
 
 - name: Ensure we have a deploy user
   become: true
-  user:
+  ansible.builtin.user:
     name: deploy
     comment: "Deploy user"
     shell: /bin/bash

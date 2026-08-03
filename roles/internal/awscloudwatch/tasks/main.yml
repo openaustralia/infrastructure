@@ -1,31 +1,31 @@
 ---
 
 - name: Check if CloudWatch is already installed
-  stat:
+  ansible.builtin.stat:
     path: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
   register: cloudwatch_installed
 
 - name: Create CloudWatch temporary directory
-  tempfile:
+  ansible.builtin.tempfile:
     state: directory
     suffix: awscwa
   register: awscwa
 
 - name: Download CloudWatch agent
-  get_url:
+  ansible.builtin.get_url:
     url: https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
     dest: "{{ awscwa.path }}"
   when: "'ec2' in group_names and not cloudwatch_installed.stat.exists"
 
 - name: Install CloudWatch agent
-  command: "dpkg -i -E ./amazon-cloudwatch-agent.deb"
+  ansible.builtin.command: "dpkg -i -E ./amazon-cloudwatch-agent.deb"
   args:
     chdir: "{{ awscwa.path }}"
     creates: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent
   when: "'ec2' in group_names and not cloudwatch_installed.stat.exists"
 
 - name: Configure CloudWatch
-  template:
+  ansible.builtin.template:
     src: config.json.j2
     dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
     mode: '0644'
@@ -34,7 +34,7 @@
     - restart CloudWatch Agent
 
 - name: Configure CloudWatch service
-  service:
+  ansible.builtin.service:
     name: amazon-cloudwatch-agent
     enabled: true
     state: started

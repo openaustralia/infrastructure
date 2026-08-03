@@ -6,7 +6,7 @@
 # current Cloudflare IP ranges and generates the appropriate config.
 
 - name: Fetch Cloudflare IPv4 ranges
-  uri:
+  ansible.builtin.uri:
     url: "{{ cloudflare_ipv4_url }}"
     return_content: true
   register: cloudflare_ipv4_response
@@ -16,7 +16,7 @@
   check_mode: false
 
 - name: Fetch Cloudflare IPv6 ranges
-  uri:
+  ansible.builtin.uri:
     url: "{{ cloudflare_ipv6_url }}"
     return_content: true
   register: cloudflare_ipv6_response
@@ -36,14 +36,14 @@
 # =============================================================================
 
 - name: Ensure nginx conf.d directory exists
-  file:
+  ansible.builtin.file:
     path: "{{ cloudflare_nginx_config_path | dirname }}"
     state: directory
     mode: '0755'
   when: cloudflare_webserver == 'nginx'
 
 - name: Deploy Cloudflare real IP config for nginx
-  template:
+  ansible.builtin.template:
     src: cloudflare-realip.conf.j2
     dest: "{{ cloudflare_nginx_config_path }}"
     mode: '0644'
@@ -62,7 +62,7 @@
   when: cloudflare_webserver == 'apache'
 
 - name: Deploy Cloudflare real IP config for apache
-  template:
+  ansible.builtin.template:
     src: cloudflare-remoteip.conf.j2
     dest: "{{ cloudflare_apache_config_path }}"
     mode: '0644'
@@ -70,7 +70,7 @@
   when: cloudflare_webserver == 'apache'
 
 - name: Enable apache Cloudflare config
-  command: "a2enconf {{ cloudflare_apache_config_path | basename | regex_replace('\\.conf$', '') }}"
+  ansible.builtin.command: "a2enconf {{ cloudflare_apache_config_path | basename | regex_replace('\\.conf$', '') }}"
   args:
     creates: "/etc/apache2/conf-enabled/{{ cloudflare_apache_config_path | basename }}"
   notify: reload apache

@@ -1,7 +1,7 @@
 # Tasks to create planningalerts database and database users
 
 - name: Install dependency for postgresql_db
-  apt:
+  ansible.builtin.apt:
     pkg: python3-psycopg2
 
 - name: "Create planningalerts database on postgres"

@@ -3,16 +3,15 @@
 
 # We're installing mysql because that's what we're using on AWS in production
 - name: Install mysql server
-  apt:
-    pkg: mysql-server
+  ansible.builtin.apt:
+    name:
+      - mysql-server
+      - python3-mysqldb
     update_cache: true
     cache_valid_time: 3600
 
-- name: Install dependency for following command
-  apt: pkg=python3-mysqldb
-
 - name: Update mysql config to bind to public ip
-  copy:
+  ansible.builtin.copy:
     src: mysqld.cnf
     dest: /etc/mysql/mysql.conf.d
     mode: '0644'
