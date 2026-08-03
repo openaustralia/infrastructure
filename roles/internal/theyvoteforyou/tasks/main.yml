@@ -9,7 +9,7 @@
 - name: Add HTTPS support for APT
   tags: passenger
   ansible.builtin.apt:
-    pkg:
+    name:
       - dirmngr
       - gnupg
       - apt-transport-https
@@ -35,7 +35,7 @@
 - name: Install nginx and passenger packages
   tags: passenger
   ansible.builtin.apt:
-    pkg:
+    name:
       - libnginx-mod-http-passenger
       - nginx
     state: present
@@ -47,7 +47,7 @@
 
 - name: Install pip
   ansible.builtin.apt:
-    pkg: python3-pip
+    name: python3-pip
 
 - name: Install dependency for following command
   ansible.builtin.pip:
@@ -275,14 +275,14 @@
   # notify: sudo reload
 
 - name: Add /usr/local/bin to PATH in cron so that chromedriver can be found
-  cron:
+  ansible.builtin.cron:
     user: deploy
     name: PATH
     env: true
     job: /usr/local/bin:/usr/bin:/bin
 
 - name: Set up daily load cron job
-  cron:
+  ansible.builtin.cron:
     name: theyvoteforyou_application_load_daily
     user: deploy
     hour: "9"
@@ -292,7 +292,7 @@
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
 - name: Set up nightly cron job
-  cron:
+  ansible.builtin.cron:
     name: theyvoteforyou_application_cron_nightly
     user: deploy
     hour: "2"
@@ -301,12 +301,13 @@
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
 - name: Install postfix so we can mail out from cron jobs
-  apt:
-    pkg: postfix
+  ansible.builtin.apt:
+    name: postfix
+    state: present
 
 # TODO: Make this mail to different addresses for development/production
 - name: Mail output of cron
-  cronvar:
+  community.general.cronvar:
     name: MAILTO
     user: deploy
     value: web-administrators@openaustralia.org,j1u3z8i7h9w0q8o4@oaf.slack.com
@@ -317,21 +318,20 @@
 # and chromedriver and ensure on every run that the latest ones are installed. That way hopefully everything
 # will hopefully stay in sync at the risk of chrome updating when not necessarily expected.
 
-- name: Get Google key for install Chrome
-  become: true
-  apt_key:
-    url: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
+- name: Add Google Chrome repository
+  ansible.builtin.deb822_repository:
+    name: google-chrome
+    types: deb
+    uris: http://dl.google.com/linux/chrome/deb/
+    suites: stable
+    components: main
+    architectures: amd64
+    signed_by: https://dl-ssl.google.com/linux/linux_signing_key.pub
     state: present
-
-- name: Apt Google repository
-  apt_repository:
-    repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
-    state: present
-    update_cache: true
 
 - name: Install latest Chrome # noqa: package-latest
   ansible.builtin.apt:
-    pkg: google-chrome-stable
+    name: google-chrome-stable
     # We want to make sure we're always running the latest version
     state: latest
 
@@ -360,13 +360,13 @@
 
 # On EC2 we're using a seperate EBS volume to hold application data
 - name: Create filesystem on attached block storage
-  filesystem:
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/nvme1n1
   when: "'ec2' in group_names"
 
 - name: Mount /data filesystem
-  mount:
+  ansible.posix.mount:
     path: /data
     # Mount device by UUID because that's needed to run on AWS Nitro based instances (e.g. t3)
     # See https://aws.amazon.com/premiumsupport/knowledge-center/boot-error-linux-nitro-instance/
