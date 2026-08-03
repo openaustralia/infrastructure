@@ -40,7 +40,7 @@
 
 - name: Set authorized_keys for local accounts (only listed github_users + terraform)
   become: true
-  authorized_key:
+  ansible.posix.authorized_key:
     user: "{{ item }}"
     exclusive: true
     key: "{{ permitted_keys_for_account }}"
