@@ -1,34 +1,34 @@
 ---
 # handlers file for righttoknow
 - name: restart varnish
-  systemd:
+  ansible.builtin.systemd_service:
     name: varnish
     daemon_reload: true
     state: restarted
 
 - name: restart postfix
-  service:
+  ansible.builtin.service:
     name: postfix
     state: restarted
 
 - name: restart rsyslog
-  service:
+  ansible.builtin.service:
     name: rsyslog
     state: restarted
 
 - name: nginx restart
-  service: name=nginx state=restarted
+  ansible.builtin.service: name=nginx state=restarted
 
 - name: nginx reload
-  service: name=nginx state=reloaded
+  ansible.builtin.service: name=nginx state=reloaded
 
 - name: restart opendkim
-  service:
+  ansible.builtin.service:
     name: opendkim
     state: restarted
 
 - name: restart sidekiq
-  systemd:
+  ansible.builtin.systemd_service:
     name: sidekiq
     daemon_reload: true
     state: restarted

@@ -1,10 +1,11 @@
 ---
 
 - name: Ensure libselinux-python is installed
-  yum: name=libselinux-python
+  ansible.builtin.yum:
+    name: libselinux-python
 
 - name: Install EPEL repo
-  yum:
+  ansible.builtin.yum:
     name: >-
       https://dl.fedoraproject.org/pub/epel/epel-release-latest-
       {{- ansible_distribution_major_version }}.noarch.rpm
@@ -16,7 +17,8 @@
     state: present
 
 - name: Install dependencies
-  yum: "name={{ item }}"
+  ansible.builtin.yum:
+    name: "{{ item }}"
   with_items:
     - cronie
     - gzip
@@ -28,4 +30,5 @@
   when: backup_duplicity_version
 
 - name: Install duplicity
-  yum: "name={{ backup_duplicity_pkg }}"
+  ansible.builtin.yum:
+    name: "{{ backup_duplicity_pkg }}"

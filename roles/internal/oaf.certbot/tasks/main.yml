@@ -9,16 +9,16 @@
   when: ansible_distribution_release not in ['focal', 'jammy']
 
 - name: Install certbot
-  apt:
+  ansible.builtin.apt:
     pkg: certbot
 
 - name: Install certbot plugin (python != 3)
-  apt:
+  ansible.builtin.apt:
     pkg: "python-certbot-{{ certbot_webserver }}"
   when: ansible_python['version']['major'] != 3
 
 - name: Install certbot plugin (python == 3)
-  apt:
+  ansible.builtin.apt:
     pkg: "python3-certbot-{{ certbot_webserver }}"
   when: ansible_python['version']['major'] == 3
 
@@ -26,23 +26,23 @@
   debug: var=certbot_certs
 
 - name: Install certificates with certbot
-  command: certbot run --non-interactive --agree-tos --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  ansible.builtin.command: certbot run --non-interactive --agree-tos --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs | flatten(levels=1) }}"
   when: certbot_webroot is undefined
 
 - name: Install certificates with certbot via webroot
-  command: certbot certonly --non-interactive --agree-tos --keep --expand --webroot -w {{ certbot_webroot }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  ansible.builtin.command: certbot certonly --non-interactive --agree-tos --keep --expand --webroot -w {{ certbot_webroot }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs | flatten(levels=1) }}"
   when: certbot_webroot is defined and not (certbot_standalone | default(false))
 
 - name: Stop varnish for standalone certbot
-  systemd:
+  ansible.builtin.systemd_service:
     name: varnish
     state: stopped
   when: certbot_standalone | default(false)
 
 - name: Install certificates with certbot standalone
-  command: >
+  ansible.builtin.command: >
     certbot certonly --non-interactive --agree-tos --keep --expand --standalone
     {% if certbot_staging | default(false) %}--staging{% endif %}
     -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
@@ -50,7 +50,7 @@
   when: certbot_standalone | default(false)
 
 - name: Start varnish after standalone certbot
-  systemd:
+  ansible.builtin.systemd_service:
     name: varnish
     state: started
   when: certbot_standalone | default(false)

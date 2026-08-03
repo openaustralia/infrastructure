@@ -4,7 +4,8 @@
   include_vars: "{{ ansible_distribution }}.yml"
 
 - name: Install dependencies (Ubuntu 18.04 and earlier)
-  apt: "name={{ item }}"
+  ansible.builtin.apt:
+    name: "{{ item }}"
   with_items:
     - cron
     - gzip
@@ -13,7 +14,8 @@
   when: ansible_distribution_release not in ['focal', 'jammy']
 
 - name: Install dependencies (Ubuntu 20.04 and 22.04)
-  apt: "name={{ item }}"
+  ansible.builtin.apt:
+    name: "{{ item }}"
   with_items:
     - cron
     - gzip
@@ -26,4 +28,5 @@
   when: backup_duplicity_version
 
 - name: Install duplicity
-  apt: "pkg={{ backup_duplicity_pkg }}"
+  ansible.builtin.apt:
+    pkg: "{{ backup_duplicity_pkg }}"

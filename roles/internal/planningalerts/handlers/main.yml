@@ -1,11 +1,11 @@
 ---
 # handlers file for planningalerts
 - name: memchached restart
-  service:
+  ansible.builtin.service:
     name: memcached
     state: restarted
 
 - name: restart postfix
-  service:
+  ansible.builtin.service:
     name: postfix
     state: restarted

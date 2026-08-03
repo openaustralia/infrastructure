@@ -6,7 +6,7 @@
     loop_var: profile
 
 - name: Setup logrotate for restic logs
-  template:
+  ansible.builtin.template:
     src: logrotate.j2
     dest: /etc/logrotate.d/restic
     owner: root

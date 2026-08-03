@@ -1,20 +1,20 @@
 ---
 
 - name: backup-configure | Ensure for backup user is exists
-  user: "name={{ backup_user }}"
+  ansible.builtin.user: "name={{ backup_user }}"
 
 - name: backup-configure | Ensure for backup directories is exits
-  file: "path={{ item }} state=directory owner={{ backup_user }} group={{ backup_group }} mode=0755"
+  ansible.builtin.file: "path={{ item }} state=directory owner={{ backup_user }} group={{ backup_group }} mode=0755"
   with_items:
     - "{{ backup_home }}"
     - "{{ backup_work }}"
     - "{{ backup_logdir }}"
 
 - name: backup-configure | Install duply
-  template: "src=duply.sh.j2 dest=/usr/local/bin/duply owner={{ backup_user }} group={{ backup_group }} mode=0755"
+  ansible.builtin.template: "src=duply.sh.j2 dest=/usr/local/bin/duply owner={{ backup_user }} group={{ backup_group }} mode=0755"
 
 - name: backup-configure | Create profile directories
-  file:
+  ansible.builtin.file:
     path: "{{ backup_home }}/{{ item.name }}"
     state: directory
     mode: "0700"
@@ -23,7 +23,7 @@
   with_items: "{{ backup_profiles }}"
 
 - name: backup-configure | Configure profiles
-  template:
+  ansible.builtin.template:
     src: conf.j2
     dest: "{{ backup_home }}/{{ item.name }}/conf"
     owner: "{{ item.user | default(backup_user) }}"
@@ -32,7 +32,7 @@
   with_items: "{{ backup_profiles }}"
 
 - name: backup-configure | Configure exclude lists
-  template:
+  ansible.builtin.template:
     src: exclude.j2
     dest: "{{ backup_home }}/{{ item.name }}/exclude"
     owner: "{{ item.user | default(backup_user) }}"
@@ -41,7 +41,7 @@
   with_items: "{{ backup_profiles }}"
 
 - name: backup-configure | Configure pre scripts
-  template:
+  ansible.builtin.template:
     src: pre.j2
     dest: "{{ backup_home }}/{{ item.name }}/pre"
     owner: "{{ item.user | default(backup_user) }}"
@@ -50,7 +50,7 @@
   with_items: "{{ backup_profiles }}"
 
 - name: backup-configure | Configure post scripts
-  template:
+  ansible.builtin.template:
     src: post.j2
     dest: "{{ backup_home }}/{{ item.name }}/post"
     owner: "{{ item.user | default(backup_user) }}"
@@ -59,7 +59,7 @@
   with_items: "{{ backup_profiles }}"
 
 - name: backup-configure | Configure restore scripts
-  template:
+  ansible.builtin.template:
     src: restore.j2
     dest: "{{ backup_home }}/{{ item.name }}/restore"
     owner: "{{ item.user | default(backup_user) }}"
@@ -68,7 +68,7 @@
   with_items: "{{ backup_profiles }}"
 
 - name: backup-configure | Create work directories
-  file:
+  ansible.builtin.file:
     state: directory
     path: "{{ backup_work }}/{{ item.name }}"
     owner: "{{ item.user | default(backup_user) }}"
@@ -77,7 +77,7 @@
   with_items: "{{ backup_profiles }}"
 
 - name: backup-configure | Create temp directories
-  file:
+  ansible.builtin.file:
     state: directory
     path: "{{ item.temp_dir }}"
     mode: '0700'
@@ -87,7 +87,7 @@
   when: item.temp_dir is defined
 
 - name: backup-configure | Create archive directories
-  file:
+  ansible.builtin.file:
     state: directory
     path: "{{ item.arch_dir }}"
     mode: '0700'
@@ -97,10 +97,15 @@
   when: item.arch_dir is defined
 
 - name: backup-configure | Setup cron
-  template: src=cron.j2 dest=/etc/cron.d/backup owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: cron.j2
+    dest: /etc/cron.d/backup
+    owner: root
+    group: root
+    mode: 0644
 
 - name: backup-configure | Create log files
-  file:
+  ansible.builtin.file:
     state: touch
     path: "{{ backup_logdir }}/{{ item.name }}.log"
     owner: "{{ item.user|default(backup_user) }}"
@@ -110,4 +115,9 @@
   changed_when: false
 
 - name: backup-configure | Configure logrotate
-  template: src=logrotate.j2 dest=/etc/logrotate.d/backup owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: logrotate.j2
+    dest: /etc/logrotate.d/backup
+    owner: root
+    group: root
+    mode: 0644
