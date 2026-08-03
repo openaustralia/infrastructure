@@ -17,18 +17,20 @@
       - curl
     state: present
 
-- name: Add key for passenger
+- name: Add passenger apt repository and signing key
   tags: passenger
-  ansible.builtin.get_url:
-    url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt
-    dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
-
-- name: Add passenger apt repository
-  tags: passenger
-  apt_repository:
-    repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
+  ansible.builtin.deb822_repository:
+    name: phusionpassenger
+    types: deb
+    uris: https://oss-binaries.phusionpassenger.com/apt/passenger
+    suites: "{{ ansible_distribution_release }}"
+    components: main
+    signed_by: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt
     state: present
-    update_cache: true
+  notify: Update apt cache
+
+- name: Flush handlers to update apt cache immediately
+  ansible.builtin.meta: flush_handlers
 
 - name: Install nginx and passenger packages
   tags: passenger

@@ -8,3 +8,7 @@
 
 - name: nginx reload
   service: name=nginx state=reloaded
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true

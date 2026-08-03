@@ -165,17 +165,31 @@
   when: "'ec2' in group_names"
 
 # Install php5 on xenial requires a few more jumps than usual
-- name: Add repo for installing php5
+- name: Add repo for installing php
   tags: xapian
-  apt_repository:
-    repo: 'ppa:ondrej/php'
-    update_cache: true
+  ansible.builtin.deb822_repository:
+    name: ondrej-php
+    types: deb
+    uris: https://launchpadcontent.net
+    suites: "{{ ansible_distribution_release }}"
+    components: main
+    signed_by: https://ubuntu.com
+    state: present
+  notify: Update apt cache
 
 - name: Add xapian backports PPA for newer libxapian
   tags: xapian
-  apt_repository:
-    repo: 'ppa:xapian/backports'
-    update_cache: true
+  ansible.builtin.deb822_repository:
+    name: xapian-backports
+    types: deb
+    uris: https://launchpadcontent.net
+    suites: "{{ ansible_distribution_release }}"
+    components: main
+    signed_by: https://ubuntu.com
+    state: present
+
+- name: Flush handlers to update apt cache immediately
+  ansible.builtin.meta: flush_handlers
 
 - name: Install required packages
   tags: xapian

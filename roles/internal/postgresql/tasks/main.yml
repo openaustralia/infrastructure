@@ -1,15 +1,19 @@
 ---
 # tasks file for postgresql
 
-- name: Import postgresql repository signing key
-  apt_key:
-    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-    id: ACCC4CF8
+- name: Add PostgreSQL apt repository and import its signing key
+  ansible.builtin.deb822_repository:
+    name: pgdg
+    types: deb
+    uris: https://postgresql.org
+    suites: "{{ ansible_distribution_release }}-pgdg"
+    components: main
+    signed_by: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+  notify: Update apt cache
 
-- name: Add postgresql apt repository
-  apt_repository:
-    repo: deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main
-    filename: pgdg
+- name: Flush handlers to update apt cache immediately
+  ansible.builtin.meta: flush_handlers
 
 # We're currently running 15.2 in production
 - name: Install postgresql 15 server

@@ -3,13 +3,19 @@
   apt:
     pkg: python3-psycopg2
 
-- name: Ensure that we have the Docker repository key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-
 - name: Ensure that we have the docker repository
-  apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable"
+  ansible.builtin.deb822:
+    name: docker
+    types: deb
+    uris: https://download.docker.com/linux/ubuntu
+    suites: '{{ ansible_distribution_release }}'
+    components: stable
+    architectures: amd64
+    signed_by: https://download.docker.com/linux/ubuntu/gpg
+  notify: Update apt cache
+
+- name: Flush handlers to update apt cache immediately
+  ansible.builtin.meta: flush_handlers
 
 - name: Install docker
   apt:
