@@ -16,7 +16,7 @@ dependencies:
     unattended_automatic_reboot: true
   - role: awscloudwatch
     tags: [cloudwatch]
-  - role: newrelic.newrelic-infra
+  - role: newrelic.newrelic-infra #where is this being used?
     tags: [newrelic]
     nrinfragent_config:
       license_key: "{{ newrelic_license_key }}"

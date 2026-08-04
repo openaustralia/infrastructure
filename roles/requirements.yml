@@ -1,12 +1,12 @@
 ---
 roles:
-  - src: ANXS.ntp
+  - src: ANXS.ntp #not being called, referenced in base-servers meta/main.yml
     version: v2.0.0
 
-  - src: jnv.unattended-upgrades
+  - src: jnv.unattended-upgrades # Not being called anywhere
     version: v1.0.1
 
-  - src: nickhammond.logrotate
+  - src: nickhammond.logrotate #Lots of calls in meta/main.yml files but nowhere the role is actually being called
     # Version 0.0.3 contains the fix
     # https://github.com/nickhammond/ansible-logrotate/commit/3e0c0895245b451120043a68b313cd1eadccda16
     version: v0.0.3
@@ -24,11 +24,11 @@ roles:
     # https://github.com/zzet/rbenv/commit/8d0f552cf4375688dc302220da280b6cc01c8d25
     version: 3.6.0
 
-  - src: newrelic.newrelic-infra
-    version: 0.5.0
+  - src: newrelic.newrelic-infra #Listed as a dependancy in base-server but not used
+    version: 0.13.0
 
-  - src: oefenweb.postfix
-    version: v2.6.2
+  - src: oefenweb.postfix # Is this being used?
+    version: v3.8.3
 
   - src: geerlingguy.swap
-    version: 2.0.0
+    version: 2.1.0
