@@ -1183,12 +1183,11 @@ STRIPE_NAMESPACE: 'RTK'
 # Maps Stripe Price IDs to Alaveteli Pro URL slugs. Alaveteli 0.45.0.0 migrated
 # Stripe from Plans to Prices and made this key required for Pro pricing.
 #
-# Emitted for both stages. Production still runs 0.44.3.0, where this key is
-# inert: it is absent from that version's DEFAULTS, and Alaveteli's config
-# loader ignores keys it does not know. Emitting it now keeps the template free
-# of version conditionals and means production is already configured when it
-# moves to 0.45.x, rather than silently falling back to the { pro: 'pro' }
-# default on a live billing path.
+# Emitted unconditionally for both stages. It was first emitted for production
+# while that stage was still on 0.44.3.0, where the key was inert - absent from
+# that version's DEFAULTS, and Alaveteli's config loader ignores keys it does not
+# know - so that the live billing path was already configured at the 0.45 cutover
+# rather than silently falling back to the { pro: 'pro' } default.
 #
 # The hash KEY is the Stripe Price ID; the VALUE is the URL slug used in
 # plan_path. Values come from the stripe_prices_test / stripe_prices_live
