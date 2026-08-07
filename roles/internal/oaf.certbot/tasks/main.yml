@@ -74,7 +74,7 @@
   systemd:
     name: varnish
     state: stopped
-  when: certbot_standalone | default(false)
+  when: certbot_standalone | default(false) and not (certbot_dns_cloudflare | bool)
 
 - name: Install certificates with certbot standalone
   command: >
@@ -82,10 +82,10 @@
     {% if certbot_staging | default(false) %}--staging{% endif %}
     -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs | flatten(levels=1) }}"
-  when: certbot_standalone | default(false)
+  when: certbot_standalone | default(false) and not (certbot_dns_cloudflare | bool)
 
 - name: Start varnish after standalone certbot
   systemd:
     name: varnish
     state: started
-  when: certbot_standalone | default(false)
+  when: certbot_standalone | default(false) and not (certbot_dns_cloudflare | bool)
