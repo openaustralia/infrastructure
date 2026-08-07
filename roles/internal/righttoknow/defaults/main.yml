@@ -8,4 +8,4 @@ ruby_version_production: 3.2.9
 # 0.45.8.0's 2.6.2 lockfile), so this does not have to be exact - but matching it
 # avoids the version-mismatch warning and keeps a rebuilt server consistent with
 # the one we have.
-bundler_version: 2.6.2
+bundler_version: 2.7.2
