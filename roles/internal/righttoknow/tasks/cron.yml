@@ -300,6 +300,35 @@
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
+# Daily purge of profile content for limited user profiles (added in 0.46)
+- name: Add alaveteli crontab - users-purge-limited
+  cron:
+    user: deploy
+    name: "users-purge-limited"
+    minute: "50"
+    hour: "2"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ../users-purge-limited.lock \"bin/rails --quiet users:purge_limited\" || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
+# Daily destruction of users deemed unused for two years (added in 0.46).
+# Shipped disabled: last_sign_in_at is nil for every account that predates the
+# 0.46 upgrade, so the first run would sweep up a large number of accounts.
+# Enable only after the dry-run count on staging has been reviewed and signed
+# off on openaustralia/righttoknow#1031.
+- name: Add alaveteli crontab - users-destroy-unused
+  cron:
+    user: deploy
+    name: "users-destroy-unused"
+    minute: "53"
+    hour: "2"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ../users-destroy-unused.lock \"bin/rails --quiet users:destroy_unused\" || echo \"stalled?\"'"
+    cron_file: "{{ item }}"
+    state: "{{ cron_enabled | ternary('present', 'absent')}}"
+    disabled: true
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
 # Daily public body export (added)
 - name: Add alaveteli crontab - public-body-export
   cron:
