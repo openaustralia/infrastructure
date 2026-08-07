@@ -141,10 +141,19 @@ stripe_webhook_secret_production: !vault |
 stripe_prices_test:
   price_1ScdLJDXjniQjO8YsjtZ6QYq: pro
   price_1TthbLDXjniQjO8YclWV5JEQ: pro-annual-billing
-# production uses the same account in LIVE mode. Rendered into production's
-# general.yml now, but inert until production moves to 0.45.x - 0.44.3.0 has no
-# STRIPE_PRICES setting and ignores the key. RTK-pro is a legacy plan ID and so
-# carries the STRIPE_NAMESPACE prefix, per upstream guidance on historical IDs.
+# production uses the same account in LIVE mode.
+#
+# Both entries must be real Stripe Price IDs. AlaveteliPro::Price.retrieve does
+# `stripe_prices.key(param)`, mapping the value (the URL slug in plan_path) back
+# to the key, then passes that key to Stripe::Price.retrieve. So the key is the
+# object ID and the value is the slug - a namespaced plan ID like `RTK-pro` does
+# not belong here, despite what infrastructure#581's description claims.
+#
+# Existing subscriptions created against the old `RTK-pro` plan are unaffected
+# by not being listed: AlaveteliPro::Subscription#price wraps the subscription's
+# own price object from Stripe rather than looking it up here. Adding RTK-pro
+# would be actively wrong - AlaveteliPro::Price.list iterates this whole hash to
+# build the pricing page, so it would show as an extra legacy-priced tier.
 stripe_prices_live:
   price_1Ty5E7DXjniQjO8YnPyv0BUZ: pro
   price_1TthX2DXjniQjO8YeJfDzO35: pro-annual-billing
