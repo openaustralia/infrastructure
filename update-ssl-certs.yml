@@ -12,8 +12,14 @@
   tasks:
     - name: Force certificates to be renewed with nginx/apache
       command: certbot renew --non-interactive --agree-tos -m contact@oaf.org.au --server https://acme-v02.api.letsencrypt.org/directory --force-renew --{{certbot_webserver}}
-      when: certbot_webroot is undefined
+      when: certbot_webroot is undefined and not (certbot_dns_cloudflare | default(false))
 
     - name: Force certificates to be renewed with webroot
       command: certbot renew --non-interactive --agree-tos -m contact@oaf.org.au --server https://acme-v02.api.letsencrypt.org/directory --force-renew --webroot -w {{ certbot_webroot }}
-      when: certbot_webroot is defined
+      when: certbot_webroot is defined and not (certbot_dns_cloudflare | default(false))
+
+    # No authenticator override here: certificates issued with dns-cloudflare
+    # record it in their renewal config, so a plain renew reuses it.
+    - name: Force certificates to be renewed with dns-cloudflare
+      command: certbot renew --non-interactive --agree-tos -m contact@oaf.org.au --server https://acme-v02.api.letsencrypt.org/directory --force-renew
+      when: certbot_dns_cloudflare | default(false)

@@ -28,12 +28,47 @@
 - name: Install certificates with certbot
   command: certbot run --non-interactive --agree-tos --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs | flatten(levels=1) }}"
-  when: certbot_webroot is undefined
+  when: certbot_webroot is undefined and not (certbot_dns_cloudflare | bool)
 
 - name: Install certificates with certbot via webroot
   command: certbot certonly --non-interactive --agree-tos --keep --expand --webroot -w {{ certbot_webroot }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs | flatten(levels=1) }}"
-  when: certbot_webroot is defined and not (certbot_standalone | default(false))
+  when: certbot_webroot is defined and not (certbot_standalone | default(false)) and not (certbot_dns_cloudflare | bool)
+
+- name: Install certbot dns-cloudflare plugin
+  apt:
+    pkg: python3-certbot-dns-cloudflare
+  when: certbot_dns_cloudflare | bool
+
+- name: Check that the Cloudflare API token is configured
+  assert:
+    that: certbot_dns_cloudflare_api_token is defined
+    fail_msg: >-
+      certbot_dns_cloudflare is enabled but certbot_dns_cloudflare_api_token is
+      not set. Create a Cloudflare API token scoped to Zone / DNS / Edit for the
+      zone(s) being certified, then add it to the relevant group_vars file with:
+      .venv/bin/ansible-vault encrypt_string --encrypt-vault-id rtk
+      'THE_TOKEN' --name certbot_dns_cloudflare_api_token
+  when: certbot_dns_cloudflare | bool
+
+- name: Install Cloudflare API credentials for certbot
+  copy:
+    content: |
+      dns_cloudflare_api_token = {{ certbot_dns_cloudflare_api_token }}
+    dest: /etc/letsencrypt/cloudflare.ini
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+  when: certbot_dns_cloudflare | bool
+
+- name: Install certificates with certbot via dns-cloudflare
+  command: >
+    certbot certonly --non-interactive --agree-tos --keep --expand
+    --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini
+    -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  loop: "{{ certbot_certs | flatten(levels=1) }}"
+  when: certbot_dns_cloudflare | bool
 
 - name: Stop varnish for standalone certbot
   systemd:
