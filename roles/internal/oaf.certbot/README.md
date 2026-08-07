@@ -25,7 +25,11 @@ API. Takes precedence over the other methods. Use for domains proxied through
 Cloudflare (orange cloud), where HTTP-01 challenges are subject to edge
 redirects and security rules. Requires `certbot_dns_cloudflare_api_token`, a
 Cloudflare API token scoped to Zone / DNS / Edit for the relevant zone(s)
-(store it vault-encrypted in group_vars).
+(store it vault-encrypted in group_vars). When enabling this on a host with
+existing certificates, run `update-ssl-certs.yml` afterwards: issuance uses
+`--keep`, so unchanged certificates keep their old renewal config
+(`authenticator = webroot`/webserver plugin) until a forced renewal rewrites
+it with dns-cloudflare.
 
 As an example:
 

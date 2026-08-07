@@ -18,8 +18,12 @@
       command: certbot renew --non-interactive --agree-tos -m contact@oaf.org.au --server https://acme-v02.api.letsencrypt.org/directory --force-renew --webroot -w {{ certbot_webroot }}
       when: certbot_webroot is defined and not (certbot_dns_cloudflare | default(false))
 
-    # No authenticator override here: certificates issued with dns-cloudflare
-    # record it in their renewal config, so a plain renew reuses it.
+    # Pass the authenticator explicitly: certificates issued before a host was
+    # switched to dns-cloudflare still have authenticator = webroot (or a
+    # webserver plugin) in their renewal config, because issuance uses --keep
+    # and only rewrites the config on actual reissuance. Certbot persists these
+    # options to the renewal config on successful renewal, so after one run the
+    # certbot timer renews with dns-cloudflare too.
     - name: Force certificates to be renewed with dns-cloudflare
-      command: certbot renew --non-interactive --agree-tos -m contact@oaf.org.au --server https://acme-v02.api.letsencrypt.org/directory --force-renew
+      command: certbot renew --non-interactive --agree-tos -m contact@oaf.org.au --server https://acme-v02.api.letsencrypt.org/directory --force-renew --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini
       when: certbot_dns_cloudflare | default(false)
