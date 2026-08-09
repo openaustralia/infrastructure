@@ -266,20 +266,24 @@ Operator credentials (AWS, Google) aren't stored in this repo or 1Password — e
     - Terraform doesn't understand its `login_session` credentials directly yet, so bridge them by editing
       `~/.aws/config`:
       ```ini
-      [profile signin]
+      [profile oaf]
       login_session = arn:aws:iam::924104513718:user/<your-user>
       region = ap-southeast-2
 
-      [default]
-      # Bridges `aws login` to tools that don't understand `login_session` yet (e.g. Terraform).
-      # Following the linked docs as written names this profile `process` instead of `default` —
-      # do that and you'll need AWS_PROFILE=process set whenever provisioning from this repo or
-      # deploying from the app repos.
-      credential_process = aws configure export-credentials --profile signin --format process
+      [profile oaf-legacy]
+      # Bridges `aws login` to tools that don't understand `login_session` yet (e.g. Terraform, Ansible).
+      credential_process = aws configure export-credentials --profile oaf --format process
       region = ap-southeast-2
       ```
-      Then `aws login --profile signin` to authenticate — `terraform`, `ansible`, and `cap` all pick it up via `default`
-      automatically.
+      Then `aws login --profile oaf` to authenticate. `terraform` (via each provider's `profile = "oaf-legacy"`) and
+      the `aws_ec2` Ansible inventory (via `aws_profile: oaf-legacy` in `inventory/aws_ec2.yml`) pick this up
+      explicitly. `cap` has no AWS touchpoint yet, and there's nowhere else with a per-tool profile setting, so for
+      that — and any ad hoc `aws`/`cap` commands — set `export AWS_PROFILE=oaf-legacy` in your `.envrc`. If you'd
+      rather everything default to `oaf-legacy` without setting `AWS_PROFILE`, you can instead duplicate the
+      `[profile oaf-legacy]` block above as `[default]` in `~/.aws/config`.
+    - The `oaf` profile's `login_session` ARN has the OAF account ID (`924104513718`) baked in, so if you ever sign
+      in to a different AWS account, `aws login --profile oaf` will notice the mismatch and ask you to confirm before
+      overwriting it — a safety net against authenticating against the wrong account.
   - We no longer recommend:
     - `aws sso login` as it has a more complicated setup,
     - `aws configure`, or AWS vars in dotenv's `.envrc` file as these long-lived credentials do not use MFA and are
