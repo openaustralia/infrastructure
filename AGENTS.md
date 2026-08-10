@@ -166,6 +166,12 @@ stage (`development`/`staging`/`production`).
 - Never commit a decrypted vault secret, a rendered `terraform/secrets.auto.tfvars`, `terraform.pem`, or any other
   file this repo's `.gitignore`/`make clean` treats as generated-and-local. Use fictional placeholders for
   hostnames, keys, and passwords in examples or docs, per the Australian Privacy Principles.
+- Never read/cat a file that plausibly holds live credentials into an AI conversation, even just to check its
+  structure — the content ends up in the conversation transcript. That includes `.envrc`/`.env`/`.env.*.local`,
+  `set-aws-access-keys.sh`, `terraform.pem`, `terraform/secrets.auto.tfvars`, `terraform/aws.auto.tfvars`,
+  `certificates/*.key`/`*.pem` (all gitignored precisely because they carry real secrets), and anything outside
+  the repo like `~/.aws/credentials`, SSH private keys, or vault passphrase files. If you need one fact from such
+  a file (e.g. which `AWS_PROFILE` is set), `grep` for that specific line rather than printing the whole file.
 - Stage commits, don't make them — `git add` the files, then write the proposed message (with the `Assisted-by:`
   trailer) to `.git/GITGUI_MSG` (used by `git gui`) and display it for copy/paste into an IDE. Check the file first;
   if it already has content, ask before overwriting rather than clobbering an existing draft. This keeps review and
