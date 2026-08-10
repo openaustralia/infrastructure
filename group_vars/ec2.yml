@@ -25,9 +25,9 @@ aws_secret_key: !vault |
 # TODO: verify if planningalerts actually needs access to both mysal and pg databases!
 
 # db_host is set when in one of requires_* groups
-db_host: "{{ rds_database.instance.endpoint }}"
+db_host: "{{ rds_database.instances[0].endpoint.address }}"
 # Set when in requires_postgresql group (Unsure why not planningalerts group)
-planningalerts_db_host: "{{ rds_planningalerts.instance.endpoint }}"
+planningalerts_db_host: "{{ rds_planningalerts.instances[0].endpoint.address }}"
 
 newrelic_license_key: !vault |
           $ANSIBLE_VAULT;1.2;AES256;ec2
