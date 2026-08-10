@@ -24,7 +24,8 @@ resource "aws_lb_listener_rule" "redirect-http-to-https" {
 
 resource "aws_lb_listener_rule" "redirect-https-to-canonical" {
   listener_arn = var.listener_https.arn
-  priority     = 1
+  # Priorities 1-4 are the blocked source IP rules, see terraform/blocked-source-ips.tf
+  priority = 10
 
   action {
     type = "redirect"
@@ -44,7 +45,7 @@ resource "aws_lb_listener_rule" "redirect-https-to-canonical" {
 
 resource "aws_lb_listener_rule" "main-https-redirect-sitemaps" {
   listener_arn = var.listener_https.arn
-  priority     = 2
+  priority     = 11
 
   action {
     type = "redirect"
@@ -75,7 +76,7 @@ resource "aws_lb_listener_rule" "main-https-redirect-sitemaps" {
 
 resource "aws_lb_listener_rule" "forward" {
   listener_arn = var.listener_https.arn
-  priority     = 5
+  priority     = 12
 
   action {
     type = "forward"

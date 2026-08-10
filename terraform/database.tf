@@ -57,9 +57,11 @@ resource "aws_db_instance" "maindb" {
   allocated_storage = 50
 
   # Using general purpose SSD
-  storage_type   = "gp2"
-  engine         = "mysql"
-  engine_version = "8.4.6"
+  storage_type = "gp2"
+  engine       = "mysql"
+  # Track the 8.4 family rather than a pinned patch: auto_minor_version_upgrade is on
+  # below, so AWS moves the patch version on its own and a pinned value drifts.
+  engine_version = "8.4"
 
   # Required by AWS to perform a major version upgrade (8.0 -> 8.4) in place.
   allow_major_version_upgrade = false
