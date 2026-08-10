@@ -7,9 +7,10 @@ resource "aws_instance" "staging" {
   key_name      = "terraform"
 
   tags = {
-    Name        = "righttoknow-staging"
-    Environment = "staging"
-    Purpose     = "Ubuntu 22.04 Staging Server"
+    Name         = "righttoknow-staging"
+    Environment  = "staging"
+    Purpose      = "Ubuntu 22.04 Staging Server"
+    AnsibleGroup = "righttoknow_staging"
   }
 
   # Increase root volume size to 20GB to allow for more packages and data
