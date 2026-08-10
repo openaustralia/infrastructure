@@ -172,6 +172,14 @@ stage (`development`/`staging`/`production`).
   `certificates/*.key`/`*.pem` (all gitignored precisely because they carry real secrets), and anything outside
   the repo like `~/.aws/credentials`, SSH private keys, or vault passphrase files. If you need one fact from such
   a file (e.g. which `AWS_PROFILE` is set), `grep` for that specific line rather than printing the whole file.
+- Keep the future effect of any standing approval ("yes to all following", "don't ask again") clearly scoped.
+  Read-only tool calls (Read, grep, `git status`/`diff`/`log`) can be batched/parallelised freely for efficiency —
+  no justification needed per call, and a standing approval for these is safe to extend broadly. File changes
+  (Edit/Write, or Bash like `mv`/`rm`/`chmod`/`sed -i`) are different: state what's about to change and why before
+  making it, one described step or clearly-announced group at a time, so an approval is for something the human
+  has actually seen reasoned about — never let a file change ride inside a batch, or under a standing approval,
+  that wasn't clearly scoped to cover it. `git add` isn't covered by this — it's cheap to undo and only follows an
+  already-approved or directly-requested change; `git commit` is already off the table unless explicitly requested.
 - Stage commits, don't make them — `git add` the files, then write the proposed message (with the `Assisted-by:`
   trailer) to `.git/GITGUI_MSG` (used by `git gui`) and display it for copy/paste into an IDE. Check the file first;
   if it already has content, ask before overwriting rather than clobbering an existing draft. This keeps review and
