@@ -1,6 +1,8 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI coding agents (Claude Code, GitHub Copilot, and others) when working with code
+in this repository. `CLAUDE.md` and `.github/copilot-instructions.md` point here so the guidance lives in one
+place.
 
 ## What this is
 
@@ -26,13 +28,18 @@ it.
 
 - Needs Python 3.11 (not 3.12+, which breaks Ansible 2.9/2.10 — see `.python-version`). `mise install` sets up
   Ruby/Python/PHP versions.
-- Ansible Vault passphrases and AWS/Terraform state creds come from the OAF 1Password account (`op signin --account
-  oaforgau`), fetched via `bin/ansible-vault-client`. AWS and Google credentials are your own CLI config (`aws
-  configure`, `gcloud auth application-default login`), not stored here.
+- Ansible Vault passphrases and AWS/Terraform state creds come from the OAF 1Password account (id in
+  `bin/.op-account`; sign in with `op signin --account "$(cat bin/.op-account)"`), fetched via
+  `bin/ansible-vault-client`. AWS and Google credentials are your own CLI config — whatever gets `aws sts
+  get-caller-identity`/`gcloud auth application-default print-access-token` working (`aws configure`,
+  `aws configure sso`, `AWS_PROFILE`, `gcloud auth application-default login`) — no specific profile is required
+  today; not stored here.
 - `make requirements` — sets up the Python venv, installs ansible-galaxy roles/collections, checks 1Password.
 - `make tf-secrets` — renders `terraform/secrets.auto.tfvars` from 1Password (RDS admin password, Cloudflare/Linode
   API tokens) before any `tf-*` target.
-- `make tf-env-check` — verifies AWS/Cloudflare/Linode/gcloud credentials are reachable.
+- `make tf-env-check` — non-fatal warning (not a check that fails the build) if `aws sts get-caller-identity` or
+  `gcloud auth application-default print-access-token` don't work. It doesn't touch Cloudflare/Linode — those
+  tokens come from `make tf-secrets` (1Password), not per-operator credentials.
 - If you only have access to some of the four vault IDs (`default`, `all`, `ec2`, `rtk`), set
   `ANSIBLE_VAULT_IDENTITY_LIST` in `.envrc` listing only the ones you can read (see README "Access to everything
   except right to know").
@@ -42,14 +49,14 @@ it.
 ```
 make help                              # full list of targets with descriptions
 make lint                              # yaml-lint + template-check + ansible-lint + tf-check-fmt + tf-validate
-make yaml-lint                         # yamllint on roles/ and site.yml only
-make ansible-lint                      # ansible-lint on roles/ and site.yml only
+make yaml-lint                         # yamllint on roles/internal/, roles/*.yml and site.yml only
+make ansible-lint                      # ansible-lint on roles/internal/, roles/*.yml and site.yml only
 make template-check                    # fails if any role's templates/ file doesn't end in .j2
 
 # Ansible provisioning (each does a dry-run "check-*" and a real "apply-*")
 make check-<service>                   # dry-run, e.g. check-planningalerts, check-righttoknow
 make apply-<service>                   # apply changes, e.g. apply-openaustralia
-STAGE=staging make apply-righttoknow   # scope to a stage/host group (righttoknow, openaustralia support this)
+STAGE=staging make apply-righttoknow   # required for righttoknow (staging/production/all) — no other service uses STAGE
 TAGS=foo SKIP_TAGS=bar make apply-X    # limit/skip Ansible tags
 ANSIBLE_VERBOSE=vvv make apply-X       # verbose ansible-playbook output
 make all                               # run site.yml against every host
@@ -58,12 +65,12 @@ make show-vars HOST=<host>             # dump all Ansible vars for a host
 make show-facts HOST=<host>            # dump all Ansible facts for a host
 make letsencrypt                       # force-renew all registered LetsEncrypt certs
 
-# Terraform (always run tf-secrets/tf-env-check first — the tf-* targets depend on them)
+# Terraform (tf-plan/tf-apply/tf-*-target depend on tf-secrets+tf-env-check; tf-validate/tf-check-fmt need neither)
 make tf-plan / make tf-apply           # plan/apply the whole terraform/ config
 make tf-plan-target TARGET=<module>    # scope to one module, e.g. TARGET=planningalerts
-make tf-validate                       # tf-check-fmt + terraform validate
+make tf-validate                       # tf-check-fmt + terraform validate (no 1Password/AWS access needed)
 
-make vagrant                           # bring up local Vagrant VMs for testing Ansible roles (not app dev)
+make vagrant                           # install the vagrant plugin/dev certs/requirements needed before `vagrant up`
 make clean / make clobber              # clean removes venv/roles/collections; clobber also removes .vagrant/log
 ```
 
@@ -71,9 +78,9 @@ Local Vagrant boxes (`vagrant up <box>`, `vagrant provision <box>`) are for test
 for application development — that happens in each app's own repo/devcontainer. This is planned to move to
 Docker/Compose down the track — see `docs/DECISIONS.md`.
 
-Every `apply-*`/`tf-apply*` run is bracketed by a `wip-<name>` git tag pushed before the change and replaced by the
-un-prefixed tag on success (via `bin/tag-provisioning`) — a lingering `wip-*` tag means that provisioning run failed
-partway through.
+Every `apply-*`/`tf-apply*` run — and also `all`, `retry`, `letsencrypt` and `update-github-ssh-keys` — is bracketed
+by a `wip-<name>` git tag pushed before the change and replaced by the un-prefixed tag on success (via
+`bin/tag-provisioning`) — a lingering `wip-*` tag means that provisioning run failed partway through.
 
 ## Architecture
 
@@ -93,10 +100,13 @@ partway through.
 - Inventory and `group_vars/`/`host_vars/` follow standard Ansible layering — most per-service config lives in
   `group_vars/<service>.yml` (e.g. `group_vars/righttoknow.yml`, `group_vars/righttoknow_production.yml`/`_staging.yml`
   for stage overrides). `group_vars/all.yml` holds cross-service defaults (backup settings, `github_users` allowed
-  to SSH in, etc.). `inventory/ec2-hosts` is the static inventory actually in use — every Makefile target passes it
-  explicitly (`-i ./inventory/ec2-hosts`). `inventory/aws_ec2.yml` (the dynamic `aws_ec2` plugin inventory, grouping
-  instances by their `Application` tag) already exists but isn't wired into any Makefile target yet — it's for a
-  planned future move to dynamic inventory, not currently live.
+  to SSH in, etc.). `inventory/ec2-hosts` is the static inventory in use by the `check-*`/`apply-*` targets, which
+  pass it explicitly (`-i ./inventory/ec2-hosts`); `all`, `letsencrypt`, `retry` and `update-github-ssh-keys` pass
+  no `-i` and fall back to `ansible.cfg`'s `inventory = inventory` (the whole directory). `inventory/aws_ec2.yml`
+  (the dynamic `aws_ec2` plugin inventory, grouping instances by their `Application` tag) already exists but isn't
+  wired into any Makefile target yet, and can't actually load today — `amazon.aws` isn't in
+  `roles/requirements.yml` (only `community.postgresql` is). It's for a planned future move to dynamic inventory,
+  not currently live.
 
 ### Secrets: Ansible Vault with 4 vault IDs
 
@@ -125,7 +135,9 @@ stage (`development`/`staging`/`production`).
 
 - `.ansible-lint` skips `meta-incorrect`/`meta-no-info`/`role-name` (not publishing to Galaxy), `var-spacing`
   (cosmetic, cron files), and `yaml` (yamllint already covers it separately); `risky-file-permissions` is a
-  warning only, to be fixed incrementally.
+  warning only, to be fixed incrementally. It also excludes `roles/internal/righttoknow/files/storage.yml` — it
+  looks like Ansible YAML but is actually a Rails ERB config template (`<%= Rails.env %>` mixed with YAML
+  anchors) copied to the host as a static payload, not something Ansible/ansible-lint can parse.
 - `.yamllint` line-length is a 120-char **warning**, not a failure, matching the Rubocop config used by the Ruby
   app repos.
 
@@ -139,10 +151,15 @@ stage (`development`/`staging`/`production`).
 - Check `docs/DECISIONS.md` for past cross-cutting decisions before assuming in an unfamiliar area of the repo; add
   a new entry there (rather than repeating it in multiple places) when a decision spans multiple files/roles/modules
   instead of belonging as a comment in one.
-- `apply-*`, `tf-apply*`, `tf-apply-target`, `letsencrypt`, and `bin/rotate-vault-passphrase` change real production
-  infrastructure (DNS, EC2/RDS, live certs, vault passphrases everyone relies on) — treat every one of these as a
-  live-fire action needing the same explicit, specific, right-now go-ahead as a production deploy, however routine
-  the request sounds. `check-*`/`tf-plan*` (dry-run) are always safe to run to see what a corresponding apply would do.
+- Default to treating every `make` target as a live-fire production action needing the same explicit, specific,
+  right-now go-ahead as a production deploy, however routine the request sounds — **except** the known-safe,
+  read-only ones: `help`, `check-*`, `tf-plan*`, `tf-validate`, `tf-check-fmt`, `lint`/`yaml-lint`/`ansible-lint`/
+  `template-check`, `show-*`, `op-check`, `tf-env-check`, `venv`/`roles`/`requirements`/`tf-secrets`/`terraform.pem`,
+  `vagrant`/`generate-certificates`, and `scan-*`. Everything else — `apply-*`, `tf-apply*`, `tf-apply-target`,
+  `letsencrypt`, `all`, `retry`, `update-github-ssh-keys`, and `bin/rotate-vault-passphrase` — changes real
+  production infrastructure or who can SSH in, and needs a go-ahead. All of these except
+  `bin/rotate-vault-passphrase` are bracketed by the `wip-*` tag described above, so a failed run always leaves a
+  marker behind.
 - If a `check-*`/`apply-*`/`tf-*` command fails on an auth or credential error, don't guess which credential or
   vault ID is wrong and don't try switching identities to "fix" it — ask. Guessing wrong here risks running
   provisioning against, or with permissions for, the wrong host or environment.

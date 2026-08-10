@@ -14,7 +14,7 @@ if [ $# -ne 4 ]; then
   echo "Usage: bin/tag-provisioning [--wip] <target> <stage> <tags> <skip_tags>"
   echo "       Should be called with --wip first, then do action then call without --wip to replace wip tag"
   echo "       Use empty strings for unused args, eg: bin/tag-provisioning oaf \"\" \"\" \"\""
-  echo "       Intended to be called from make apply-* and tf-apply targets"
+  echo "       Intended to be called from make apply-*, tf-apply*, all, retry, letsencrypt and update-github-ssh-keys targets"
   exit 1
 fi
 

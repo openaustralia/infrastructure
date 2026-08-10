@@ -37,15 +37,15 @@ help:
 	@echo "  op-check                            Fail if not signed into the OAF 1Password account"
 	@echo "  terraform.pem                       Materialise terraform.pem from 1Password"
 	@echo "  tf-secrets                          Render terraform/secrets.auto.tfvars from 1Password via op inject"
-	@echo "  tf-env-check                        Warn if AWS/Cloudflare/Linode/gcloud credentials aren't reachable"
+	@echo "  tf-env-check                        Warn (non-fatal) if AWS or gcloud credentials aren't reachable"
 	@echo "  roles                               Install Ansible Galaxy external roles and collections"
 	@echo "  venv                                Create Python virtualenv and install requirements"
 	@echo "  generate-certificates               Generate certificates for the development *.test domains"
 	@echo "Independent targets (not required by all):"
 	@echo "  letsencrypt                         Renew/update SSL certificates"
 	@echo "  lint                                Run the following lint targets:"
-	@echo "    yaml-lint                         Run yamllint on roles and site.yml only"
-	@echo "    ansible-lint                      Run ansible-lint on roles and site.yml only"
+	@echo "    yaml-lint                         Run yamllint on roles/internal/, roles/*.yml and site.yml only"
+	@echo "    ansible-lint                      Run ansible-lint on roles/internal/, roles/*.yml and site.yml only"
 	@echo "    tf-check-fmt                      Check terraform files are correctly formatted"
 	@echo "    tf-validate                       Check terraform formatting and validate config"
 	@echo "  retry                               Re-run site.yml limited to hosts from last failed run"
@@ -69,14 +69,14 @@ help:
 	@echo "  check-planningalerts                Dry-run Ansible for planningalerts hosts"
 	@echo "  check-theyvoteforyou                Dry-run Ansible for theyvoteforyou host"
 	@echo "  check-oaf                           Dry-run Ansible for oaf host"
-	@echo "  check-openaustralia                 Dry-run Ansible for openaustralia new/old/all host/s"
+	@echo "  check-openaustralia                 Dry-run Ansible for openaustralia host"
 	@echo "  check-metabase                      Dry-run Ansible for metabase host"
 	@echo ""
 	@echo "  apply-righttoknow STAGE=<stage>     Apply Ansible changes to righttoknow production/staging/all host/s"
 	@echo "  apply-planningalerts                Apply Ansible changes to planningalerts hosts"
 	@echo "  apply-theyvoteforyou                Apply Ansible changes to theyvoteforyou host"
 	@echo "  apply-oaf                           Apply Ansible changes to oaf host"
-	@echo "  apply-openaustralia                 Apply Ansible changes to openaustralia new/old/all host/s"
+	@echo "  apply-openaustralia                 Apply Ansible changes to openaustralia host"
 	@echo "  apply-metabase                      Apply Ansible changes to metabase host"
 	@echo ""
 	@echo "  scan-oaf                            Scan oaf.org.au for broken links (1/2 hour)"
@@ -87,7 +87,7 @@ help:
 	@echo "  ANSIBLE_VERBOSE  Ansible verbosity flag, e.g. ANSIBLE_VERBOSE=vvv"
 	@echo "  HOST           Ansible host pattern (required by show-* targets, will list inventory host names if not supplied)"
 	@echo "  SKIP_TAGS      Skip plays/tasks with these tags (optional, space or comma separated)"
-	@echo "  STAGE          Target stage, e.g. STAGE=new or old or staging or '' (required by some check-*/apply-* targets)"
+	@echo "  STAGE          Target stage: staging, production or all (required by check-righttoknow/apply-righttoknow only)"
 	@echo "  TAGS           Only run plays/tasks tagged with these (optional, space or comma separated)"
 	@echo "  TARGET         Terraform module name (required by tf-plan-target/tf-apply-target, will list options if not supplied)"
 
@@ -172,13 +172,19 @@ venv: .venv/bin/activate
 roles: .make/roles
 
 all: requirements
+	bin/tag-provisioning --wip all "" "" ""
 	.venv/bin/ansible-playbook site.yml
+	bin/tag-provisioning all "" "" ""
 
 letsencrypt: requirements
+	bin/tag-provisioning --wip letsencrypt "" "" ""
 	.venv/bin/ansible-playbook update-ssl-certs.yml
+	bin/tag-provisioning letsencrypt "" "" ""
 
 retry: requirements site.retry
+	bin/tag-provisioning --wip retry "" "" ""
 	.venv/bin/ansible-playbook site.yml -l @site.retry
+	bin/tag-provisioning retry "" "" ""
 
 check-host:
 ifndef HOST
@@ -294,7 +300,9 @@ apply-metabase: requirements # stage_required
 
 # Update ssh keys on all servers
 update-github-ssh-keys: requirements
+	bin/tag-provisioning --wip update-github-ssh-keys "" "userkeys" ""
 	.venv/bin/ansible-playbook site.yml --tags userkeys
+	bin/tag-provisioning update-github-ssh-keys "" "userkeys" ""
 
 #   Behind cloudflare consider tunnelling via ssh or proxying via bastian
 #	https://www.righttoknow.org.au
