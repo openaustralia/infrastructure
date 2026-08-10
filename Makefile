@@ -36,7 +36,7 @@ help:
 	@echo "  all                                 Run full site.yml playbook against all hosts"
 	@echo "  requirements                        Install requirements: venv, roles, collections, terraform.pem and check required commands"
 	@echo "  op-check                            Fail if not signed into the OAF 1Password account"
-	@echo "  aws-check                           Fail if aws-cli or the Session Manager plugin aren't installed and recent enough"
+	@echo "  aws-check                           Fail if aws-cli/Session Manager plugin missing; bootstrap ~/.aws/config oaf/oaf-legacy profiles"
 	@echo "  terraform.pem                       Materialise terraform.pem from 1Password"
 	@echo "  tf-secrets                          Render terraform/secrets.auto.tfvars from 1Password via op inject"
 	@echo "  tf-env-check                        Warn (non-fatal) if AWS or gcloud credentials aren't reachable"
@@ -125,6 +125,11 @@ op-check:
 #     --document-name AWS-StartSSHSession --parameters 'portNumber=%p'" ...
 # Checked in this order (aws first, plugin second) since the plugin is useless
 # without the CLI, and reporting the more fundamental problem first is clearer.
+# Also bootstraps ~/.aws/config: both [profile oaf-legacy] and [profile oaf] are only ever written
+# to if missing, never overwritten - so if either was customised for some unexpected reason, that
+# customisation is left alone. [profile oaf]'s login_session ARN is operator-specific, so its
+# bootstrapped value is a placeholder you're expected to edit with your own username; see README
+# "CLI tools for credentials".
 aws-check:
 	@if command -v aws >/dev/null 2>&1; then \
       if aws --version 2>&1 | grep -qE 'aws-cli/2\.(3[2-9]|[4-9][0-9]|[1-9][0-9][0-9])'; then \
@@ -145,6 +150,21 @@ aws-check:
 	  echo "  Install: https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html" >&2; \
 	  echo "For MacOS users, install using brew: brew install session-manager-plugin" >&2; \
 	  exit 1; \
+	fi
+	@if aws configure get login_session --profile oaf >/dev/null 2>&1; then \
+	  echo "OK: [profile oaf] already has a login_session set"; \
+	else \
+	  aws configure set region ap-southeast-2 --profile oaf; \
+	  aws configure set login_session "arn:aws:iam::924104513718:user/REPLACE_ME" --profile oaf; \
+	  echo "WARN: [profile oaf] had no login_session - added a placeholder in ~/.aws/config." >&2; \
+	  echo "  Edit it with your own IAM username, then run: aws login --profile oaf" >&2; \
+	fi
+	@if aws configure get credential_process --profile oaf-legacy >/dev/null 2>&1; then \
+	  echo "OK: [profile oaf-legacy] already configured"; \
+	else \
+	  aws configure set region ap-southeast-2 --profile oaf-legacy; \
+	  aws configure set credential_process "aws configure export-credentials --profile oaf --format process" --profile oaf-legacy; \
+	  echo "OK: [profile oaf-legacy] configured in ~/.aws/config (bridges 'aws login --profile oaf' for Terraform/Ansible)"; \
 	fi
 
 # Materialise terraform.pem from 1Password. The script is idempotent
