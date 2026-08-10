@@ -30,10 +30,11 @@ it.
   Ruby/Python/PHP versions.
 - Ansible Vault passphrases and AWS/Terraform state creds come from the OAF 1Password account (id in
   `bin/.op-account`; sign in with `op signin --account "$(cat bin/.op-account)"`), fetched via
-  `bin/ansible-vault-client`. AWS and Google credentials are your own CLI config — whatever gets `aws sts
-  get-caller-identity`/`gcloud auth application-default print-access-token` working (`aws configure`,
-  `aws configure sso`, `AWS_PROFILE`, `gcloud auth application-default login`) — no specific profile is required
-  today; not stored here.
+  `bin/ansible-vault-client`. AWS and Google credentials are your own CLI config, not stored here: `aws login`
+  (browser-based, MFA) against the `oaf` profile, with Terraform/Ansible reading through `oaf-legacy`, which
+  bridges to that session via `credential_process` — see README "CLI tools for credentials" for the `~/.aws/config`
+  setup. `aws sso login`/`aws configure` are no longer recommended (no MFA, long-lived creds on disk). Google via
+  `gcloud auth application-default login`.
 - `make requirements` — sets up the Python venv, installs ansible-galaxy roles/collections, checks 1Password.
 - `make tf-secrets` — renders `terraform/secrets.auto.tfvars` from 1Password (RDS admin password, Cloudflare/Linode
   API tokens) before any `tf-*` target.

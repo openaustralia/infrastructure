@@ -267,7 +267,7 @@ configuration. The Cloudflare and Linode provider tokens are the exception: they
   Install using the official
   [Installing or updating to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
   instructions.
-    - We recommend you sign in with [`aws login`](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sign-in.html)
+    - We recommend you sign in with [`aws login --profile oaf`](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sign-in.html)
       which uses a browser-based authentication flow (supporting MFA) to provide temporary credentials.
     - Terraform doesn't understand its `login_session` credentials directly yet, so bridge them by editing
       `~/.aws/config`:
@@ -290,7 +290,7 @@ configuration. The Cloudflare and Linode provider tokens are the exception: they
     - The `oaf` profile's `login_session` ARN has the OAF account ID (`924104513718`) baked in, so if you ever sign
       in to a different AWS account, `aws login --profile oaf` will notice the mismatch and ask you to confirm before
       overwriting it — a safety net against authenticating against the wrong account.
-  - We no longer recommend:
+  - We no longer support (because we use oaf-legacy profile):
     - `aws sso login` as it has a more complicated setup,
     - `aws configure`, or AWS vars in dotenv's `.envrc` file as these long-lived credentials do not use MFA and are
       stored on the local file system in plain text.
