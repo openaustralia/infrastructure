@@ -1,0 +1,7 @@
+---
+# handlers file for umami
+
+- name: reload nginx
+  systemd:
+    name: nginx
+    state: reloaded

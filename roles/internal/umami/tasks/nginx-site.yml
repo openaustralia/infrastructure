@@ -1,0 +1,30 @@
+---
+# Included twice from main.yml: once before certbot runs, when the TLS server
+# block is left out because no certificate exists yet, and once after, when it
+# can be rendered. That is what makes a first run on a fresh box work in a
+# single pass.
+
+- name: Check whether a Let's Encrypt certificate already exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ umami_domain }}/fullchain.pem"
+  register: umami_certificate
+
+- name: Copy the nginx site configuration
+  template:
+    src: umami.conf.j2
+    dest: /etc/nginx/sites-available/umami
+    mode: '0644'
+  notify: reload nginx
+
+- name: Enable the nginx site
+  file:
+    src: /etc/nginx/sites-available/umami
+    dest: /etc/nginx/sites-enabled/umami
+    state: link
+  notify: reload nginx
+
+- name: Disable the packaged default nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: reload nginx

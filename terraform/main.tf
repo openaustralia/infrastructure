@@ -74,6 +74,18 @@ module "metabase" {
   listener_https           = aws_lb_listener.main-https
 }
 
+# Self-hosted Umami, replacing hosted plausible.io (issue #607).
+# Standalone rather than behind aws_lb.main, so there is no target group,
+# no ACM certificate and no listener rule: Cloudflare proxies it and nginx
+# on the box terminates TLS with a Let's Encrypt certificate.
+module "analytics" {
+  source           = "./analytics"
+  security_group   = aws_security_group.analytics
+  instance_profile = aws_iam_instance_profile.logging
+  ami              = var.ubuntu_22_ami
+  zone_id          = cloudflare_zone.oaf_org_au.id
+}
+
 module "openaustralia" {
   source                   = "./openaustralia"
   security_group_webserver = aws_security_group.webserver

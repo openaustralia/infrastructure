@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: OpenAustralia Foundation
+  description: Self-hosted Umami web analytics, behind nginx and the Cloudflare proxy
+  license: MIT
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+
+# cloudflare_realip and oaf.certbot are pulled in from tasks/main.yml with
+# include_role rather than declared here, because both of them need nginx to
+# already be installed and meta dependencies run before the role's own tasks.
+dependencies: []

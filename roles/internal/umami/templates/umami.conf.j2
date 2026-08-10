@@ -1,0 +1,67 @@
+# {{ ansible_managed }}
+
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+  server_name {{ umami_domain }};
+
+  # Has to stay on plain HTTP so certbot can renew
+  location ^~ /.well-known/acme-challenge/ {
+    root {{ umami_certbot_webroot }};
+  }
+
+{% if umami_certificate.stat.exists %}
+  location / {
+    return 301 https://$host$request_uri;
+  }
+{% else %}
+  # No certificate yet, so serve over HTTP until certbot has run
+  location / {
+    proxy_pass http://127.0.0.1:{{ umami_port }};
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    # Umami reads country, region and city from these. See "Location data" in
+    # this role's README: only CF-IPCountry arrives by default, and without the
+    # other two Umami reports country and leaves region and city empty.
+    proxy_set_header CF-IPCountry $http_cf_ipcountry;
+    proxy_set_header CF-Region-Code $http_cf_region_code;
+    proxy_set_header CF-IPCity $http_cf_ipcity;
+    proxy_set_header CF-Connecting-IP $remote_addr;
+  }
+{% endif %}
+}
+
+{% if umami_certificate.stat.exists %}
+server {
+  listen 443 ssl http2 default_server;
+  listen [::]:443 ssl http2 default_server;
+  server_name {{ umami_domain }};
+
+  ssl_certificate /etc/letsencrypt/live/{{ umami_domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{ umami_domain }}/privkey.pem;
+
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_prefer_server_ciphers off;
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_timeout 1d;
+
+  location / {
+    proxy_pass http://127.0.0.1:{{ umami_port }};
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    # Umami reads country, region and city from these. See "Location data" in
+    # this role's README: only CF-IPCountry arrives by default, and without the
+    # other two Umami reports country and leaves region and city empty.
+    proxy_set_header CF-IPCountry $http_cf_ipcountry;
+    proxy_set_header CF-Region-Code $http_cf_region_code;
+    proxy_set_header CF-IPCity $http_cf_ipcity;
+    # cloudflare_realip has already resolved $remote_addr to the visitor's
+    # address for requests that came through the proxy. Setting the header
+    # here rather than passing the client's through means a request that
+    # reached the origin directly cannot forge it.
+    proxy_set_header CF-Connecting-IP $remote_addr;
+  }
+}
+{% endif %}

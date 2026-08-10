@@ -1,0 +1,5 @@
+---
+# defaults file for umami
+#
+# Configuration lives in group_vars/analytics.yml, following metabase and the
+# other service roles. The derived connection string is in vars/main.yml.

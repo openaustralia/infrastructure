@@ -14,6 +14,11 @@
 
 # INVENTORY IN alphabetical order by group name
 
+[analytics]
+# analytics.oaf.org.au itself is proxied by Cloudflare, so Ansible and ssh use
+# the unproxied name
+srv.analytics.oaf.org.au
+
 [ec2]
 # NOTE: The planning alerts servers are NOT in ec2!
 srv.theyvoteforyou.org.au
@@ -23,6 +28,7 @@ prod.righttoknow.org.au
 au.proxy.oaf.org.au
 web.metabase.oaf.org.au
 vpn.oaf.org.au
+srv.analytics.oaf.org.au
 
 [catch_all_mail:children]
 righttoknow_staging
@@ -50,6 +56,7 @@ theyvoteforyou
 
 # Group for all sites that use and need information on the PostgreSQL RDS instance
 [requires_postgresql:children]
+analytics
 righttoknow
 metabase
 planningalerts

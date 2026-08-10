@@ -1,7 +1,7 @@
-.PHONY: all ansible-lint apply-metabase apply-oaf requirements apply-openaustralia \
+.PHONY: all ansible-lint apply-analytics apply-metabase apply-oaf requirements apply-openaustralia \
         apply-planningalerts apply-righttoknow  apply-theyvoteforyou \
-        check-host check-metabase check-oaf check-openaustralia check-planningalerts check-righttoknow \
-        check-theyvoteforyou check-target \
+        check-analytics check-host check-metabase check-oaf check-openaustralia check-planningalerts \
+        check-righttoknow check-theyvoteforyou check-target \
         scan-oaf scan-openaustralia scan-planningalerts \
         clean clobber help letsencrypt lint op-check retry roles \
         show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target \
@@ -71,6 +71,7 @@ help:
 	@echo "  check-oaf                           Dry-run Ansible for oaf host"
 	@echo "  check-openaustralia                 Dry-run Ansible for openaustralia new/old/all host/s"
 	@echo "  check-metabase                      Dry-run Ansible for metabase host"
+	@echo "  check-analytics                     Dry-run Ansible for analytics host"
 	@echo ""
 	@echo "  apply-righttoknow STAGE=<stage>     Apply Ansible changes to righttoknow production/staging/all host/s"
 	@echo "  apply-planningalerts                Apply Ansible changes to planningalerts hosts"
@@ -78,6 +79,7 @@ help:
 	@echo "  apply-oaf                           Apply Ansible changes to oaf host"
 	@echo "  apply-openaustralia                 Apply Ansible changes to openaustralia new/old/all host/s"
 	@echo "  apply-metabase                      Apply Ansible changes to metabase host"
+	@echo "  apply-analytics                     Apply Ansible changes to analytics host"
 	@echo ""
 	@echo "  scan-oaf                            Scan oaf.org.au for broken links (1/2 hour)"
 	@echo "  scan-openaustralia                  Scan openaustralia.org.au for broken links (2-3 hours)"
@@ -265,6 +267,8 @@ check-openaustralia: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --check --diff
 check-metabase: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --check --diff
+check-analytics: requirements
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l analytics --check --diff
 
 # These make changes
 apply-righttoknow: requirements stage_required
@@ -291,6 +295,10 @@ apply-metabase: requirements # stage_required
 	bin/tag-provisioning --wip metabase "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
 	bin/tag-provisioning metabase "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
+apply-analytics: requirements
+	bin/tag-provisioning --wip analytics "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l analytics --diff
+	bin/tag-provisioning analytics "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 
 # Update ssh keys on all servers
 update-github-ssh-keys: requirements
