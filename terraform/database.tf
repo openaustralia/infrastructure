@@ -59,7 +59,7 @@ resource "aws_db_instance" "maindb" {
   # Using general purpose SSD
   storage_type   = "gp2"
   engine         = "mysql"
-  engine_version = "8.4.6"
+  engine_version = "8.4.8"
 
   # Required by AWS to perform a major version upgrade (8.0 -> 8.4) in place.
   allow_major_version_upgrade = false
