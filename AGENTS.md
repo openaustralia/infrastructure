@@ -180,6 +180,11 @@ stage (`development`/`staging`/`production`).
   has actually seen reasoned about — never let a file change ride inside a batch, or under a standing approval,
   that wasn't clearly scoped to cover it. `git add` isn't covered by this — it's cheap to undo and only follows an
   already-approved or directly-requested change; `git commit` is already off the table unless explicitly requested.
+- The same scoping applies to Bash allow-patterns for multi-subcommand CLIs (`gh`, `git`, `aws`, `terraform`): a
+  prefix like `gh pr` covers both read-only `gh pr view` and mutating `gh pr create`/`merge`/`close`/`comment`, so
+  a permission prompt offering to remember that broader prefix is offering more than what was actually run. Prefer
+  or request the pattern scoped to the exact safe subcommand used (`gh pr view`), not the shared prefix, and don't
+  save a broader pattern than that to `.claude/settings.json`/`settings.local.json` either.
 - Stage commits, don't make them — `git add` the files, then write the proposed message (with the `Assisted-by:`
   trailer) to `.git/GITGUI_MSG` (used by `git gui`) and display it for copy/paste into an IDE. Check the file first;
   if it already has content, ask before overwriting rather than clobbering an existing draft. This keeps review and
