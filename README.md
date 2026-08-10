@@ -129,6 +129,9 @@ for the servers.
 
 A little note on terminology:
 
+- "assembling" (suggested, for consistency - not yet in wide use) - using Terraform to create/update the
+  infrastructure a server needs (EC2 instances, RDS databases, DNS, load balancers, etc.), before Ansible ever
+  touches the server.
 - "provisioning" - we use this to mean configuring the server with Ansible.
 - "deployment" - we use to mean installing or updating the web application with Capistrano.
 
