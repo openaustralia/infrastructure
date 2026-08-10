@@ -144,10 +144,18 @@ These block:
 
 | Service | Mode | Challenge Path |
 |---------|------|----------------|
-| righttoknow | webroot | `/usr/share/nginx/html/.well-known/acme-challenge/` |
+| righttoknow | dns-cloudflare (DNS-01) | No HTTP challenge; DNS TXT records via Cloudflare API |
 | theyvoteforyou | nginx plugin | Handled by certbot-nginx |
 | openaustralia | apache plugin | Handled by certbot-apache |
 | planningalerts | apache plugin | Handled by certbot-apache |
+
+righttoknow previously used webroot (HTTP-01 at
+`/usr/share/nginx/html/.well-known/acme-challenge/`), but issuance for the
+proxied hostnames failed in August 2026: Let's Encrypt's validators were
+redirected to HTTPS at the Cloudflare edge and then 403'd. It now uses DNS-01
+via the `certbot_dns_cloudflare` option of the `oaf.certbot` role, which is
+immune to proxy/WAF behaviour entirely. The webroot config is retained as a
+fallback.
 
 ### Cloudflare Behaviour
 
