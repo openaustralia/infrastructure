@@ -72,16 +72,3 @@
   when: add_authorized_keys is success
   notify: sshd restart
 
-# 'ssm' group membership means this host was found via inventory/aws_ec2.yml's dynamic
-# inventory, which only ever discovers instances explicitly tagged AnsibleGroups in Terraform -
-# so it's safe to take as "explicitly declared SSM-ready", not just "AWS knows this exists".
-# Once here, there's no need for a public SSH port at all: toggle both lines so exactly one is
-# ever active (having both would mean sshd listens on both interfaces).
-- name: Set ListenAddress depending on SSM management
-  become: true
-  lineinfile:
-    dest: /etc/ssh/sshd_config
-    regexp: "^#?\\s*ListenAddress "
-    line: "{{ 'ListenAddress 127.0.0.1' if 'ssm' in group_names else 'ListenAddress 0.0.0.0' }}"
-  notify: sshd restart
-
