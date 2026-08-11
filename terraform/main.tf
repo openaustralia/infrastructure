@@ -3,6 +3,14 @@ module "cuttlefish" {
   zone_id = cloudflare_zone.oaf_org_au.id
 }
 
+# Mail server replacing cuttlefish
+# https://github.com/openaustralia/infrastructure/issues/365
+module "postal" {
+  source          = "./postal"
+  zone_id         = cloudflare_zone.oaf_org_au.id
+  authorized_keys = [data.external.id_rsa.result["id_rsa"]]
+}
+
 module "docs-internal" {
   source  = "./docs-internal"
   zone_id = cloudflare_zone.oaf_org_au.id
