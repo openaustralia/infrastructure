@@ -311,7 +311,7 @@ endif
 ifndef MODULE
 ifndef RESOURCE
 	@echo "ERROR: MODULE or RESOURCE must be set! Available modules are:"
-	@ls -1 terraform/ | grep -E '^[a-z]' | grep -v '\.tf$$' | sed 's/^/  /'
+	@ls -1 terraform/ | grep -E '^[a-z]' | grep -Ev '\.tf|\.sh' | sed 's/^/  /'
 	@echo "Or set RESOURCE=<type>.<name> for a single resource, e.g. RESOURCE=aws_db_instance.maindb"
 	@echo "  Find <type>.<name> in plan output ('  # <type>.<name> will be ...') or a 'resource \"<type>\" \"<name>\" {' block in a .tf file"
 	@exit 1
