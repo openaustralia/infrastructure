@@ -18,9 +18,7 @@ module "docs-internal" {
 
 
 module "planningalerts" {
-  source           = "./planningalerts"
-  instance_profile = aws_iam_instance_profile.cloudwatch_logging_and_ssm
-  # Not sure if it's better to pass this in or whether this module should just make its own version of it
+  source                        = "./planningalerts"
   security_group_incoming_email = aws_security_group.incoming_email
   deployer_key                  = aws_key_pair.deployer
   load_balancer                 = aws_lb.main

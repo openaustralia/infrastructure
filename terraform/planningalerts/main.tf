@@ -19,7 +19,7 @@ module "blue" {
     aws_security_group.memcached_server.name,
     var.security_group_incoming_email.name
   ]
-  iam_instance_profile = var.instance_profile.name
+  iam_instance_profile = module.instance_role.instance_profile.name
   key_name             = var.deployer_key.key_name
   vpc_id               = var.vpc.id
   zone_id              = cloudflare_zone.main.id
@@ -37,7 +37,7 @@ module "green" {
     aws_security_group.memcached_server.name,
     var.security_group_incoming_email.name
   ]
-  iam_instance_profile = var.instance_profile.name
+  iam_instance_profile = module.instance_role.instance_profile.name
   key_name             = var.deployer_key.key_name
   vpc_id               = var.vpc.id
   zone_id              = cloudflare_zone.main.id
