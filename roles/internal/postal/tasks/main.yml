@@ -73,6 +73,14 @@
     container_default_behavior: no_defaults
   no_log: true
 
+# The MariaDB image only opens port 3306 once initialization is complete,
+# so this also covers the slow first-boot database setup
+- name: Wait for MariaDB to accept connections
+  wait_for:
+    host: 127.0.0.1
+    port: 3306
+    timeout: 300
+
 - name: Generate the docker-compose file for the pinned postal version
   command: "postal set-version {{ postal_version }}"
   args:
@@ -102,7 +110,7 @@
   notify: Restart caddy
 
 - name: Generate DKIM signing key
-  command: openssl genrsa -out /opt/postal/config/signing.key 1024
+  command: openssl genrsa -out /opt/postal/config/signing.key 2048
   args:
     creates: /opt/postal/config/signing.key
 
