@@ -18,14 +18,14 @@
 # NOTE: The planning alerts servers are NOT in ec2!
 srv.theyvoteforyou.org.au
 openaustralia.org.au
-staging.righttoknow.org.au
+#staging.righttoknow.org.au
 prod.righttoknow.org.au
 au.proxy.oaf.org.au
 web.metabase.oaf.org.au
 vpn.oaf.org.au
 
-[catch_all_mail:children]
-righttoknow_staging
+# [catch_all_mail:children]
+# righttoknow_staging
 
 [metabase]
 web.metabase.oaf.org.au
@@ -56,13 +56,13 @@ planningalerts
 
 [righttoknow:children]
 righttoknow_production
-righttoknow_staging
+# righttoknow_staging
 
 [righttoknow_production]
 prod.righttoknow.org.au
 
-[righttoknow_staging]
-staging.righttoknow.org.au
+# [righttoknow_staging]
+#staging.righttoknow.org.au
 
 [theyvoteforyou]
 srv.theyvoteforyou.org.au

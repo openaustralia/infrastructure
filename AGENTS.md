@@ -144,13 +144,10 @@ by a `wip-<name>` git tag pushed before the change and replaced by the un-prefix
 - Inventory and `group_vars/`/`host_vars/` follow standard Ansible layering — most per-service config lives in
   `group_vars/<service>.yml` (e.g. `group_vars/righttoknow.yml`, `group_vars/righttoknow_production.yml`/`_staging.yml`
   for stage overrides). `group_vars/all.yml` holds cross-service defaults (backup settings, `github_users` allowed
-  to SSH in, etc.). `inventory/ec2-hosts` is the static inventory in use by the `check-*`/`apply-*` targets, which
-  pass it explicitly (`-i ./inventory/ec2-hosts`); `all`, `letsencrypt`, `retry` and `update-github-ssh-keys` pass
-  no `-i` and fall back to `ansible.cfg`'s `inventory = inventory` (the whole directory). `inventory/aws_ec2.yml`
-  (the dynamic `aws_ec2` plugin inventory, grouping instances by their `Application` tag) already exists but isn't
-  wired into any Makefile target yet, and can't actually load today — `amazon.aws` isn't in
-  `roles/requirements.yml` (only `community.postgresql` is). It's for a planned future move to dynamic inventory,
-  not currently live.
+  to SSH in, etc.). Every Ansible-invoking Makefile target merges two inventory sources: `inventory/ec2-hosts`
+  (static) and `inventory/aws_ec2.yml` (dynamic, tag-scoped — see its own header comments for how/why). Migration
+  to the dynamic source is per-host and incremental; `public_hostname` (`group_vars/all.yml`/`ssm.yml`) is a
+  stable identifier for things like backup paths, independent of that migration.
 
 ### Secrets: Ansible Vault with 4 vault IDs
 
