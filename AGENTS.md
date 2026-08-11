@@ -67,7 +67,8 @@ make letsencrypt                       # force-renew all registered LetsEncrypt 
 
 # Terraform (tf-plan/tf-apply/tf-*-target depend on tf-secrets+tf-env-check; tf-validate/tf-check-fmt need neither)
 make tf-plan / make tf-apply           # plan/apply the whole terraform/ config
-make tf-plan-target TARGET=<module>    # scope to one module, e.g. TARGET=planningalerts
+make tf-plan-target MODULE=<module>    # scope to one module, e.g. MODULE=planningalerts
+make tf-plan-target RESOURCE=<type>.<name> # scope to one resource, e.g. RESOURCE=aws_db_instance.maindb
 make tf-validate                       # tf-check-fmt + terraform validate (no 1Password/AWS access needed)
 
 make vagrant                           # install the vagrant plugin/dev certs/requirements needed before `vagrant up`

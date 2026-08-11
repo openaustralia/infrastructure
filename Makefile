@@ -59,8 +59,10 @@ help:
 	@echo "  tf-init                             Run terraform init in the terraform directory"
 	@echo "  tf-plan                             Run terraform plan in the terraform directory"
 	@echo "  tf-apply                            Run terraform apply in the terraform directory"
-	@echo "  tf-plan-target TARGET=<module>       Run terraform plan scoped to a single module"
-	@echo "  tf-apply-target TARGET=<module>      Run terraform apply scoped to a single module"
+	@echo "  tf-plan-target MODULE=<module>       Run terraform plan scoped to a single module"
+	@echo "  tf-apply-target MODULE=<module>      Run terraform apply scoped to a single module"
+	@echo "  tf-plan-target RESOURCE=<type>.<name>  Run terraform plan scoped to a single resource"
+	@echo "  tf-apply-target RESOURCE=<type>.<name> Run terraform apply scoped to a single resource"
 	@echo "  update-github-ssh-keys              Update SSH keys on all servers from GitHub"
 	@echo "  vagrant                             Install vagrant plugins and ensure requirements are present"
 	@echo ""
@@ -91,7 +93,9 @@ help:
 	@echo "  SKIP_TAGS      Skip plays/tasks with these tags (optional, space or comma separated)"
 	@echo "  STAGE          Target stage: staging, production or all (required by check-righttoknow/apply-righttoknow only)"
 	@echo "  TAGS           Only run plays/tasks tagged with these (optional, space or comma separated)"
-	@echo "  TARGET         Terraform module name (required by tf-plan-target/tf-apply-target, will list options if not supplied)"
+	@echo "  MODULE         Terraform module name for tf-plan-target/tf-apply-target (lists options if not supplied)"
+	@echo "  RESOURCE       Terraform resource address <type>.<name> for tf-plan-target/tf-apply-target, instead of MODULE"
+	@echo "                 Find it in plan output ('  # <type>.<name> will be ...') or a 'resource \"<type>\" \"<name>\" {' block"
 
 setup:
 	sudo apt install parallel jq direnv
@@ -270,19 +274,31 @@ tf-check-fmt:
 	@echo "PASSED tf-check-fmt!"
 
 check-target:
-ifndef TARGET
-	@echo "ERROR: TARGET is not set! Available targets are:"
-	@ls -1 terraform/ | grep -E '^[a-z]' | grep -v '\.tf$$' | sed 's/^/  /'
+ifdef MODULE
+ifdef RESOURCE
+	@echo "ERROR: Set only one of MODULE or RESOURCE, not both!"
 	@exit 1
 endif
+endif
+ifndef MODULE
+ifndef RESOURCE
+	@echo "ERROR: MODULE or RESOURCE must be set! Available modules are:"
+	@ls -1 terraform/ | grep -E '^[a-z]' | grep -v '\.tf$$' | sed 's/^/  /'
+	@echo "Or set RESOURCE=<type>.<name> for a single resource, e.g. RESOURCE=aws_db_instance.maindb"
+	@echo "  Find <type>.<name> in plan output ('  # <type>.<name> will be ...') or a 'resource \"<type>\" \"<name>\" {' block in a .tf file"
+	@exit 1
+endif
+endif
+
+TF_TARGET := $(if $(MODULE),module.$(MODULE),$(RESOURCE))
 
 tf-plan-target: check-target tf-secrets tf-env-check .make/terraform
-	terraform -chdir=terraform plan -target=module.$(TARGET)
+	terraform -chdir=terraform plan -target=$(TF_TARGET)
 
 tf-apply-target: check-target tf-secrets tf-env-check .make/terraform
-	bin/tag-provisioning --wip terraform "$(TARGET)" "" ""
-	terraform -chdir=terraform apply -target=module.$(TARGET)
-	bin/tag-provisioning terraform "$(TARGET)" "" ""
+	bin/tag-provisioning --wip terraform "$(TF_TARGET)" "" ""
+	terraform -chdir=terraform apply -target=$(TF_TARGET)
+	bin/tag-provisioning terraform "$(TF_TARGET)" "" ""
 
 stage_required:
 ifndef STAGE
