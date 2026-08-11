@@ -1,0 +1,132 @@
+---
+# tasks file for postal
+- name: Install packages needed by docker and the postal installer
+  apt:
+    pkg:
+      - ca-certificates
+      - curl
+      - git
+      - jq
+      - python3-docker
+    cache_valid_time: 300
+
+- name: Ensure /etc/apt/keyrings exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Ensure that we have the Docker repository key
+  get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: '0644'
+
+- name: Ensure that we have the docker repository
+  apt_repository:
+    repo: >-
+      deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc]
+      https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+
+- name: Install docker
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+
+- name: Configure docker log rotation
+  template:
+    src: docker-daemon.json.j2
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+  notify: Restart docker
+
+- name: Clone the postal installation helper
+  git:
+    repo: https://github.com/postalserver/install
+    dest: /opt/postal/install
+    version: main
+    # `postal upgrade` does its own git pull; don't pull unsupervised
+    update: false
+
+- name: Symlink the postal command
+  file:
+    src: /opt/postal/install/bin/postal
+    dest: /usr/bin/postal
+    state: link
+
+- name: Run MariaDB for postal
+  docker_container:
+    name: postal-mariadb
+    image: "{{ postal_mariadb_image }}"
+    restart_policy: always
+    published_ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - /opt/postal/mariadb-data:/var/lib/mysql
+    command: "--innodb-log-file-size={{ postal_mariadb_innodb_log_file_size }}"
+    env:
+      MARIADB_DATABASE: postal
+      MARIADB_ROOT_PASSWORD: "{{ postal_mariadb_root_password }}"
+    container_default_behavior: no_defaults
+  no_log: true
+
+- name: Generate the docker-compose file for the pinned postal version
+  command: "postal set-version {{ postal_version }}"
+  args:
+    creates: /opt/postal/install/docker-compose.yml
+
+- name: Create postal config directory
+  file:
+    path: /opt/postal/config
+    state: directory
+    mode: '0755'
+
+# 0644 rather than something stricter because the config and signing key
+# are read by a non-root user inside the postal containers
+- name: Copy across postal.yml
+  template:
+    src: postal.yml.j2
+    dest: /opt/postal/config/postal.yml
+    mode: '0644'
+  no_log: true
+  notify: Restart postal
+
+- name: Copy across Caddyfile
+  template:
+    src: Caddyfile.j2
+    dest: /opt/postal/config/Caddyfile
+    mode: '0644'
+  notify: Restart caddy
+
+- name: Generate DKIM signing key
+  command: openssl genrsa -out /opt/postal/config/signing.key 1024
+  args:
+    creates: /opt/postal/config/signing.key
+
+- name: Set signing key permissions
+  file:
+    path: /opt/postal/config/signing.key
+    mode: '0644'
+
+- name: Initialize the postal database schema
+  shell: postal initialize && touch /opt/postal/.initialized
+  args:
+    creates: /opt/postal/.initialized
+
+- name: Start postal
+  command: postal start
+  changed_when: false
+
+- name: Run Caddy for SSL termination
+  docker_container:
+    name: postal-caddy
+    image: "{{ postal_caddy_image }}"
+    restart_policy: always
+    network_mode: host
+    volumes:
+      - /opt/postal/config/Caddyfile:/etc/caddy/Caddyfile
+      - /opt/postal/caddy-data:/data
+    container_default_behavior: no_defaults

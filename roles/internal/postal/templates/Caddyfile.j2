@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+{{ postal_web_hostname }} {
+  reverse_proxy 127.0.0.1:5000
+}
+
+track.{{ postal_web_hostname }} {
+  reverse_proxy 127.0.0.1:5000 {
+    header_up X-Postal-Track-Host "1"
+  }
+}

@@ -1,0 +1,23 @@
+---
+# defaults file for postal
+postal_web_hostname: postal.oaf.org.au
+
+# Version of postal to install. Upgrades are done manually on the server
+# with `postal upgrade <version>` (see the README).
+postal_version: 3.3.7
+
+postal_mariadb_image: mariadb:11.4
+postal_caddy_image: caddy:2
+
+# Postal requires this to be at least 10x the size of the largest
+# message you intend to send
+postal_mariadb_innodb_log_file_size: 256M
+
+# Used for messages sent by the postal management system itself
+# (e.g. password resets)
+postal_smtp_from_name: Postal
+postal_smtp_from_address: postal@oaf.org.au
+
+# Stop docker container logs filling the disk
+postal_docker_log_max_size: 50m
+postal_docker_log_max_file: "5"
