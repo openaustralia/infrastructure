@@ -57,6 +57,24 @@ resource "linode_firewall" "main" {
   }
 
   inbound {
+    label    = "allow-smtps"
+    action   = "ACCEPT"
+    protocol = "TCP"
+    ports    = "465"
+    ipv4     = ["0.0.0.0/0"]
+    ipv6     = ["::/0"]
+  }
+
+  inbound {
+    label    = "allow-smtp-submission"
+    action   = "ACCEPT"
+    protocol = "TCP"
+    ports    = "587"
+    ipv4     = ["0.0.0.0/0"]
+    ipv6     = ["::/0"]
+  }
+
+  inbound {
     label    = "allow-http"
     action   = "ACCEPT"
     protocol = "TCP"
