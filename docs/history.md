@@ -4,13 +4,13 @@
 
 <!-- vscode-markdown-toc -->
 - [History](#history)
-  - [A little history](#a-little-history)
+  - [A little history](#alittlehistory)
   - [Approach](#approach)
   - [Updates](#updates)
     - [2025-05-27](#2025-05-27)
-      - [Supported Platforms](#supported-platforms)
-      - [RightToKnow Dev platform](#righttoknow-dev-platform)
-      - [PlanningAlerts Production](#planningalerts-production)
+      - [Supported Platforms](#supportedplatforms)
+      - [RightToKnow Dev platform](#righttoknowdevplatform)
+      - [PlanningAlerts Production](#planningalertsproduction)
     - [2018-05-26](#2018-05-26)
 
 <!-- vscode-markdown-toc-config
@@ -19,7 +19,7 @@
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
 
-## <a name='Alittlehistory'></a>A little history
+## <a name='alittlehistory'></a>A little history
 
 When OpenAustralia Foundation started, it just ran openaustralia.org and a
 blog site. Hosting was kindly sponsored by Andrew Snow from Octopus
@@ -63,7 +63,7 @@ provider, migrate all our services, and shut down everything on Octopus.
 So, we picked up the work that we started in 2015 with, at a high level,
 a very similar approach.
 
-## <a name='Approach'></a>Approach
+## <a name='approach'></a>Approach
 
 - Split services into separate VMs - make each service easier to maintain on its
   own.
@@ -75,13 +75,13 @@ a very similar approach.
   any hosting provider.
 - Spend a bit more money on hosting if it means less maintenance.
 
-## <a name='Updates'></a>Updates
+## <a name='updates'></a>Updates
 
 ### <a name=''></a>2025-05-27
 
 _Umm. 7 years later, plus one day. That's weird._
 
-#### <a name='SupportedPlatforms'></a>Supported Platforms
+#### <a name='supportedplatforms'></a>Supported Platforms
 
 In the past, the tools in this repo were well supported across most common Linux platforms (including WSL), and OS X. However, newer versions of OSX only run on ARM chips, and older versions of OS X are increasingly unsupported by tools such as VirtualBox and Docker.
 
@@ -89,11 +89,11 @@ As of today, the only platform that we know works is debian-based Linux systems.
 
 We'd like to expand this in future, when we have time
 
-#### <a name='RightToKnowDevplatform'></a>RightToKnow Dev platform
+#### <a name='righttoknowdevplatform'></a>RightToKnow Dev platform
 
 We've moved RTK on to upstream Alavateli, so the instructions below for a dev environment are out of date. Please refer to [openaustralia/righttoknow](https://github.com/openaustralia/righttoknow?tab=readme-ov-file#development)'s README for instructions.
 
-#### <a name='PlanningAlertsProduction'></a>PlanningAlerts Production
+#### <a name='planningalertsproduction'></a>PlanningAlerts Production
 
 We now have two production servers. Every day deployment is still run by Capistrano. For major upgrades (e.g., updating the Ruby version), we have the option of a blue/green deployment driven by Terraform, allowing us to update without downtime.
 

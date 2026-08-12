@@ -4,7 +4,8 @@
 
 <!-- vscode-markdown-toc -->
 - [Automated setup and configuration for most of OpenAustralia Foundation's servers](#automated-setup-and-configuration-for-most-of-openaustralia-foundations-servers)
-  - [The tools](#the-tools)
+  - [Other Documents](#otherdocuments)
+  - [The tools](#thetools)
   - [Provisioning](#provisioning)
     - [Provisioning local development servers using Vagrant](#provisioning-local-development-servers-using-vagrant)
     - [Provisioning production servers](#provisioning-production-servers)
@@ -21,6 +22,8 @@
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
 
+## <a name='otherdocuments'></a>Other Documents
+
 History and background context (including the changelog-style "Updates" entries) has moved to
 [docs/history.md](docs/history.md).
 
@@ -29,7 +32,10 @@ See [AGENTS.md](AGENTS.md) for AI Agent guidelines.
 See [docs/DECISIONS.md](docs/DECISIONS.md) for Cross-cutting engineering decisions and directives that aren't tied to
 one file or area. 
 
-## <a name='Thetools'></a>The tools
+One-time setup instructions (prerequisites, credentials, the Ansible Vault password, and generating dev SSL
+certificates) have moved to [INSTALL.md](INSTALL.md).
+
+## <a name='thetools'></a>The tools
 
 To get a completely working server and service up and running requires a number
 of different tools. We use different tools for different things.
@@ -77,9 +83,6 @@ un-rendered template.
 role's `templates/` directory does not end in `.j2`, and it runs in CI.
 Third-party roles under `roles/external/` are not checked, as we don't control
 their layout.
-
-One-time setup instructions (prerequisites, credentials, the Ansible Vault password, and generating dev SSL
-certificates) have moved to [INSTALL.md](INSTALL.md).
 
 ## <a name='Provisioning'></a>Provisioning
 
