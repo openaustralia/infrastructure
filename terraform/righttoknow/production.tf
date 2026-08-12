@@ -34,7 +34,7 @@ resource "aws_instance" "production" {
   ]
 
   availability_zone    = aws_ebs_volume.production_data.availability_zone
-  iam_instance_profile = var.instance_profile.name
+  iam_instance_profile = module.instance_role.instance_profile.name
 
   # Disable termination to protect production
   disable_api_termination = true

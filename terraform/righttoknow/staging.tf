@@ -33,7 +33,7 @@ resource "aws_instance" "staging" {
   ]
 
   availability_zone    = aws_ebs_volume.staging_data.availability_zone
-  iam_instance_profile = var.instance_profile.name
+  iam_instance_profile = module.instance_role.instance_profile.name
 
   # Allow termination for staging
   disable_api_termination = false
