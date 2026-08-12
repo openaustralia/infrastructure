@@ -13,6 +13,7 @@
   - [Deploying](#deploying)
   - [Backups](#backups)
   - [Git Tags](#gittags)
+  - [Mail Catching](#mail-catching)
 
 <!-- vscode-markdown-toc-config
 	numbering=false
@@ -22,6 +23,11 @@
 
 History and background context (including the changelog-style "Updates" entries) has moved to
 [docs/history.md](docs/history.md).
+
+See [AGENTS.md](AGENTS.md) for AI Agent guidelines.
+
+See [docs/DECISIONS.md](docs/DECISIONS.md) for Cross-cutting engineering decisions and directives that aren't tied to
+one file or area. 
 
 ## <a name='Thetools'></a>The tools
 
@@ -193,5 +199,7 @@ Terraform tags (from `make tf-apply`) will start with `[wip-]terraform` and then
 
 Ansible tags (from `make apply-*`) will start with the service being targetted, and then have the timestamp, followed
 by the `STAGE`, `TAGS`, and `SKIP_TAGS` values, if set.
+
+## <a name='MailCatching'></a>Mail Catching
 
 Mail catching configuration has moved to [docs/openaustralia.md](docs/openaustralia.md).
