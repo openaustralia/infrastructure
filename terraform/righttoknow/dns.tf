@@ -157,6 +157,14 @@ resource "cloudflare_record" "www_staging" {
   proxied = false
 }
 
+resource "cloudflare_record" "staging_test" {
+  zone_id = cloudflare_zone.main.id
+  name    = "staging-test.righttoknow.org.au"
+  type    = "CNAME"
+  value   = cloudflare_tunnel.righttoknow_staging_test.cname
+  proxied = true
+}
+
 resource "cloudflare_record" "staging-spf" {
   zone_id = cloudflare_zone.main.id
   name    = "staging.righttoknow.org.au"
