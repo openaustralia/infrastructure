@@ -21,8 +21,8 @@ Consequences that span the repo:
   provisioned (`roles/internal/postal/`) from this repository - cuttlefish/morph provisioning lives in their app
   repos.
 - Postal runs via Docker using the official [postalserver/install](https://github.com/postalserver/install)
-  helper; the `postal_version` is pinned in the role defaults and upgrades are manual (see README "Setting up the
-  postal mail server").
+  helper; the `postal_version` is pinned in the role defaults and upgrades are manual (see
+  [docs/POSTAL.md](POSTAL.md)).
 - Applications will migrate off cuttlefish one at a time; per-domain SPF/DKIM records move into each service's
   `dns.tf` as they do. Cuttlefish decommissioning, `_spf1.oaf.org.au` cleanup and DMARC tightening
   (#360/#361/#363) are follow-ups tracked on #365.

@@ -140,9 +140,8 @@ On Linode running as separate VMs with automated server configuration:
 - morph.io - automated server configuration using Ansible at
   <https://github.com/openaustralia/morph/tree/master/provisioning>
 - postal.oaf.org.au - [Postal](https://github.com/postalserver/postal) mail
-  server replacing cuttlefish. Unlike cuttlefish and morph, it is assembled
-  (`terraform/postal/`) and provisioned (`roles/internal/postal/`) from this
-  repository.
+  server replacing cuttlefish, assembled and provisioned from this repository -
+  see [docs/POSTAL.md](docs/POSTAL.md)
 
 If it makes sense we might move cuttlefish and morph.io to AWS as well.
 
@@ -399,38 +398,8 @@ The repo will be tagged `wip-TARGET_UTC-TIME[_STAGE][-TAGS][-not-SKIP_TAGS]` bef
 which will be replaced with `TARGET_UTC-TIME[_STAGE][-TAGS][-not-SKIP_TAGS]` upon success.
 With tags pushed to origin, so everyone can see what was changed on servers.
 
-### <a name='Settingupthepostalmailserver'></a>Setting up the postal mail server
-
-The [Postal](https://github.com/postalserver/postal) mail server
-(postal.oaf.org.au) is assembled with Terraform (`terraform/postal/` - Linode
-instance, reverse DNS and Cloudflare DNS records) and provisioned with Ansible
-(`roles/internal/postal/` - Docker, MariaDB, the official
-[postalserver/install](https://github.com/postalserver/install) helper and
-Caddy for SSL termination):
-
-    make tf-plan-target MODULE=postal   # then tf-apply-target when happy
-    make check-postal
-    make apply-postal
-
-After the first provisioning run there are some one-off manual steps:
-
-1. Create a global admin user: SSH to the server and run `postal make-user`
-2. Add the DKIM record for the return path domain: run
-   `postal default-dkim-record` on the server and add the TXT record it
-   prints (`postal._domainkey.rp.postal.oaf.org.au`) to `terraform/postal/dns.tf`
-3. Log into <https://postal.oaf.org.au>, create an organisation and a mail
-   server per application, and add each sending domain (which will show the
-   per-domain SPF/DKIM records to add to that domain's `dns.tf`)
-4. Generate SMTP credentials for postal's own system emails and set
-   `postal_system_smtp_username`/`postal_system_smtp_password` (vaulted) in
-   `group_vars/postal.yml`
-
-Upgrades are deliberately manual: bump `postal_version` in
-`roles/internal/postal/defaults/main.yml`, then run `postal upgrade <version>`
-on the server (which pulls the install helper repo and migrates the database).
-
-Note: Linode blocks SMTP ports on newly created instances for some accounts -
-if outbound port 25 is blocked, open a Linode support ticket to lift it.
+The postal mail server needs Terraform and some one-off manual steps as well as Ansible -
+see [docs/POSTAL.md](docs/POSTAL.md).
 
 ### <a name='ForciblyrenewingLetsEncryptcertificatesonproductionservers'></a>Forcibly renewing LetsEncrypt certificates on production servers
 
