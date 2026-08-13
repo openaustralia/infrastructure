@@ -134,14 +134,14 @@ dependencies:
   #       schedule: 0 2 * * *
   #       source: /data
   #       action: backup_verify_purge --force
-  #       target: "s3://s3.amazonaws.com/oaf-backups/openaustralia/{{ public_hostname }}/data"
+  #       target: "s3://s3.amazonaws.com/oaf-backups/openaustralia/{{ log_name }}/data"
 
   - role: oaf.restic
     restic_profiles:
       - name: openaustralia_data
         schedule: "0 3 * * *"
         source: /data
-        repository: "s3:s3.amazonaws.com/oaf-backups/openaustralia/{{ public_hostname }}/restic"
+        repository: "s3:s3.amazonaws.com/oaf-backups/openaustralia/{{ log_name }}/restic"
         password: "{{ restic_password }}"
         aws_access_key_id: "{{ backup_target_user }}"
         aws_secret_access_key: "{{ backup_target_pass }}"
