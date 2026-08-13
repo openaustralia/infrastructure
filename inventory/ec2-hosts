@@ -16,36 +16,36 @@
 
 [ec2]
 # NOTE: The planning alerts servers are NOT in ec2!
-srv.theyvoteforyou.org.au
-openaustralia.org.au
+# srv.theyvoteforyou.org.au
+# openaustralia.org.au
 #staging.righttoknow.org.au
-prod.righttoknow.org.au
-au.proxy.oaf.org.au
-web.metabase.oaf.org.au
-vpn.oaf.org.au
+# prod.righttoknow.org.au
+# au.proxy.oaf.org.au
+# web.metabase.oaf.org.au
+# vpn.oaf.org.au
 
 # [catch_all_mail:children]
 # righttoknow_staging
 
 [metabase]
-web.metabase.oaf.org.au
+# web.metabase.oaf.org.au
 
 [openaustralia]
-openaustralia.org.au
+# openaustralia.org.au
 
 [openvpn]
 52.64.33.12 ansible_user=ubuntu ansible_ssh_private_key_file=terraform.pem
 
 [planningalerts]
-ec2-3-27-58-54.ap-southeast-2.compute.amazonaws.com
-ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
+# ec2-3-27-58-54.ap-southeast-2.compute.amazonaws.com
+# ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 
 # NOTE: The postal server is a Linode instance, NOT ec2 - see terraform/postal
 [postal]
 postal.oaf.org.au
 
 [proxy]
-au.proxy.oaf.org.au
+# au.proxy.oaf.org.au
 
 # Group for all sites that use and thus need information on the MySQL 8.x RDS instance
 [requires_mysql:children]
@@ -63,11 +63,11 @@ righttoknow_production
 # righttoknow_staging
 
 [righttoknow_production]
-prod.righttoknow.org.au
+# prod.righttoknow.org.au
 
 # [righttoknow_staging]
 #staging.righttoknow.org.au
 
 [theyvoteforyou]
-srv.theyvoteforyou.org.au
+# srv.theyvoteforyou.org.au
 

@@ -14,8 +14,12 @@ resource "aws_instance" "openvpn" {
   user_data = file("${path.module}/vpn-user-data.sh")
 
   tags = {
-    Name = "openvpn-server"
-    Role = "vpn"
+    Name           = "openvpn-server"
+    Role           = "vpn"
+    PublicHostname = "vpn.oaf.org.au"
+    # Not worth chasing the inventory/ec2-hosts vpn.oaf.org.au vs 52.64.33.12 mess further -
+    # this server's slated to be retired soon anyway (see issue #558).
+    LogName = "vpn.oaf.org.au"
   }
 
   root_block_device {
