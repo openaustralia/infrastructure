@@ -54,6 +54,8 @@ help:
 	@echo "  setup                               Install ubuntu packages required for development"
 	@echo "  show-inventory                      Show the group/host tree from both inventory sources (--graph)"
 	@echo "  show-aws-inventory                  Terse table of every instance the aws_ec2 dynamic source discovers, with tags"
+	@echo "  ssh-config                          Output configuration snippet for OpenSSH ~/.ssh/config"
+	@echo "  server-status [HOST=<host-or-group>] Quick fleet-wide uptime/memory/disk check"
 	@echo "  show-vars HOST=<host>               Show all Ansible variables for a host"
 	@echo "  show-facts HOST=<host>              Show all Ansible facts for a host"
 	@echo "  show-rds-facts HOST=<host>          Show RDS debug facts for a host"
@@ -251,6 +253,16 @@ endif
 
 show-inventory: requirements
 	.venv/bin/ansible-inventory -i ./inventory --graph
+
+ssh-config:
+	bin/ssh-config
+
+server-status: requirements
+ifdef HOST
+	bin/server-status --limit $(HOST)
+else
+	bin/server-status
+endif
 
 # Terse, human-readable listing of every EC2 instance the aws_ec2 dynamic inventory plugin
 # discovers - instance-id, state, Name tag, IPs, and AnsibleGroups tag ("-" if unmanaged/not yet
