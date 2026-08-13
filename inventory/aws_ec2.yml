@@ -5,17 +5,20 @@ regions:
 # Only discover instances explicitly opted in via a non-blank AnsibleGroups tag (set in
 # Terraform) - deliberately NOT every EC2 instance in the account. Untagged/not-yet-migrated
 # hosts (the untouched rest of the fleet, stray old/stopped instances, etc.) must never appear
-# here at all: this inventory is the trigger for locking sshd to 127.0.0.1 (see
-# roles/internal/deploy-user), so membership has to mean "explicitly declared SSM-ready", not
-# "AWS happens to know this instance exists".
+# here at all - membership has to mean "explicitly declared SSM-ready", not "AWS happens to know
+# this instance exists".
 filters:
   tag-key: AnsibleGroups
 exclude_filters:
   - tag:AnsibleGroups: [""]
-# Name hosts by their Name tag (human-readable in logs/output), not instance-id or DNS name -
-# but see compose below, which points the actual SSH connection at the instance-id regardless.
+# Name hosts by their LogName tag, not Name or instance-id/DNS name - but see compose below, which
+# points the actual SSH connection at the instance-id regardless. Name would collide with several
+# static-inventory group names (e.g. the "metabase"/"theyvoteforyou" instances are literally named
+# that, same as the group), and PublicHostname isn't unique enough (deliberately identical across
+# a blue/green fleet - see group_vars/all.yml). LogName is unique per-instance by design and
+# happens to restore each host's original static-inventory name too.
 hostnames:
-  - tag:Name
+  - tag:LogName
 keyed_groups:
   # AnsibleGroups is a comma-separated tag (set in Terraform) listing every group a host is a
   # member of, flattened to include groups only reached via `:children` in inventory/ec2-hosts.

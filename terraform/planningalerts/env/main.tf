@@ -28,6 +28,20 @@ resource "aws_instance" "main" {
     Application = "planningalerts"
     BlueGreen   = var.env_name
     Roles       = "app,web,db"
+    # Same value across every instance in the blue/green fleet, unlike Name - see group_vars/ssm.yml
+    PublicHostname = "www.planningalerts.org.au"
+    # Deliberately mirrors Name (not the old static-inventory hostname, unlike other services) -
+    # this fleet's instances get replaced regularly (blue/green cutovers), so a snapshot of the
+    # previous ec2-*.compute.amazonaws.com hostname would likely go stale before the next
+    # replacement anyway, whereas Name stays self-consistent regardless of replacement. Costs a
+    # one-time CloudWatch log stream rename now - see the PR description for exactly what renamed
+    # to what.
+    LogName = "web${count.index + 1}.${var.env_name}.planningalerts"
+    # Flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (requires_postgresql) - see inventory/aws_ec2.yml. Deliberately no "ec2" group -
+    # per inventory/ec2-hosts' own "the planning alerts servers are NOT in ec2!" comment, so
+    # group_vars/ec2.yml's base_domain: org.au doesn't newly apply.
+    AnsibleGroups = "planningalerts,requires_postgresql"
   }
   security_groups      = var.security_groups
   iam_instance_profile = var.iam_instance_profile

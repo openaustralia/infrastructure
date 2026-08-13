@@ -16,6 +16,9 @@ resource "aws_instance" "staging" {
     # Matches the exact old static-inventory hostname, so migrating to the dynamic inventory
     # doesn't move backup_hostname (see group_vars/all.yml/ssm.yml) and orphan backup history.
     PublicHostname = "staging.righttoknow.org.au"
+    # This host is already on the dynamic inventory, so there's no separate history to preserve -
+    # matches inventory/ec2-hosts' commented-out entry for it either way.
+    LogName = "staging.righttoknow.org.au"
   }
 
   # Increase root volume size to 20GB to allow for more packages and data
