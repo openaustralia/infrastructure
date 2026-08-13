@@ -8,9 +8,6 @@
 # The grouping of CIDRs across the four rules matches what was created in the console.
 # Each ALB rule condition allows a limited number of values, so ranges were added in
 # batches as they were identified.
-#
-# The `import` blocks below adopt the existing rules into Terraform state rather than
-# creating new ones. They are a no-op once applied and can be deleted after that.
 
 resource "aws_lb_listener_rule" "blocked_source_ips_1" {
   listener_arn = aws_lb_listener.main-https.arn
@@ -108,24 +105,4 @@ resource "aws_lb_listener_rule" "blocked_source_ips_4" {
       ]
     }
   }
-}
-
-import {
-  to = aws_lb_listener_rule.blocked_source_ips_1
-  id = "arn:aws:elasticloadbalancing:ap-southeast-2:924104513718:listener-rule/app/main/849a14c4221ca5aa/72e3742ac1d27ba5/ee1f77e92714910e"
-}
-
-import {
-  to = aws_lb_listener_rule.blocked_source_ips_2
-  id = "arn:aws:elasticloadbalancing:ap-southeast-2:924104513718:listener-rule/app/main/849a14c4221ca5aa/72e3742ac1d27ba5/4fa21e780fccf5a1"
-}
-
-import {
-  to = aws_lb_listener_rule.blocked_source_ips_3
-  id = "arn:aws:elasticloadbalancing:ap-southeast-2:924104513718:listener-rule/app/main/849a14c4221ca5aa/72e3742ac1d27ba5/46780b135a3a4302"
-}
-
-import {
-  to = aws_lb_listener_rule.blocked_source_ips_4
-  id = "arn:aws:elasticloadbalancing:ap-southeast-2:924104513718:listener-rule/app/main/849a14c4221ca5aa/72e3742ac1d27ba5/e7f0ef90383f0369"
 }
