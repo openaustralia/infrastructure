@@ -16,7 +16,12 @@ resource "aws_instance" "main" {
   ebs_optimized = true
   key_name      = var.deployer_key.key_name
   tags = {
-    Name = "theyvoteforyou"
+    Name           = "theyvoteforyou"
+    PublicHostname = "theyvoteforyou.org.au"
+    LogName        = "srv.theyvoteforyou.org.au"
+    # Flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (requires_mysql) - see inventory/aws_ec2.yml.
+    AnsibleGroups = "ec2,theyvoteforyou,requires_mysql"
   }
   vpc_security_group_ids  = [var.security_group.id, var.security_group_service.id]
   disable_api_termination = true

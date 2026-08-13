@@ -14,7 +14,12 @@ resource "aws_instance" "main" {
   ebs_optimized = true
   key_name      = "deployer_key"
   tags = {
-    Name = "metabase"
+    Name           = "metabase"
+    PublicHostname = "metabase.oaf.org.au"
+    LogName        = "web.metabase.oaf.org.au"
+    # Flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (requires_postgresql) - see inventory/aws_ec2.yml.
+    AnsibleGroups = "ec2,metabase,requires_postgresql"
   }
   security_groups = [var.security_group_behind_lb.name]
 
