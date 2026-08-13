@@ -17,6 +17,6 @@ cd "$(dirname "$0")/.." || exit 1
   .venv/bin/ansible-inventory -i ./inventory/aws_ec2.yml --list 2>/dev/null |
     jq -r '
       ._meta.hostvars | to_entries[] |
-      [(.value.tags.LogName // "-"), (.value.tags.Name // "-"), (if .value.tags.PublicHostname then "https://" + .value.tags.PublicHostname else "-" end), (.value.ansible_host // "-"), .value.state.name, (.value.private_ip_address // "-"), (.value.public_ip_address // "-"), (.value.tags.AnsibleGroups // "-")] | @tsv
+      [(.value.tags.LogName // "-"), (.value.tags.Name // "-"), (if .value.tags.PublicHostname then "https://" + .value.tags.PublicHostname else "-" end), (.value.ansible_host // "-"), (.value.state.name // "-"), (.value.private_ip_address // "-"), (.value.public_ip_address // "-"), (.value.tags.AnsibleGroups // "-")] | @tsv
     ' | sort
 } | column -t -s $'\t'
