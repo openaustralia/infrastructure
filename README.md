@@ -12,6 +12,7 @@
     - [Provisioning production servers](#provisioning-production-servers)
     - [Forcibly renewing LetsEncrypt certificates on production servers](#forcibly-renewing-letsencrypt-certificates-on-production-servers)
       - [Filtering hosts and/or tasks performed](#filtering-hosts-andor-tasks-performed)
+  - [Accessing servers](#accessingservers)
   - [Deploying](#deploying)
   - [Backups](#backups)
   - [Git Tags](#gittags)
@@ -439,6 +440,26 @@ You can also set:
 - `ANSIBLE_SKIP_TAGS` - skips tasks / roles that have one of the comma-separated roles
 - `ANSIBLE_VERBOSE` - set to one to four 'v's eg `ANSIBLE_VERBOSE=vvv make apply-openaustralia` will show a lot of diagnostic information from ansible
 - `ANSIBLE_START_TASK` - set to part of the task description to have ansible skip to that task, which allows you to quickly debug after a failure
+
+## <a name='Accessingservers'></a>Accessing servers
+
+Direct SSH access is being phased out in favour of AWS SSM Session Manager. For any instance with a
+`PublicHostname` tag set:
+
+    make ssh-config
+
+prints an OpenSSH `~/.ssh/config` block - one `Host` entry per instance, aliased by its public hostname, `Name`
+tag, and instance ID, proxying through SSM rather than a direct network connection. Paste the output into your
+own `~/.ssh/config` yourself; it's not written there automatically. Re-run and re-paste after any instance
+replacement (blue/green cutover, AMI refresh, etc.), since the resolved instance IDs go stale.
+
+For a quick fleet-wide health check:
+
+    make server-status
+
+runs `uptime`, `free -m`, `df` (space and inodes), and a failed-systemd-units check against every host in
+inventory. Scope it to one host or group with `HOST=<host-or-group>`, e.g. `make server-status
+HOST=planningalerts`.
 
 ## <a name='Deploying'></a>Deploying
 
