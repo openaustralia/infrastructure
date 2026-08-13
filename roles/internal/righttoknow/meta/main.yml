@@ -17,7 +17,7 @@ dependencies:
   #     - name: righttoknow_data
   #       schedule: 0 2 * * *
   #       source: /data
-  #       target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ public_hostname }}/data"
+  #       target: "s3://s3.amazonaws.com/oaf-backups/righttoknow/{{ log_name }}/data"
   #       exclude:
   #         - "**/bundle"
   #         - "**/cache"
@@ -30,7 +30,7 @@ dependencies:
       - name: righttoknow_data
         schedule: "0 3 * * *"
         source: /data
-        repository: "s3:s3.amazonaws.com/oaf-backups/righttoknow/{{ public_hostname }}/restic"
+        repository: "s3:s3.amazonaws.com/oaf-backups/righttoknow/{{ log_name }}/restic"
         password: "{{ restic_password }}"
         aws_access_key_id: "{{ backup_target_user }}"
         aws_secret_access_key: "{{ backup_target_pass }}"
