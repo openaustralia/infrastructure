@@ -11,6 +11,15 @@ resource "aws_instance" "production" {
     Name        = "righttoknow-production"
     Environment = "production"
     Purpose     = "Ubuntu 22.04 Production Server"
+    # Deliberately the real (redirect-target) public domain, not the old static-inventory
+    # hostname - see group_vars/all.yml/ssm.yml for how this is used.
+    PublicHostname = "www.righttoknow.org.au"
+    # Matches the old static-inventory hostname (prod.righttoknow.org.au), so CloudWatch log
+    # stream continuity isn't broken by this instance moving to the dynamic inventory.
+    LogName = "prod.righttoknow.org.au"
+    # Flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (righttoknow, requires_postgresql) - see inventory/aws_ec2.yml.
+    AnsibleGroups = "ec2,righttoknow_production,righttoknow,requires_postgresql"
   }
 
   # Increase root volume size to 20GB to allow for more packages and data

@@ -11,7 +11,12 @@ resource "aws_instance" "production" {
   ebs_optimized = true
   key_name      = "terraform"
   tags = {
-    Name = "openaustralia-prod"
+    Name           = "openaustralia-prod"
+    PublicHostname = "www.openaustralia.org.au"
+    LogName        = "openaustralia.org.au"
+    # Flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (requires_mysql) - see inventory/aws_ec2.yml.
+    AnsibleGroups = "ec2,openaustralia,requires_mysql"
   }
 
   # Increase root volume size to 20GB to allow for more packages and data
