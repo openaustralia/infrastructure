@@ -11,6 +11,12 @@
 
 _STAGE := $(if $(filter-out all,$(STAGE)),_$(STAGE),)
 
+# If terraform/local.tfvars exists (gitignored - never committed), pass it to every tf-plan*/
+# tf-apply* run. Lets a one-off value (e.g. a differently-scoped Cloudflare/Linode token, when the
+# 1Password one is missing a permission a particular task needs) override secrets.auto.tfvars -
+# -var-file is Terraform's highest-precedence source, above *.auto.tfvars.
+TF_VAR_FILE_ARG := $(if $(wildcard terraform/local.tfvars),-var-file=local.tfvars,)
+
 ANSIBLE_TAGS := $(shell echo "$(TAGS)" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//' | sed 's/,$$//')
 ANSIBLE_SKIP_TAGS := $(shell echo "$(SKIP_TAGS)" | sed 's/[^A-Z0-9_]\+/,/gi' | sed 's/,\+/,/g' | sed 's/^,//' | sed 's/,$$//')
 
@@ -303,10 +309,10 @@ tf-init: tf-secrets .make/terraform
 	touch .make/terraform
 
 tf-plan: tf-secrets tf-env-check .make/terraform
-	terraform -chdir=terraform plan
+	terraform -chdir=terraform plan $(TF_VAR_FILE_ARG)
 tf-apply: tf-secrets tf-env-check .make/terraform
 	bin/tag-provisioning --wip terraform "" "" ""
-	terraform -chdir=terraform apply
+	terraform -chdir=terraform apply $(TF_VAR_FILE_ARG)
 	bin/tag-provisioning terraform "" "" ""
 tf-validate: tf-check-fmt .make/terraform
 	terraform -chdir=terraform validate
@@ -335,11 +341,11 @@ endif
 TF_TARGET := $(if $(MODULE),module.$(MODULE),$(RESOURCE))
 
 tf-plan-target: check-target tf-secrets tf-env-check .make/terraform
-	terraform -chdir=terraform plan -target=$(TF_TARGET)
+	terraform -chdir=terraform plan -target=$(TF_TARGET) $(TF_VAR_FILE_ARG)
 
 tf-apply-target: check-target tf-secrets tf-env-check .make/terraform
 	bin/tag-provisioning --wip terraform "$(TF_TARGET)" "" ""
-	terraform -chdir=terraform apply -target=$(TF_TARGET)
+	terraform -chdir=terraform apply -target=$(TF_TARGET) $(TF_VAR_FILE_ARG)
 	bin/tag-provisioning terraform "$(TF_TARGET)" "" ""
 
 stage_required:
