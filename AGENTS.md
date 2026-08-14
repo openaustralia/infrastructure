@@ -138,9 +138,9 @@ by a `wip-<name>` git tag pushed before the change and replaced by the un-prefix
   monitoring. `roles/internal/` are OAF-authored roles — one per service (`righttoknow`, `planningalerts`,
   `theyvoteforyou`, `openaustralia`, `metabase`, `proxy`, `openvpn`) plus shared building blocks used across
   several (`base-server`, `mysql`, `postgresql`, `deploy-user`, `oaf.certbot`, `oaf.backup`, `oaf.restic`,
-  `cloudflare_realip`, `awscloudwatch`) and a few one-way cleanup roles that uninstall a retired tool
-  (`remove_mise`, `remove_rbenv`, `remove_rvm`). `roles/external/` are third-party Galaxy roles installed by
-  `make requirements`/`make roles` (not linted, since we don't control their layout).
+  `cloudflare_realip`, `awscloudwatch`, `rvm.group`) and a few one-way cleanup roles that uninstall a retired
+  tool (`remove_mise`, `remove_rbenv`, `remove_rvm`). `roles/external/` are third-party Galaxy roles installed
+  by `make requirements`/`make roles` (not linted, since we don't control their layout).
 - Inventory and `group_vars/`/`host_vars/` follow standard Ansible layering — most per-service config lives in
   `group_vars/<service>.yml` (e.g. `group_vars/righttoknow.yml`, `group_vars/righttoknow_production.yml`/`_staging.yml`
   for stage overrides). `group_vars/all.yml` holds cross-service defaults (backup settings, `github_users` allowed
