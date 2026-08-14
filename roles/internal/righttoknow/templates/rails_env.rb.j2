@@ -1,0 +1,10 @@
+ENV['RAILS_ENV'] ||= 'production'
+# Log level 'info' was making the log files grow too quickly
+ENV['LOG_LEVEL'] ||= 'warn'
+# Sentry error monitoring, consumed by the righttoknow theme's Sentry.init
+# (the SDK reads both variables natively). This file is loaded from
+# Alaveteli's config/boot.rb, so web (Passenger), sidekiq, the init.d daemons
+# and cron all pick them up. SENTRY_ENVIRONMENT comes from the deploy stage
+# because staging and production both run RAILS_ENV=production.
+ENV['SENTRY_DSN'] ||= '{{ sentry_dsn }}'
+ENV['SENTRY_ENVIRONMENT'] ||= '{{ item }}'

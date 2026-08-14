@@ -115,12 +115,37 @@
     mode: '0644'
   when: "'righttoknow_staging' in group_names"
 
+# The Sentry DSN is assembled in group_vars/all.yml from sentry_host, the
+# per-service sentry_project_id (group_vars/righttoknow.yml) and the per-stage
+# sentry_secret_key (group_vars/righttoknow_{staging,production}.yml). An
+# empty part would render a broken SENTRY_DSN into rails_env.rb and the app
+# would silently report no errors, so fail loudly instead.
+- name: Refuse to write rails_env.rb without complete Sentry credentials
+  ansible.builtin.assert:
+    that:
+      - sentry_host is defined
+      - sentry_host | string | trim | length > 0
+      - sentry_project_id is defined
+      - sentry_project_id | string | trim | length > 0
+      - sentry_secret_key is defined
+      - sentry_secret_key | string | trim | length > 0
+    fail_msg: >-
+      One of sentry_host, sentry_project_id or sentry_secret_key is empty or
+      undefined, which would render a broken SENTRY_DSN into rails_env.rb and
+      silently disable error reporting.
+  when: "'righttoknow_staging' in group_names or 'righttoknow_production' in group_names"
+
 - name: Another Aleveteli config to force production environment
-  copy:
-    src: rails_env.rb
+  template:
+    src: rails_env.rb.j2
     dest: /srv/www/{{ item }}/shared/rails_env.rb
     mode: '0644'
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+  # Environment variables are baked in at process start, so a changed file
+  # only takes effect once Passenger and sidekiq restart
+  notify:
+    - nginx restart
+    - restart sidekiq
 
 - name: Add newrelic configuration to disable agent
   template:
