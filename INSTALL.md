@@ -144,8 +144,33 @@ For a few things, including major PlanningAlerts deployments, you'll need [Terra
 - Run `make tf-secrets` to render `terraform/secrets.auto.tfvars` from 1Password — this provides the `rds_admin_password`, `cloudflare_api_token`, and `linode_api_token` (see [CLI tools for credentials](#cli-tools-for-credentials) above).
 - **AWS** - You need an account with the same permissions as the `ansible` user (from ansible vault) or better
   - to access the S3 bucket we use to store Terraform's permanent state.
-- The `cloudflare_api_token` needs at least `Zone / Zone / Read` perms for planning, and `Zone / Zone / Write` for updating
+- The `cloudflare_api_token` needs these Cloudflare API token permissions:
+  (Left is what it lists, to the right is what
+  you have to select to add it):
+  - `Zone Write` - Add: `Zone` > `Zone` > `Edit`
+  - `Zone Settings Write` - Add: `Zone` > `Zone Settings` > `Edit`
+  - `Zone Custom Asset Write` - Add: `Zone` > `Zone Custom Assets` > `Edit`
+  - `Zone Versioning Write` - Add: `Zone` > `Zone Versioning` > `Edit`
+  - `Zone DNS Settings Write` - Add: `Zone` > `DNS Settings` > `Edit`
+  - `DNS Write` - Add: `Zone` > `DNS` > `Edit`
+  - `Cloudflare Tunnel Write` (new) - Add: `Account` > `Cloudflare Tunnel` > `Edit`
+  - `Cloudflare One Connectors` (new) - Add: `Account` > `Cloudflare One Connector` (not `cloudflared`) > `Write`
+    - **new: Cloudflare Tunnel** need an additional **Account**-scoped permission with Edit/Write access
+    - Cloudflare has renamed this permission more than once, see Cloudflare's
+      own [Tunnel permissions doc](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/remote-tunnel-permissions/)
+    - If created as a personal token,
+      (use Cloudflare dashboard > profile icon (top right) > **API Tokens** >
+      **Create Token** > **Create Custom Token**)
+      it will report instead:
+      - This API token will affect the below accounts and zones, along with their respective permissions
+        - All accounts - Account Custom Assets:Edit, Cloudflare One Connector: cloudflared:Edit, Cloudflare Tunnel:Edit
+        - All zones - DNS Settings:Edit, Zone Versioning:Edit, Zone Settings:Edit, Zone:Edit, DNS:Edit
+    - Note: The 1Password token (`Terraform-Deploy-1Password`) currently covers everything above except the Tunnel permission,
+      scoped to **all zones** in the OAF Cloudflare account (`668e6ebb9952c26ec3c17a85fb3a25a1`).
 - The `linode_api_token` needs at least read access for planning and full access for updating
+- If the 1Password token is missing a new permission, create a `terraform/local.tfvars` (gitignored) file
+  with just the token(s) you need to override, e.g. `cloudflare_api_token = "..."` -
+  every `tf-plan*`/`tf-apply*` target picks it up automatically if it exists
 - Terraform requires that you have [the gCloud CLI](https://cloud.google.com/sdk/docs/install) set up and configured with authentication credentials it can use
   - run `gcloud auth application-default login`
 - See the notes on `terraform/prepkey.sh` in the prerequisites section for how new instances are initially configured with (only) your ssh key.
