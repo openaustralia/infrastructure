@@ -24,6 +24,34 @@ This repo is worked on via terminal Claude Code and other editors alike — keep
 tool-agnostic (plain shell/`make` commands, not editor-specific steps), both when following it and when adding to
 it.
 
+## Contributing
+
+This repo deliberately has **no `CONTRIBUTING.md`, issue template or pull request template of its own**. The
+org-wide files in the [`openaustralia/.github`](https://github.com/openaustralia/.github) repo are authoritative
+here, and only stop applying if a repo-specific `CONTRIBUTING.md` is ever added. Read them before opening a
+branch, PR or issue — `CONTRIBUTING.md`, `PULL_REQUEST_TEMPLATE.md` and `ISSUE_TEMPLATE/`, all under that repo's
+`.github/` directory. A local clone may sit alongside your other OAF checkouts (commonly named `.github` or
+`dot-github`); check for one first, otherwise read them on GitHub.
+
+The parts that come up most often:
+
+- **Branches** follow [Conventional Branch](https://conventionalbranch.org/#summary):
+  `<type>/<issue-number>-<short-description>`, e.g. `feature/123-add-postcode-search`, `bugfix/890-fix-pagination`,
+  `doc/7391-clarify-setup-steps`. Branch off `main` — we use GitHub Flow, so `main` is always production-ready.
+- **Pull requests** open as drafts, fill in the org PR template, link the related issue, and are assigned to the
+  human driving the change. Taking a PR out of draft, once the checks pass, is the author's call.
+- **Commits** carry a [DCO](https://developercertificate.org/) `Signed-off-by` trailer (`git commit -s`), added by
+  a human — see "Working with AI tools" below for how that interacts with agent-staged commits.
+- **AI-assisted work** is disclosed in two places, both naming the specific model: an `Assisted-by:` commit trailer
+  and a note in the pull request description.
+
+CI (`.github/workflows/lint.yaml`) runs on every pull request as four separate checks — `make ansible-lint`,
+`make yaml-lint`, `make template-check` and `make tf-check-fmt`. `make tf-validate` is *not* run in CI. The
+ansible-lint job points `ANSIBLE_CONFIG` at `.github/ansible.cfg` rather than the repo-root `ansible.cfg`, because
+vault passphrases aren't available in CI so `vault_identity_list` has to stay unset there — anything you add that
+needs to decrypt a vault value will pass locally and fail in CI. `.github/CODEOWNERS` requests reviews from
+`@openaustralia/team-infrastructure`.
+
 ## Setup (one-time, per operator)
 
 - Needs Python 3.11 (not 3.12+, which breaks Ansible 2.9/2.10 — see `.python-version`). `mise install` sets up
@@ -35,9 +63,16 @@ it.
   bridges to that session via `credential_process` — see README "CLI tools for credentials" for the `~/.aws/config`
   setup. `aws sso login`/`aws configure` are no longer recommended (no MFA, long-lived creds on disk). Google via
   `gcloud auth application-default login`.
-- `make requirements` — sets up the Python venv, installs ansible-galaxy roles/collections, checks 1Password.
+- `make requirements` — sets up the Python venv, installs ansible-galaxy roles/collections, materialises
+  `terraform.pem`, and runs `op-check`/`aws-check`.
+- `make aws-check` — fails if the `aws` CLI (2.32.0+, needed for `aws login`) or the Session Manager plugin are
+  missing, and bootstraps the `oaf`/`oaf-legacy` profiles in `~/.aws/config` if absent. It only ever writes a
+  profile that isn't there, so an existing customised one is left alone; `[profile oaf]`'s `login_session` ARN is
+  written as a placeholder you're expected to edit with your own username.
 - `make tf-secrets` — renders `terraform/secrets.auto.tfvars` from 1Password (RDS admin password, Cloudflare/Linode
   API tokens) before any `tf-*` target.
+- `make setup` — `apt install`s the Ubuntu packages a dev box needs (`parallel`, `jq`, `direnv`). Linux only;
+  on macOS install those yourself.
 - `make tf-env-check` — non-fatal warning (not a check that fails the build) if `aws sts get-caller-identity` or
   `gcloud auth application-default print-access-token` don't work. It doesn't touch Cloudflare/Linode — those
   tokens come from `make tf-secrets` (1Password), not per-operator credentials.
@@ -62,8 +97,10 @@ TAGS=foo SKIP_TAGS=bar make apply-X    # limit/skip Ansible tags
 ANSIBLE_VERBOSE=vvv make apply-X       # verbose ansible-playbook output
 make all                               # run site.yml against every host
 make retry                             # re-run site.yml limited to hosts that failed last time
+make show-inventory                    # list every host in the EC2 inventory
 make show-vars HOST=<host>             # dump all Ansible vars for a host
 make show-facts HOST=<host>            # dump all Ansible facts for a host
+make show-rds-facts HOST=<host>        # dump the RDS debug facts for a host
 make letsencrypt                       # force-renew all registered LetsEncrypt certs
 
 # Terraform (tf-plan/tf-apply/tf-*-target depend on tf-secrets+tf-env-check; tf-validate/tf-check-fmt need neither)
@@ -71,7 +108,9 @@ make tf-plan / make tf-apply           # plan/apply the whole terraform/ config
 make tf-plan-target MODULE=<module>    # scope to one module, e.g. MODULE=planningalerts
 make tf-plan-target RESOURCE=<type>.<name> # scope to one resource, e.g. RESOURCE=aws_db_instance.maindb
 make tf-validate                       # tf-check-fmt + terraform validate (no 1Password/AWS access needed)
+make tf-init                           # terraform init — ask first, it can migrate state if the backend changed
 
+make scan-<site>                       # linkchecker crawl to log/scan_<site>.html (oaf, openaustralia, planningalerts)
 make vagrant                           # install the vagrant plugin/dev certs/requirements needed before `vagrant up`
 make clean / make clobber              # clean removes venv/roles/collections; clobber also removes .vagrant/log
 ```
@@ -96,9 +135,12 @@ by a `wip-<name>` git tag pushed before the change and replaced by the un-prefix
   major upgrades (e.g. Ruby version bumps); everyday deploys still go through Capistrano.
 - **Ansible** (`site.yml`, `roles/`, `group_vars/`, `host_vars/`, `inventory/`) configures the OS and services on
   top of instances Terraform created: packages, users, MySQL/PostgreSQL, nginx/Apache + certbot, cron, backups,
-  monitoring. `roles/internal/` are OAF-authored roles (one per service, e.g. `righttoknow`, `planningalerts`,
-  `theyvoteforyou`, `mysql`, `base-server`, `oaf.certbot`, `oaf.backup`); `roles/external/` are third-party
-  Galaxy roles installed by `make requirements`/`make roles` (not linted, since we don't control their layout).
+  monitoring. `roles/internal/` are OAF-authored roles — one per service (`righttoknow`, `planningalerts`,
+  `theyvoteforyou`, `openaustralia`, `metabase`, `proxy`, `openvpn`) plus shared building blocks used across
+  several (`base-server`, `mysql`, `postgresql`, `deploy-user`, `oaf.certbot`, `oaf.backup`, `oaf.restic`,
+  `cloudflare_realip`, `awscloudwatch`, `rvm.group`) and a few one-way cleanup roles that uninstall a retired
+  tool (`remove_mise`, `remove_rbenv`, `remove_rvm`). `roles/external/` are third-party Galaxy roles installed
+  by `make requirements`/`make roles` (not linted, since we don't control their layout).
 - Inventory and `group_vars/`/`host_vars/` follow standard Ansible layering — most per-service config lives in
   `group_vars/<service>.yml` (e.g. `group_vars/righttoknow.yml`, `group_vars/righttoknow_production.yml`/`_staging.yml`
   for stage overrides). `group_vars/all.yml` holds cross-service defaults (backup settings, `github_users` allowed
@@ -133,6 +175,18 @@ PlanningAlerts (`planningalerts-app`), They Vote For You (`publicwhip`), Right t
 see its own README), OpenAustralia. See README.md "Deploying" section for the exact `cap` invocations per app and
 stage (`development`/`staging`/`production`).
 
+### Where the docs live
+
+`README.md` is the entry point (setup, credentials, provisioning, deploying, backups, git tags, mail catching) and
+links out to `docs/`. Read the relevant `docs/` file *before* touching a service — they carry the per-service
+detail that isn't in the roles:
+
+- `docs/planningalerts.md`, `docs/righttoknow.md`, `docs/theyvoteforyou.md`, `docs/openaustralia.md` — per-service
+  setup, deploy and operational notes
+- `docs/cloudflare-proxy-migration.md` — what changes when a service moves behind Cloudflare's proxy (orange cloud)
+- `docs/DECISIONS.md` — cross-cutting decisions, newest first
+- `docs/history.md` — background on how the current setup came to be
+
 ### Linting config quirks worth knowing
 
 - `.ansible-lint` skips `meta-incorrect`/`meta-no-info`/`role-name` (not publishing to Galaxy), `var-spacing`
@@ -156,8 +210,10 @@ stage (`development`/`staging`/`production`).
 - Default to treating every `make` target as a live-fire production action needing the same explicit, specific,
   right-now go-ahead as a production deploy, however routine the request sounds — **except** the known-safe,
   read-only ones: `help`, `check-*`, `tf-plan*`, `tf-validate`, `tf-check-fmt`, `lint`/`yaml-lint`/`ansible-lint`/
-  `template-check`, `show-*`, `op-check`, `tf-env-check`, `venv`/`roles`/`requirements`/`tf-secrets`/`terraform.pem`,
-  `vagrant`/`generate-certificates`, and `scan-*`. Everything else — `apply-*`, `tf-apply*`, `tf-apply-target`,
+  `template-check`, `show-*`, `op-check`, `aws-check`, `tf-env-check`,
+  `venv`/`roles`/`requirements`/`tf-secrets`/`terraform.pem`, `vagrant`/`generate-certificates`, and `scan-*`.
+  `tf-init` isn't on that list: `terraform init` can migrate state if the backend config has changed, so ask.
+  Everything else — `apply-*`, `tf-apply*`, `tf-apply-target`,
   `letsencrypt`, `all`, `retry`, `update-github-ssh-keys`, and `bin/rotate-vault-passphrase` — changes real
   production infrastructure or who can SSH in, and needs a go-ahead. All of these except
   `bin/rotate-vault-passphrase` are bracketed by the `wip-*` tag described above, so a failed run always leaves a
@@ -191,12 +247,21 @@ stage (`development`/`staging`/`production`).
   trailer) to `.git/GITGUI_MSG` (used by `git gui`) and display it for copy/paste into an IDE. Check the file first;
   if it already has content, ask before overwriting rather than clobbering an existing draft. This keeps review and
   sign-off a deliberate separate human act, not a rubber stamp.
-- Check the `openaustralia/.github` repo (a local clone may exist at `../.github` — check there first, but don't
-  assume it's present) for the org-wide PR/issue templates and `CONTRIBUTING.md`.
-- PRs must disclose material AI involvement per OAF's CLA (`openaustralia/.github` repo, `CLA/CLA.md`): a note in
-  the PR description, distinct from the commit `Assisted-by:` trailer.
+- Leave the DCO `Signed-off-by` trailer off any message you draft, and never add it on someone's behalf: the org
+  `CONTRIBUTING.md` requires it on every commit but is explicit that a human, not an AI agent, must sign off,
+  because it's a certification only a person can make. So the human committing the staged change is the one who
+  adds it — `git commit -s`. Same for `Co-authored-by:`, which is for other human contributors. `Assisted-by:` is
+  the AI trailer, and it's the only one you write.
+- Read the org-wide `CONTRIBUTING.md`, `PULL_REQUEST_TEMPLATE.md` and `ISSUE_TEMPLATE/` from the
+  `openaustralia/.github` repo — this repo has none of its own, so those govern (see "Contributing" above). A local
+  clone may sit beside your other OAF checkouts under a name like `.github` or `dot-github`; check for one before
+  fetching from GitHub, and don't assume it's present or up to date.
+- PRs must disclose material AI involvement in the PR description, naming the specific model, per the
+  "AI-assisted contributions" section of the org `CONTRIBUTING.md`. That note is required in addition to the
+  per-commit `Assisted-by:` trailer — the org rule is disclosure in both places, and neither substitutes for the
+  other. (OAF's CLA was retired, so don't cite it as the source of this requirement.)
 - PRs I create must be opened as drafts (`gh pr create --draft --assignee <human>`), never ready-for-review
-  directly, and assigned to the human driving the change, not me (per CONTRIBUTING.md; no `Signed-off-by`/
-  `Co-authored-by` trailer for AI either). Taking a PR out of draft is the human's call.
+  directly, and assigned to the human driving the change, not me. Taking a PR out of draft, once the checks pass,
+  is the human's call.
 - GitHub issues have no draft state. Don't create one directly — draft the title/body for the human to file
   themselves, unless they've explicitly asked you to create it this time.
