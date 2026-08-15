@@ -11,13 +11,24 @@ cd "$(dirname "$0")/.." || exit 1
 # inodes, e.g. from lots of small files), and any failed systemd units. Excludes
 # squashfs/tmpfs/devtmpfs from both df checks - snap mounts and ephemeral filesystems otherwise
 # clutter them with noise nobody's checking on. Consistent units throughout (megabytes, not a mix
-# of -h and -m). One combined remote command per host (needs -m shell, not command, for the `;`
-# separators) rather than several separate ansible invocations - avoids several times the per-host
-# SSM connection overhead for what's meant to be a quick, pithy check.
+# of -h and -m). One combined remote command per host (needs the shell module, not command, for
+# the `;` separators) rather than several separate ansible invocations - avoids several times the
+# per-host SSM connection overhead for what's meant to be a quick, pithy check.
 #
+# Run as a tiny playbook (server-status.yml, via ansible-playbook) rather than a single ad-hoc
+# shell command: ad-hoc command/shell tasks are always reported CHANGED (there's no ad-hoc
+# equivalent of changed_when), which would make every host look the same regardless of whether
+# anything's actually wrong. changed_when in that playbook instead reports a host as changed only
+# when there are failed units or the remote command exited non-zero, so a clean status check shows
+# ok; the debug task then always prints the collected output either way.
 #
-# Any extra arguments are passed straight through to ansible - e.g. --limit planningalerts,
+# Any extra arguments are passed straight through to ansible-playbook - e.g. --limit planningalerts,
 # --forks 1.
-sep="================================================================================"
-.venv/bin/ansible all -i ./inventory -m shell -a \
-  "hostname; date; echo; uptime; echo; free -m; echo; df -m -x squashfs -x tmpfs -x devtmpfs; echo; df -i -x squashfs -x tmpfs -x devtmpfs; echo; echo 'Failed units:'; systemctl --failed --no-legend ; echo $sep" "$@"
+if .venv/bin/ansible-playbook -i ./inventory "$@" server-status.yml; then
+  echo "OK: All servers where contactable."
+else
+  echo "FAILED: Some servers failed the status check!"
+  trap '' ERR
+  exit 1
+fi
+
