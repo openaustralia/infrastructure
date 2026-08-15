@@ -43,4 +43,4 @@ compose:
   # NOTE: compose values are Jinja2 *expressions*, not literal strings - this must be a quoted
   # Jinja2 string literal (single-quoted here, since the value itself only needs double quotes),
   # or it silently evaluates to nothing (Ansible's compose failures are non-fatal by default).
-  ansible_ssh_common_args: "'-o ProxyCommand=\"aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters portNumber=%p\"'"
+  ansible_ssh_common_args: "'-o ProxyCommand=\"aws ssm start-session --profile oaf --target %h --document-name AWS-StartSSHSession --parameters portNumber=%p\"'"
