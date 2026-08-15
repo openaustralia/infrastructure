@@ -71,4 +71,3 @@
     line: "PasswordAuthentication no"
   when: add_authorized_keys is success
   notify: sshd restart
-
