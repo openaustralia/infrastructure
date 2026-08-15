@@ -53,8 +53,10 @@ aws ec2 describe-instances --profile oaf \
   --query "Reservations[].Instances[].{Id:InstanceId,Name:Tags[?Key=='Name']|[0].Value,PublicHostname:Tags[?Key=='PublicHostname']|[0].Value}" \
   --output json |
   jq -r --arg identity_file "$identity_file" \
-    '[.[] | select(.PublicHostname != null and .PublicHostname != "")] | sort_by(.PublicHostname) | .[] |
-    "Host \(.Name) \(.PublicHostname) \(.Id)\n" +
+    '[.[] | select(.PublicHostname != null and .PublicHostname != "")]
+    | (group_by(.PublicHostname) | map(select(length == 1) | .[0].PublicHostname)) as $unique
+    | sort_by(.PublicHostname) | .[] | . as $i |
+    "Host \(.Name)\(if ($unique | index($i.PublicHostname)) then " \(.PublicHostname)" else "" end) \(.Id)\n" +
     "    ProxyCommand sh -c \"aws ssm start-session --profile oaf --target \(.Id) --document-name AWS-StartSSHSession --parameters portNumber=%p\"\n" +
-    "    User deploy\n" +
+    "    User root\n" +
     (if $identity_file != "" then "    # IdentityFile \($identity_file)\n    # IdentitiesOnly yes\n" else "" end)'
