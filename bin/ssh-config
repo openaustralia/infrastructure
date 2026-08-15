@@ -56,5 +56,5 @@ aws ec2 describe-instances --profile oaf \
     '[.[] | select(.PublicHostname != null and .PublicHostname != "")] | sort_by(.PublicHostname) | .[] |
     "Host \(.Name) \(.PublicHostname) \(.Id)\n" +
     "    ProxyCommand sh -c \"aws ssm start-session --profile oaf --target \(.Id) --document-name AWS-StartSSHSession --parameters portNumber=%p\"\n" +
-    "    User root\n" +
+    "    User deploy\n" +
     (if $identity_file != "" then "    # IdentityFile \($identity_file)\n    # IdentitiesOnly yes\n" else "" end)'
