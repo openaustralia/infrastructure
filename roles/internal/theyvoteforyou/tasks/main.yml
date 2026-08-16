@@ -327,7 +327,7 @@
     state: present
     update_cache: true
 
-- name: Install latest Chrome # noqa: package-latest
+- name: Install LATEST Chrome (released every few weeks) # noqa: package-latest
   apt:
     pkg: google-chrome-stable
     # We want to make sure we're always running the latest version
