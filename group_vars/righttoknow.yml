@@ -1,7 +1,3 @@
-# TODO: Unify this with the domain. It's currently only used to name
-# things on New Relic.
-site_name: righttoknow.org.au
-
 cron_enabled: true
 certbot_webserver: nginx
 certbot_webroot: /usr/share/nginx/html
