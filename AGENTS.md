@@ -136,7 +136,7 @@ by a `wip-<name>` git tag pushed before the change and replaced by the un-prefix
 - **Ansible** (`site.yml`, `roles/`, `group_vars/`, `host_vars/`, `inventory/`) configures the OS and services on
   top of instances Terraform created: packages, users, MySQL/PostgreSQL, nginx/Apache + certbot, cron, backups,
   monitoring. `roles/internal/` are OAF-authored roles — one per service (`righttoknow`, `planningalerts`,
-  `theyvoteforyou`, `openaustralia`, `metabase`, `proxy`, `openvpn`) plus shared building blocks used across
+  `theyvoteforyou`, `openaustralia`, `metabase`, `proxy`) plus shared building blocks used across
   several (`base-server`, `mysql`, `postgresql`, `deploy-user`, `oaf.certbot`, `oaf.backup`, `oaf.restic`,
   `cloudflare_realip`, `awscloudwatch`, `rvm.group`) and a few one-way cleanup roles that uninstall a retired
   tool (`remove_mise`, `remove_rbenv`, `remove_rvm`). `roles/external/` are third-party Galaxy roles installed
