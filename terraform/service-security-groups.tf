@@ -8,11 +8,11 @@ resource "aws_security_group" "theyvoteforyou" {
   description = "Security group for theyvoteforyou"
 
   ingress {
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [local.vpc_cidr]
+    description = "SSH within the VPC only (server-to-server, no public access)"
   }
 
   ingress {
@@ -53,11 +53,11 @@ resource "aws_security_group" "righttoknow" {
   description = "Security group for righttoknow"
 
   ingress {
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [local.vpc_cidr]
+    description = "SSH within the VPC only (server-to-server, no public access)"
   }
 
   ingress {
@@ -98,11 +98,11 @@ resource "aws_security_group" "openaustralia" {
   description = "Security group for openaustralia"
 
   ingress {
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [local.vpc_cidr]
+    description = "SSH within the VPC only (server-to-server, no public access)"
   }
 
   ingress {

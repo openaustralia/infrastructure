@@ -7,3 +7,7 @@ data "aws_subnets" "default" {
     values = [aws_default_vpc.default.id]
   }
 }
+
+locals {
+  vpc_cidr = aws_default_vpc.default.cidr_block
+}

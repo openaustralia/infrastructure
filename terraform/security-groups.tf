@@ -30,14 +30,14 @@ resource "aws_security_group" "load-balancer" {
 
 resource "aws_security_group" "webserver" {
   name        = "webserver"
-  description = "standard security group for webservers. Allow ssh/http/https"
+  description = "standard security group for webservers. Allow http/https/pings from public, ssh within VPC"
 
   ingress {
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [local.vpc_cidr]
+    description = "SSH within the VPC only (server-to-server, no public access)"
   }
 
   ingress {
@@ -145,11 +145,11 @@ resource "aws_security_group" "planningalerts" {
   description = "Web servers for PlanningAlerts"
 
   ingress {
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [local.vpc_cidr]
+    description = "SSH within the VPC only (server-to-server, no public access)"
   }
 
   # Production http port
