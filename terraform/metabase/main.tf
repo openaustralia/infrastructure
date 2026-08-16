@@ -17,9 +17,10 @@ resource "aws_instance" "main" {
     Name           = "metabase"
     PublicHostname = "metabase.oaf.org.au"
     LogName        = "web.metabase.oaf.org.au"
-    # Flattened inventory/ec2-hosts group membership, including groups only reached via
-    # :children (requires_postgresql) - see inventory/aws_ec2.yml.
-    AnsibleGroups = "ec2,metabase,requires_postgresql"
+    # Replicated flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (requires_postgresql) from previous inventory/aws_ec2.yml.
+    AnsibleGroups = "metabase,requires_postgresql,ec2"
+    # NO capistrano Tags, this is deployed by ansible using docker compose
   }
   security_groups = [var.security_group_behind_lb.name]
 
