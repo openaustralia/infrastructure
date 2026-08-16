@@ -11,6 +11,7 @@ resource "aws_instance" "staging" {
     Environment = "staging"
     Purpose     = "Ubuntu 22.04 Staging Server"
 
+    Application = "alaveteli"
     # Flattened inventory/ec2-hosts group membership, including groups only reached via
     # :children (righttoknow, catch_all_mail) - see previous inventory/aws_ec2.yml.
     AnsibleGroups = "righttoknow_staging,righttoknow,catch_all_mail,requires_postgresql,ec2"

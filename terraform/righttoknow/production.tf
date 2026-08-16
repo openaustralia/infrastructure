@@ -12,6 +12,7 @@ resource "aws_instance" "production" {
     Environment = "production"
     Purpose     = "Ubuntu 22.04 Production Server"
 
+    Application = "alaveteli"
     # Deliberately the real (redirect-target) public domain, not the old static-inventory
     # hostname - see group_vars/all.yml/ssm.yml for how this is used.
     PublicHostname = "www.righttoknow.org.au"
