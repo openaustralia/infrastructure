@@ -18,7 +18,8 @@ resource "aws_instance" "main" {
   tags = {
     Name           = "theyvoteforyou"
     PublicHostname = "theyvoteforyou.org.au"
-    LogName        = "srv.theyvoteforyou.org.au"
+    # The newrelic and cloudwatch names had not been updated to srv.theyvoteforyou.org.au despite the code changes
+    LogName        = "theyvoteforyou.org.au"
 
     # Flattened inventory/ec2-hosts group membership, including groups only reached via
     # :children (requires_mysql) - see inventory/aws_ec2.yml.
