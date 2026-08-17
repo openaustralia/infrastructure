@@ -3,11 +3,12 @@
   apt:
     pkg: build-essential
 
-- name: Download tinyproxy source code
+- name: "Download tinyproxy source code (change notification turned off)"
   get_url:
     url: https://github.com/tinyproxy/tinyproxy/releases/download/1.10.0/tinyproxy-1.10.0.tar.gz
     dest: /tmp/tinyproxy-1.10.0.tar.gz
   register: tinyproxy_source
+  changed_when: false
 
 - name: Unpacking tinyproxy # noqa: no-handler
   unarchive:
