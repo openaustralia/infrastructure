@@ -231,12 +231,13 @@ detail that isn't in the roles:
   would drift. This repo has no `CONTRIBUTING.md` or templates of its own, so the org-level ones govern. Fetch the
   current versions before opening a PR or an issue:
 
-  `gh api repos/openaustralia/.github/contents/.github/CONTRIBUTING.md -H "Accept: application/vnd.github.raw"`
+  `curl -fsSL https://raw.githubusercontent.com/openaustralia/.github/main/.github/CONTRIBUTING.md`
 
-  `gh api repos/openaustralia/.github/contents/AGENTS.md -H "Accept: application/vnd.github.raw"`
+  `curl -fsSL https://raw.githubusercontent.com/openaustralia/.github/main/AGENTS.md`
 
-  A local clone may sit beside your other OAF checkouts under a name like `.github` or `dot-github`; check for one
-  first, but don't assume it's present or up to date. The PR and issue templates are org-level too, under
+  Any equivalent fetch of those URLs works (web fetch, or `gh api` if the GitHub CLI is installed); don't assume a
+  particular tool is present. A local clone may sit beside your other OAF checkouts under a name like `.github` or
+  `dot-github`; check for one first, but don't assume it's present or up to date. The PR and issue templates are org-level too, under
   `.github/PULL_REQUEST_TEMPLATE.md` and `.github/ISSUE_TEMPLATE/` in that repo. Between them they cover branch
   naming, draft PRs and assignees, DCO sign-off, AI disclosure, staging commits rather than making them,
   standing-approval and allow-pattern scoping, issue drafting, word-wrapping in PR/issue bodies, and
