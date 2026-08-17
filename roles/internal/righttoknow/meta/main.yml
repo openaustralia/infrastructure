@@ -165,6 +165,8 @@ dependencies:
     
   - role: cloudflare_realip
     cloudflare_webserver: nginx
+    tags:
+    - cloudflare_realip
 
   - role: nickhammond.logrotate
     logrotate_scripts:
