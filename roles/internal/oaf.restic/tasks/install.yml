@@ -20,11 +20,12 @@
 - name: Download and install restic
   when: restic_installed_version.rc != 0 or restic_version not in restic_installed_version.stdout
   block:
-    - name: Download restic binary
+    - name: "Download restic binary (change notification turned off)"
       get_url:
         url: "https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_amd64.bz2"
         dest: "/tmp/restic_{{ restic_version }}.bz2"
         mode: "0644"
+      changed_when: false
 
     - name: Extract restic binary
       shell: "bunzip2 -c /tmp/restic_{{ restic_version }}.bz2 > /usr/local/bin/restic"
