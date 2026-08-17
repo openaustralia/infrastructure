@@ -75,7 +75,11 @@ sub vcl_recv {
     }
 
     # Ignore Cookies on images...
-    if (req.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico)(\?.*|)$") {
+    # ...unless Alaveteli has flagged the URL as an attachment download that
+    # needs its session cookie (see attachment_params in
+    # app/helpers/info_request_helper.rb)
+    if (req.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico)(\?.*|)$" &&
+        req.url !~ "(\?|\&)cookie_passthrough=1") {
         unset req.http.Cookie;
         return (hash);
     }
@@ -108,7 +112,8 @@ sub vcl_recv {
 
 sub vcl_backend_response {
     set beresp.http.x-url = bereq.url;
-    if (bereq.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico|txt)(\?.*|)$") {
+    if (bereq.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico|txt)(\?.*|)$" &&
+        bereq.url !~ "(\?|\&)cookie_passthrough=1") {
     # Ignore backend headers..
         unset beresp.http.set-Cookie;
         set beresp.ttl = 3600s;
