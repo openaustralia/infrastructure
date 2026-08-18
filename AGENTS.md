@@ -199,9 +199,6 @@ detail that isn't in the roles:
 
 ## Working with AI tools
 
-- If something here doesn't match what you're consistently seeing in the repo, flag the mismatch and ask which
-  needs fixing (so it's fixed once and for all), presenting fixing the code/config as the easy default choice and
-  updating this file as the alternative.
 - When a commit message body covers more than one distinct point, use a markdown bullet list rather than one
   flowing paragraph; it's easier to scan and review.
 - Check `docs/DECISIONS.md` for past cross-cutting decisions before assuming in an unfamiliar area of the repo; add
@@ -230,38 +227,18 @@ detail that isn't in the roles:
   `certificates/*.key`/`*.pem` (all gitignored precisely because they carry real secrets), and anything outside
   the repo like `~/.aws/credentials`, SSH private keys, or vault passphrase files. If you need one fact from such
   a file (e.g. which `AWS_PROFILE` is set), `grep` for that specific line rather than printing the whole file.
-- Keep the future effect of any standing approval ("yes to all following", "don't ask again") clearly scoped.
-  Read-only tool calls (Read, grep, `git status`/`diff`/`log`) can be batched/parallelised freely for efficiency —
-  no justification needed per call, and a standing approval for these is safe to extend broadly. File changes
-  (Edit/Write, or Bash like `mv`/`rm`/`chmod`/`sed -i`) are different: state what's about to change and why before
-  making it, one described step or clearly-announced group at a time, so an approval is for something the human
-  has actually seen reasoned about — never let a file change ride inside a batch, or under a standing approval,
-  that wasn't clearly scoped to cover it. `git add` isn't covered by this — it's cheap to undo and only follows an
-  already-approved or directly-requested change; `git commit` is already off the table unless explicitly requested.
-- The same scoping applies to Bash allow-patterns for multi-subcommand CLIs (`gh`, `git`, `aws`, `terraform`): a
-  prefix like `gh pr` covers both read-only `gh pr view` and mutating `gh pr create`/`merge`/`close`/`comment`, so
-  a permission prompt offering to remember that broader prefix is offering more than what was actually run. Prefer
-  or request the pattern scoped to the exact safe subcommand used (`gh pr view`), not the shared prefix, and don't
-  save a broader pattern than that to `.claude/settings.json`/`settings.local.json` either.
-- Stage commits, don't make them — `git add` the files, then write the proposed message (with the `Assisted-by:`
-  trailer) to `.git/GITGUI_MSG` (used by `git gui`) and display it for copy/paste into an IDE. Check the file first;
-  if it already has content, ask before overwriting rather than clobbering an existing draft. This keeps review and
-  sign-off a deliberate separate human act, not a rubber stamp.
-- Leave the DCO `Signed-off-by` trailer off any message you draft, and never add it on someone's behalf: the org
-  `CONTRIBUTING.md` requires it on every commit but is explicit that a human, not an AI agent, must sign off,
-  because it's a certification only a person can make. So the human committing the staged change is the one who
-  adds it — `git commit -s`. Same for `Co-authored-by:`, which is for other human contributors. `Assisted-by:` is
-  the AI trailer, and it's the only one you write.
-- Read the org-wide `CONTRIBUTING.md`, `PULL_REQUEST_TEMPLATE.md` and `ISSUE_TEMPLATE/` from the
-  `openaustralia/.github` repo — this repo has none of its own, so those govern (see "Contributing" above). A local
-  clone may sit beside your other OAF checkouts under a name like `.github` or `dot-github`; check for one before
-  fetching from GitHub, and don't assume it's present or up to date.
-- PRs must disclose material AI involvement in the PR description, naming the specific model, per the
-  "AI-assisted contributions" section of the org `CONTRIBUTING.md`. That note is required in addition to the
-  per-commit `Assisted-by:` trailer — the org rule is disclosure in both places, and neither substitutes for the
-  other. (OAF's CLA was retired, so don't cite it as the source of this requirement.)
-- PRs I create must be opened as drafts (`gh pr create --draft --assignee <human>`), never ready-for-review
-  directly, and assigned to the human driving the change, not me. Taking a PR out of draft, once the checks pass,
-  is the human's call.
-- GitHub issues have no draft state. Don't create one directly — draft the title/body for the human to file
-  themselves, unless they've explicitly asked you to create it this time.
+- Don't rely on this file for the org-wide contributing rules or agent conventions — they change, and a copy here
+  would drift. This repo has no `CONTRIBUTING.md` or templates of its own, so the org-level ones govern. Fetch the
+  current versions before opening a PR or an issue:
+
+  `curl -fsSL https://raw.githubusercontent.com/openaustralia/.github/main/.github/CONTRIBUTING.md`
+
+  `curl -fsSL https://raw.githubusercontent.com/openaustralia/.github/main/AGENTS.md`
+
+  Any equivalent fetch of those URLs works (web fetch, or `gh api` if the GitHub CLI is installed); don't assume a
+  particular tool is present. A local clone may sit beside your other OAF checkouts under a name like `.github` or
+  `dot-github`; check for one first, but don't assume it's present or up to date. The PR and issue templates are org-level too, under
+  `.github/PULL_REQUEST_TEMPLATE.md` and `.github/ISSUE_TEMPLATE/` in that repo. Between them they cover branch
+  naming, draft PRs and assignees, DCO sign-off, AI disclosure, staging commits rather than making them,
+  standing-approval and allow-pattern scoping, issue drafting, word-wrapping in PR/issue bodies, and
+  credential/privacy handling — so none of that is restated here.
