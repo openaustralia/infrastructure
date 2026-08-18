@@ -1,0 +1,12 @@
+---
+# handlers file for postal
+- name: Restart docker
+  service:
+    name: docker
+    state: restarted
+
+- name: Restart postal
+  command: postal restart
+
+- name: Restart caddy
+  command: docker restart postal-caddy
