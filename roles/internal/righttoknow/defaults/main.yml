@@ -9,3 +9,23 @@ ruby_version_production: 3.2.9
 # avoids the version-mismatch warning and keeps a rebuilt server consistent with
 # the one we have.
 bundler_version: 2.6.2
+
+# Sentry CLI (the v4 `sentry` binary, not the older `sentry-cli`), used to wrap
+# cron jobs in monitor check-ins. Note the pre-1.0 version numbering: breaking
+# changes can land in a minor release, so pin it and bump deliberately. To
+# update, take the version and the sha256 of the sentry-linux-x64 asset from
+# https://github.com/getsentry/cli/releases and verify a provision run before
+# rolling it to production.
+sentry_cli_version: 0.42.2
+sentry_cli_sha256: af167de38664700584b79a5af94d49d33b8d9c9606f8b6ca54ee31b1a8a6e551
+
+# Fraction of requests traced for Sentry performance monitoring. Errors are
+# captured regardless of this.
+sentry_traces_sample_rate: 0.1
+
+# Sentry loader script for browser-side error monitoring, pointing at the
+# separate right-to-know-js Sentry project. The key is public by design (it
+# ships in the page HTML), so unlike the server DSN it is not vaulted. Note the
+# js-de host: this org is in Sentry's EU region, and the default
+# js.sentry-cdn.com serves a no-op script for it. Set to '' to serve nothing.
+sentry_js_loader_url: https://js-de.sentry-cdn.com/9d567178e9609f763dfd26e378c4af1d.min.js
