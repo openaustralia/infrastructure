@@ -431,7 +431,9 @@
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_production }}"
-  notify: nginx restart
+  notify:
+    - nginx restart
+    - restart sidekiq
   when: "'righttoknow_production' in group_names"
 
 - name: Apply Alaveteli config (staging)
@@ -456,7 +458,9 @@
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
-  notify: nginx restart
+  notify:
+    - nginx restart
+    - restart sidekiq
   when: "'righttoknow_staging' in group_names"
 
 - name: Apply Alaveteli Storage Config
