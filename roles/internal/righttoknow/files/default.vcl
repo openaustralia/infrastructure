@@ -58,12 +58,13 @@ sub vcl_recv {
        req.method != "POST" &&
        req.method != "PUT" &&
        req.method != "PURGE" &&
+       req.method != "BAN" &&
        req.method != "DELETE" ) {
         # We don't allow any other methods.
         return (synth(405, "Method Not Allowed"));
     }
 
-    if (req.method != "GET" && req.method != "HEAD" && req.method != "PURGE") {
+    if (req.method != "GET" && req.method != "HEAD" && req.method != "PURGE" && req.method != "BAN") {
         /* We only deal with GET and HEAD by default, the rest get passed direct to backend */
         return (pass);
     }
@@ -98,6 +99,11 @@ sub vcl_recv {
          return (synth(405, "Not allowed."));
       }
 
+      # Alaveteli's NotifyCacheJob sends its requests through Varnish as an
+      # HTTP proxy, so the request line carries an absolute URI. Strip the
+      # scheme and host so the ban pattern matches the path stored in x-url.
+      set req.url = regsub(req.url, "^https?://[^/]+", "");
+
       # For an explanation of the following roundabout way of defining
       # ban lists, see
       # http://kristianlyng.wordpress.com/2010/07/28/smart-bans-with-varnish/
@@ -105,6 +111,22 @@ sub vcl_recv {
       # TODO: in Varnish 2.x, the following would be
       # purge("obj.http.x-url ~ " req.url);
       ban("obj.http.x-url ~ " + req.url);
+      return (synth(200, "Banned"));
+    }
+
+    # Handle BAN requests. Alaveteli sends these (instead of PURGE) for the
+    # pattern entries in its cached_urls lists, with the pattern in the
+    # X-Invalidate-Pattern header.
+    if (req.method == "BAN") {
+      if (!client.ip ~ purge) {
+         return (synth(405, "Not allowed."));
+      }
+
+      if (!req.http.X-Invalidate-Pattern) {
+         return (synth(400, "X-Invalidate-Pattern header required"));
+      }
+
+      ban("obj.http.x-url ~ " + req.http.X-Invalidate-Pattern);
       return (synth(200, "Banned"));
     }
     return (hash);

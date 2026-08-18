@@ -1,0 +1,1 @@
+deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart send-notifications foi-alert-tracks sidekiq
