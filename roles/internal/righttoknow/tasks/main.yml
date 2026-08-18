@@ -258,9 +258,24 @@
 
 # The sysvinit daemons have to be stopped and removed before the systemd units start,
 # otherwise both copies of each daemon run at once. Both stages are cleaned up on every
-# host because both hosts have accumulated both stages' scripts over the years
+# host because both hosts have accumulated both stages' scripts over the years.
+# Their own `stop` can't be used: those scripts call start-stop-daemon with --pidfile as
+# the only match criterion, which dpkg 1.19.3+ refuses for a pidfile written by a non-root
+# user ("matching only on non-root pidfile ... is insecure"), so the daemon is left running
+# and the script exits 1. Adding --user is the documented remedy, and is what Alaveteli
+# upstream did in its own templates in 2021.
+# --user is deliberately the only criterion added. --exec or --name would narrow the match
+# further, guarding against a stale pidfile whose PID has been recycled by another deploy
+# process, but neither can match these daemons: they are `script/runner` invocations, so
+# /proc/<pid>/exe is the rbenv ruby binary and comm is `ruby`, never the script path. A
+# criterion that can't match makes start-stop-daemon treat the daemon as absent and exit 0
+# under --oknodo, leaving it running, which is the problem above. The residual stale-pidfile
+# risk is accepted: this is a one-shot, guarded by `removes:`, run during provisioning.
 - name: Stop the sysvinit daemons replaced by systemd units
-  command: "/etc/init.d/{{ item[1] }}-{{ item[0] }} stop"
+  command: >-
+    /sbin/start-stop-daemon --stop --oknodo --retry 5
+    --pidfile /srv/www/{{ item[0] }}/current/tmp/pids/{{ item[1] }}.pid
+    --user deploy
   args:
     removes: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
   with_nested:
