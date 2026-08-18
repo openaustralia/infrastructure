@@ -90,7 +90,8 @@
     mode: '0755'
   with_nested:
     - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
-    - ['', 'shared']
+    # The daemon units log straight into shared/log, which has to exist before they can start
+    - ['', 'shared', 'shared/log']
 
 - name: Link directories in /srv/www to /data
   file:
@@ -255,6 +256,55 @@
     daemon_reload: true
   when: "'righttoknow_production' in group_names"
 
+# The sysvinit daemons have to be stopped and removed before the systemd units start,
+# otherwise both copies of each daemon run at once. Both stages are cleaned up on every
+# host because both hosts have accumulated both stages' scripts over the years
+- name: Stop the sysvinit daemons replaced by systemd units
+  command: "/etc/init.d/{{ item[1] }}-{{ item[0] }} stop"
+  args:
+    removes: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
+  with_nested:
+    - ['staging', 'production']
+    - ['send-notifications', 'foi-alert-tracks']
+
+- name: Remove the sysvinit daemons replaced by systemd units
+  file:
+    path: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
+    state: absent
+  with_nested:
+    - ['staging', 'production']
+    - ['send-notifications', 'foi-alert-tracks']
+
+- name: Install send-notifications systemd unit
+  template:
+    src: send-notifications.service.j2
+    dest: /etc/systemd/system/send-notifications.service
+    mode: "0644"
+  vars:
+    stage: "{{ item }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+  notify: restart send-notifications
+
+- name: Install foi-alert-tracks systemd unit
+  template:
+    src: foi-alert-tracks.service.j2
+    dest: /etc/systemd/system/foi-alert-tracks.service
+    mode: "0644"
+  vars:
+    stage: "{{ item }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+  notify: restart foi-alert-tracks
+
+- name: Enable and start the Alaveteli notification and alert daemons
+  systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+    daemon_reload: true
+  with_items:
+    - send-notifications
+    - foi-alert-tracks
+
 - name: Link run-with-lockfile.sh so it's available system-wide
   file:
     src: "/srv/www/{{ 'staging' if ('righttoknow_staging' in group_names) else 'production' }}/current/commonlib/bin/run-with-lockfile.sh"
@@ -322,16 +372,21 @@
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
-- name: Copy init scripts
+- name: Copy init script Capistrano uses to restart the application
   template:
-    src: "init/{{ item[1] }}.j2"
-    dest: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
+    src: init/alaveteli.j2
+    dest: "/etc/init.d/alaveteli-{{ item }}"
     mode: 0755
   vars:
-    stage: "{{ item[0] }}"
-  with_nested:
-    - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
-    - ['send-notifications', 'foi-alert-tracks', 'alaveteli']
+    stage: "{{ item }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
+- name: Allow deploy user to restart the application daemons
+  copy:
+    src: righttoknow_deploy_sudoers
+    dest: /etc/sudoers.d/
+    mode: '0440'
+    validate: visudo -cf %s
 
 - name: Generate nginx config
   copy:

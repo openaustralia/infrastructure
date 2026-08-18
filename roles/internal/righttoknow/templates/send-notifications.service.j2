@@ -1,0 +1,22 @@
+[Unit]
+Description=Alaveteli send-notifications daemon ({{ stage }})
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=deploy
+Group=deploy
+WorkingDirectory=/srv/www/{{ stage }}/current
+
+Environment=PATH=/home/deploy/.rbenv/shims:/usr/local/bin:/usr/bin:/bin
+Environment=RAILS_ENV=production
+
+ExecStart=/srv/www/{{ stage }}/current/script/runner NotificationMailer.send_notifications_loop
+StandardOutput=append:/srv/www/{{ stage }}/shared/log/send-notifications.log
+StandardError=inherit
+
+Restart=on-failure
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
