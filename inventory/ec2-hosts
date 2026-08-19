@@ -24,6 +24,10 @@ au.proxy.oaf.org.au
 web.metabase.oaf.org.au
 vpn.oaf.org.au
 
+[linode]
+# This contains Linode instances that are not in EC2
+postal.oaf.org.au
+
 [catch_all_mail:children]
 righttoknow_staging
 
