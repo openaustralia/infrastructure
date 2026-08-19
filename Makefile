@@ -1,13 +1,13 @@
-.PHONY: all ansible-lint apply-metabase apply-oaf requirements apply-openaustralia \
-        apply-planningalerts apply-postal apply-righttoknow  apply-theyvoteforyou \
-        aws-check \
-        check-host check-metabase check-oaf check-openaustralia check-planningalerts check-postal check-righttoknow \
-        check-theyvoteforyou check-target \
-        scan-oaf scan-openaustralia scan-planningalerts \
-        clean clobber help letsencrypt lint op-check retry roles \
-        show-facts show-inventory show-rds-facts show-vars stage_required tf-apply tf-apply-target \
-        tf-env-check tf-init tf-plan tf-plan-target tf-secrets \
-        update-github-ssh-keys vagrant venv yaml-lint template-check
+.PHONY: all ansible-lint apply-metabase apply-openaustralia apply-planningalerts \
+        apply-righttoknow apply-theyvoteforyou aws-check \
+        check-host check-metabase check-openaustralia check-planningalerts check-postal \
+        check-righttoknow check-target check-theyvoteforyou \
+        clean clobber generate-certificates help letsencrypt lint op-check \
+        requirements retry roles \
+        scan-oaf scan-openaustralia scan-planningalerts server-status setup \
+        show-aws-inventory show-facts show-inventory show-rds-facts show-vars ssh-config stage_required \
+        template-check tf-apply tf-apply-target tf-check-fmt tf-env-check tf-init tf-plan tf-plan-target \
+        tf-secrets tf-validate update-github-ssh-keys vagrant venv yaml-lint
 
 _STAGE := $(if $(filter-out all,$(STAGE)),_$(STAGE),)
 
@@ -81,7 +81,6 @@ help:
 	@echo "  check-righttoknow STAGE=<stage>     Dry-run Ansible for righttoknow production/staging/all host/s"
 	@echo "  check-planningalerts                Dry-run Ansible for planningalerts hosts"
 	@echo "  check-theyvoteforyou                Dry-run Ansible for theyvoteforyou host"
-	@echo "  check-oaf                           Dry-run Ansible for oaf host"
 	@echo "  check-openaustralia                 Dry-run Ansible for openaustralia host"
 	@echo "  check-metabase                      Dry-run Ansible for metabase host"
 	@echo "  check-postal                        Dry-run Ansible for postal host"
@@ -89,7 +88,6 @@ help:
 	@echo "  apply-righttoknow STAGE=<stage>     Apply Ansible changes to righttoknow production/staging/all host/s"
 	@echo "  apply-planningalerts                Apply Ansible changes to planningalerts hosts"
 	@echo "  apply-theyvoteforyou                Apply Ansible changes to theyvoteforyou host"
-	@echo "  apply-oaf                           Apply Ansible changes to oaf host"
 	@echo "  apply-openaustralia                 Apply Ansible changes to openaustralia host"
 	@echo "  apply-metabase                      Apply Ansible changes to metabase host"
 	@echo "  apply-postal                        Apply Ansible changes to postal host"
@@ -360,8 +358,6 @@ check-planningalerts: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l planningalerts$(_STAGE) --check --diff
 check-theyvoteforyou: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l theyvoteforyou$(_STAGE) --check --diff
-check-oaf: requirements # stage_required
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l oaf$(_STAGE) --check --diff
 check-openaustralia: requirements # stage_required
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l openaustralia$(_STAGE) --check --diff
 check-metabase: requirements # stage_required
@@ -382,10 +378,6 @@ apply-theyvoteforyou: requirements # stage_required
 	bin/tag-provisioning --wip theyvoteforyou "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l theyvoteforyou$(_STAGE) --diff
 	bin/tag-provisioning theyvoteforyou "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
-apply-oaf: requirements # stage_required
-	bin/tag-provisioning --wip oaf "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l oaf$(_STAGE) --diff
-	bin/tag-provisioning oaf "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-openaustralia: requirements # stage_required
 	bin/tag-provisioning --wip openaustralia "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l openaustralia$(_STAGE) --diff
