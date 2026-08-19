@@ -13,9 +13,9 @@ terraform {
 
 resource "linode_instance" "main" {
   region           = "ap-southeast"
-  type             = "g6-standard-2"
+  type             = "g6-standard-4"
   label            = "postal"
-  image            = "linode/ubuntu24.04"
+  image            = "linode/ubuntu22.04"
   authorized_keys  = var.authorized_keys
   booted           = true
   backups_enabled  = true
