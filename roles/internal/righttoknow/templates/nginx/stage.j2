@@ -56,14 +56,21 @@ server {
   passenger_enabled on;
   passenger_ruby /home/deploy/.rbenv/shims/ruby;
 
-  # Serve maintenance page when present
-  if (-f $document_root/system/maintenance.html) {
-    return 503;
+  # Serve the maintenance page capistrano-maintenance writes (see
+  # config/deploy.rb in openaustralia/righttoknow). The test lives inside
+  # `location /` rather than at server level so the ACME challenge, assets
+  # and favicon locations above stay reachable while maintenance is on.
+  location / {
+    if (-f $document_root/down.html) {
+      return 503;
+    }
   }
   error_page 503 @maintenance;
   location @maintenance {
-    rewrite  ^(.*)$  /system/maintenance.html break;
-    break;
+    # Stop Varnish (and browsers) holding on to the 503 after
+    # maintenance:disable removes the page.
+    add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+    rewrite ^(.*)$ /down.html break;
   }
 }
 
