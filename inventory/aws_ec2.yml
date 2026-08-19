@@ -22,8 +22,8 @@ hostnames:
 # CAUTION: an instance tagged AnsibleGroups but with no LogName tag is silently dropped from
 # the inventory - the plugin skips any host it can't name, with no warning, and strict: true
 # doesn't cover hostname resolution. Worst case is a partial run: one host of a multi-host
-# service disappears, the playbook succeeds on the rest and exits 0. After tagging a new host,
-# confirm it shows up in `make show-aws-inventory` before relying on `make apply-<service>`.
+# collection disappears, the playbook succeeds on the rest and exits 0. After tagging a new host,
+# confirm it shows up in `make show-aws-inventory` before relying on `make apply-<collection>`.
 keyed_groups:
   # AnsibleGroups is a comma-separated tag (set in Terraform) listing every group a host is a
   # member of, flattened to include groups only reached via `:children` in inventory/ec2-hosts.

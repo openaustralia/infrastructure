@@ -31,7 +31,7 @@ backup_full_max_age: 1M
 # inventory migration or an instance replacement - use public_hostname (not unique) or log_name
 # (unique) instead, e.g. for backup paths (see roles/internal/righttoknow's restic repository).
 
-# The web service's canonical public name - deliberately identical across every instance in a
+# The collection's canonical public name - deliberately identical across every instance in a
 # blue/green fleet like planningalerts. Overridden in group_vars/ssm.yml for dynamically-discovered
 # hosts.
 public_hostname: "{{ inventory_hostname }}"

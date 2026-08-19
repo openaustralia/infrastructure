@@ -30,7 +30,7 @@ resource "aws_instance" "main" {
     Roles       = "app,web,db"
     # Same value across every instance in the blue/green fleet, unlike Name - see group_vars/ssm.yml
     PublicHostname = "www.planningalerts.org.au"
-    # Deliberately mirrors Name (not the old static-inventory hostname, unlike other services) -
+    # Deliberately mirrors Name (not the old static-inventory hostname, unlike other collections) -
     # this fleet's instances get replaced regularly (blue/green cutovers), so a snapshot of the
     # previous ec2-*.compute.amazonaws.com hostname would likely go stale before the next
     # replacement anyway, whereas Name stays self-consistent regardless of replacement. Costs a
