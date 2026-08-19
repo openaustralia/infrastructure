@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+trap 'echo "ERROR: show-aws-inventory failed at line $LINENO (exit $?)" >&2' ERR
+
+cd "$(dirname "$0")/.." || exit 1
+
+# Runs the real inventory/aws_ec2.yml plugin (not a reimplementation) so this actually verifies
+# what Ansible will see - filters, keyed_groups, hostnames: tag:Name, etc. The first call in a
+# cold shell pays a one-off ansible-vault-client/1Password round-trip (group_vars are always
+# loaded, even for --list); it's fast in a normal terminal session once that's warm.
+{
+  printf 'NAME\tURL\tINSTANCE\tSTATE\tPRIVATE_IP\tPUBLIC_IP\tANSIBLE_GROUPS\n'
+  .venv/bin/ansible-inventory -i ./inventory/aws_ec2.yml --list 2>/dev/null |
+    jq -r '
+      ._meta.hostvars | to_entries[] |
+      [.key, (if .value.tags.PublicHostname then "https://" + .value.tags.PublicHostname else "-" end), (.value.ansible_host // "-"), .value.state.name, (.value.private_ip_address // "-"), (.value.public_ip_address // "-"), (.value.tags.AnsibleGroups // "-")] | @tsv
+    ' | sort
+} | column -t -s $'\t'

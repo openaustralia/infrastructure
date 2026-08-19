@@ -52,7 +52,8 @@ help:
 	@echo "    tf-validate                       Check terraform formatting and validate config"
 	@echo "  retry                               Re-run site.yml limited to hosts from last failed run"
 	@echo "  setup                               Install ubuntu packages required for development"
-	@echo "  show-inventory                      List all hosts in the EC2 inventory"
+	@echo "  show-inventory                      Show the group/host tree from both inventory sources (--graph)"
+	@echo "  show-aws-inventory                  Terse table of every instance the aws_ec2 dynamic source discovers, with tags"
 	@echo "  show-vars HOST=<host>               Show all Ansible variables for a host"
 	@echo "  show-facts HOST=<host>              Show all Ansible facts for a host"
 	@echo "  show-rds-facts HOST=<host>          Show RDS debug facts for a host"
@@ -251,16 +252,23 @@ ifndef HOST
 endif
 
 show-inventory: requirements
-	.venv/bin/ansible-inventory -i ./inventory/ec2-hosts --graph
+	.venv/bin/ansible-inventory -i ./inventory --graph
+
+# Terse, human-readable listing of every EC2 instance the aws_ec2 dynamic inventory plugin
+# discovers - instance-id, state, Name tag, IPs, and AnsibleGroups tag ("-" if unmanaged/not yet
+# tagged). Runs the real plugin (via inventory/aws_ec2.yml), so this actually verifies its
+# keyed_groups/hostnames config, not a separate reimplementation of it.
+show-aws-inventory: requirements
+	bin/show-aws-inventory
 
 show-vars: check-host requirements
-	.venv/bin/ansible -i ./inventory/ec2-hosts $(HOST) -m debug -a "var=hostvars[inventory_hostname]"
+	.venv/bin/ansible -i ./inventory $(HOST) -m debug -a "var=hostvars[inventory_hostname]"
 
 show-facts: check-host requirements
-	.venv/bin/ansible -i ./inventory/ec2-hosts $(HOST) -m setup
+	.venv/bin/ansible -i ./inventory $(HOST) -m setup
 
 show-rds-facts: check-host requirements
-	.venv/bin/ansible-playbook -i ./inventory/ec2-hosts site.yml --limit $(HOST) --tags facts -e "show_rds_debug=true"
+	.venv/bin/ansible-playbook -i ./inventory site.yml --limit $(HOST) --tags facts -e "show_rds_debug=true"
 
 # Delete all files that are normally created by running make goals
 clean:
@@ -329,48 +337,48 @@ endif
 
 # Checks only
 check-righttoknow: requirements stage_required
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l righttoknow$(_STAGE) --check --diff
 check-planningalerts: requirements # stage_required
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l planningalerts$(_STAGE) --check --diff
 check-theyvoteforyou: requirements # stage_required
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l theyvoteforyou$(_STAGE) --check --diff
 check-oaf: requirements # stage_required
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l oaf$(_STAGE) --check --diff
 check-openaustralia: requirements # stage_required
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l openaustralia$(_STAGE) --check --diff
 check-metabase: requirements # stage_required
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l metabase$(_STAGE) --check --diff
 check-postal: requirements # stage_required
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l postal$(_STAGE) --check --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l postal$(_STAGE) --check --diff
 
 # These make changes
 apply-righttoknow: requirements stage_required
 	bin/tag-provisioning --wip righttoknow "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l righttoknow$(_STAGE) --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l righttoknow$(_STAGE) --diff
 	bin/tag-provisioning righttoknow "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-planningalerts: requirements # stage_required
 	bin/tag-provisioning --wip planningalerts "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l planningalerts$(_STAGE) --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l planningalerts$(_STAGE) --diff
 	bin/tag-provisioning planningalerts "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-theyvoteforyou: requirements # stage_required
 	bin/tag-provisioning --wip theyvoteforyou "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l theyvoteforyou$(_STAGE) --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l theyvoteforyou$(_STAGE) --diff
 	bin/tag-provisioning theyvoteforyou "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-oaf: requirements # stage_required
 	bin/tag-provisioning --wip oaf "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l oaf$(_STAGE) --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l oaf$(_STAGE) --diff
 	bin/tag-provisioning oaf "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-openaustralia: requirements # stage_required
 	bin/tag-provisioning --wip openaustralia "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l openaustralia$(_STAGE) --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l openaustralia$(_STAGE) --diff
 	bin/tag-provisioning openaustralia "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-metabase: requirements # stage_required
 	bin/tag-provisioning --wip metabase "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l metabase$(_STAGE) --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l metabase$(_STAGE) --diff
 	bin/tag-provisioning metabase "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 apply-postal: requirements # stage_required
 	bin/tag-provisioning --wip postal "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
-	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory/ec2-hosts site.yml -l postal$(_STAGE) --diff
+	.venv/bin/ansible-playbook $(ANSIBLE_OPTS) -i ./inventory site.yml -l postal$(_STAGE) --diff
 	bin/tag-provisioning postal "$(STAGE)" "$(TAGS)" "$(SKIP_TAGS)"
 
 # Update ssh keys on all servers
