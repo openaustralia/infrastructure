@@ -1,4 +1,5 @@
 plugin: aws_ec2
+aws_profile: oaf-legacy
 regions:
   - ap-southeast-2
 keyed_groups:

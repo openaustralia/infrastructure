@@ -40,6 +40,10 @@ openaustralia.org.au
 ec2-3-27-58-54.ap-southeast-2.compute.amazonaws.com
 ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
 
+# NOTE: The postal server is a Linode instance, NOT ec2 - see terraform/postal
+[postal]
+postal.oaf.org.au
+
 [proxy]
 au.proxy.oaf.org.au
 

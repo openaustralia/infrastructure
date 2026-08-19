@@ -1,4 +1,11 @@
 ---
 # defaults file for righttoknow
-ruby_version_staging: 3.2.9
+ruby_version_staging: 3.4.10
 ruby_version_production: 3.2.9
+
+# Keep in step with `BUNDLED WITH` in Alaveteli's Gemfile.lock. An older bundler
+# in the same major series does still install the bundle (2.4.19 handles
+# 0.45.8.0's 2.6.2 lockfile), so this does not have to be exact - but matching it
+# avoids the version-mismatch warning and keeps a rebuilt server consistent with
+# the one we have.
+bundler_version: 2.6.2

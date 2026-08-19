@@ -38,6 +38,10 @@ db_dumps/*.sql.gz
 *.swp
 *.swo
 
+# Claude Code local-only files (personal settings/notes, not shared via AGENTS.md/CLAUDE.md)
+/.claude/settings.local.json
+/CLAUDE.local.md
+
 # Ignore patch files
 *.patch
 *.rej

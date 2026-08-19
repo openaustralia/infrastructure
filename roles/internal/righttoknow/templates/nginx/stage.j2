@@ -41,6 +41,14 @@ server {
     add_header Cache-Control public;
   }
 
+  # Browsers request /favicon.ico unprompted, but the file lives in
+  # app/assets/images rather than public/, so the bare path would fall through to
+  # Rails and 404. Adopted from Alaveteli 0.45's nginx examples. The non-digest
+  # path exists because the deploy runs assets:link_non_digest after precompile.
+  location = /favicon.ico {
+    rewrite ^ /assets/favicon.ico last;
+  }
+
   # TODO: Serve attachments directly from the cache, if possible.
   # See example apache config with alaveteli
 
@@ -63,13 +71,23 @@ server {
 server {
   listen 443 ssl http2;
   server_name {{ domain }};
-  rewrite ^/(.*) https://www.{{ domain }}/$1 permanent;
 
-  ssl on;
+  # Let's Encrypt HTTP-01 challenges can arrive over HTTPS (the validator
+  # follows redirects), so they must be exempt from the redirect below.
+  {% if certbot_webroot is defined %}
+  location ^~ /.well-known/acme-challenge/ {
+    root {{ certbot_webroot }};
+  }
+  {% endif %}
+
+  location / {
+    rewrite ^/(.*) https://www.{{ domain }}/$1 permanent;
+  }
+
   ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
 
-  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_protocols TLSv1.2 TLSv1.3;
   ssl_prefer_server_ciphers on;
   ssl_session_cache  builtin:1000  shared:SSL:10m;
   ssl_ciphers 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4';
@@ -80,20 +98,50 @@ server {
   listen 443 ssl http2;
   server_name www.{{ domain }};
 
-  ssl on;
   ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
 
-  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_protocols TLSv1.2 TLSv1.3;
   ssl_prefer_server_ciphers on;
   ssl_session_cache  builtin:1000  shared:SSL:10m;
   ssl_ciphers 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4';
+
+  # Let's Encrypt HTTP-01 challenges can arrive over HTTPS (the validator
+  # follows redirects), so they must bypass the deny list in `location /`
+  # below — Let's Encrypt validates from cloud provider IP ranges that
+  # overlap with it.
+  {% if certbot_webroot is defined %}
+  location ^~ /.well-known/acme-challenge/ {
+    auth_basic off;
+    root {{ certbot_webroot }};
+  }
+  {% endif %}
 
   # If you need to access the "emergency user" and password_protect is enabled
   # then you probably have to disable it temporarily
   {% if password_protect | bool -%}
   auth_basic "{{ stage }}";
   auth_basic_user_file htpasswd;
+
+  # Stripe delivers webhooks without HTTP basic auth credentials, so exempt the
+  # Pro webhook endpoint from the staging password protection. Exact-match
+  # location so only this path is exempt. Mirrors the proxy settings from
+  # `location /` (X-Forwarded-Proto https is required, otherwise FORCE_SSL
+  # would 301 the POST and Stripe treats redirects as delivery failures).
+  # The `deny` list from `location /` is deliberately not carried over: the
+  # endpoint is protected by Stripe signature verification, and Stripe delivers
+  # from ranges we don't want to have to track here.
+  location = /pro/subscriptions/stripe-webhook {
+    auth_basic off;
+
+    proxy_pass  http://127.0.0.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_redirect off;
+    client_max_body_size 100m;
+  }
   {% endif %}
 
   location / {

@@ -32,3 +32,15 @@
     name: sidekiq
     daemon_reload: true
     state: restarted
+
+- name: restart send-notifications
+  systemd:
+    name: send-notifications
+    daemon_reload: true
+    state: restarted
+
+- name: restart foi-alert-tracks
+  systemd:
+    name: foi-alert-tracks
+    daemon_reload: true
+    state: restarted

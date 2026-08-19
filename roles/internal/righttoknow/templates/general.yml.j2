@@ -180,19 +180,6 @@ DEFAULT_LOCALE: 'en'
 # ---
 USE_DEFAULT_BROWSER_LANGUAGE: true
 
-# Normally, Alaveteli will put the locale into its URLs, like this
-# www.example.com/en/body/list/all. If you don't want this behaviour whenever
-# the locale is the default one, set INCLUDE_DEFAULT_LOCALE_IN_URLS to false.
-#
-# INCLUDE_DEFAULT_LOCALE_IN_URLS: Boolean (default: true)
-#
-# Examples:
-#
-#   INCLUDE_DEFAULT_LOCALE_IN_URLS: false
-#
-# ---
-INCLUDE_DEFAULT_LOCALE_IN_URLS: true
-
 # Are authorities required to respond by law?
 #
 # AUTHORITY_MUST_RESPOND: Boolean (default: true)
@@ -479,6 +466,29 @@ SECRET_KEY_BASE: '{{ alaveteli_secret_key_base }}'
 # ---
 READ_ONLY: ''
 
+# READ_ONLY_FEATURES - Array of strings (default: [])
+#
+# Granular read-only control for specific features. This allows you to disable
+# specific functionality without putting the entire site in read-only mode.
+#
+# Available features:
+#   'annotations'     - Blocks annotations on requests
+#   'classifications' - Blocks request status classifications
+#   'followups'       - Blocks followup messages on requests
+#   'requests'        - Blocks new FOI requests
+#   'signups'         - Blocks new user registration
+#
+# Examples:
+#
+# Block only new requests:
+#   READ_ONLY_FEATURES: ['requests']
+#
+# Block new requests and annotations:
+#   READ_ONLY_FEATURES: ['requests', 'annotations']
+#
+# ---
+READ_ONLY_FEATURES: []
+
 # Is this a staging or development site? If not, it's a live production site.
 # This setting controls whether or not the rails-post-deploy script will create
 # the file config/rails_env.rb file to force Rails into production environment.
@@ -627,6 +637,21 @@ EXCEPTION_NOTIFICATIONS_TO:
 #
 # ---
 MAX_REQUESTS_PER_USER_PER_DAY: 6
+
+# If you're running behind Varnish set this to work out where to send purge
+# requests. Otherwise, don't set it.
+#
+# VARNISH_HOSTS - Array of Strings (default: nil)
+#
+# Examples:
+#
+#   VARNISH_HOSTS:
+#     - host1
+#     - host2
+#
+# ---
+VARNISH_HOSTS:
+  - 127.0.0.1
 
 # Adding a value here will enable Google Analytics on all non-admin pages for
 # non-admin users.
@@ -954,6 +979,13 @@ BLOCK_SPAM_ABOUT_ME_TEXT: true
 # ---
 BLOCK_SPAM_COMMENTS: true
 
+# Prevent users submitting user to user messages that appear to be spam.
+#
+# BLOCK_SPAM_USER_MESSAGES - Boolean (default: false)
+#
+# ---
+BLOCK_SPAM_USER_MESSAGES: true
+
 # Prevent user signups from spam email domains or names which appear to be spam.
 #
 # BLOCK_SPAM_SIGNUPS - Boolean (default: false)
@@ -1193,6 +1225,27 @@ STRIPE_SECRET_KEY: '{{ stripe_secret_key }}'
 # ---
 STRIPE_NAMESPACE: 'RTK'
 
+# Maps Stripe Price IDs to Alaveteli Pro URL slugs. Alaveteli 0.45.0.0 migrated
+# Stripe from Plans to Prices and made this key required for Pro pricing.
+#
+# Emitted unconditionally for both stages. It was first emitted for production
+# while that stage was still on 0.44.3.0, where the key was inert - absent from
+# that version's DEFAULTS, and Alaveteli's config loader ignores keys it does not
+# know - so that the live billing path was already configured at the 0.45 cutover
+# rather than silently falling back to the { pro: 'pro' } default.
+#
+# The hash KEY is the Stripe Price ID; the VALUE is the URL slug used in
+# plan_path. Values come from the stripe_prices_test / stripe_prices_live
+# group_vars. Price IDs are public identifiers, not secrets.
+#
+# STRIPE_PRICES - Hash (default: { pro: 'pro' })
+#
+# ---
+STRIPE_PRICES:
+{% for price_id, slug in stripe_prices.items() %}
+  {{ price_id }}: {{ slug }}
+{% endfor %}
+
 # Stripe.com webhook secret. Only required for Alaveteli Pro.
 #
 # STRIPE_WEBHOOK_SECRET: - String (default: '')
@@ -1283,18 +1336,23 @@ SURVEY_URL: ''
 # ---
 USER_SIGN_IN_ACTIVITY_RETENTION_DAYS: 30
 
-# Background jobs are processed by Rails' ActiveJob using Sidekiq. There are
-# various ways to run Sidekiq depending to server resources and technical
-# knowledge in order to run and maintain a Redis server.
+# If ENABLE_PUBLIC_ANNOTATIONS is set to true, comments (annotations) will
+# be allowed on all requests regardless of who made the request.
 #
-# Can either be set to:
-# - 'inline' to process jobs within the web application process, this was the
-#   default option up until Alaveteli 0.42 and doesn't require Redis to be.
-#   installed. Due to issues with requests with web requests timing out this has
-#   been superseded by the other options.
-# - 'server' to process job by a server running as a system daemon.
+# If set to false, comments will only be allowed by the requester or admin
+# users.
 #
-# BACKGROUND_JOBS – String (default: 'server')
+# ENABLE_PUBLIC_ANNOTATIONS - Boolean (default: true)
 #
 # ---
-BACKGROUND_JOBS: 'server'
+ENABLE_PUBLIC_ANNOTATIONS: true
+
+# If ENABLE_USER_TO_USER_MESSAGING is set to true, Alaveteli will allow users
+# to send messages to each other through the site.
+#
+# If set to false, user-to-user messaging functionality will be disabled.
+#
+# ENABLE_USER_TO_USER_MESSAGING - Boolean (default: true)
+#
+# ---
+ENABLE_USER_TO_USER_MESSAGING: true
