@@ -592,6 +592,35 @@
     mode: '0644'
   notify: restart varnish
 
+# Sentry CLI, used by cron.yml to wrap each scheduled job in a cron monitor
+# check-in (openaustralia/righttoknow#1004). Pinned and checksummed rather
+# than piping cli.sentry.dev/install to bash, so a provision run can't be
+# changed out from under us. The binary is self-contained (no runtime deps).
+# `sentry monitor run` authenticates with the project DSN, not an auth token.
+- name: Install Sentry CLI
+  tags: sentry
+  ansible.builtin.get_url:
+    url: "https://github.com/getsentry/cli/releases/download/{{ sentry_cli_version }}/sentry-linux-x64"
+    checksum: "sha256:{{ sentry_cli_sha256 }}"
+    dest: /usr/local/bin/sentry
+    owner: root
+    group: root
+    mode: '0755'
+
+# `run-with-lockfile -n` exits 100 when the previous run still holds the lock,
+# which is routine for the frequent jobs (update-xapian-index runs every five
+# minutes) and is not a failure. Without this shim Sentry would record every
+# skip as a failed check-in. Any other non-zero exit is passed through, so real
+# failures still register.
+- name: Install lock-aware cron wrapper for Sentry check-ins
+  tags: sentry
+  ansible.builtin.copy:
+    src: rtk-cron-lock
+    dest: /usr/local/bin/rtk-cron-lock
+    owner: root
+    group: root
+    mode: '0755'
+
 - import_tasks: certificates.yml
 - import_tasks: cron.yml
 
