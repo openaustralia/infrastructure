@@ -22,7 +22,7 @@ resource "aws_instance" "main" {
     LogName        = "theyvoteforyou.org.au"
 
     # Flattened inventory/ec2-hosts group membership, including groups only reached via
-    # :children (requires_mysql) - see inventory/aws_ec2.yml.
+    # :children (requires_mysql) - see previous inventory/aws_ec2.yml.
     AnsibleGroups = "theyvoteforyou,requires_mysql,ec2"
 
     # Application and Roles will be read by the capistrano-aws gem (see

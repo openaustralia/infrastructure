@@ -21,7 +21,7 @@ resource "aws_instance" "production" {
     LogName = "prod.righttoknow.org.au"
 
     # Flattened inventory/ec2-hosts group membership, including groups only reached via
-    # :children (righttoknow, requires_postgresql) - see inventory/aws_ec2.yml.
+    # :children (righttoknow, requires_postgresql) - see previous inventory/aws_ec2.yml.
     AnsibleGroups = "righttoknow_production,righttoknow,requires_postgresql,ec2"
 
     # Application, Stage and Roles will be read by the capistrano-aws gem (see

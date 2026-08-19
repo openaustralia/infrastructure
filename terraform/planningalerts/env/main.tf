@@ -38,7 +38,7 @@ resource "aws_instance" "main" {
     # to what.
     LogName = "web${count.index + 1}.${var.env_name}.planningalerts"
     # Flattened inventory/ec2-hosts group membership, including groups only reached via
-    # :children (requires_postgresql) - see inventory/aws_ec2.yml. Now includes "ec2" (previously
+    # :children (requires_postgresql) - see previous inventory/aws_ec2.yml. Now includes "ec2" (previously
     # deliberately excluded) - that exclusion's stated reason (group_vars/ec2.yml's base_domain
     # "newly applying") doesn't hold up: the role already builds planningalerts.{{ base_domain }}
     # expecting exactly ec2.yml's org.au, and packer/planningalerts.pkr.hcl's own AMI-build

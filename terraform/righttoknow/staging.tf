@@ -12,7 +12,7 @@ resource "aws_instance" "staging" {
     Purpose     = "Ubuntu 22.04 Staging Server"
 
     # Flattened inventory/ec2-hosts group membership, including groups only reached via
-    # :children (righttoknow, catch_all_mail) - see inventory/aws_ec2.yml.
+    # :children (righttoknow, catch_all_mail) - see previous inventory/aws_ec2.yml.
     AnsibleGroups = "righttoknow_staging,righttoknow,catch_all_mail,requires_postgresql,ec2"
 
     # Matches the exact old static-inventory hostname. (Backup continuity is actually carried
