@@ -1356,3 +1356,34 @@ ENABLE_PUBLIC_ANNOTATIONS: true
 #
 # ---
 ENABLE_USER_TO_USER_MESSAGING: true
+
+# Sentry error monitoring and APM. Not an Alaveteli setting: these are read by
+# the RightToKnow theme's lib/sentry_config.rb and its
+# lib/views/general/_before_head_end.html.erb, via AlaveteliConfiguration.get.
+# See openaustralia/righttoknow#1004.
+#
+# SENTRY_DSN identifies the project to send to and is a write-only key, so it
+# grants no read access to the data in Sentry. Staging and production hold
+# separate keys for the same project (group_vars/righttoknow_{staging,production}),
+# and the theme derives the Sentry environment from STAGING_SITE above.
+#
+# ---
+SENTRY_DSN: '{{ sentry_dsn }}'
+
+# Fraction of requests traced for performance monitoring, from 0 to 1. Errors
+# are always captured regardless of this. Lower it if tracing quota becomes a
+# problem; a change here takes effect on the next provision, with no deploy.
+#
+# ---
+SENTRY_TRACES_SAMPLE_RATE: {{ sentry_traces_sample_rate }}
+
+# Loader script for browser-side error monitoring, served by Sentry's CDN and
+# configured in the Sentry UI rather than here. Reports to a separate Sentry
+# project from the Ruby app, so browser noise stays out of the server issue
+# list. The key in this URL is public by design - it ships in the page HTML to
+# every visitor - so it is not vaulted.
+#
+# Leave empty to serve no browser monitoring script at all.
+#
+# ---
+SENTRY_JS_LOADER_URL: '{{ sentry_js_loader_url }}'
