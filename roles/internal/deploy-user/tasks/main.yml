@@ -11,6 +11,23 @@
     shell: /bin/bash
     group: deploy
 
+## Ubuntu user is not created automatically on Linode, so we need to create it for linode servers
+
+- name: Ensure we have a ubuntu group
+  become: true
+  group:
+    name: ubuntu
+  when: "'linode' in group_names"
+
+- name: Ensure we have a ubuntu user
+  become: true
+  user:
+    name: ubuntu
+    comment: "Ubuntu user"
+    shell: /bin/bash
+    group: ubuntu
+  when: "'linode' in group_names"
+
 - name: Refuse to manage authorized_keys without a populated github_users list
   ansible.builtin.assert:
     that:
