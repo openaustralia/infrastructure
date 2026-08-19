@@ -114,11 +114,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # "vpn.oaf" => { node: 27,
     #                       box: "ubuntu/jammy64",
     #                       groups: [] },
-
-    "openvpn" => { node: 28,
-                   box: "ubuntu/jammy64",
-                   groups: ["openvpn"] }
-
   }
 
   config.vm.provision "ansible" do |ansible|
@@ -135,9 +130,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # Empty list just so ansible doesn't complain it doesn't know about these cloud servers
       "ec2" => [],
-
-      # TODO: Consider adding hosts for these Server groups (that are used)
-      "openvpn" => []
     }
     hosts.each do |hostname, details|
       hostname = "#{hostname}.#{BASE_DOMAIN}"

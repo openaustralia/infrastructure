@@ -302,12 +302,6 @@
   roles:
     - postal
 
-- hosts: openvpn
-  tags: openvpn
-  become: true
-  roles:
-    - internal/openvpn
-
 # vagrant equivalent of AWS redis service
 - hosts: redis
   name: "Vagrant redis Server to mimic AWS ElastiCache"

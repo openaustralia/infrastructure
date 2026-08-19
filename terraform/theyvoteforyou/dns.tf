@@ -27,7 +27,7 @@ resource "cloudflare_record" "root" {
   proxied = true
 }
 
-### TODO: Remove this when we have the OpenVPN configured
+### TODO: Remove this when we have the SSM configured
 resource "cloudflare_record" "non_proxy_root" {
   zone_id = cloudflare_zone.org_au.id
   name    = "srv.theyvoteforyou.org.au"
