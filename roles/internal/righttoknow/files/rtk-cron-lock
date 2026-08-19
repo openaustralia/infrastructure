@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Wrapper around commonlib's run-with-lockfile for jobs whose check-ins are
+# reported to a Sentry cron monitor (openaustralia/righttoknow#1004).
+#
+# run-with-lockfile -n exits 100 when a previous run still holds the lock. That
+# is a routine skip, not a failure - update-xapian-index runs every five minutes
+# and will overlap - but Sentry treats any non-zero exit from the wrapped
+# command as a failed check-in. Translate 100 to 0 so a skip reports as a
+# successful (no-op) run, and pass every other exit code through unchanged so
+# real failures still register.
+#
+# A job that stops running altogether is still caught: Sentry reports it missed
+# its schedule. A job stuck holding the lock is caught by the monitor's
+# max-runtime.
+#
+# Usage: rtk-cron-lock LOCKFILE COMMAND
+# Installed by the righttoknow Ansible role; not intended to be run by hand.
+
+run-with-lockfile -n "$1" "$2"
+status=$?
+
+if [ "$status" -eq 100 ]; then
+  exit 0
+fi
+
+exit "$status"
