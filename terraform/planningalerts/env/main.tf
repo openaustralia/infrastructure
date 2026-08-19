@@ -38,10 +38,16 @@ resource "aws_instance" "main" {
     # to what.
     LogName = "web${count.index + 1}.${var.env_name}.planningalerts"
     # Flattened inventory/ec2-hosts group membership, including groups only reached via
-    # :children (requires_postgresql) - see inventory/aws_ec2.yml. Deliberately no "ec2" group -
-    # per inventory/ec2-hosts' own "the planning alerts servers are NOT in ec2!" comment, so
-    # group_vars/ec2.yml's base_domain: org.au doesn't newly apply.
-    AnsibleGroups = "planningalerts,requires_postgresql"
+    # :children (requires_postgresql) - see inventory/aws_ec2.yml. Now includes "ec2" (previously
+    # deliberately excluded) - that exclusion's stated reason (group_vars/ec2.yml's base_domain
+    # "newly applying") doesn't hold up: the role already builds planningalerts.{{ base_domain }}
+    # expecting exactly ec2.yml's org.au, and packer/planningalerts.pkr.hcl's own AMI-build
+    # provisioner already runs with groups = ["ec2", "planningalerts"] - so the golden image
+    # itself has always been built assuming ec2.yml's vars apply. Without "ec2" here, the live
+    # instance was missing base_domain/aws_access_key/aws_secret_key/newrelic_license_key/
+    # planningalerts_db_host entirely (the last of these registered by the "Gather RDS facts"
+    # play, itself scoped to hosts: ec2) - which is what broke the newrelic_license_key check.
+    AnsibleGroups = "planningalerts,requires_postgresql,ec2"
   }
   security_groups      = var.security_groups
   iam_instance_profile = var.iam_instance_profile
