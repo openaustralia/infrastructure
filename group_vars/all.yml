@@ -27,6 +27,14 @@ backup_max_age: 6M
 backup_max_full_backups: 6
 backup_full_max_age: 1M
 
+# The service's public DNS hostname, deliberately independent of whatever the connection/display
+# hostname happens to be - used for stable identifiers like backup paths (e.g.
+# roles/internal/righttoknow's restic repository). Defaults to inventory_hostname (the static
+# inventory's hostname, historically stable per host), overridden in group_vars/ssm.yml for
+# dynamically-discovered hosts, where inventory_hostname is a Name tag that can differ from the
+# public-facing identity (and isn't unique for blue/green fleets).
+public_hostname: "{{ inventory_hostname }}"
+
 certbot_webserver: apache
 # Part of the default value "--quiet" appears not to be valid
 certbot_auto_renew_options: "--no-self-upgrade"

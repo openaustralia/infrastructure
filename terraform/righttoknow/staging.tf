@@ -7,10 +7,15 @@ resource "aws_instance" "staging" {
   key_name      = "terraform"
 
   tags = {
-    Name         = "righttoknow-staging"
-    Environment  = "staging"
-    Purpose      = "Ubuntu 22.04 Staging Server"
-    AnsibleGroup = "righttoknow_staging"
+    Name        = "righttoknow-staging"
+    Environment = "staging"
+    Purpose     = "Ubuntu 22.04 Staging Server"
+    # Flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (righttoknow, catch_all_mail) - see inventory/aws_ec2.yml.
+    AnsibleGroups = "ec2,righttoknow,righttoknow_staging,catch_all_mail,requires_postgresql"
+    # Matches the exact old static-inventory hostname, so migrating to the dynamic inventory
+    # doesn't move backup_hostname (see group_vars/all.yml/ssm.yml) and orphan backup history.
+    PublicHostname = "staging.righttoknow.org.au"
   }
 
   # Increase root volume size to 20GB to allow for more packages and data

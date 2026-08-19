@@ -2,7 +2,42 @@ plugin: aws_ec2
 aws_profile: oaf-legacy
 regions:
   - ap-southeast-2
+# Only discover instances explicitly opted in via a non-blank AnsibleGroups tag (set in
+# Terraform) - deliberately NOT every EC2 instance in the account. Untagged/not-yet-migrated
+# hosts (the untouched rest of the fleet, stray old/stopped instances, etc.) must never appear
+# here at all: this inventory is the trigger for locking sshd to 127.0.0.1 (see
+# roles/internal/deploy-user), so membership has to mean "explicitly declared SSM-ready", not
+# "AWS happens to know this instance exists".
+filters:
+  tag-key: AnsibleGroups
+exclude_filters:
+  - tag:AnsibleGroups: [""]
+# Name hosts by their Name tag (human-readable in logs/output), not instance-id or DNS name -
+# but see compose below, which points the actual SSH connection at the instance-id regardless.
+hostnames:
+  - tag:Name
 keyed_groups:
-  - key: tags.Application
+  # AnsibleGroups is a comma-separated tag (set in Terraform) listing every group a host is a
+  # member of, flattened to include groups only reached via `:children` in inventory/ec2-hosts.
+  # Deliberately no parent_group here - unlike ec2-hosts, membership is entirely tag-driven, so
+  # e.g. planningalerts hosts (never in `ec2`) aren't forced into it.
+  - key: tags.AnsibleGroups.split(',')
     separator: ''
-    parent_group: ec2
+groups:
+  # Every host reaching this point already passed the filters/exclude_filters above, so
+  # membership here IS "explicitly declared SSM-ready" - safe to use unconditionally, e.g. in
+  # roles/internal/deploy-user to decide whether sshd can be locked to 127.0.0.1.
+  ssm: true
+compose:
+  # inventory_hostname is the human-readable Name tag (see hostnames above), but the actual SSH
+  # target must be the instance-id - set it explicitly here rather than relying on
+  # inventory_hostname, since that's no longer the same value. This is also what %h resolves to
+  # below, and what your ~/.ssh/config `Host i-*` block (SSH key etc.) matches against.
+  ansible_host: instance_id
+  # SSH over SSM, not a direct network connection - same for every host here, no per-operator
+  # override possible (or needed): OpenSSH always prefers a command-line -o over ~/.ssh/config for
+  # the same keyword, and this becomes one via ansible_ssh_common_args.
+  # NOTE: compose values are Jinja2 *expressions*, not literal strings - this must be a quoted
+  # Jinja2 string literal (single-quoted here, since the value itself only needs double quotes),
+  # or it silently evaluates to nothing (Ansible's compose failures are non-fatal by default).
+  ansible_ssh_common_args: "'-o ProxyCommand=\"aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters portNumber=%p\"'"
