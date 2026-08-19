@@ -158,14 +158,6 @@ resource "cloudflare_record" "dmarc" {
 # * group_vars/openaustralia.yml
 
 # A records
-resource "cloudflare_record" "old_root" {
-  zone_id = cloudflare_zone.org_au.id
-  name    = "oldprod.openaustralia.org.au"
-  type    = "A"
-  value   = aws_eip.main.public_ip
-  proxied = false
-}
-
 resource "cloudflare_record" "alt_root" {
   zone_id = cloudflare_zone.org_au.id
   name    = "openaustralia.org.au"

@@ -1,8 +1,5 @@
 variable "oaf_org_au_zone_id" {}
 variable "openaustraliafoundation_org_au_zone_id" {}
-variable "openaustralia_main_ip" {
-  description = "Public IP address of the main openaustralia server"
-}
 variable "openaustralia_production_ip" {
   description = "Public IP address of the production openaustralia server"
 }
