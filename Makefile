@@ -1,5 +1,5 @@
 .PHONY: all ansible-lint apply-metabase apply-openaustralia apply-planningalerts \
-        apply-righttoknow apply-theyvoteforyou aws-check \
+        apply-postal apply-righttoknow apply-theyvoteforyou aws-check \
         check-host check-metabase check-openaustralia check-planningalerts check-postal \
         check-righttoknow check-target check-theyvoteforyou \
         clean clobber generate-certificates help letsencrypt lint op-check \
