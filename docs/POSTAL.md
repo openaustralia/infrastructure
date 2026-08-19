@@ -1,6 +1,6 @@
 # Postal mail server
 
-The [Postal](https://github.com/postalserver/postal) mail server (postal.oaf.org.au) replaces cuttlefish. Unlike cuttlefish and morph.io, whose provisioning lives in their own application repositories, postal is assembled **and** provisioned from this repository. See [docs/DECISIONS.md](DECISIONS.md) for why we moved off cuttlefish.
+The [Postal](https://github.com/postalserver/postal) mail server (postal.oaf.org.au) replaces cuttlefish. Unlike cuttlefish and morph.io, whose provisioning lives in their own application repositories, postal is assembled **and** provisioned from this repository. See [docs/adr/0002-postal-replaces-cuttlefish.md](adr/0002-postal-replaces-cuttlefish.md) for why we moved off cuttlefish.
 
 ## Setting up the server
 
