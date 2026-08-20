@@ -4,13 +4,13 @@
 
 <!-- vscode-markdown-toc -->
 - [History](#history)
-  - [A little history](#alittlehistory)
+  - [A little history](#a-little-history)
   - [Approach](#approach)
   - [Updates](#updates)
     - [2025-05-27](#2025-05-27)
-      - [Supported Platforms](#supportedplatforms)
-      - [RightToKnow Dev platform](#righttoknowdevplatform)
-      - [PlanningAlerts Production](#planningalertsproduction)
+      - [Supported Platforms](#supported-platforms)
+      - [RightToKnow Dev platform](#righttoknow-dev-platform)
+      - [PlanningAlerts Production](#planningalerts-production)
     - [2018-05-26](#2018-05-26)
 
 <!-- vscode-markdown-toc-config
@@ -95,7 +95,7 @@ We've moved RTK on to upstream Alavateli, so the instructions below for a dev en
 
 #### <a name='planningalertsproduction'></a>PlanningAlerts Production
 
-We now have two production servers. Every day deployment is still run by Capistrano. For major upgrades (e.g., updating the Ruby version), we have the option of a blue/green deployment driven by Terraform, allowing us to update without downtime.
+We now have two production servers. Every day deployment is still run by Capistrano. For major upgrades (e.g., updating the Ruby version), we have the option of a blue/green cutover driven by Terraform, allowing us to update without downtime.
 
 ### <a name='-1'></a>2018-05-26
 

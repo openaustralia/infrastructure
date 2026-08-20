@@ -4,9 +4,9 @@
 
 <!-- vscode-markdown-toc -->
 - [OpenAustralia](#openaustralia)
-  - [Deploying OpenAustralia](#deploying-openaustralia)
-    - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
-    - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
+    - [Deploying OpenAustralia](#deploying-openaustralia)
+      - [Deploying OpenAustralia to your local development server](#deploying-openaustralia-to-your-local-development-server)
+      - [Deploying OpenAustralia to production](#deploying-openaustralia-to-production)
   - [Mail Catching](#mail-catching)
     - [`log_not_sendmail`](#log_not_sendmail)
 
@@ -55,7 +55,7 @@ The `log_not_sendmail` command logs emails to ~/log/mail/DATE-TIME.log, keeping 
 To send email to a mail catcher on openaustralia, update the `/etc/msmstprc` file,
 keeping a copy as the ansible `internal/openaustralia` role will overwite it!
 
-Note: This will affect BOTH the production and staging environments on that server!
+Note: This will affect BOTH the production and staging stages on that host!
 If you ONLY want to change staging, then add the following to the `/etc/apache2/sites-enabled` config file for staging:
 
 
@@ -77,7 +77,7 @@ password <your-password>
 host plannies-mate.thesite.info
 ```
 
-Change the default if you want both production and staging to be changed:
+Change the default if you want both stages to be changed:
 
 
 ```

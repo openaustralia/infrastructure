@@ -63,8 +63,8 @@
 #### <a name='CLItoolsforcredentials'></a>CLI tools for credentials
 
 Operator credentials (AWS, Google) aren't stored in this repo or 1Password — each tool reads from your own CLI
-configuration. The Cloudflare and Linode provider tokens are the exception: they're shared service tokens kept in the *
-*DevOps** 1Password vault and rendered by `make tf-secrets`. Install and configure the ones you need:
+configuration. The Cloudflare and Linode provider tokens are the exception: they're shared service tokens kept in
+the **DevOps** 1Password vault and rendered by `make tf-secrets`. Install and configure the ones you need:
 
 - **1Password CLI (`op`)** — required to read the shared Ansible Vault passphrases and the RDS admin password.
     - Install: `brew install --cask 1password-cli` on macOS, or
