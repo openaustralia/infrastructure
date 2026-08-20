@@ -8,6 +8,7 @@
     - [Prerequisites](#prerequisites)
       - [CLI tools for credentials](#cli-tools-for-credentials)
     - [Environment setup](#environment-setup)
+    - [Accepting SSH host keys for the fleet](#accepting-ssh-host-keys-for-the-fleet)
     - [Add the Ansible Vault password](#add-the-ansible-vault-password)
       - [Recommended: 1Password](#recommended-1password)
       - [Rotating a vault passphrase](#rotating-a-vault-passphrase)
@@ -169,6 +170,20 @@ Simply run
 ```
 make requirements vagrant
 ```
+
+### <a name='AcceptingSSHhostkeysforthefleet'></a>Accepting SSH host keys for the fleet
+
+The first time you connect to any server, SSH asks you to confirm its host key. Running an Ansible command
+against the whole fleet at once triggers that prompt for several hosts in parallel, and your answers can end
+up going to the wrong prompt - limit it to one host at a time to get through them cleanly:
+
+```
+make requirements
+.venv/bin/ansible all -i ./inventory -m command -a uptime --forks 1
+```
+
+Only needed once per host - once a key's accepted it's cached in `~/.ssh/known_hosts`, and later commands
+(e.g. `make server-status`) go back to running in parallel without prompting.
 
 ### <a name='AddtheAnsibleVaultpassword'></a>Add the Ansible Vault password
 

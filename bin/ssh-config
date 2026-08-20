@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+trap 'echo "ERROR: ssh-config failed at line $LINENO (exit $?)" >&2' ERR
+
+cd "$(dirname "$0")/.." || exit 1
+
+# Prints an OpenSSH ~/.ssh/config block for every running EC2 instance with a non-blank
+# PublicHostname tag, proxying through SSM rather than a direct network connection. Deliberately
+# an explicit, freshly-generated list rather than a wildcard Host pattern (e.g. `Host i-*`) - a
+# wildcard in your personal ~/.ssh/config could silently hijack SSH to some unrelated instance in
+# a totally different AWS account you use. One Host line per instance lists every useful alias
+# (PublicHostname, Name tag, instance ID), all pointing at the same resolved ProxyCommand.
+#
+# The instance ID is baked directly into each ProxyCommand rather than relying on %h, since %h
+# expands to whatever alias you actually typed - not necessarily the instance ID - and
+# `aws ssm start-session --target` only accepts an instance ID.
+#
+# Output goes to stdout for you to review and paste into ~/.ssh/config yourself - it's your
+# personal file with unrelated content in it, so this deliberately doesn't write to it directly.
+# Re-run and re-paste after any instance replacement (blue/green cutover, AMI refresh, etc.) - the
+# resolved instance IDs go stale, that's the accepted cost of being explicit rather than a
+# wildcard.
+#
+# Locked to the "oaf" profile explicitly rather than relying on AWS_PROFILE being set or a
+# [default] profile being configured - that's only assumed for ad hoc commands you run yourself
+# (see INSTALL.md's "CLI tools for credentials"), not for anything this repo generates. "oaf" (not
+# "oaf-legacy") because this is a plain `aws` CLI call, which understands `aws login`'s
+# login_session credentials natively - "oaf-legacy" only exists to bridge those for tools that
+# don't (Terraform, Ansible).
+#
+# The generated ProxyCommand below is pinned the same way and for the same reason - it runs later,
+# at `ssh` time, potentially from a completely different shell/context than this script (a fresh
+# terminal, a script, anything shelling out to ssh), so it can't rely on AWS_PROFILE being set
+# there either.
+
+# Suggest a starting IdentityFile as a commented-out prompt, based on whichever default-named key
+# exists on whoever's machine actually runs this script (not this one) - checked in OpenSSH's own
+# default-identity-file priority order. Left commented rather than active: it's a starting point
+# per operator to uncomment and pair with `IdentitiesOnly yes`, not something to force on everyone
+# - roles/internal/deploy-user's authorized_key task sets exclusive: true (only the specific
+# github_users/terraform keys are authorized at all), so ssh-agent noise from unrelated keys can
+# exhaust MaxAuthTries before your real key is ever offered unless you pin down which one to use.
+identity_file=""
+for candidate in id_rsa id_ecdsa id_ecdsa_sk id_ed25519 id_ed25519_sk id_xmss id_dsa; do
+  if [ -f "$HOME/.ssh/$candidate" ]; then
+    identity_file="~/.ssh/$candidate"
+    break
+  fi
+done
+
+aws ec2 describe-instances --profile oaf \
+  --filters "Name=tag-key,Values=PublicHostname" "Name=instance-state-name,Values=running" \
+  --query "Reservations[].Instances[].{Id:InstanceId,Name:Tags[?Key=='Name']|[0].Value,PublicHostname:Tags[?Key=='PublicHostname']|[0].Value}" \
+  --output json |
+  jq -r --arg identity_file "$identity_file" \
+    '[.[] | select(.PublicHostname != null and .PublicHostname != "")] | sort_by(.PublicHostname) | .[] |
+    "Host \(.Name) \(.PublicHostname) \(.Id)\n" +
+    "    ProxyCommand sh -c \"aws ssm start-session --profile oaf --target \(.Id) --document-name AWS-StartSSHSession --parameters portNumber=%p\"\n" +
+    "    User root\n" +
+    (if $identity_file != "" then "    # IdentityFile \($identity_file)\n    # IdentitiesOnly yes\n" else "" end)'
