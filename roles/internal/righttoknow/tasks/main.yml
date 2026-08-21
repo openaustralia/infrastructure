@@ -357,7 +357,7 @@
     login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
-    database: "rtk-{{ item }}"
+    login_db: "rtk-{{ item }}"
     type: database
     role: "rtk-{{ item }}"
     privs: ALL
@@ -368,7 +368,7 @@
     login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
-    db: "rtk-production"
+    login_db: "rtk-production"
     name: "rtk-production-readonly"
     password: "{{ rtk_production_readonly_postgresql_password }}"
     no_password_changes: true
@@ -379,7 +379,7 @@
     login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
-    db: "rtk-production"
+    login_db: "rtk-production"
     role: "rtk-production-readonly"
     privs: SELECT
     objs: ALL_IN_SCHEMA
