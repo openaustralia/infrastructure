@@ -14,9 +14,6 @@
 
 # INVENTORY IN alphabetical order by group name
 
-[openvpn]
-52.64.33.12 ansible_user=ubuntu ansible_ssh_private_key_file=terraform.pem
-
 # NOTE: The postal server is a Linode instance, NOT ec2 - see terraform/postal
 [postal]
 postal.oaf.org.au
