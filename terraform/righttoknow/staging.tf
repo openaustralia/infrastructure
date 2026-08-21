@@ -7,10 +7,30 @@ resource "aws_instance" "staging" {
   key_name      = "terraform"
 
   tags = {
-    Name         = "righttoknow-staging"
-    Environment  = "staging"
-    Purpose      = "Ubuntu 22.04 Staging Server"
-    AnsibleGroup = "righttoknow_staging"
+    Name        = "righttoknow-staging"
+    Environment = "staging"
+    Purpose     = "Ubuntu 22.04 Staging Server"
+
+    # Flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (righttoknow, catch_all_mail) - see previous inventory/aws_ec2.yml.
+    AnsibleGroups = "righttoknow_staging,righttoknow,catch_all_mail,requires_postgresql,ec2"
+
+    # Matches the exact old static-inventory hostname. (Backup continuity is actually carried
+    # by LogName below - the restic repository path is derived from log_name, not
+    # public_hostname; see roles/internal/righttoknow/meta/main.yml.)
+    PublicHostname = "staging.righttoknow.org.au"
+
+    # This host is already on the dynamic inventory, so there's no separate history to preserve -
+    # matches inventory/ec2-hosts' commented-out entry for it either way.
+    LogName = "staging.righttoknow.org.au"
+
+    # Application, Stage and Roles will be read by the capistrano-aws gem (see
+    # https://github.com/fernandocarletti/capistrano-aws#configuration) to find and configure
+    # this deploy target for cap staging deploy - matches righttoknow/config/deploy.rb's
+    # set :application and config/deploy/staging.rb's roles: %w[app web db].
+    Application = "alaveteli"
+    Stage       = "staging"
+    Roles       = "app,web,db"
   }
 
   # Increase root volume size to 20GB to allow for more packages and data

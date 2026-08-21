@@ -15,7 +15,13 @@ resource "aws_instance" "main" {
   ebs_optimized = true
   key_name      = "deployer_key"
   tags = {
-    Name = "au.proxy"
+    Name           = "au.proxy"
+    PublicHostname = "au.proxy.oaf.org.au"
+    LogName        = "au.proxy.oaf.org.au"
+    # Replicated flattened inventory/ec2-hosts group membership from previous inventory/aws_ec2.yml.
+    AnsibleGroups = "proxy,ec2"
+
+    # No capistrano tags - proxy is deployed by ansible roles/internal/proxy
   }
   security_groups = [aws_security_group.main.name]
 

@@ -11,6 +11,26 @@ resource "aws_instance" "production" {
     Name        = "righttoknow-production"
     Environment = "production"
     Purpose     = "Ubuntu 22.04 Production Server"
+
+    # Deliberately the real (redirect-target) public domain, not the old static-inventory
+    # hostname - see group_vars/all.yml/ssm.yml for how this is used.
+    PublicHostname = "www.righttoknow.org.au"
+
+    # Matches the old static-inventory hostname (prod.righttoknow.org.au), so CloudWatch log
+    # stream continuity isn't broken by this instance moving to the dynamic inventory.
+    LogName = "prod.righttoknow.org.au"
+
+    # Flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (righttoknow, requires_postgresql) - see previous inventory/aws_ec2.yml.
+    AnsibleGroups = "righttoknow_production,righttoknow,requires_postgresql,ec2"
+
+    # Application, Stage and Roles will be read by the capistrano-aws gem (see
+    # https://github.com/fernandocarletti/capistrano-aws#configuration) to find and configure
+    # this deploy target for cap production deploy - matches existing righttoknow/config/deploy.rb's
+    # set :application and config/deploy/production.rb's roles: %w[app web db].
+    Application = "alaveteli"
+    Stage       = "production"
+    Roles       = "app,web,db"
   }
 
   # Increase root volume size to 20GB to allow for more packages and data

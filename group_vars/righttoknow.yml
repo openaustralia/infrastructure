@@ -1,7 +1,3 @@
-# TODO: Unify this with the domain. It's currently only used to name
-# things on New Relic.
-site_name: righttoknow.org.au
-
 cron_enabled: true
 certbot_webserver: nginx
 certbot_webroot: /usr/share/nginx/html
@@ -196,48 +192,48 @@ pro_referral_coupon_production: !vault |
 logs:
   - file_path: /var/log/syslog
     log_group_name: /var/log/syslog
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%b %d %H:%M:%S"
 
   # Duplicity disabled Dec 2025 - replaced by restic
   # - file_path: /var/log/duply/righttoknow_data.log
   #   log_group_name: /var/log/duply/righttoknow_data.log
-  #   log_stream_name: "{{ inventory_hostname }}"
+  #   log_stream_name: "{{ log_name }}"
   #   timestamp_format: "%b %d %H:%M:%S"
 
   - file_path: /var/log/restic/righttoknow.log
     log_group_name: /var/log/restic/righttoknow.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%b %d %H:%M:%S"
 
   - file_path: /var/log/nginx/error.log
     log_group_name: /var/log/nginx/error.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%d %H:%M:%S.%f"
 
   - file_path: /var/log/letsencrypt/letsencrypt.log
     log_group_name: /var/log/letsencrypt/letsencrypt.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%d %H:%M:%S"
 
   - file_path: /var/log/unattended-upgrades/unattended-upgrades.log
     log_group_name: /var/log/unattended-upgrades/unattended-upgrades.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%d %H:%M:%S"
 
   - file_path: /srv/www/production/shared/log/production.log
     log_group_name: /srv/www/production/shared/log/production.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
 
   - file_path: /srv/www/production/shared/log/foi-alert-tracks.log
     log_group_name: /srv/www/production/shared/log/foi-alert-tracks.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
 
   - file_path: /srv/www/production/shared/log/foi-purge-varnish.log
     log_group_name: /srv/www/production/shared/log/foi-purge-varnish.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
 
 sentry_project_id: !vault |

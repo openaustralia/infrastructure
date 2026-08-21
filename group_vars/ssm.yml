@@ -1,0 +1,11 @@
+# File: group_vars/ssm.yml
+---
+# PublicHostname is a Terraform-set tag (stable across instance/Name-tag changes - e.g. an
+# instance swap like theyvoteforyou's - and deliberately shared across a blue/green fleet's
+# instances, unlike Name). Overrides group_vars/all.yml's inventory_hostname-based default.
+public_hostname: "{{ tags.PublicHostname }}"
+
+# LogName is a Terraform-set tag, unique per instance even within a blue/green fleet (unlike
+# PublicHostname) - see each terraform/*.tf for what it's set to and why. Overrides
+# group_vars/all.yml's inventory_hostname-based default.
+log_name: "{{ tags.LogName }}"

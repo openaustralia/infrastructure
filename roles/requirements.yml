@@ -34,4 +34,20 @@ roles:
     version: 2.0.0
 
 collections:
-  - community.postgresql
+  - name: community.postgresql
+    # Pinned so a future release can't silently start requiring a newer ansible-core than our
+    # 2.10.17 (see requirements.txt) - the same way amazon.aws 5.0.0+ did below. Currently also
+    # the latest available release.
+    version: 4.2.0
+  - name: amazon.aws
+    # Pinned to the last release supporting our ansible-core 2.10.17 (see requirements.txt);
+    # 5.0.0+ requires ansible-core >=2.11.0 and fails to load ("'super' object has no
+    # attribute 'get_options'").
+    version: 4.5.0
+  - name: community.aws
+    # Must stay version-matched to amazon.aws above (community.aws 4.5.0 depends on
+    # amazon.aws >=4.4.0): remote-side community.aws modules (e.g. rds) import internals from
+    # amazon.aws's module_utils, so an unmatched pair fails at runtime on the target host
+    # ("ImportError: cannot import name 'HAS_BOTO'" - removed from amazon.aws 4.x, but the
+    # community.aws version bundled inside the ansible==2.10.7 pip package still expects it).
+    version: 4.5.0
