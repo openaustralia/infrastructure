@@ -35,7 +35,7 @@
   tags: facts
   tasks:
     - name: Ensure host is not in multiple requires_* groups
-      assert:
+      ansible.builtin.assert:
         that:
           - "(['requires_mysql', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
         fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_postgresql'] | select('in', group_names) | list }}"
@@ -48,7 +48,7 @@
   tags: python
   tasks:
     - name: Install python3 for Ansible if available, otherwise fallback to python2
-      raw: >-
+      ansible.builtin.raw: >-
         test -e /usr/bin/python3 ||
         (apt -y update && apt install -y python-is-python3) ||
         test -e /usr/bin/python ||
@@ -64,7 +64,7 @@
   tasks:
     - name: Install python2 packages
       tags: python
-      apt:
+      ansible.builtin.apt:
         pkg: "{{ item }}"
         cache_valid_time: 300
       loop:
@@ -75,7 +75,7 @@
 
     - name: Install boto which is required for EC2 stuff (Python 2)
       tags: python
-      pip: name=boto
+      ansible.builtin.pip: name=boto
       when: ansible_python_version is version('3', '<')
 
 - hosts: all
@@ -87,7 +87,7 @@
   tasks:
     - name: Install python packages
       tags: python
-      apt:
+      ansible.builtin.apt:
         pkg: "{{ item }}"
         cache_valid_time: 300
       loop:
@@ -98,7 +98,7 @@
 
     - name: Install boto3 which is required for EC2 stuff (Python 3)
       tags: python
-      pip: name=boto3
+      ansible.builtin.pip: name=boto3
       # Not 3.0: pip 8.x on Ubuntu 16.04 ignores Requires-Python, so it happily
       # installs py3.8+ only wheels (urllib3 2.x) that fail to even parse on
       # python3.5. That shadows the distro urllib3 and breaks every module
@@ -127,7 +127,7 @@
       when: "db_name is defined"
 
     - name: Display information about the RDS database
-      debug:
+      ansible.builtin.debug:
         var: "rds_database"
       tags:
         - facts
@@ -149,7 +149,7 @@
       when: "planningalerts_db_name is defined"
 
     - name: Displays information about the planningalerts RDS instance
-      debug:
+      ansible.builtin.debug:
         var: "rds_planningalerts"
       tags:
         - facts
@@ -309,10 +309,10 @@
   become: true
   tasks:
     - name: Install redis
-      apt:
+      ansible.builtin.apt:
         name: redis
     - name: Make redis listen on 0.0.0.0
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/redis/redis.conf
         regexp: "^bind 127.0.0.1"
         line: "bind 0.0.0.0"
@@ -320,6 +320,6 @@
         - Restart redis
   handlers:
     - name: Restart redis
-      service:
+      ansible.builtin.service:
         name: redis
         state: restarted

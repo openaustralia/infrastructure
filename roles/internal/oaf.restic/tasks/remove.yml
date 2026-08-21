@@ -1,28 +1,28 @@
 ---
 - name: Remove restic cron jobs
-  file:
+  ansible.builtin.file:
     path: "/etc/cron.d/restic-{{ item.name }}"
     state: absent
   loop: "{{ restic_profiles }}"
 
 - name: Remove restic backup scripts
-  file:
+  ansible.builtin.file:
     path: "/usr/local/bin/restic-backup-{{ item.name }}"
     state: absent
   loop: "{{ restic_profiles }}"
 
 - name: Remove restic logrotate config
-  file:
+  ansible.builtin.file:
     path: /etc/logrotate.d/restic
     state: absent
 
 - name: Remove restic config directory
-  file:
+  ansible.builtin.file:
     path: "{{ restic_config_dir }}"
     state: absent
 
 - name: Remove restic binary
-  file:
+  ansible.builtin.file:
     path: /usr/local/bin/restic
     state: absent
   when: restic_remove_binary | default(false)

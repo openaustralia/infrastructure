@@ -1,10 +1,10 @@
 ---
 
 - name: "Include OS-specific variables."
-  include_vars: "{{ ansible_distribution }}.yml"
+  ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
 
 - name: Install dependencies (Ubuntu 18.04 and earlier)
-  apt: "name={{ item }}"
+  ansible.builtin.apt: "name={{ item }}"
   with_items:
     - cron
     - gzip
@@ -13,7 +13,7 @@
   when: ansible_distribution_release not in ['focal', 'jammy']
 
 - name: Install dependencies (Ubuntu 20.04 and 22.04)
-  apt: "name={{ item }}"
+  ansible.builtin.apt: "name={{ item }}"
   with_items:
     - cron
     - gzip
@@ -22,8 +22,8 @@
   when: ansible_distribution_release in ['focal', 'jammy']
 
 - name: Set duplicity package name
-  set_fact: "backup_duplicity_pkg={{ backup_duplicity_pkg }}={{ backup_duplicity_version }}"
+  ansible.builtin.set_fact: "backup_duplicity_pkg={{ backup_duplicity_pkg }}={{ backup_duplicity_version }}"
   when: backup_duplicity_version
 
 - name: Install duplicity
-  apt: "pkg={{ backup_duplicity_pkg }}"
+  ansible.builtin.apt: "pkg={{ backup_duplicity_pkg }}"

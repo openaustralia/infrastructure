@@ -2,11 +2,11 @@
 # handlers file for cloudflare_realip
 
 - name: reload nginx
-  systemd:
+  ansible.builtin.systemd:
     name: nginx
     state: reloaded
 
 - name: reload apache
-  systemd:
+  ansible.builtin.systemd:
     name: apache2
     state: reloaded

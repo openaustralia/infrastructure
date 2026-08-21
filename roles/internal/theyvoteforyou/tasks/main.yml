@@ -1,6 +1,6 @@
 ---
 - name: Remove apache2
-  apt:
+  ansible.builtin.apt:
     name: apache2
     state: absent
 
@@ -8,7 +8,7 @@
 
 - name: Add HTTPS support for APT
   tags: passenger
-  apt:
+  ansible.builtin.apt:
     pkg:
       - dirmngr
       - gnupg
@@ -26,34 +26,34 @@
 
 - name: Add passenger apt repository
   tags: passenger
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: 'deb [signed-by=/usr/share/keyrings/phusionpassenger-archive-keyring.asc] https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
     update_cache: true
 
 - name: Install nginx and passenger packages
   tags: passenger
-  apt:
+  ansible.builtin.apt:
     pkg:
       - libnginx-mod-http-passenger
       - nginx
     state: present
 
 - name: Install memcached
-  apt:
+  ansible.builtin.apt:
     pkg: memcached
     state: present
 
 - name: Install pip
-  apt:
+  ansible.builtin.apt:
     pkg: python3-pip
 
 - name: Install dependency for following command
-  pip:
+  ansible.builtin.pip:
     name: PyMySQL
 
 - name: Create theyvoteforyou databases
-  mysql_db:
+  community.mysql.mysql_db:
     login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
@@ -63,7 +63,7 @@
     - staging
 
 - name: Create theyvoteforyou user with access to the database (production)
-  mysql_user:
+  community.mysql.mysql_user:
     login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
@@ -73,7 +73,7 @@
     host: "%"
 
 - name: Create mysql 8 user with readonly access to the production theyvoteforyou database for metabase
-  mysql_user:
+  community.mysql.mysql_user:
     login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
@@ -84,7 +84,7 @@
   run_once: true
 
 - name: Create theyvoteforyou user with access to the database (staging)
-  mysql_user:
+  community.mysql.mysql_user:
     login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
@@ -94,7 +94,7 @@
     host: "%"
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
-  file:
+  ansible.builtin.file:
     state: directory
     owner: deploy
     group: deploy
@@ -114,7 +114,7 @@
     - /srv/www/staging/shared/public
 
 - name: Copy application settings
-  copy:
+  ansible.builtin.copy:
     src: settings-{{ item }}.yml
     dest: "/srv/www/{{ item }}/shared/config/settings.yml"
     owner: deploy
@@ -126,7 +126,7 @@
   notify: nginx reload
 
 - name: Copy application database configuration
-  template:
+  ansible.builtin.template:
     src: "database-{{ item }}.yml.j2"
     dest: "/srv/www/{{ item }}/shared/config/database.yml"
     owner: deploy
@@ -138,7 +138,7 @@
   notify: nginx reload
 
 - name: Copy rails master key for production
-  template:
+  ansible.builtin.template:
     src: production.key.j2
     dest: "/srv/www/{{ item }}/shared/config/credentials/production.key"
     owner: deploy
@@ -150,7 +150,7 @@
   notify: nginx reload
 
 - name: Copy application newrelic configuration
-  template:
+  ansible.builtin.template:
     src: newrelic.yml.j2
     dest: "/srv/www/{{ item }}/shared/config/newrelic.yml"
     owner: deploy
@@ -162,7 +162,7 @@
   notify: nginx reload
 
 - name: Copy application skylight.io configuration
-  template:
+  ansible.builtin.template:
     src: skylight.yml.j2
     dest: "/srv/www/{{ item }}/shared/config/skylight.yml"
     owner: deploy
@@ -174,12 +174,12 @@
   notify: nginx reload
 
 - name: Ensure package to build gem native extensions are installed
-  apt:
+  ansible.builtin.apt:
     pkg: libmysqlclient-dev
 
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
-  file:
+  ansible.builtin.file:
     state: directory
     path: "/etc/letsencrypt/live/{{ item }}"
     mode: '0755'
@@ -191,7 +191,7 @@
 # We need to setup the SSL certificates before we try to configure nginx
 # because otherwise nginx will try to look for non-existent certificates
 - name: Copy SSL certificates for development
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}.pem"
     # We're faking it as if these are let's encrypt certs. Makes for less magic config
     dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
@@ -204,7 +204,7 @@
   notify: nginx reload
 
 - name: Copy SSL keys for development
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}.key"
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
     mode: "0640"
@@ -228,7 +228,7 @@
 
 - name: Copy test/test password for staging site
   tags: htpasswd
-  copy:
+  ansible.builtin.copy:
     src: htpasswd
     dest: /etc/nginx/
     mode: '0640'
@@ -237,14 +237,14 @@
   notify: nginx restart
 
 - name: Copy nginx main configuration
-  copy:
+  ansible.builtin.copy:
     src: nginx.conf
     dest: /etc/nginx/
     mode: '0644'
   notify: nginx restart
 
 - name: Copy nginx site configuration
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: /etc/nginx/sites-available/{{ item }}
     mode: '0644'
@@ -255,7 +255,7 @@
   notify: nginx reload
 
 - name: Enable sites
-  file:
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/{{ item }}
     dest: /etc/nginx/sites-enabled/{{ item }}
     state: link
@@ -266,7 +266,7 @@
   notify: nginx reload
 
 - name: Allow deploy user to control application services
-  template:
+  ansible.builtin.template:
     src: theyvoteforyou_foreman.j2
     dest: /etc/sudoers.d/theyvoteforyou_foreman
     mode: '0440'
@@ -274,14 +274,14 @@
   # notify: sudo reload
 
 - name: Add /usr/local/bin to PATH in cron so that chromedriver can be found
-  cron:
+  ansible.builtin.cron:
     user: deploy
     name: PATH
     env: true
     job: /usr/local/bin:/usr/bin:/bin
 
 - name: Set up daily load cron job
-  cron:
+  ansible.builtin.cron:
     name: theyvoteforyou_application_load_daily
     user: deploy
     hour: "9"
@@ -291,7 +291,7 @@
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
 - name: Set up nightly cron job
-  cron:
+  ansible.builtin.cron:
     name: theyvoteforyou_application_cron_nightly
     user: deploy
     hour: "2"
@@ -300,12 +300,12 @@
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
 
 - name: Install postfix so we can mail out from cron jobs
-  apt:
+  ansible.builtin.apt:
     pkg: postfix
 
 # TODO: Make this mail to different addresses for development/production
 - name: Mail output of cron
-  cronvar:
+  community.general.cronvar:
     name: MAILTO
     user: deploy
     value: web-administrators@openaustralia.org,j1u3z8i7h9w0q8o4@oaf.slack.com
@@ -318,24 +318,24 @@
 
 - name: Get Google key for install Chrome
   become: true
-  apt_key:
+  ansible.builtin.apt_key:
     url: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
     state: present
 
 - name: Apt Google repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     state: present
     update_cache: true
 
 - name: Install LATEST Chrome (released every few weeks) # noqa: package-latest
-  apt:
+  ansible.builtin.apt:
     pkg: google-chrome-stable
     # We want to make sure we're always running the latest version
     state: latest
 
 - name: Get latest version number for chromedriver
-  uri:
+  ansible.builtin.uri:
     url: "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"
     return_content: true
     headers:
@@ -343,7 +343,7 @@
   register: latest_chromedriver
 
 - name: Download and install chromedriver
-  unarchive:
+  ansible.builtin.unarchive:
     src: "https://chromedriver.storage.googleapis.com/{{ latest_chromedriver.content|trim }}/chromedriver_linux64.zip"
     dest: /usr/local/bin
     remote_src: true
@@ -352,20 +352,20 @@
 # We want this directory to exist in development too so that
 # things are as consistent as possible
 - name: Create data mountpoint
-  file:
+  ansible.builtin.file:
     state: directory
     path: /data
     mode: '0755'
 
 # On EC2 we're using a seperate EBS volume to hold application data
 - name: Create filesystem on attached block storage
-  filesystem:
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/nvme1n1
   when: "'ec2' in group_names"
 
 - name: Mount /data filesystem
-  mount:
+  ansible.posix.mount:
     path: /data
     # Mount device by UUID because that's needed to run on AWS Nitro based instances (e.g. t3)
     # See https://aws.amazon.com/premiumsupport/knowledge-center/boot-error-linux-nitro-instance/
@@ -375,7 +375,7 @@
   when: "'ec2' in group_names"
 
 - name: Create directories in /data
-  file:
+  ansible.builtin.file:
     path: "/data/{{ item[0] }}/{{ item[1] }}"
     owner: deploy
     group: deploy
@@ -386,7 +386,7 @@
     - ['public', 'public/cards']
 
 - name: Link directories in /srv/www to /data
-  file:
+  ansible.builtin.file:
     state: link
     src: "/data/{{ item[0] }}/{{ item[1] }}"
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"

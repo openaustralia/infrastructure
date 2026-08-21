@@ -4,14 +4,14 @@
 # Basically everything in /data is stuff we want backed up that
 # isn't the database
 - name: Create data mountpoint
-  file:
+  ansible.builtin.file:
     state: directory
     path: /data
     mode: '0755'
 
 # On EC2 we're using a separate EBS volume to hold application data
 - name: Create filesystem on attached block storage
-  filesystem:
+  community.general.filesystem:
     fstype: ext4
     dev: /dev/nvme1n1
   when:
@@ -22,7 +22,7 @@
 - name: Mount /data filesystem
   # Use SKIP_TAGS=mount_data to get past this point when checking
   tags: mount_data
-  mount:
+  ansible.posix.mount:
     path: /data
     # Mount device by UUID because that's needed to run on AWS Nitro based instances (e.g. t3)
     # See https://aws.amazon.com/premiumsupport/knowledge-center/boot-error-linux-nitro-instance/
@@ -35,7 +35,7 @@
   - "ansible_facts['devices']['nvme1n1']['links']['uuids'] | length > 0"
 
 - name: Create directories in /data
-  file:
+  ansible.builtin.file:
     path: "/data/{{ item[0] }}/{{ item[1] }}"
     owner: deploy
     group: deploy
@@ -46,7 +46,7 @@
     - ['images/mps', 'images/mpsL', 'images/mpsXL', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search/searchdb']
 
 - name: Ensure that directories in /srv/www exist
-  file:
+  ansible.builtin.file:
     path: "/srv/www/{{ item[0] }}/{{ item[1] }}"
     owner: deploy
     group: deploy
@@ -57,7 +57,7 @@
     - ['log', 'releases', 'shared/config', 'shared/rss/mp', 'shared/sitemaps']
 
 - name: Link directories in /srv/www to /data
-  file:
+  ansible.builtin.file:
     state: link
     src: "/data/{{ item[0] }}/{{ item[1] }}"
     dest: "/srv/www/{{ item[0] }}/shared/{{ item[1] }}"
@@ -66,7 +66,7 @@
     - ['images', 'pwdata', 'html_cache', 'regmem_scan', 'regmem_scan_old', 'search']
 
 - name: Link file alerts-lastsent in /srv/www to /data
-  file:
+  ansible.builtin.file:
     state: link
     src: "/data/{{ item }}/alerts-lastsent"
     dest: "/srv/www/{{ item }}/shared/alerts-lastsent"
@@ -77,20 +77,20 @@
 # dependency for ansible mysql_db module handled in site.yml
 
 - name: Install MySQL client dev headers, updating cache as needed
-  apt:
+  ansible.builtin.apt:
     name: libmysqlclient-dev
     state: present
     update_cache: true
     cache_valid_time: 3600
 
 - name: Install OpenSSL
-  apt:
+  ansible.builtin.apt:
     name: libssl-dev
     state: present
 
 # NOTE - This works for both mysql 5 AND 8
 - name: Create openaustralia databases
-  mysql_db:
+  community.mysql.mysql_db:
     login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
@@ -98,7 +98,7 @@
   loop: "{{ environments }}"
 
 - name: Create openaustralia mysql admin user with access to the databases
-  mysql_user:
+  community.mysql.mysql_user:
     login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
@@ -109,7 +109,7 @@
   loop: "{{ environments }}"
 
 - name: Create mysql user with readonly access to the openaustralia databases for metabase
-  mysql_user:
+  community.mysql.mysql_user:
     login_host: "{{ db_host }}"
     login_user: admin
     login_password: "{{ rds_admin_password }}"
@@ -120,7 +120,7 @@
   loop: "{{ environments }}"
 
 - name: Create .my.cnf in development with password for both production and staging
-  template:
+  ansible.builtin.template:
     src: mysql.j2
     dest: /root/.my.cnf
     owner: root
@@ -130,7 +130,7 @@
 
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
-  file:
+  ansible.builtin.file:
     state: directory
     path: "/etc/letsencrypt/live/{{ item }}"
     mode: '0755'
@@ -140,7 +140,7 @@
 # We need to setup the SSL certificates before we try to configure nginx
 # because otherwise nginx will try to look for non-existent certificates
 - name: Copy SSL certificates for development
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}.pem"
     # We're faking it as if these are let's encrypt certs. Makes for less magic config
     dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
@@ -151,7 +151,7 @@
   notify: reload apache
 
 - name: Copy SSL keys for development
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}.key"
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
     mode: 0640
@@ -161,25 +161,25 @@
   notify: reload apache
 
 - name: Install apache now (for the benefit of certbot)
-  apt: pkg=apache2
+  ansible.builtin.apt: pkg=apache2
   when: "'ec2' in group_names"
 
 # Install php5 on xenial requires a few more jumps than usual
 - name: Add repo for installing php5
   tags: xapian
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: 'ppa:ondrej/php'
     update_cache: true
 
 - name: Add xapian backports PPA for newer libxapian
   tags: xapian
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: 'ppa:xapian/backports'
     update_cache: true
 
 - name: Install required packages
   tags: xapian
-  apt:
+  ansible.builtin.apt:
     name:
       - apache2
       - ghostscript
@@ -215,7 +215,7 @@
 # whatever revision the PPA published for the host's distro.
 - name: Install xapian packages at pinned version
   tags: xapian
-  apt:
+  ansible.builtin.apt:
     name:
       - "libxapian-dev={{ xapian_version }}*"
       - "xapian-tools={{ xapian_version }}*"
@@ -224,7 +224,7 @@
 - name: Install required packages for php
   tags: xapian
   when: "php_version is defined"
-  apt:
+  ansible.builtin.apt:
     name:
       - libapache2-mod-php{{ php_version }}
       - php{{ php_version }}
@@ -241,7 +241,7 @@
 # Without this the deploy fails at the composer:install step with
 # "composer: command not found".
 - name: Install composer (PHP dependency manager, used by Capistrano deploy)
-  apt:
+  ansible.builtin.apt:
     name: composer
     state: present
     update_cache: true
@@ -273,14 +273,14 @@
 #   sudo touch /var/lib/xapian-bindings-installed-{{ xapian_version }}
 - name: Stat xapian bindings install marker
   tags: xapian
-  stat:
+  ansible.builtin.stat:
     path: "/var/lib/xapian-bindings-installed-{{ xapian_version }}"
   register: xapian_stamp
 
 - name: Download xapian bindings source
   tags: xapian
   when: not xapian_stamp.stat.exists
-  get_url:
+  ansible.builtin.get_url:
     url: https://oligarchy.co.uk/xapian/{{ xapian_version }}/xapian-bindings-{{ xapian_version }}.tar.xz
     dest: /home/deploy
     owner: deploy
@@ -290,7 +290,7 @@
 - name: Unpack xapian bindings source
   tags: xapian
   when: not xapian_stamp.stat.exists
-  unarchive:
+  ansible.builtin.unarchive:
       src: /home/deploy/xapian-bindings-{{ xapian_version }}.tar.xz
       dest: /home/deploy
       remote_src: true
@@ -306,7 +306,7 @@
   when:
     - not xapian_stamp.stat.exists
     - not ansible_check_mode
-  command: ./configure --with-php
+  ansible.builtin.command: ./configure --with-php
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
     creates: /home/deploy/xapian-bindings-{{ xapian_version }}/Makefile
@@ -317,7 +317,7 @@
   when:
     - not xapian_stamp.stat.exists
     - not ansible_check_mode
-  command: make
+  ansible.builtin.command: make
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
     creates: /home/deploy/xapian-bindings-{{ xapian_version }}/php/xapian.la
@@ -328,7 +328,7 @@
   when:
     - not xapian_stamp.stat.exists
     - not ansible_check_mode
-  command: make install
+  ansible.builtin.command: make install
   args:
     chdir: /home/deploy/xapian-bindings-{{ xapian_version }}
   notify: reload apache
@@ -338,27 +338,27 @@
   when:
     - not xapian_stamp.stat.exists
     - not ansible_check_mode
-  copy:
+  ansible.builtin.copy:
     dest: "/var/lib/xapian-bindings-installed-{{ xapian_version }}"
     content: ""
     mode: '0644'
 
 - name: Create xapian mods-available ini
   tags: xapian
-  copy:
+  ansible.builtin.copy:
     content: "extension=xapian.so\n"
     dest: /etc/php/{{ php_version }}/mods-available/xapian.ini
     mode: '0644'
 
 - name: Enable xapian extension
   tags: xapian
-  command: phpenmod xapian
+  ansible.builtin.command: phpenmod xapian
   args:
     creates: /etc/php/{{ php_version }}/apache2/conf.d/20-xapian.ini
   notify: reload apache
 
 - name: Enable apache modules
-  apache2_module: state=present name={{ item }}
+  community.general.apache2_module: state=present name={{ item }}
   notify: reload apache
   with_items:
     - expires
@@ -368,7 +368,7 @@
 - name: Copy across the php config
   tags: xapian
   when: "php_version is defined"
-  template:
+  ansible.builtin.template:
     src: php.ini.j2
     dest: /etc/php/{{ php_version }}/{{ item }}/php.ini
     mode: '0644'
@@ -379,7 +379,7 @@
 
 - name: Copy test/test password
   tags: htpasswd
-  copy:
+  ansible.builtin.copy:
     src: htpasswd
     dest: /srv/www/{{ item }}/shared
     mode: '0640'
@@ -389,12 +389,12 @@
   notify: reload apache
 
 - name: Install ssl-cert package (provides snakeoil certs)
-  apt:
+  ansible.builtin.apt:
     name: ssl-cert
     state: present
 
 - name: Use snakeoil cert as placeholder until Let's Encrypt runs
-  shell: |
+  ansible.builtin.shell: |
     domain="{{ item.value.domain }}"
     cert_dir="/etc/letsencrypt/live/${domain}"
     if [ ! -f "${cert_dir}/fullchain.pem" ]; then
@@ -410,7 +410,7 @@
 
 - name: Find latest certbot live dir for each domain
   tags: sites_available
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     (ls -d /etc/letsencrypt/live/{{ item.value.domain }}-[0-9]* 2>/dev/null || echo /etc/letsencrypt/live/{{ item.value.domain }}) | tail -1
   args:
@@ -423,7 +423,7 @@
 
 - name: Build certbot_live_dir_map fact
   tags: sites_available
-  set_fact:
+  ansible.builtin.set_fact:
     certbot_live_dir_map: >-
       {{ certbot_live_dir_map | default({}) |
          combine({item.item.value.domain: item.stdout | default('/etc/letsencrypt/live/' + item.item.value.domain)}) }}
@@ -433,7 +433,7 @@
 
 - name: Ensure each site has an apache configuration
   tags: sites_available
-  template:
+  ansible.builtin.template:
     src: "apache/{{ item.value.template | default(item.key) }}.conf.j2"
     dest: "/etc/apache2/sites-available/{{ item.key}}.conf"
     mode: '0644'
@@ -447,7 +447,7 @@
   notify: reload apache
 
 - name: Enable virtual hosts
-  file:
+  ansible.builtin.file:
     src: /etc/apache2/sites-available/{{ item.key }}.conf
     dest: /etc/apache2/sites-enabled/{{ item.key }}.conf
     state: link
@@ -455,7 +455,7 @@
   notify: reload apache
 
 - name: Build certbot_certs from apache_sites
-  set_fact:
+  ansible.builtin.set_fact:
     built_certbot_certs: >-
       {{ built_certbot_certs | default([]) +
          [{'email': certbot_email,
@@ -472,7 +472,7 @@
     certbot_certs: "{{ built_certbot_certs }}"
 
 - name: Copy across the application config
-  template:
+  ansible.builtin.template:
     src: general.j2
     dest: "/srv/www/{{ item }}/shared/general"
     owner: deploy
@@ -487,7 +487,7 @@
 
 - name: Copy across the parser config
   tags: parser_config
-  template:
+  ansible.builtin.template:
     src: parser_configuration.yml.j2
     dest: "/srv/www/{{ item }}/shared/parser_configuration.yml"
     owner: deploy
@@ -499,13 +499,13 @@
 
 - name: Copy msmtp configuration
   tags: msmtp
-  template:
+  ansible.builtin.template:
     src: msmtprc.j2
     dest: /etc/msmtprc
     mode: '0644'
 
 - name: "Ensure /usr/local/bin exists"
-  file:
+  ansible.builtin.file:
     path: /usr/local/bin
     owner: root
     group: root
@@ -523,7 +523,7 @@
 # daily update at night for MP data (regmem, data from Public Whip etc.)
 - name: Set up cron job for daily update
   tags: cron
-  cron:
+  ansible.builtin.cron:
     name: "dailyupdate {{ item }}"
     user: deploy
     hour: 1
@@ -535,7 +535,7 @@
 # every week early Sunday grab weekly range of data
 - name: Set up cron job for weekly update
   tags: cron
-  cron:
+  ansible.builtin.cron:
     name: "weeklyupdate {{ item }}"
     user: deploy
     hour: 4
@@ -548,7 +548,7 @@
 # Email updates (Going at 10am to give me time to fix things if necessary)
 - name: Set up cron job for email alerts
   tags: cron
-  cron:
+  ansible.builtin.cron:
     name: "alertmailer {{ item }}"
     user: deploy
     hour: 10
@@ -561,7 +561,7 @@
 # Morning update (Australian Hansard is supposed to be up by 9am the next working day)
 - name: Set up cron job for morning updates
   tags: cron
-  cron:
+  ansible.builtin.cron:
     name: "morningupdate {{ item }}"
     user: deploy
     hour: 9
@@ -572,12 +572,12 @@
   with_items: "{{ environments }}"
 
 - name: Install postfix so we can mail out from cron jobs
-  apt:
+  ansible.builtin.apt:
     pkg: postfix
 
 # For local development (under vagrant we don't want the cron jobs generating email)
 - name: "Set MAILTO only for ec2 cron jobs"
-  cronvar:
+  community.general.cronvar:
     name: MAILTO
     user: deploy
     value: web-administrators@openaustralia.org,z4e3a8v8r4p0f9z1@oaf.slack.com
@@ -586,18 +586,18 @@
 # TODO: I have faint memory of rsync service for data.openaustralia.org.au
 
 - name: Uninstall newrelic php monitor
-  apt:
+  ansible.builtin.apt:
     pkg: newrelic-php5
     state: absent
 
 - name: Configure newrelic php monitor
-  file:
+  ansible.builtin.file:
     state: absent
     path: /etc/php/{{ php_version }}/mods-available/newrelic.ini
   notify: reload apache
 
 - name: Enable newrelic for php
-  file:
+  ansible.builtin.file:
     state: absent
     path: "/etc/php/{{ php_version }}/{{ item }}/conf.d/30-newrelic.ini"
   with_items:
@@ -609,17 +609,17 @@
 # This causes a request to /api/key to 404. So make content negotiation work by
 # adding it back in
 - name: Make content negotiation work again for php
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/mime.types
     line: 'application/x-httpd-php phtml pht php'
 
 - name: Autoremove unneeded packages
-  apt:
+  ansible.builtin.apt:
     autoremove: true
 
 # We allow the capistrano deploys to restart apache
 - name: Allow deploy user to restart apache
-  copy:
+  ansible.builtin.copy:
     src: deploy_can_restart_apache
     dest: /etc/sudoers.d/
     mode: '0440'
