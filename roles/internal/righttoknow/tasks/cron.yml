@@ -321,7 +321,7 @@
     name: "users-purge-limited"
     minute: "50"
     hour: "2"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ../users-purge-limited.lock \"bin/rails --quiet users:purge_limited\" || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production sentry monitor run users-purge-limited -s \"50 2 * * *\" -e {{ item }} --check-in-margin 60 --max-runtime 120 --timezone Australia/Sydney -- rtk-cron-lock ../users-purge-limited.lock \"bin/rails --quiet users:purge_limited\" || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
@@ -330,14 +330,17 @@
 # Shipped disabled: last_sign_in_at is nil for every account that predates the
 # 0.46 upgrade, so the first run would sweep up a large number of accounts.
 # Enable only after the dry-run count on staging has been reviewed and signed
-# off on openaustralia/righttoknow#1031.
+# off on openaustralia/righttoknow#1031. A disabled entry is commented out in
+# the crontab, so it never runs and never checks in - Sentry only hears about a
+# monitor the first time its job runs, so no monitor exists for this one until
+# the entry is enabled, and enabling it brings the monitor with it.
 - name: Add alaveteli crontab - users-destroy-unused
   cron:
     user: deploy
     name: "users-destroy-unused"
     minute: "53"
     hour: "2"
-    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production run-with-lockfile -n ../users-destroy-unused.lock \"bin/rails --quiet users:destroy_unused\" || echo \"stalled?\"'"
+    job: "/bin/bash -l -c 'cd /srv/www/{{ item }}/current && RAILS_ENV=production sentry monitor run users-destroy-unused -s \"53 2 * * *\" -e {{ item }} --check-in-margin 60 --max-runtime 120 --timezone Australia/Sydney -- rtk-cron-lock ../users-destroy-unused.lock \"bin/rails --quiet users:destroy_unused\" || echo \"stalled?\"'"
     cron_file: "{{ item }}"
     state: "{{ cron_enabled | ternary('present', 'absent')}}"
     disabled: true
