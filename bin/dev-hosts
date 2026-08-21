@@ -32,8 +32,9 @@
 # Renaming rather than dropping "ec2" is the point: it is the group that says where a host
 # lives, and group_vars/ec2.yml is where ansible_user, terraform.pem and the RDS-derived
 # db_host come from. A dev host needs all of those answered differently, so it wants the same
-# group under a different name, e.g. group_vars/test.yml. Note such a group needs
-# ansible_group_priority set in the inventory to win against the service groups.
+# group under a different name, e.g. group_vars/vagrant.yml. Note such a group needs
+# ansible_group_priority set in the inventory - 0, the same as "ec2", so it loses to the
+# service groups by number rather than by however its name happens to sort.
 #
 # ${var.env_name} is always dropped: blue/green is a production concern and means nothing
 # locally. The doubled dot it leaves is collapsed, so web1.${var.env_name}.planningalerts
@@ -68,9 +69,10 @@ MEMORY_MB = {
   "large" => 8192, "xlarge" => 16_384, "2xlarge" => 32_768
 }.freeze
 
+# Ubuntu has stopped releasing vagrant boxes, use bento from 24.04 onwards
 VAGRANT_BOX = {
   "16.04" => "ubuntu/xenial64", "18.04" => "ubuntu/bionic64", "20.04" => "ubuntu/focal64",
-  "22.04" => "ubuntu/jammy64", "24.04" => "ubuntu/noble64", "26.04" => "ubuntu/resolute64"
+  "22.04" => "ubuntu/jammy64", "24.04" => "bento/ubuntu-24.04", "26.04" => "bento/ubuntu-26.04"
 }.freeze
 
 COUNT_INDEX = /\$\{\s*count\.index\s*\+\s*1\s*\}/

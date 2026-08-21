@@ -1,3 +1,4 @@
+# Sets variables applicable for live systems running on ec2
 ---
 base_domain: org.au
 

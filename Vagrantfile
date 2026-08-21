@@ -15,15 +15,16 @@ STANDARD_ALIASES = %w[www test www.test]
 
 # The group that says where these hosts live, standing in for "ec2" on the real ones. Renaming
 # rather than keeping "ec2" matters: group_vars/ec2.yml sets ansible_user, terraform.pem and an
-# RDS-derived db_host, and shares five keys with group_vars/development.yml which it would win.
-# Local boxes must not be in it.
+# RDS-derived db_host. It shares base_domain, devsite and newrelic_license_key with
+# group_vars/development.yml, and db_host and planningalerts_db_host with group_vars/vagrant.yml,
+# and would win all five. Local boxes must not be in it.
 LOCATION_GROUP = "vagrant"
 
 # Cap per-host memory. Production runs to 16GB for theyvoteforyou and over 36GB in total.
 MAX_MEMORY = (ENV["VAGRANT_MEMORY"] || 4096).to_i
 
 # Stand-ins for the AWS managed services, which have no aws_instance in Terraform for
-# bin/dev-hosts to find. group_vars/development.yml pins mysql_host to .10 and both
+# bin/dev-hosts to find. group_vars/vagrant.yml pins mysql_host to .10 and both
 # postgresql_host and planningalerts_db_host to .11, so those two node numbers must not move.
 #
 # FIXME in #574 (Upgrade Ansible to a supported version): jammy is the newest box Ansible 2.10
@@ -155,24 +156,38 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Uncomment the following line if you want some verbose output from ansible
     ansible.verbose = "vv"
 
+    # Every box below is in development, in LOCATION_GROUP, and in whichever groups name what it
+    # runs, so the merge order between those has to be pinned rather than left to Ansible's
+    # fallback of sorting same-depth groups by name. Ansible combines group_vars in
+    # `sorted(groups, key=lambda g: (g.depth, g.priority, g.name))` order, last one winning
+    # (ansible/inventory/helpers.py), so the numbers below read low-to-high as least-to-most
+    # specific:
+    #
+    #   -1  development             what every dev environment shares, whatever runs it
+    #    0  vagrant, ec2            where the host lives - the location group
+    #    1  metabase, righttoknow   service groups, at Ansible's default
+    #
+    # Names would give the wrong answer at every level: "vagrant" sorts after "development" only
+    # by luck, and a future "devcontainer" or "cloud" location group sorts before it and would
+    # quietly lose; "ec2" sorts before every service group but "vagrant" sorts after most of
+    # them. Priority has to be set in the inventory, not group_vars, since it governs how
+    # group_vars files merge - see the matching sections in inventory/ec2-hosts.
     ansible.groups = {
-      "development" => [],
       "catch_all_mail" => [],
 
-      # Empty list just so ansible doesn't complain it doesn't know about these cloud servers
-      "ec2" => [],
+      # group_vars/development.yml - base_domain, devsite and the local test credentials.
+      "development" => [],
+      "development:vars" => { "ansible_group_priority" => -1 },
 
-      # Same 0 as [ec2:vars] in inventory/ec2-hosts. No effect while "ec2" is empty here, but it
-      # keeps the two inventories agreeing on where the location group sits in the merge order.
+      # Empty list just so ansible doesn't complain it doesn't know about these cloud servers.
+      # The priority has no effect while the group is empty, but it keeps the two inventories
+      # agreeing on where a location group sits.
+      "ec2" => [],
       "ec2:vars" => { "ansible_group_priority" => 0 },
 
-      # Lose to the more specific groups deterministically rather than by alphabet, which would
-      # otherwise have "vagrant" beat them while "devc" or "local" quietly lost. 0 matches
-      # [ec2:vars] in inventory/ec2-hosts, so a dev box resolves its vars in the same order a
-      # real host does, and it keeps a future group_vars/vagrant.yml from beating
-      # group_vars/development.yml, which is what pins mysql_host, postgresql_host, db_host and
-      # rds_admin_password locally. Priority has to be set in the inventory, not group_vars,
-      # since it governs how group_vars files merge.
+      # group_vars/vagrant.yml - the VirtualBox private-network addresses of the boxes standing
+      # in for RDS. Beats development, loses to the service groups.
+      LOCATION_GROUP => [],
       "#{LOCATION_GROUP}:vars" => { "ansible_group_priority" => 0 }
     }
     hosts.each do |hostname, details|
