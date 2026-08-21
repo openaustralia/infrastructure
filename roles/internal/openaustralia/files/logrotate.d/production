@@ -1,0 +1,9 @@
+"/srv/www/production/log/*.log" {
+  daily
+  rotate 30
+  compress
+  missingok
+  copytruncate
+  delaycompress
+  notifempty
+}

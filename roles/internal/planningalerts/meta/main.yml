@@ -1,13 +1,2 @@
 ---
-dependencies:
-
-  - role: nickhammond.logrotate
-    logrotate_scripts:
-      - name: production
-        path: "/srv/www/production/shared/log/*.log"
-        options:
-          - daily
-          - rotate 30
-          - compress
-          - missingok
-          - copytruncate
+dependencies: []

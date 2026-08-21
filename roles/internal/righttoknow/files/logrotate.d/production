@@ -1,0 +1,8 @@
+"/srv/www/production/shared/log/*.log" {
+  daily
+  rotate 28
+  compress
+  missingok
+  notifempty
+  copytruncate
+}

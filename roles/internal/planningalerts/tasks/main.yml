@@ -94,3 +94,18 @@
 - name: Set postfix destination  # noqa: no-changed-when
   ansible.builtin.command: postconf -e "mydestination=planningalerts.{{ base_domain }}"
 
+
+# Log rotation, previously handled by the nickhammond.logrotate role
+- name: Install logrotate
+  ansible.builtin.apt:
+    pkg: logrotate
+  tags: [logrotate]
+
+- name: Install logrotate configuration for application logs
+  ansible.builtin.copy:
+    src: logrotate.d/production
+    dest: /etc/logrotate.d/production
+    owner: root
+    group: root
+    mode: "0644"
+  tags: [logrotate]
