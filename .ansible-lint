@@ -5,14 +5,25 @@ exclude_paths:
   # can't handle it. It's a static payload copied to the host, not
   # Ansible config, so there's nothing for the linter to check here.
   - roles/internal/righttoknow/files/storage.yml
+
 # We are not publishing to Galaxy, so these don't matter
 skip_list:
-  - meta-incorrect          # 28 occurrences - not required,
-  - meta-no-info            # 17 occurrences - not required,
-  - role-name               # 4 occurrences - not required,
-  - var-spacing             # ~25 occurrences - cosmetic, all in cron files
-  - yaml                    # ~200 occurrences - yamllint already runs separately
+  - meta-incorrect          # ~25 occurrences - placeholder galaxy_info - not required
+  - role-name               # role names with dots (oaf.backup) - not required
+  - schema[meta]            # incomplete galaxy_info in meta/main.yml - not required
+  - jinja[spacing]          # ~91 occurrences - cosmetic, mostly cron files (was var-spacing)
+  - yaml                    # yamllint already runs separately
 
-# Worth knowing about but not blocking - fix in new code
+# Worth knowing about but not blocking - fix in new code, clean up incrementally.
+# Counts are from the ansible-lint 26 upgrade (see #574).
 warn_list:
-  - risky-file-permissions  # ~50 occurrences - fix in separate PR
+  - risky-file-permissions  # ~5 occurrences - pre-existing
+  - name[casing]            # ~37 occurrences - task names starting lowercase
+  - name[missing]           # ~12 occurrences - unnamed tasks
+  - name[play]              # ~14 occurrences - unnamed plays
+  - name[template]          # ~7 occurrences - Jinja at the start of a name
+  - key-order[play]         # ~10 occurrences - hosts/tags/name ordering
+  - no-changed-when         # ~11 occurrences - command/shell without changed_when
+  - no-free-form            # ~30 occurrences - k=v shorthand module args
+  - partial-become[task]    # ~3 occurrences - become_user without become
+  - var-naming[no-role-prefix]  # ~36 occurrences - role vars without role prefix

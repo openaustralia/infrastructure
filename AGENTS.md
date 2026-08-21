@@ -52,7 +52,7 @@ needs to decrypt a vault value will pass locally and fail in CI. `.github/CODEOW
 
 ## Setup (one-time, per operator)
 
-- Needs Python 3.11 (not 3.12+, which breaks Ansible 2.9/2.10 — see `.python-version`). `mise install` sets up
+- Needs Python at the version in `.python-version`. `mise install` sets up
   Ruby/Python/PHP versions.
 - Ansible Vault passphrases and AWS/Terraform state creds come from the OAF 1Password account (id in
   `bin/.op-account`; sign in with `op signin --account "$(cat bin/.op-account)"`), fetched via
@@ -61,7 +61,7 @@ needs to decrypt a vault value will pass locally and fail in CI. `.github/CODEOW
   bridges to that session via `credential_process` — see README "CLI tools for credentials" for the `~/.aws/config`
   setup. `aws sso login`/`aws configure` are no longer recommended (no MFA, long-lived creds on disk). Google via
   `gcloud auth application-default login`.
-- `make requirements` — sets up the Python venv, installs ansible-galaxy roles/collections, materialises
+- `make requirements` — sets up the Python venv (Ansible collections come bundled with the ansible pip package), installs ansible-galaxy roles, materialises
   `terraform.pem`, and runs `op-check`/`aws-check`.
 - `make aws-check` — fails if the `aws` CLI (2.32.0+, needed for `aws login`) or the Session Manager plugin are
   missing, and bootstraps the `oaf`/`oaf-legacy` profiles in `~/.aws/config` if absent. It only ever writes a

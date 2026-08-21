@@ -40,13 +40,13 @@ help:
 	@echo "Available targets"
 	@echo "  help                                Output this help text"
 	@echo "  all                                 Run full site.yml playbook against all hosts"
-	@echo "  requirements                        Install requirements: venv, roles, collections, terraform.pem and check required commands"
+	@echo "  requirements                        Install requirements: venv, roles, terraform.pem and check required commands"
 	@echo "  op-check                            Fail if not signed into the OAF 1Password account"
 	@echo "  aws-check                           Fail if aws-cli/Session Manager plugin missing; bootstrap ~/.aws/config oaf/oaf-legacy profiles"
 	@echo "  terraform.pem                       Materialise terraform.pem from 1Password"
 	@echo "  tf-secrets                          Render terraform/secrets.auto.tfvars from 1Password via op inject"
 	@echo "  tf-env-check                        Warn (non-fatal) if AWS or gcloud credentials aren't reachable"
-	@echo "  roles                               Install Ansible Galaxy external roles and collections"
+	@echo "  roles                               Install Ansible Galaxy external roles"
 	@echo "  venv                                Create Python virtualenv and install requirements"
 	@echo "  generate-certificates               Generate certificates for the development *.test domains"
 	@echo "Independent targets (not required by all):"
@@ -217,19 +217,19 @@ generate-certificates: .make/certificates
 venv: .venv/bin/activate
 
 .venv/bin/activate: requirements.txt
-	test -d .venv || python3 -m virtualenv .venv
-	.venv/bin/pip install --upgrade pip virtualenv
+	test -d .venv || python3 -m venv .venv
+	.venv/bin/pip install --upgrade pip
 	.venv/bin/pip install -Ur requirements.txt
 	touch .venv/bin/activate
 
 .make:
 	mkdir -p .make
 
-.make/collections: .venv/bin/activate roles/requirements.yml | .make
-	.venv/bin/ansible-galaxy collection install -r roles/requirements.yml
-	touch .make/collections
-
-.make/roles: .make/collections .venv/bin/activate roles/requirements.yml | .make
+# Collections come bundled with the ansible pip package (see roles/requirements.yml). The rm
+# clears locally-installed collections from the pre-bundle setup, which would otherwise shadow
+# the bundled copies.
+.make/roles: .venv/bin/activate roles/requirements.yml | .make
+	rm -rf collections .make/collections
 	.venv/bin/ansible-galaxy install -r roles/requirements.yml -p roles/external
 	touch .make/roles
 
@@ -436,7 +436,12 @@ template-check:
 	@echo "PASSED template-check!"
 
 ansible-lint: venv roles
-	ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/ roles/*.yml site.yml
+	# ANSIBLE_CONFIG: lint with the CI config, which sets no vault_identity_list - linting
+	# doesn't need secrets, and without it every !vault value spawns bin/ansible-vault-client
+	# (and a 1Password CLI call). ANSIBLE_HOME keeps ansible-lint's collection search away
+	# from ~/.ansible/collections, where stale copies could shadow the collections bundled
+	# with the ansible pip package.
+	ANSIBLE_CONFIG=.github/ansible.cfg ANSIBLE_HOME=$(CURDIR)/.make/ansible-home ANSIBLE_ROLES_PATH=roles:roles/internal:roles/external .venv/bin/ansible-lint roles/internal/ roles/*.yml site.yml
 	@echo "PASSED ansible-lint!"
 
 lint: yaml-lint template-check ansible-lint tf-check-fmt tf-validate

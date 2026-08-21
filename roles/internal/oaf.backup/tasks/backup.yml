@@ -1,13 +1,13 @@
 ---
 
-- import_tasks: install.deb.yml
+- ansible.builtin.import_tasks: install.deb.yml
   when: ansible_os_family == "Debian" and not backup_remove
 
-- import_tasks: install.red.yml
+- ansible.builtin.import_tasks: install.red.yml
   when: ansible_os_family == "RedHat" and not backup_remove
 
-- import_tasks: configure.yml
+- ansible.builtin.import_tasks: configure.yml
   when: not backup_remove
 
-- import_tasks: remove.yml
+- ansible.builtin.import_tasks: remove.yml
   when: backup_remove

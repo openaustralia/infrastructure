@@ -52,7 +52,7 @@ When Cloudflare proxies requests to your origin server, the client IP address is
 ```yaml
 # In your service role's tasks/main.yml
 - name: Configure Cloudflare real IP
-  include_role:
+  ansible.builtin.include_role:
     name: cloudflare_realip
   vars:
     cloudflare_webserver: nginx  # or apache

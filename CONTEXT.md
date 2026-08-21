@@ -72,12 +72,19 @@ One of OAF's five public-facing offerings: Planning Alerts, Right to Know, They 
 and morph.io.
 _Avoid_: service, product, site
 
+**Ansible bundle**:
+The `ansible` Python package: ansible-core (the engine) plus a curated, version-matched set of Ansible
+collections, installed as one unit by `make requirements`. When a version constraint matters, name the layer -
+the bundle and ansible-core version independently (bundle 12 carries core 2.19).
+_Avoid_: bare "ansible" (ambiguous with ansible-core when versions matter), community package
+
 **Ansible collection**:
-A Galaxy collection installed into `collections/` by `make requirements`.
+A Galaxy collection of Ansible modules and plugins. Ours all arrive inside the Ansible bundle rather than being
+installed individually.
 _Avoid_: dependency, package
 
 Bare "collection" is never used in this repository, because both senses above are load-bearing: one is org-wide
-naming, the other is an Ansible config path and a gitignored directory. Always qualify it.
+naming, the other is an Ansible packaging unit. Always qualify it.
 
 ## Out of scope
 
