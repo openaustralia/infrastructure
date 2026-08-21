@@ -81,5 +81,21 @@
   ignore_errors: "{{ ansible_check_mode }}"
   tags: [ntp]
 
+# New Relic infrastructure agent, via New Relic's officially recommended install role.
+# Skipped where the credentials aren't defined (e.g. development) - unlike the old
+# newrelic.newrelic-infra role there is no uninstall path, so dev boxes simply never
+# get the agent.
+- name: Install New Relic infrastructure agent
+  ansible.builtin.import_role:
+    name: newrelic.newrelic_install
+  vars:
+    targets: [infrastructure]
+  environment:
+    NEW_RELIC_API_KEY: "{{ newrelic_api_key | default('') }}"
+    NEW_RELIC_ACCOUNT_ID: "{{ newrelic_account_id | default('') }}"
+    NEW_RELIC_REGION: "{{ newrelic_region | default('US') }}"
+  when: newrelic_api_key is defined and newrelic_account_id is defined
+  tags: [newrelic]
+
 # TODO: Add byobu and enable it by default
 # TODO: Install htop because it's awesome

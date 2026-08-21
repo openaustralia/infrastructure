@@ -30,6 +30,7 @@ db_host: "{{ rds_database.instances[0].endpoint.address }}"
 # Set when in requires_postgresql group (Unsure why not planningalerts group)
 planningalerts_db_host: "{{ rds_planningalerts.instances[0].endpoint.address }}"
 
+# Used by the New Relic APM config templates (righttoknow, theyvoteforyou)
 newrelic_license_key: !vault |
           $ANSIBLE_VAULT;1.2;AES256;ec2
           63343465396536616465383664646636633632616133343734666464303438613965313037633032
@@ -38,4 +39,9 @@ newrelic_license_key: !vault |
           6265303862363133330a343630383831303035613031303862633361366337636235366165386130
           61623365636130633264363330663661616635346432656164373937636631373633633238386633
           3664373363626161383364333230303662373865643130356366
+
+# New Relic credentials for the newrelic.newrelic_install role (see roles/requirements.yml).
+# TODO(#574): add vault-encrypted newrelic_api_key (a New Relic USER api key) and
+# newrelic_account_id here before the next apply - until they exist the New Relic install
+# task in base-server is skipped.
 devsite: false

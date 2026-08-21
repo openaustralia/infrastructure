@@ -14,4 +14,3 @@ base_domain: test
 newrelic_license_key: null
 devsite: true
 rds_admin_password: "test_password"
-nrinfragent_state: absent

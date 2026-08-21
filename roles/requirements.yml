@@ -10,8 +10,10 @@ roles:
     # https://github.com/zzet/rbenv/commit/8d0f552cf4375688dc302220da280b6cc01c8d25
     version: 3.6.0
 
-  - src: newrelic.newrelic-infra
-    version: 0.5.0
+  - src: newrelic.newrelic_install
+    # New Relic's officially recommended install role, replacing the semi-dormant
+    # newrelic.newrelic-infra role. Latest version as of Aug 2026.
+    version: v0.7.11
 
   - src: geerlingguy.swap
     # Latest version as of Aug 2026
