@@ -1,3 +1,8 @@
 ---
 - name: Update timezone
   ansible.builtin.command: dpkg-reconfigure --frontend noninteractive tzdata
+
+- name: Update mail aliases
+  # newaliases only exists once a mail system (postfix) is installed
+  ansible.builtin.shell: which newaliases && newaliases || true
+  changed_when: true

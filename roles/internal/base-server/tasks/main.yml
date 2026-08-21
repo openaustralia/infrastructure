@@ -21,5 +21,65 @@
     state: link
   notify: Update timezone
 
+# Forward local mail to somewhere it gets read
+- name: Configure /etc/aliases
+  ansible.builtin.template:
+    src: aliases.j2
+    dest: /etc/aliases
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Update mail aliases
+  tags: [aliases]
+
+# Automatic security updates
+- name: Install unattended-upgrades
+  ansible.builtin.apt:
+    pkg: unattended-upgrades
+  tags: [unattended-upgrades]
+
+- name: Enable automatic package list updates and upgrades
+  ansible.builtin.copy:
+    src: 20auto-upgrades
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root
+    group: root
+    mode: "0644"
+  tags: [unattended-upgrades]
+
+- name: Configure unattended-upgrades
+  ansible.builtin.copy:
+    src: 50unattended-upgrades
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    owner: root
+    group: root
+    mode: "0644"
+  tags: [unattended-upgrades]
+
+# Time synchronisation via systemd-timesyncd (the Ubuntu default),
+# which replaced the ntpd previously installed by ANXS.ntp
+- name: Remove ntpd
+  ansible.builtin.apt:
+    pkg: ntp
+    state: absent
+    purge: true
+  tags: [ntp]
+
+- name: Install systemd-timesyncd
+  ansible.builtin.apt:
+    pkg: systemd-timesyncd
+  when: ansible_distribution_version is version('20.04', '>=')
+  tags: [ntp]
+
+- name: Enable and start systemd-timesyncd
+  ansible.builtin.systemd:
+    name: systemd-timesyncd
+    enabled: true
+    state: started
+  # In check mode the package install above is only simulated, so on a host that
+  # still runs ntpd the unit doesn't exist yet and this task can't find it
+  ignore_errors: "{{ ansible_check_mode }}"
+  tags: [ntp]
+
 # TODO: Add byobu and enable it by default
 # TODO: Install htop because it's awesome

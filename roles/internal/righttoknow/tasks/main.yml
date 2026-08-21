@@ -708,3 +708,19 @@
 - name: Install memcached
   ansible.builtin.apt:
     pkg: memcached
+
+# Log rotation, previously handled by the nickhammond.logrotate role
+- name: Install logrotate
+  ansible.builtin.apt:
+    pkg: logrotate
+  tags: [logrotate]
+
+- name: Install logrotate configuration for mail and application logs
+  ansible.builtin.copy:
+    src: "logrotate.d/{{ item }}"
+    dest: "/etc/logrotate.d/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  with_items: [mail, production, staging]
+  tags: [logrotate]

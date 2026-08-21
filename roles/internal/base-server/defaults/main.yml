@@ -1,2 +1,7 @@
 ---
 # defaults file for base-server
+
+# Mail delivered to these local users is forwarded to the alias instead
+aliases_list:
+  - {user: deploy, alias: root}
+  - {user: root, alias: web-administrators@openaustralia.org}

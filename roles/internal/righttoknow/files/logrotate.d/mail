@@ -1,0 +1,15 @@
+# This is the log rotation scheme required by Alaveteli
+# See http://alaveteli.org/docs/installing/email/#logging
+/var/log/mail/mail.log {
+  rotate 30
+  daily
+  dateext
+  missingok
+  notifempty
+  compress
+  delaycompress
+  sharedscripts
+  postrotate
+    systemctl restart rsyslog >/dev/null 2>&1 || true
+  endscript
+}

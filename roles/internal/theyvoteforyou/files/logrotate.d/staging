@@ -1,0 +1,7 @@
+"/srv/www/staging/shared/log/*.log" {
+  daily
+  rotate 7
+  compress
+  missingok
+  copytruncate
+}
