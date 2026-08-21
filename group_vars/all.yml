@@ -1,5 +1,9 @@
 # File: group_vars/all.yml
 ---
+# Banner rendered into files via {{ ansible_managed }}. Set here as a variable because the
+# ansible_managed setting in ansible.cfg is deprecated (removal planned for ansible-core 2.23).
+ansible_managed: Ansible managed - do not edit directly (the changes will be lost)!
+
 theyvoteforyou_domain: "theyvoteforyou.{{ base_domain }}"
 openaustralia_domain: "openaustralia.{{ base_domain }}"
 righttoknow_domain: "righttoknow.{{ base_domain }}"
