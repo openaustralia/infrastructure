@@ -11,7 +11,7 @@
 # low-to-high as least-to-most specific and give that outcome deterministically:
 #
 #   -1  development                    what every dev environment shares (Vagrantfile only)
-#    0  ec2, requires_*, vagrant       where the host lives, what it needs
+#    0  ec2, linode, requires_*, vagrant  where the host lives, what it needs
 #    1  metabase, righttoknow, ...     service groups, at Ansible's default
 #
 # Names would decide it otherwise, and only by luck: "ec2" happens to sort before every service
@@ -54,6 +54,14 @@ ansible_group_priority=-1
 [redis]
 
 # INVENTORY IN alphabetical order by group name
+
+[linode]
+# This contains Linode instances that are not in EC2
+postal.oaf.org.au
+
+# Same "where the host lives" priority as ec2 - see the comment at the top of this file
+[linode:vars]
+ansible_group_priority=0
 
 # NOTE: The postal server is a Linode instance, NOT ec2 - see terraform/postal
 [postal]

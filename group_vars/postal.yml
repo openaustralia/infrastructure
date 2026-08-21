@@ -1,6 +1,9 @@
 # Secrets for the postal mail server (see roles/internal/postal)
 # Encrypted with the "default" vault id - see ansible.cfg
 
+display_name: "postal.oaf.org.au"
+site_name: "postal.oaf.org.au"
+
 postal_mariadb_root_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           35333239633762346138613837313966303064663735663633323861616562303763613438376162
