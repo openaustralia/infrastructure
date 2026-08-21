@@ -28,9 +28,8 @@
 
 - For starting local VMs for testing you will need [Vagrant](https://www.vagrantup.com/) and a supported provider - our
   instructions assume [VirtualBox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox).
-- In order to run Ansible, you'll need Python < 3.12 installed
-    - 3.12 dropped some deprecated language features which
-      cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
+- In order to run Ansible, you'll need Python installed at the version in `.python-version`
+  (which [mise](https://mise.jdx.dev/) installs for you)
     - Secrets: Ansible passphrases are read from the OAF 1Password account.
       See [Add the Ansible Vault password](#add-the-ansible-vault-password) below.
 - In order to run Capistrano, you'll need a version of Ruby installed; even better, install [rbenv](https://rbenv.org/)
@@ -122,8 +121,7 @@ Run `make requirements` to install the requirements for python and ansible.
 
 **Ansible**
 
-- In order to run the Ansible playbooks, you'll need Python 3.11 installed (as per `.python-version`)
-  - Note v3.12 dropped some deprecated language features which cause [Ansible 2.9 and 2.10 to no longer work](https://github.com/ansible/ansible/issues/81946).
+- In order to run the Ansible playbooks, you'll need Python installed at the version in `.python-version`
 
 **Secrets**
 
@@ -163,7 +161,7 @@ There's a very handy `Makefile` included which will:
 
 - install Vagrant plugins
 - Create a python virtual environment
-- Install `ansible-galaxy` roles and collections
+- Install `ansible-galaxy` roles (Ansible collections come bundled with the ansible pip package)
 
 Simply run
 

@@ -27,13 +27,13 @@ MAX_MEMORY = (ENV["VAGRANT_MEMORY"] || 4096).to_i
 # bin/dev-hosts to find. group_vars/vagrant.yml pins mysql_host to .10 and both
 # postgresql_host and planningalerts_db_host to .11, so those two node numbers must not move.
 #
-# FIXME in #574 (Upgrade Ansible to a supported version): jammy is the newest box Ansible 2.10
-# can manage at all. It vendors six 1.12.0, whose meta path importer only implements
-# find_module/load_module, and Python 3.12 removed the import system's fallback to those. Every
-# module task then dies on the guest with "No module named 'ansible.module_utils.six.moves'",
-# starting at the first gather_facts. 24.04 ships Python 3.12 and 26.04 ships 3.14, so both are
-# out until #574 lands. roles/internal/postgresql also hardcodes the jammy-pgdg apt repo, which
-# needs widening at the same time. Restore these two once Ansible is new enough:
+# FIXME in #574 (Upgrade Ansible to a supported version): ansible-core 2.19 (the version #574
+# landed on) officially supports target Python up to 3.13, so 24.04 (Python 3.12) boxes now
+# work but 26.04 (Python 3.14) is not yet a supported target. Moving these two boxes to
+# bento/ubuntu-26.04 is gated on the follow-up bump to a newer ansible-core once
+# theyvoteforyou leaves Ubuntu 20.04 (its Python 3.8 pins us to core 2.19 - see
+# docs/adr/0003-two-stage-ansible-upgrade.md). roles/internal/postgresql also hardcodes the
+# jammy-pgdg apt repo, which needs widening at the same time. Restore these two after that bump:
 #   "mysql" => { node: 10, box: "bento/ubuntu-26.04", memory: 2048, groups: ["mysql"] },
 #   "postgresql" => { node: 11, box: "bento/ubuntu-26.04", memory: 2048, groups: ["postgresql"] },
 LOCAL_ONLY = {

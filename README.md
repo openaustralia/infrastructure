@@ -113,7 +113,7 @@ Provision all running servers (production and staging) with:
 
     make all
 
-This will create a Python virtualenv in `venv`; install ansible inside it; and install required roles from ansible-galaxy inside `roles/external`
+This will create a Python venv in `.venv`; install ansible inside it; and install required roles from ansible-galaxy inside `roles/external`
 
 If you just want to provision a single server:
 
