@@ -182,8 +182,8 @@
         rbenv:
           env: user
           version: v1.1.2
-          default_ruby: "{{ ruby_versions | first }}"
-          rubies: "{{ ruby_versions | map('community.general.dict_kv', 'version') | list }}"
+          default_ruby: "{{ ruby_versions | default(['']) | first }}"
+          rubies: "{{ ruby_versions | default([]) | map('community.general.dict_kv', 'version') | list }}"
         rbenv_users:
           - deploy
       when: "ruby_manager == 'rbenv'"
