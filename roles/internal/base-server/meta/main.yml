@@ -4,8 +4,3 @@ dependencies:
     tags: [deploy-user]
   - role: awscloudwatch
     tags: [cloudwatch]
-  - role: newrelic.newrelic-infra
-    tags: [newrelic]
-    nrinfragent_config:
-      license_key: "{{ newrelic_license_key }}"
-      display_name: "{{ site_name }}"
