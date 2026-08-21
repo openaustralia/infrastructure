@@ -1,5 +1,5 @@
 ---
 
-- import_tasks: backup.yml
+- ansible.builtin.import_tasks: backup.yml
   when: backup_enabled
   tags: [backup]

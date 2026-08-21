@@ -216,7 +216,7 @@
   notify: nginx reload
 
 - name: Install certificate using certbot
-  include_role:
+  ansible.builtin.include_role:
     name: oaf.certbot
   vars:
     certbot_certs:

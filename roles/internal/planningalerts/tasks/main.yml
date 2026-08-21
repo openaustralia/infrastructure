@@ -11,7 +11,7 @@
   notify:
     - memchached restart
 
-- include_tasks: database.yml
+- ansible.builtin.include_tasks: database.yml
 
 - name: Ensure that deploy owns /srv/www and /srv/www/shared
   ansible.builtin.file:

@@ -466,7 +466,7 @@
 - name: Install certificate using certbot
   tags: broken
   when: "'ec2' in group_names"
-  include_role:
+  ansible.builtin.include_role:
     name: oaf.certbot
   vars:
     certbot_certs: "{{ built_certbot_certs }}"

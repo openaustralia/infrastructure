@@ -1,6 +1,6 @@
 ---
 - name: Configure backup profiles
-  include_tasks: configure_profile.yml
+  ansible.builtin.include_tasks: configure_profile.yml
   loop: "{{ restic_profiles }}"
   loop_control:
     loop_var: profile
