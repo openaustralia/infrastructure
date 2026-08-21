@@ -76,6 +76,9 @@
     name: systemd-timesyncd
     enabled: true
     state: started
+  # In check mode the package install above is only simulated, so on a host that
+  # still runs ntpd the unit doesn't exist yet and this task can't find it
+  ignore_errors: "{{ ansible_check_mode }}"
   tags: [ntp]
 
 # TODO: Add byobu and enable it by default
