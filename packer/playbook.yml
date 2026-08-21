@@ -35,9 +35,9 @@
       ansible.builtin.pip: name=boto
 
     - name: Get information about the postgresql RDS instance
-      community.aws.rds_instance_info:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
+      amazon.aws.rds_instance_info:
+        access_key: "{{ aws_access_key }}"
+        secret_key: "{{ aws_secret_key }}"
         db_instance_identifier: postgresql
         region: "{{ ec2_region }}"
       register: rds_postgresql
@@ -45,9 +45,9 @@
       check_mode: no
 
     - name: Get information about the planningalerts RDS instance
-      community.aws.rds_instance_info:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
+      amazon.aws.rds_instance_info:
+        access_key: "{{ aws_access_key }}"
+        secret_key: "{{ aws_secret_key }}"
         db_instance_identifier: planningalerts
         region: "{{ ec2_region }}"
       register: rds_planningalerts

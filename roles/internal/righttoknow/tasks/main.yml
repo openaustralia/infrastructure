@@ -345,11 +345,22 @@
     login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
-    db: "rtk-{{ item }}"
+    login_db: "rtk-{{ item }}"
     name: "rtk-{{ item }}"
     password: "{{ (item == 'production') | ternary(db_password_production, db_password_staging) }}"
-    priv: ALL
     no_password_changes: true
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
+# The priv option was removed from postgresql_user in community.postgresql 4.0
+- name: Give the rtk user all privileges on its database
+  community.postgresql.postgresql_privs:
+    login_host: "{{ db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "rtk-{{ item }}"
+    type: database
+    role: "rtk-{{ item }}"
+    privs: ALL
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
 
 - name: Create posgresql user rtk-production-readonly for metabase
@@ -622,8 +633,8 @@
     group: root
     mode: '0755'
 
-- import_tasks: certificates.yml
-- import_tasks: cron.yml
+- ansible.builtin.import_tasks: certificates.yml
+- ansible.builtin.import_tasks: cron.yml
 
 - name: Install postfix (and opendkim) for email handling
   ansible.builtin.apt:

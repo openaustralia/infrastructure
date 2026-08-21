@@ -40,43 +40,17 @@
           - "(['requires_mysql', 'requires_postgresql'] | select('in', group_names) | list | length) <= 1"
         fail_msg: "{{ inventory_hostname }} is in multiple exclusive groups: {{ ['requires_mysql', 'requires_postgresql'] | select('in', group_names) | list }}"
 
-# Ensure python3 is available for Ansible (required before gather_facts), with fallback to python2
-# If it does fall back, set ansible_python_interpreter to /usr/bin/python in that old group
+# Ensure python3 is available for Ansible (required before gather_facts)
 - hosts: all
   become: true
   gather_facts: false
   tags: python
   tasks:
-    - name: Install python3 for Ansible if available, otherwise fallback to python2
+    - name: Install python3 for Ansible if it is missing
       ansible.builtin.raw: >-
         test -e /usr/bin/python3 ||
-        (apt -y update && apt install -y python-is-python3) ||
-        test -e /usr/bin/python ||
-        apt install -y python-minimal
+        (apt -y update && apt install -y python3)
       changed_when: false
-
-- hosts: all
-  name: "Install python2 requirements"
-  tags:
-    - python
-    - python2
-  become: true
-  tasks:
-    - name: Install python2 packages
-      tags: python
-      ansible.builtin.apt:
-        pkg: "{{ item }}"
-        cache_valid_time: 300
-      loop:
-        - python-pip
-        - python-pymysql
-        - python-psycopg2
-      when: ansible_python_version is version('3', '<')
-
-    - name: Install boto which is required for EC2 stuff (Python 2)
-      tags: python
-      ansible.builtin.pip: name=boto
-      when: ansible_python_version is version('3', '<')
 
 - hosts: all
   name: "Install python3 requirements"
@@ -94,16 +68,10 @@
         - python3-pip
         - python3-pymysql
         - python3-psycopg2
-      when: ansible_python_version is version('3', '>=')
 
-    - name: Install boto3 which is required for EC2 stuff (Python 3)
+    - name: Install boto3 which is required for EC2 stuff
       tags: python
       ansible.builtin.pip: name=boto3
-      # Not 3.0: pip 8.x on Ubuntu 16.04 ignores Requires-Python, so it happily
-      # installs py3.8+ only wheels (urllib3 2.x) that fail to even parse on
-      # python3.5. That shadows the distro urllib3 and breaks every module
-      # importing ansible.module_utils.urls, apt included.
-      when: ansible_python_version is version('3.7', '>=')
 
 - hosts: ec2
   name: "Gather RDS facts"
@@ -113,9 +81,9 @@
   become: true
   tasks:
     - name: Get information about the RDS instance
-      community.aws.rds_instance_info:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
+      amazon.aws.rds_instance_info:
+        access_key: "{{ aws_access_key }}"
+        secret_key: "{{ aws_secret_key }}"
         db_instance_identifier: "{{ db_name }}"
         region: "{{ ec2_region }}"
       register: rds_database
@@ -135,9 +103,9 @@
       when: "(show_rds_debug | default(false) | bool) and (db_name is defined)"
 
     - name: Get information about the planningalerts RDS instance
-      community.aws.rds_instance_info:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
+      amazon.aws.rds_instance_info:
+        access_key: "{{ aws_access_key }}"
+        secret_key: "{{ aws_secret_key }}"
         db_instance_identifier: "{{ planningalerts_db_name }}"
         region: "{{ ec2_region }}"
       register: rds_planningalerts
@@ -181,20 +149,20 @@
     - name: Remove rbenv
       tags:
         - rbenv
-      import_role:
+      ansible.builtin.import_role:
         name: internal/remove_rbenv
       vars:
         rbenv_users:
           - deploy
       when: "ruby_manager != 'rbenv'"
     - name: Remove rvm
-      import_role:
+      ansible.builtin.import_role:
         name: internal/remove_rvm
       tags:
         - rvm
       when: "ruby_manager != 'rvm'"
     - name: Remove mise
-      import_role:
+      ansible.builtin.import_role:
         name: internal/remove_mise
       tags:
         - mise
@@ -208,7 +176,7 @@
   tasks:
     # NOTE: rbenv uses the latest bin/ruby-build so there will usually be changes if you are checking
     - name: Install rbenv
-      import_role:
+      ansible.builtin.import_role:
         name: external/zzet.rbenv
       vars:
         rbenv:
@@ -220,7 +188,7 @@
           - deploy
       when: "ruby_manager == 'rbenv'"
     - name: Install rvm
-      import_role:
+      ansible.builtin.import_role:
         name: external/rvm.ruby
       vars:
         rvm1_rubies: "{{ ruby_versions }}"
@@ -235,7 +203,7 @@
 
     # Add deploy user to group rvm
     - name: Add deploy user to rvm group
-      import_role:
+      ansible.builtin.import_role:
         name: internal/rvm.group
       when: "ruby_manager == 'rvm'"
 

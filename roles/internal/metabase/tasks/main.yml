@@ -17,6 +17,7 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
+      - docker-compose-plugin
 
 - name: Install dependency for ansible mysql_db module
   ansible.builtin.apt:
@@ -25,10 +26,6 @@
 - name: Install pip
   ansible.builtin.apt:
     pkg: python3-pip
-
-- name: Install docker-compose python library
-  ansible.builtin.pip:
-    name: docker-compose
 
 - name: Create database
   community.postgresql.postgresql_db:
@@ -42,11 +39,21 @@
     login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
-    db: "metabase"
+    login_db: "metabase"
     name: "metabase"
     password: "{{ db_password }}"
-    priv: ALL
     no_password_changes: true
+
+# The priv option was removed from postgresql_user in community.postgresql 4.0
+- name: Give the metabase user all privileges on its database
+  community.postgresql.postgresql_privs:
+    login_host: "{{ db_host }}"
+    login_user: root
+    login_password: "{{ rds_admin_password }}"
+    db: "metabase"
+    type: database
+    role: "metabase"
+    privs: ALL
 
 - name: Create /srv/www directory
   ansible.builtin.file:
@@ -63,5 +70,5 @@
     mode: '0644'
 
 - name: Run metabase
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: /srv/www
