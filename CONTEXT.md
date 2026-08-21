@@ -41,6 +41,13 @@ _Avoid_: uninstall role, teardown role
 One machine, whether EC2 or Linode.
 _Avoid_: server, box, instance, node
 
+**Location group**:
+The Ansible group that says where a host lives and answers the questions that follow from it - `ansible_user`, how
+to reach the database, which domain the host is under. `ec2` for the real hosts, `vagrant` for local boxes, and a
+sibling for each future dev environment. Exactly one per host, at `ansible_group_priority` 0 so it loses to the
+service groups and beats `development`.
+_Avoid_: environment (it means something else here), platform, provider
+
 ### Stages and environments
 
 **Stage**:

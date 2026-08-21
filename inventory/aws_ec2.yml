@@ -31,6 +31,11 @@ keyed_groups:
   # e.g. planningalerts hosts (never in `ec2`) aren't forced into it.
   - key: tags.AnsibleGroups.split(',')
     separator: ''
+# NOTE: group variables cannot be set from here. This plugin's config has no directive for them,
+# and the keyed_groups/groups below only ever reach InventoryData.set_variable for a *host*, so
+# `ansible_group_priority` for the groups this file populates lives in inventory/ec2-hosts
+# instead - see the comment on [ec2:vars] there. Groups merge by name across inventory sources,
+# so that file governs these groups even though it holds none of their hosts.
 groups:
   # Every host reaching this point already passed the filters/exclude_filters above, so
   # membership here IS "explicitly declared SSM-ready" - safe to use unconditionally, e.g. in

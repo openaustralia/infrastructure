@@ -1,10 +1,15 @@
+# Sets variables for development systems
+# (which are NOT using the live ec2 resources)
+#
+# Whatever every dev environment shares, whichever tool runs it. The location group holds the
+# rest - group_vars/vagrant.yml today, a sibling file per environment later - so this file must
+# stay free of anything specific to one of them. Priority -1, below the location group: see the
+# `Vagrantfile` and inventory/ec2-hosts.
+---
 base_domain: test
 
-mysql_host: 192.168.56.10
-postgresql_host: 192.168.56.11
-planningalerts_db_host: 192.168.56.11
-
-db_host: "{{ postgresql_host if 'requires_postgresql' in group_names else mysql_host }}"
+# mysql_host, postgresql_host, planningalerts_db_host and db_host come from the location group,
+# since their addresses depend on how the environment is built.
 
 newrelic_license_key: null
 devsite: true
