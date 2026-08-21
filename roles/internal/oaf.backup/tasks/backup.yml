@@ -1,13 +1,13 @@
 ---
 
-- include: install.deb.yml
+- import_tasks: install.deb.yml
   when: ansible_os_family == "Debian" and not backup_remove
 
-- include: install.red.yml
+- import_tasks: install.red.yml
   when: ansible_os_family == "RedHat" and not backup_remove
 
-- include: configure.yml
+- import_tasks: configure.yml
   when: not backup_remove
 
-- include: remove.yml
+- import_tasks: remove.yml
   when: backup_remove
