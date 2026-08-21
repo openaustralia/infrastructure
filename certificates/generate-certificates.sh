@@ -38,7 +38,6 @@ domains=(
           "theyvoteforyou.${BASE_DOMAIN}"
           "www.openaustralia.${BASE_DOMAIN}"
           )
-# "oaf.${BASE_DOMAIN}"
 
 # Generates a private key with passphrase "abcd" (but only if it doesn't already exist)
 if [ ! -f myCA.key ]; then
@@ -89,7 +88,6 @@ mkdir -p ../roles/internal/theyvoteforyou/files ../roles/internal/openaustralia/
 mv theyvoteforyou.${BASE_DOMAIN}.{key,pem} *.theyvoteforyou.${BASE_DOMAIN}.{key,pem} ../roles/internal/theyvoteforyou/files
 mv *.openaustralia.${BASE_DOMAIN}.{key,pem} ../roles/internal/openaustralia/files
 mv righttoknow.${BASE_DOMAIN}.{key,pem} *.righttoknow.${BASE_DOMAIN}.{key,pem} ../roles/internal/righttoknow/files
-#mv oaf.${BASE_DOMAIN}.{key,pem} ../roles/internal/oaf/files
 set +x
 
 # FIXME: adjust temporary measure to copy across a certificate generated here
