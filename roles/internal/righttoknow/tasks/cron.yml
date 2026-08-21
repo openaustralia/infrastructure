@@ -318,7 +318,7 @@
 # Staging only for now: rolled out to production with the 0.46.7.0 cutover once
 # it has been observed on staging (openaustralia/righttoknow#1031).
 - name: Add alaveteli crontab - users-purge-limited
-  cron:
+  ansible.builtin.cron:
     user: deploy
     name: "users-purge-limited"
     minute: "50"
@@ -339,7 +339,7 @@
 # for this one until the entry is enabled, and enabling it brings the monitor
 # with it.
 - name: Add alaveteli crontab - users-destroy-unused
-  cron:
+  ansible.builtin.cron:
     user: deploy
     name: "users-destroy-unused"
     minute: "53"

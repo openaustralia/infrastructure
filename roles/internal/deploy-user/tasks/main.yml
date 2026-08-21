@@ -15,13 +15,13 @@
 
 - name: Ensure we have a ubuntu group
   become: true
-  group:
+  ansible.builtin.group:
     name: ubuntu
   when: "'linode' in group_names"
 
 - name: Ensure we have a ubuntu user
   become: true
-  user:
+  ansible.builtin.user:
     name: ubuntu
     comment: "Ubuntu user"
     shell: /bin/bash
