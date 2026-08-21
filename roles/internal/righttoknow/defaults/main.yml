@@ -3,12 +3,12 @@
 ruby_version_staging: 3.4.10
 ruby_version_production: 3.4.10
 
-# Keep in step with `BUNDLED WITH` in Alaveteli's Gemfile.lock. An older bundler
-# in the same major series does still install the bundle (2.4.19 handles
-# 0.45.8.0's 2.6.2 lockfile), so this does not have to be exact - but matching it
-# avoids the version-mismatch warning and keeps a rebuilt server consistent with
-# the one we have.
-bundler_version: 2.6.2
+# Keep in step with `BUNDLED WITH` in Alaveteli's Gemfile.lock - 2.7.2 as of
+# 0.46.7.0. An older bundler in the same major series does still install the
+# bundle (2.4.19 handled 0.45.8.0's 2.6.2 lockfile), so this does not have to be
+# exact - but matching it avoids the version-mismatch warning and keeps a
+# rebuilt server consistent with the one we have.
+bundler_version: 2.7.2
 
 # Sentry CLI (the v4 `sentry` binary, not the older `sentry-cli`), used to wrap
 # cron jobs in monitor check-ins. Note the pre-1.0 version numbering: breaking
