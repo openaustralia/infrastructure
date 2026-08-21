@@ -97,7 +97,6 @@ module "oaf" {
   source                                 = "./oaf"
   oaf_org_au_zone_id                     = cloudflare_zone.oaf_org_au.id
   openaustraliafoundation_org_au_zone_id = cloudflare_zone.openaustraliafoundation_org_au.id
-  openaustralia_main_ip                  = module.openaustralia.main_public_ip
   openaustralia_production_ip            = module.openaustralia.production_public_ip
   righttoknow_production_ip              = module.righttoknow.production_public_ip
   righttoknow_staging_ip                 = module.righttoknow.staging_public_ip
