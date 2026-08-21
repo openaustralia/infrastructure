@@ -72,6 +72,10 @@
     - name: Install boto3 which is required for EC2 stuff
       tags: python
       ansible.builtin.pip: name=boto3
+      # Run for real even under --check: the RDS facts task below runs with
+      # check_mode: false (its facts feed later config) and needs boto3 on the
+      # host, so a check run against a freshly-baked AMI host starves without it
+      check_mode: false
 
 - hosts: ec2
   name: "Gather RDS facts"
