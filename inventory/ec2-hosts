@@ -11,7 +11,7 @@
 # low-to-high as least-to-most specific and give that outcome deterministically:
 #
 #   -1  development                    what every dev environment shares (Vagrantfile only)
-#    0  ec2, requires_*, vagrant       where the host lives, what it needs
+#    0  ec2, linode, requires_*, vagrant  where the host lives, what it needs
 #    1  metabase, righttoknow, ...     service groups, at Ansible's default
 #
 # Names would decide it otherwise, and only by luck: "ec2" happens to sort before every service
@@ -55,35 +55,13 @@ ansible_group_priority=-1
 
 # INVENTORY IN alphabetical order by group name
 
-[ec2]
-# NOTE: The planning alerts servers are NOT in ec2!
-srv.theyvoteforyou.org.au
-openaustralia.org.au
-staging.righttoknow.org.au
-prod.righttoknow.org.au
-au.proxy.oaf.org.au
-web.metabase.oaf.org.au
-vpn.oaf.org.au
-
 [linode]
 # This contains Linode instances that are not in EC2
 postal.oaf.org.au
 
-[catch_all_mail:children]
-righttoknow_staging
-
-[metabase]
-web.metabase.oaf.org.au
-
-[openaustralia]
-openaustralia.org.au
-
-[openvpn]
-52.64.33.12 ansible_user=ubuntu ansible_ssh_private_key_file=terraform.pem
-
-[planningalerts]
-ec2-3-27-58-54.ap-southeast-2.compute.amazonaws.com
-ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
+# Same "where the host lives" priority as ec2 - see the comment at the top of this file
+[linode:vars]
+ansible_group_priority=0
 
 # NOTE: The postal server is a Linode instance, NOT ec2 - see terraform/postal
 [postal]
