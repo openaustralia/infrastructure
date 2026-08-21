@@ -2,5 +2,5 @@
 logs:
    - file_path: /var/log/syslog
      log_group_name: /var/log/syslog
-     log_stream_name: "{{ inventory_hostname }}"
+     log_stream_name: "{{ log_name }}"
      timestamp_format: "%b %d %H:%M:%S"

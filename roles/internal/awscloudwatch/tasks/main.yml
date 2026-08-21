@@ -11,11 +11,12 @@
     suffix: awscwa
   register: awscwa
 
-- name: Download CloudWatch agent
+- name: "Download CloudWatch agent (change notification turned off)"
   get_url:
     url: https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
     dest: "{{ awscwa.path }}"
   when: "'ec2' in group_names and not cloudwatch_installed.stat.exists"
+  changed_when: false
 
 - name: Install CloudWatch agent
   command: "dpkg -i -E ./amazon-cloudwatch-agent.deb"

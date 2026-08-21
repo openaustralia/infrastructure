@@ -3,10 +3,10 @@
   apt:
     pkg: build-essential
 
-- name: Download tinyproxy source code
+- name: "Download tinyproxy source code (will always change)"
   get_url:
-    url: https://github.com/tinyproxy/tinyproxy/releases/download/1.10.0/tinyproxy-1.10.0.tar.gz
-    dest: /tmp/tinyproxy-1.10.0.tar.gz
+    url: "https://github.com/tinyproxy/tinyproxy/releases/download/{{ tinyproxy_version }}/tinyproxy-{{ tinyproxy_version }}.tar.gz"
+    dest: "/tmp/tinyproxy-{{ tinyproxy_version }}.tar.gz"
   register: tinyproxy_source
 
 - name: Unpacking tinyproxy # noqa: no-handler
@@ -20,14 +20,14 @@
 - name: Configuring tinyproxy source # noqa: no-handler
   command: "./configure"
   args:
-    chdir: /tmp/tinyproxy-1.10.0
+    chdir: "/tmp/tinyproxy-{{ tinyproxy_version }}"
   when: tinyproxy_source_unpack is changed
   register: tinyproxy_configure
 
 - name: Compiling tinyproxy # noqa: no-handler
   shell: make && make install
   args:
-    chdir: /tmp/tinyproxy-1.10.0
+    chdir: "/tmp/tinyproxy-{{ tinyproxy_version }}"
   when: tinyproxy_configure is changed
 
 - name: Tinyproxy startup script

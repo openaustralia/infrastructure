@@ -11,7 +11,20 @@ resource "aws_instance" "production" {
   ebs_optimized = true
   key_name      = "terraform"
   tags = {
-    Name = "openaustralia-prod"
+    Name           = "openaustralia-prod"
+    PublicHostname = "www.openaustralia.org.au"
+    LogName        = "openaustralia.org.au"
+    # Replicated flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (requires_mysql) from previous inventory/aws_ec2.yml.
+    AnsibleGroups = "openaustralia,requires_mysql,ec2"
+
+    # Application and Roles will be read by the capistrano-aws gem (see
+    # https://github.com/fernandocarletti/capistrano-aws#configuration) to find and configure
+    # this deploy target - matches openaustralia/config/deploy.rb's existing set :application and
+    # roles: %w[app web] in both its config/deploy/staging.rb and production.rb.
+    Application = "openaustralia.org"
+    Roles       = "app,web"
+    # NOTE: No Stage tag is set since this single instance is the deploy target for both stages.
   }
 
   # Increase root volume size to 20GB to allow for more packages and data
@@ -20,7 +33,7 @@ resource "aws_instance" "production" {
   }
 
   vpc_security_group_ids  = [var.security_group_webserver.id, var.security_group_service.id]
-  availability_zone       = aws_ebs_volume.data.availability_zone
+  availability_zone       = aws_ebs_volume.production_data.availability_zone
   disable_api_termination = true
   iam_instance_profile    = var.instance_profile.name
 }

@@ -17,11 +17,12 @@
       - curl
     state: present
 
-- name: Add key for passenger
+- name: "Add key for passenger (change notification turned off)"
   tags: passenger
   ansible.builtin.get_url:
     url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt
     dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
+  changed_when: false
 
 - name: Add passenger apt repository
   tags: passenger
@@ -265,9 +266,9 @@
   notify: nginx reload
 
 - name: Allow deploy user to control application services
-  copy:
-    src: theyvoteforyou_foreman
-    dest: /etc/sudoers.d/
+  template:
+    src: theyvoteforyou_foreman.j2
+    dest: /etc/sudoers.d/theyvoteforyou_foreman
     mode: '0440'
     validate: visudo -cf %s
   # notify: sudo reload
@@ -327,7 +328,7 @@
     state: present
     update_cache: true
 
-- name: Install latest Chrome # noqa: package-latest
+- name: Install LATEST Chrome (released every few weeks) # noqa: package-latest
   apt:
     pkg: google-chrome-stable
     # We want to make sure we're always running the latest version

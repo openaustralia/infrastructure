@@ -1,0 +1,19 @@
+---
+# Fleet-wide health check playbook run by bin/server-status - see that script for the rationale.
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: Collect status
+      shell: >
+        hostname && date && echo && uptime && echo && free -m && echo &&
+        df -m -x squashfs -x tmpfs -x devtmpfs && echo &&
+        df -i -x squashfs -x tmpfs -x devtmpfs && echo &&
+        echo 'Failed units:' && systemctl --failed --no-legend
+      register: status_result
+      changed_when: status_result.stdout_lines[-1] != 'Failed units:'
+      failed_when: status_result.rc != 0
+
+    - name: Show status
+      debug:
+        var: status_result.stdout_lines
+      changed_when: status_result.stdout_lines[-1] != 'Failed units:'

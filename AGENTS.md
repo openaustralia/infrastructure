@@ -9,14 +9,12 @@ place.
 Terraform + Ansible configuration that provisions and configures almost all of OpenAustralia Foundation's
 servers (AWS EC2, plus a couple of Linode VMs for cuttlefish and morph.io). This repo does **not** deploy
 application code — each application (PlanningAlerts, They Vote For You, Right to Know / Alaveteli, OpenAustralia)
-lives in its own repository and is deployed from there with Capistrano. Terminology used throughout the repo and
-docs:
+lives in its own repository and is deployed from there with Capistrano.
 
-- **assembling** *(suggested, for consistency — not yet in wide use)* — using Terraform to create/update the
-  infrastructure a server needs (EC2 instances, RDS databases, DNS, load balancers, etc.), before Ansible ever
-  touches the server
-- **provisioning** — configuring a server with Ansible (installing packages, users, cron jobs, SSL certs, etc.)
-- **deployment** — installing/updating the actual web application with Capistrano, done from the app's own repo
+Vocabulary lives in [CONTEXT.md](CONTEXT.md), this repo's glossary. Read it before naming things or writing docs.
+It settles **assembling** (Terraform) vs **provisioning** (Ansible) vs **deployment** (Capistrano), **host** as the
+word for one machine, **stage** vs **environment**, what counts as a **service** here as against an **OAF
+collection**, and why bare "collection" is never used in this repo.
 
 Small, low-capacity charity team — favour simple, low-maintenance solutions over ones that need ongoing attention.
 
@@ -46,7 +44,7 @@ The parts that come up most often:
   and a note in the pull request description.
 
 CI (`.github/workflows/lint.yaml`) runs on every pull request as four separate checks — `make ansible-lint`,
-`make yaml-lint`, `make template-check` and `make tf-check-fmt`. `make tf-validate` is *not* run in CI. The
+`make yaml-lint`, `make template-check` and `make tf-check-fmt`. `make tf-validate` is _not_ run in CI. The
 ansible-lint job points `ANSIBLE_CONFIG` at `.github/ansible.cfg` rather than the repo-root `ansible.cfg`, because
 vault passphrases aren't available in CI so `vault_identity_list` has to stay unset there — anything you add that
 needs to decrypt a vault value will pass locally and fail in CI. `.github/CODEOWNERS` requests reviews from
@@ -92,7 +90,7 @@ make template-check                    # fails if any role's templates/ file doe
 # Ansible provisioning (each does a dry-run "check-*" and a real "apply-*")
 make check-<service>                   # dry-run, e.g. check-planningalerts, check-righttoknow
 make apply-<service>                   # apply changes, e.g. apply-openaustralia
-STAGE=staging make apply-righttoknow   # required for righttoknow (staging/production/all) — no other service uses STAGE
+STAGE=staging make apply-righttoknow   # required for righttoknow (staging/production/all); no other service takes the flag
 TAGS=foo SKIP_TAGS=bar make apply-X    # limit/skip Ansible tags
 ANSIBLE_VERBOSE=vvv make apply-X       # verbose ansible-playbook output
 make all                               # run site.yml against every host
@@ -117,7 +115,7 @@ make clean / make clobber              # clean removes venv/roles/collections; c
 
 Local Vagrant boxes (`vagrant up <box>`, `vagrant provision <box>`) are for testing the Ansible setup itself, not
 for application development — that happens in each app's own repo/devcontainer. This is planned to move to
-Docker/Compose down the track — see `docs/DECISIONS.md`.
+Docker/Compose down the track — see `docs/adr/0001-local-ansible-testing-moves-to-docker.md`.
 
 Every `apply-*`/`tf-apply*` run — and also `all`, `retry`, `letsencrypt` and `update-github-ssh-keys` — is bracketed
 by a `wip-<name>` git tag pushed before the change and replaced by the un-prefixed tag on success (via
@@ -128,15 +126,17 @@ by a `wip-<name>` git tag pushed before the change and replaced by the un-prefix
 ### Two-layer split: Terraform then Ansible
 
 - **`terraform/`** creates infrastructure: EC2 instances, RDS databases, DNS (Cloudflare), load balancers, S3
-  buckets, IAM. Organised as one subdirectory/module per service (`terraform/planningalerts/`,
+  buckets, IAM. Mostly one subdirectory/module per service (`terraform/planningalerts/`,
   `terraform/righttoknow/`, `terraform/theyvoteforyou/`, `terraform/oaf/`, `terraform/morph/`, `terraform/cuttlefish/`,
-  etc.), wired together in `terraform/main.tf`. State lives in the `oaf-terraform-state` S3 bucket
-  (`terraform/backend.tf`). PlanningAlerts supports blue/green EC2 fleets driven from Terraform for zero-downtime
-  major upgrades (e.g. Ruby version bumps); everyday deploys still go through Capistrano.
+  etc.), plus reusable modules (`aws-certificate`, `activestorage-s3`) and DNS-only modules for third-party
+  services (`campaign-monitor`, `social`, `raisely`, `docs-internal`), wired together in `terraform/main.tf`. State lives in the `oaf-terraform-state` S3 bucket
+  (`terraform/backend.tf`). PlanningAlerts supports blue/green **environments** driven from Terraform, so a
+  major upgrade (e.g. a Ruby version bump) is a cutover with no downtime rather than a deployment; everyday
+  deployments still go through Capistrano.
 - **Ansible** (`site.yml`, `roles/`, `group_vars/`, `host_vars/`, `inventory/`) configures the OS and services on
   top of instances Terraform created: packages, users, MySQL/PostgreSQL, nginx/Apache + certbot, cron, backups,
   monitoring. `roles/internal/` are OAF-authored roles — one per service (`righttoknow`, `planningalerts`,
-  `theyvoteforyou`, `openaustralia`, `metabase`, `proxy`, `openvpn`) plus shared building blocks used across
+  `theyvoteforyou`, `openaustralia`, `metabase`, `proxy`) plus shared building blocks used across
   several (`base-server`, `mysql`, `postgresql`, `deploy-user`, `oaf.certbot`, `oaf.backup`, `oaf.restic`,
   `cloudflare_realip`, `awscloudwatch`, `rvm.group`) and a few one-way cleanup roles that uninstall a retired
   tool (`remove_mise`, `remove_rbenv`, `remove_rvm`). `roles/external/` are third-party Galaxy roles installed
@@ -144,13 +144,10 @@ by a `wip-<name>` git tag pushed before the change and replaced by the un-prefix
 - Inventory and `group_vars/`/`host_vars/` follow standard Ansible layering — most per-service config lives in
   `group_vars/<service>.yml` (e.g. `group_vars/righttoknow.yml`, `group_vars/righttoknow_production.yml`/`_staging.yml`
   for stage overrides). `group_vars/all.yml` holds cross-service defaults (backup settings, `github_users` allowed
-  to SSH in, etc.). `inventory/ec2-hosts` is the static inventory in use by the `check-*`/`apply-*` targets, which
-  pass it explicitly (`-i ./inventory/ec2-hosts`); `all`, `letsencrypt`, `retry` and `update-github-ssh-keys` pass
-  no `-i` and fall back to `ansible.cfg`'s `inventory = inventory` (the whole directory). `inventory/aws_ec2.yml`
-  (the dynamic `aws_ec2` plugin inventory, grouping instances by their `Application` tag) already exists but isn't
-  wired into any Makefile target yet, and can't actually load today — `amazon.aws` isn't in
-  `roles/requirements.yml` (only `community.postgresql` is). It's for a planned future move to dynamic inventory,
-  not currently live.
+  to SSH in, etc.). Every Ansible-invoking Makefile target merges two inventory sources: `inventory/ec2-hosts`
+  (static) and `inventory/aws_ec2.yml` (dynamic, tag-scoped — see its own header comments for how/why). Migration
+  to the dynamic source is per-host and incremental; `public_hostname` (`group_vars/all.yml`/`ssm.yml`) is a
+  stable identifier for things like backup paths, independent of that migration.
 
 ### Secrets: Ansible Vault with 4 vault IDs
 
@@ -178,13 +175,15 @@ stage (`development`/`staging`/`production`).
 ### Where the docs live
 
 `README.md` is the entry point (setup, credentials, provisioning, deploying, backups, git tags, mail catching) and
-links out to `docs/`. Read the relevant `docs/` file *before* touching a service — they carry the per-service
+links out to `docs/`. Read the relevant `docs/` file _before_ touching a service — they carry the per-service
 detail that isn't in the roles:
 
 - `docs/planningalerts.md`, `docs/righttoknow.md`, `docs/theyvoteforyou.md`, `docs/openaustralia.md` — per-service
   setup, deploy and operational notes
 - `docs/cloudflare-proxy-migration.md` — what changes when a service moves behind Cloudflare's proxy (orange cloud)
-- `docs/DECISIONS.md` — cross-cutting decisions, newest first
+- `docs/adr/` — architecture decision records, one numbered file per decision (replaces the retired
+  `docs/DECISIONS.md`)
+- `CONTEXT.md` — the glossary, at the repo root
 - `docs/history.md` — background on how the current setup came to be
 
 ### Linting config quirks worth knowing
@@ -201,9 +200,10 @@ detail that isn't in the roles:
 
 - When a commit message body covers more than one distinct point, use a markdown bullet list rather than one
   flowing paragraph; it's easier to scan and review.
-- Check `docs/DECISIONS.md` for past cross-cutting decisions before assuming in an unfamiliar area of the repo; add
-  a new entry there (rather than repeating it in multiple places) when a decision spans multiple files/roles/modules
-  instead of belonging as a comment in one.
+- Check `docs/adr/` for past decisions before assuming in an unfamiliar area of the repo, and read `CONTEXT.md`
+  for the vocabulary. Add a new ADR (rather than repeating the decision in multiple places) when a decision spans
+  multiple files/roles/modules instead of belonging as a comment in one, and when it is hard to reverse, surprising
+  without context, and the result of a real trade-off. When a term gets settled, put it in `CONTEXT.md` instead.
 - Default to treating every `make` target as a live-fire production action needing the same explicit, specific,
   right-now go-ahead as a production deploy, however routine the request sounds — **except** the known-safe,
   read-only ones: `help`, `check-*`, `tf-plan*`, `tf-validate`, `tf-check-fmt`, `lint`/`yaml-lint`/`ansible-lint`/
@@ -242,3 +242,23 @@ detail that isn't in the roles:
   naming, draft PRs and assignees, DCO sign-off, AI disclosure, staging commits rather than making them,
   standing-approval and allow-pattern scoping, issue drafting, word-wrapping in PR/issue bodies, and
   credential/privacy handling — so none of that is restated here.
+
+## Agent skills (used by [mattpocock-skills](https://github.com/mattpocock/skills))
+
+Configuration the installed engineering skills read. Edit these files directly — re-running
+`/setup-matt-pocock-skills` is only needed to switch issue trackers or start over.
+
+### Issue tracker
+
+GitHub issues on `openaustralia/infrastructure`, via the `gh` CLI; issue bodies follow the org-level templates in
+`openaustralia/.github`. External PRs are _not_ treated as a request surface. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`)
+already exist on the repo and are used as-is. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` at the repo root is the glossary, `docs/adr/` holds the decision records. See
+`docs/agents/domain.md`.

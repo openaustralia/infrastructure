@@ -1,0 +1,338 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Report the development hosts to create, as JSON, derived from what Terraform declares for the
+# real ones. For the Vagrantfile now, and the dev inventories (local, devcontainer, cloud) later.
+#
+# Terraform is the source of the host list because it is the one place that already knows every
+# host and its Ansible groups. Nothing here drives Terraform, and Terraform will not be used to
+# create these hosts.
+#
+# Reads only the .tf files. No AWS credentials, no `terraform init`, no state.
+#
+# Usage:
+#   bin/dev-hosts                        # JSON array on stdout
+#   bin/dev-hosts --table                # human-readable summary
+#   bin/dev-hosts --tld=test             # rewrite [oaf.]org.au -> test, and ec2 group -> test
+#   bin/dev-hosts --count=2              # two hosts for each Terraform `count` resource
+#   bin/dev-hosts --tld=test --ec2=      # ...but drop the ec2 group instead of renaming it
+#
+# Options:
+#   --tld=DOMAIN   Replace a trailing ".oaf.org.au" or ".org.au" on log_name and
+#                  public_hostname with ".DOMAIN". Leaves name alone, which carries no domain.
+#   --count=N      How many hosts to emit for each resource using Terraform's `count`.
+#                  Defaults to 1, which is what a development setup wants.
+#   --ec2=GROUP    Rename the "ec2" group to GROUP. Defaults to the --tld value, so
+#                  --tld=test also turns the ec2 group into "test". An empty --ec2= drops the
+#                  group instead, and with neither option it is left alone.
+#   --max-memory=N Cap memory_mb at N MB, default 4096. Production sizes run to 16GB for
+#                  theyvoteforyou and total over 36GB, which no development machine wants.
+#                  production_memory_mb keeps the uncapped figure.
+#
+# Renaming rather than dropping "ec2" is the point: it is the group that says where a host
+# lives, and group_vars/ec2.yml is where ansible_user, terraform.pem and the RDS-derived
+# db_host come from. A dev host needs all of those answered differently, so it wants the same
+# group under a different name, e.g. group_vars/vagrant.yml. Note such a group needs
+# ansible_group_priority set in the inventory - 0, the same as "ec2", so it loses to the
+# service groups by number rather than by however its name happens to sort.
+#
+# ${var.env_name} is always dropped: blue/green is a production concern and means nothing
+# locally. The doubled dot it leaves is collapsed, so web1.${var.env_name}.planningalerts
+# becomes web1.planningalerts.
+#
+# Fields per host:
+#   name             Name tag, the short name.
+#   log_name         LogName tag. inventory/aws_ec2.yml uses this for `hostnames:`, so it is
+#                    what `-l` and backup paths key off.
+#   public_hostname  PublicHostname tag.
+#   groups           AnsibleGroups tag, split on commas, with "ec2" renamed or dropped per
+#                    --ec2 above. Every other group is verbatim.
+#   ubuntu           Ubuntu release, decoded from the *name* of the ami variable rather than by
+#                    resolving an AMI id, so this needs no API call. nil if undecodable.
+#   vagrant_box      Ubuntu release mapped to its Vagrant box, nil if unknown.
+#   memory_mb        RAM to give the development host: the production instance_type's memory,
+#                    capped at --max-memory. Ready to hand straight to a provider.
+#   production_memory_mb  What the production instance_type actually has, uncapped.
+#
+# Exits non-zero, printing every problem it found and no JSON, if any host comes out unusable:
+# a name still holding a Terraform expression this script cannot substitute, an Ubuntu release
+# it cannot decode, or an instance_type missing from its memory table. Producing a half-usable
+# host list quietly would just move the failure somewhere harder to diagnose.
+
+require "json"
+
+TF_DIR = File.expand_path("../terraform", __dir__)
+
+# instance_type suffix -> RAM in MB, for the t3 family this repo uses.
+MEMORY_MB = {
+  "nano" => 512, "micro" => 1024, "small" => 2048, "medium" => 4096,
+  "large" => 8192, "xlarge" => 16_384, "2xlarge" => 32_768
+}.freeze
+
+# Ubuntu has stopped releasing vagrant boxes, use bento from 24.04 onwards
+VAGRANT_BOX = {
+  "16.04" => "ubuntu/xenial64", "18.04" => "ubuntu/bionic64", "20.04" => "ubuntu/focal64",
+  "22.04" => "ubuntu/jammy64", "24.04" => "bento/ubuntu-24.04", "26.04" => "bento/ubuntu-26.04"
+}.freeze
+
+COUNT_INDEX = /\$\{\s*count\.index\s*\+\s*1\s*\}/
+ENV_NAME = /\$\{\s*var\.env_name\s*\}/
+OAF_DOMAIN = /\.(?:oaf\.)?org\.au\z/
+
+# Drop comments without being fooled by a '#' inside a quoted string.
+def strip_comment(line)
+  out = +""
+  in_string = false
+  index = 0
+  while index < line.length
+    char = line[index]
+    if in_string
+      if char == "\\"
+        out << char << (line[index + 1] || "")
+        index += 2
+        next
+      end
+      in_string = false if char == '"'
+      out << char
+    elsif char == '"'
+      in_string = true
+      out << char
+    elsif char == "#" || (char == "/" && line[index + 1] == "/")
+      break
+    else
+      out << char
+    end
+    index += 1
+  end
+  out
+end
+
+# Yield [kind, labels, body_lines] for each top-level block, tracking brace depth so sibling
+# resources (aws_eip and aws_ebs_volume both carry their own `tags`) are never confused for the
+# instance, and nested blocks (root_block_device) stay inside their parent.
+def each_block(path)
+  depth = 0
+  header = nil
+  body = []
+  File.readlines(path, chomp: true).each do |raw|
+    line = strip_comment(raw)
+    if depth.zero?
+      next unless (match = line.match(/^(\w+)\s+((?:"[^"]*"\s*)*)\{/))
+
+      header = [match[1], match[2].scan(/"([^"]*)"/).flatten]
+      body = []
+      depth = line.count("{") - line.count("}")
+      yield(*header, body) if depth.zero?
+      next
+    end
+    depth += line.count("{") - line.count("}")
+    if depth.zero?
+      yield(*header, body)
+    else
+      body << line
+    end
+  end
+end
+
+# The lines of the first `tags = {` block, ignoring any nested-block tags that follow.
+def tags_of(body)
+  start = body.index { |line| line.match?(/^\s*tags\s*=\s*\{/) }
+  return {} unless start
+
+  depth = 0
+  collected = {}
+  body[start..].each do |line|
+    depth += line.count("{") - line.count("}")
+    if (match = line.match(/^\s*(\w+)\s*=\s*"([^"]*)"/))
+      collected[match[1]] = match[2]
+    end
+    break if depth.zero? && collected.any?
+  end
+  collected
+end
+
+def value_of(body, key)
+  body.each do |line|
+    match = line.match(/^\s*#{key}\s*=\s*(.+?)\s*$/)
+    return match[1] if match
+  end
+  nil
+end
+
+# module "proxy" { ami = var.ubuntu_16_ami } -> {"proxy" => "var.ubuntu_16_ami"}
+def module_ami_vars
+  path = File.join(TF_DIR, "main.tf")
+  return {} unless File.exist?(path)
+
+  found = {}
+  each_block(path) do |kind, labels, body|
+    next unless kind == "module"
+
+    ami = value_of(body, "ami")
+    found[labels.first] = ami if ami
+  end
+  found
+end
+
+# Any literal AMI name mentioning an Ubuntu release, for the packer-built planningalerts images
+# whose release only appears in the image name (e.g. planningalerts-puma-ubuntu-22.04-v4).
+def ami_name_releases
+  Dir.glob(File.join(TF_DIR, "**", "*.tf")).flat_map do |path|
+    File.read(path).scan(/ami_name\s*=\s*"([^"]*ubuntu-(\d\d\.\d\d)[^"]*)"/i).map(&:last)
+  end.uniq
+end
+
+def decode_ubuntu(ami_expression, mod, module_amis, fallbacks)
+  return nil unless ami_expression
+
+  # Resolve `var.ami` through the module block in main.tf, one hop.
+  expression = ami_expression == "var.ami" ? (module_amis[mod] || ami_expression) : ami_expression
+
+  if (match = expression.match(/ubuntu_(\d+)_(?:\d+_)?ami/))
+    major = match[1]
+    return major.length == 2 ? "#{major}.04" : nil
+  end
+  # data.aws_ami.* - the release is only in the image name, so fall back to that.
+  return fallbacks.first if expression.start_with?("data.aws_ami") && fallbacks.length == 1
+
+  nil
+end
+
+# Substitute the interpolations we understand, then tidy the dots dropping env_name leaves behind.
+def expand(value, index)
+  return nil if value.nil?
+
+  value.gsub(COUNT_INDEX, index.to_s)
+       .gsub(ENV_NAME, "")
+       .gsub(/\.{2,}/, ".")
+       .sub(/\A\./, "")
+       .sub(/\.\z/, "")
+end
+
+def retld(host, tld)
+  return host if host.nil? || tld.nil?
+
+  host.sub(OAF_DOMAIN, ".#{tld}")
+end
+
+# nil leaves "ec2" alone, "" drops it, anything else renames it.
+def rename_ec2(groups, replacement)
+  return groups if replacement.nil?
+  return groups - ["ec2"] if replacement.empty?
+
+  groups.map { |group| group == "ec2" ? replacement : group }
+end
+
+# Anything that would make this host unusable downstream. Reported, not raised, so one run
+# lists everything needing attention rather than stopping at the first.
+def problems_with(host)
+  found = []
+  %w[name log_name public_hostname].each do |field|
+    value = host[field]
+    next unless value&.include?("${")
+
+    found << "unresolved expression in #{field}: #{value.inspect} " \
+             "- teach #{File.basename(__FILE__)} to substitute it"
+  end
+  if host["ubuntu"].nil?
+    found << "cannot decode an Ubuntu release from ami #{host['ami_expression'].inspect} " \
+             "- add the variable name to decode_ubuntu"
+  elsif host["vagrant_box"].nil?
+    found << "no box mapped for Ubuntu #{host['ubuntu']} - add it to VAGRANT_BOX"
+  end
+  if host["memory_mb"].nil?
+    found << "no memory known for instance_type #{host['instance_type'].inspect} " \
+             "- add it to MEMORY_MB"
+  end
+  found
+end
+
+table = ARGV.include?("--table")
+tld = ARGV.grep(/\A--tld=/).first&.split("=", 2)&.last
+replicas = (ARGV.grep(/\A--count=/).first&.split("=", 2)&.last || "1").to_i
+ec2_arg = ARGV.grep(/\A--ec2=/).first&.split("=", 2)&.last
+ec2_group = ec2_arg.nil? ? tld : ec2_arg
+max_memory = (ARGV.grep(/\A--max-memory=/).first&.split("=", 2)&.last || "4096").to_i
+
+if ARGV.include?("--help") || ARGV.include?("-h")
+  doc = File.readlines(__FILE__)
+            .drop(2)                                  # shebang and frozen_string_literal
+            .drop_while { |line| line.strip.empty? }  # the blank line after them
+            .take_while { |line| line.start_with?("#") }
+            .map { |line| line.sub(/^# ?/, "") }
+  puts doc.join
+  exit 0
+end
+
+module_amis = module_ami_vars
+fallbacks = ami_name_releases
+hosts = []
+
+Dir.glob(File.join(TF_DIR, "**", "*.tf")).each do |path|
+  # First path component under terraform/, so terraform/planningalerts/env/main.tf reports
+  # "planningalerts" rather than the "env" submodule directory.
+  mod = path.sub("#{TF_DIR}/", "").split("/").first
+  mod = "(root)" if mod.end_with?(".tf")
+
+  each_block(path) do |kind, labels, body|
+    next unless kind == "resource" && labels.first == "aws_instance"
+
+    tags = tags_of(body)
+    name = tags["Name"] || tags["LogName"]
+    next unless name
+
+    ami = value_of(body, "ami")
+    release = decode_ubuntu(ami, mod, module_amis, fallbacks)
+    size = value_of(body, "instance_type")&.delete('"')
+    production_memory = size && MEMORY_MB[size.split(".").last]
+    count_expression = value_of(body, "count")
+
+    # One host unless Terraform uses `count`, in which case --count decides how many.
+    indexes = count_expression ? (1..replicas) : [1]
+    indexes.each do |index|
+      hosts << {
+        "name" => expand(name, index),
+        "log_name" => retld(expand(tags["LogName"], index), tld),
+        "public_hostname" => retld(expand(tags["PublicHostname"], index), tld),
+        "resource" => labels.last,
+        "module" => mod,
+        "file" => path.sub(%r{^#{Regexp.escape(File.dirname(TF_DIR))}/}, ""),
+        "groups" => rename_ec2(
+          (tags["AnsibleGroups"] || "").split(",").map(&:strip).reject(&:empty?), ec2_group
+        ),
+        "stage" => tags["Stage"],
+        "ami_expression" => ami,
+        "ubuntu" => release,
+        "vagrant_box" => release && VAGRANT_BOX[release],
+        "instance_type" => size,
+        "memory_mb" => production_memory && [production_memory, max_memory].min,
+        "production_memory_mb" => production_memory,
+        "count" => count_expression
+      }
+    end
+  end
+end
+
+hosts.sort_by! { |host| host["name"] }
+
+complaints = hosts.flat_map do |host|
+  problems_with(host).map { |problem| "#{host['file']}: #{host['name']}: #{problem}" }
+end
+
+unless complaints.empty?
+  warn "#{File.basename(__FILE__)}: #{complaints.length} problem(s), refusing to emit a " \
+       "partial host list:"
+  complaints.each { |complaint| warn "  #{complaint}" }
+  exit 1
+end
+
+if table
+  format = "%-26s %-30s %-14s %-16s %7s  %s\n"
+  printf(format, "NAME", "LOG_NAME", "MODULE", "BOX", "MEM_MB", "GROUPS")
+  hosts.each do |host|
+    printf(format, host["name"], host["log_name"] || "-", host["module"],
+           host["vagrant_box"] || "?", host["memory_mb"] || "?", host["groups"].join(","))
+  end
+else
+  puts JSON.pretty_generate(hosts)
+end
