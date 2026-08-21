@@ -14,25 +14,25 @@
   tasks:
     # Too strange. Installing this after an update doesn't work. It doesn't find it.
     - name: Install python
-      apt:
+      ansible.builtin.apt:
         pkg: "python-is-python3"
 
     - name: apt update
-      apt:
+      ansible.builtin.apt:
         update_cache: true
     
     - name: Install pip
-      apt:
+      ansible.builtin.apt:
         pkg: python-pip
       when: ansible_distribution_release not in ['focal', 'jammy']
 
     - name: Install pip
-      apt:
+      ansible.builtin.apt:
         pkg: python3-pip
       when: ansible_distribution_release in ['focal', 'jammy']
 
     - name: Install boto which is required for EC2 stuff
-      pip: name=boto
+      ansible.builtin.pip: name=boto
 
     - name: Get information about the postgresql RDS instance
       community.aws.rds_instance_info:

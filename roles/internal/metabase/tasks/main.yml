@@ -1,44 +1,44 @@
 ---
 - name: Install dependency for postgresql_db
-  apt:
+  ansible.builtin.apt:
     pkg: python3-psycopg2
 
 - name: Ensure that we have the Docker repository key
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
 
 - name: Ensure that we have the docker repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable"
 
 - name: Install docker
-  apt:
+  ansible.builtin.apt:
     name:
       - docker-ce
       - docker-ce-cli
       - containerd.io
 
 - name: Install dependency for ansible mysql_db module
-  apt:
+  ansible.builtin.apt:
     pkg: python3-mysqldb
 
 - name: Install pip
-  apt:
+  ansible.builtin.apt:
     pkg: python3-pip
 
 - name: Install docker-compose python library
-  pip:
+  ansible.builtin.pip:
     name: docker-compose
 
 - name: Create database
-  postgresql_db:
+  community.postgresql.postgresql_db:
     login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
     name: "metabase"
 
 - name: Create posgresql role
-  postgresql_user:
+  community.postgresql.postgresql_user:
     login_host: "{{ db_host }}"
     login_user: root
     login_password: "{{ rds_admin_password }}"
@@ -49,7 +49,7 @@
     no_password_changes: true
 
 - name: Create /srv/www directory
-  file:
+  ansible.builtin.file:
     state: directory
     owner: deploy
     group: deploy
@@ -57,11 +57,11 @@
     path: /srv/www
 
 - name: Copy across docker-compose.yml
-  template:
+  ansible.builtin.template:
     src: docker-compose.yml.j2
     dest: /srv/www/docker-compose.yml
     mode: '0644'
 
 - name: Run metabase
-  docker_compose:
+  community.docker.docker_compose:
     project_src: /srv/www

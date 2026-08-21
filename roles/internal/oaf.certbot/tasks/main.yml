@@ -2,46 +2,46 @@
 # tasks file for oaf.certbot
 
 - name: Install Certbot PPA
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: ppa:certbot/certbot
     update_cache: true
   # On Ubuntu 20.04 (focal) and 22.04 (jammy) we can install certbot as a standard Ubuntu package
   when: ansible_distribution_release not in ['focal', 'jammy']
 
 - name: Install certbot
-  apt:
+  ansible.builtin.apt:
     pkg: certbot
 
 - name: Install certbot plugin (python != 3)
-  apt:
+  ansible.builtin.apt:
     pkg: "python-certbot-{{ certbot_webserver }}"
   when: ansible_python['version']['major'] != 3
 
 - name: Install certbot plugin (python == 3)
-  apt:
+  ansible.builtin.apt:
     pkg: "python3-certbot-{{ certbot_webserver }}"
   when: ansible_python['version']['major'] == 3
 
 - name: "Show certbot certificate list [DEBUG]"
-  debug: var=certbot_certs
+  ansible.builtin.debug: var=certbot_certs
 
 - name: Install certificates with certbot
-  command: certbot run --non-interactive --agree-tos --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  ansible.builtin.command: certbot run --non-interactive --agree-tos --keep --expand --{{ certbot_webserver }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs | flatten(levels=1) }}"
   when: certbot_webroot is undefined and not (certbot_dns_cloudflare | bool)
 
 - name: Install certificates with certbot via webroot
-  command: certbot certonly --non-interactive --agree-tos --keep --expand --webroot -w {{ certbot_webroot }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
+  ansible.builtin.command: certbot certonly --non-interactive --agree-tos --keep --expand --webroot -w {{ certbot_webroot }} -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
   loop: "{{ certbot_certs | flatten(levels=1) }}"
   when: certbot_webroot is defined and not (certbot_standalone | default(false)) and not (certbot_dns_cloudflare | bool)
 
 - name: Install certbot dns-cloudflare plugin
-  apt:
+  ansible.builtin.apt:
     pkg: python3-certbot-dns-cloudflare
   when: certbot_dns_cloudflare | bool
 
 - name: Check that the Cloudflare API token is configured
-  assert:
+  ansible.builtin.assert:
     that: certbot_dns_cloudflare_api_token is defined
     fail_msg: >-
       certbot_dns_cloudflare is enabled but certbot_dns_cloudflare_api_token is
@@ -52,7 +52,7 @@
   when: certbot_dns_cloudflare | bool
 
 - name: Install Cloudflare API credentials for certbot
-  copy:
+  ansible.builtin.copy:
     content: |
       dns_cloudflare_api_token = {{ certbot_dns_cloudflare_api_token }}
     dest: /etc/letsencrypt/cloudflare.ini
@@ -63,7 +63,7 @@
   when: certbot_dns_cloudflare | bool
 
 - name: Install certificates with certbot via dns-cloudflare
-  command: >
+  ansible.builtin.command: >
     certbot certonly --non-interactive --agree-tos --keep --expand
     --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini
     -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
@@ -71,13 +71,13 @@
   when: certbot_dns_cloudflare | bool
 
 - name: Stop varnish for standalone certbot
-  systemd:
+  ansible.builtin.systemd:
     name: varnish
     state: stopped
   when: certbot_standalone | default(false) and not (certbot_dns_cloudflare | bool)
 
 - name: Install certificates with certbot standalone
-  command: >
+  ansible.builtin.command: >
     certbot certonly --non-interactive --agree-tos --keep --expand --standalone
     {% if certbot_staging | default(false) %}--staging{% endif %}
     -m {{ item.email }} {{ ['-d'] | product(item.domains) | map('join', ' ') | join(' ') }}
@@ -85,7 +85,7 @@
   when: certbot_standalone | default(false) and not (certbot_dns_cloudflare | bool)
 
 - name: Start varnish after standalone certbot
-  systemd:
+  ansible.builtin.systemd:
     name: varnish
     state: started
   when: certbot_standalone | default(false) and not (certbot_dns_cloudflare | bool)

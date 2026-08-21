@@ -1,11 +1,11 @@
 - name: Ensure we have a deploy group
   become: true
-  group:
+  ansible.builtin.group:
     name: deploy
 
 - name: Ensure we have a deploy user
   become: true
-  user:
+  ansible.builtin.user:
     name: deploy
     comment: "Deploy user"
     shell: /bin/bash
@@ -15,13 +15,13 @@
 
 - name: Ensure we have a ubuntu group
   become: true
-  group:
+  ansible.builtin.group:
     name: ubuntu
   when: "'linode' in group_names"
 
 - name: Ensure we have a ubuntu user
   become: true
-  user:
+  ansible.builtin.user:
     name: ubuntu
     comment: "Ubuntu user"
     shell: /bin/bash
@@ -57,7 +57,7 @@
 
 - name: Set authorized_keys for local accounts (only listed github_users + terraform)
   become: true
-  authorized_key:
+  ansible.posix.authorized_key:
     user: "{{ item }}"
     exclusive: true
     key: "{{ permitted_keys_for_account }}"
@@ -81,7 +81,7 @@
 
 - name: Only allow ssh access with keys
   become: true
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/ssh/sshd_config
     state: present
     regexp: "^#?PasswordAuthentication"

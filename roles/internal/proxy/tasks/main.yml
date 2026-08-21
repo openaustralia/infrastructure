@@ -1,16 +1,16 @@
 ---
 - name: Install compiler
-  apt:
+  ansible.builtin.apt:
     pkg: build-essential
 
 - name: "Download tinyproxy source code (will always change)"
-  get_url:
+  ansible.builtin.get_url:
     url: "https://github.com/tinyproxy/tinyproxy/releases/download/{{ tinyproxy_version }}/tinyproxy-{{ tinyproxy_version }}.tar.gz"
     dest: "/tmp/tinyproxy-{{ tinyproxy_version }}.tar.gz"
   register: tinyproxy_source
 
 - name: Unpacking tinyproxy # noqa: no-handler
-  unarchive:
+  ansible.builtin.unarchive:
     copy: false
     dest: /tmp/
     src: "{{ tinyproxy_source.dest }}"
@@ -18,41 +18,41 @@
   register: tinyproxy_source_unpack
 
 - name: Configuring tinyproxy source # noqa: no-handler
-  command: "./configure"
+  ansible.builtin.command: "./configure"
   args:
     chdir: "/tmp/tinyproxy-{{ tinyproxy_version }}"
   when: tinyproxy_source_unpack is changed
   register: tinyproxy_configure
 
 - name: Compiling tinyproxy # noqa: no-handler
-  shell: make && make install
+  ansible.builtin.shell: make && make install
   args:
     chdir: "/tmp/tinyproxy-{{ tinyproxy_version }}"
   when: tinyproxy_configure is changed
 
 - name: Tinyproxy startup script
-  copy:
+  ansible.builtin.copy:
     src: init.sh
     dest: /etc/init.d/tinyproxy
     mode: "0755"
 
 - name: Create user tinyproxy
-  user:
+  ansible.builtin.user:
     name: tinyproxy
 
 - name: Create group tinyproxy
-  group:
+  ansible.builtin.group:
     name: tinyproxy
 
 - name: Tinyproxy configuration
-  template:
+  ansible.builtin.template:
     src: tinyproxy.conf.j2
     dest: /usr/local/etc/tinyproxy/tinyproxy.conf
     mode: "0644"
   notify: restart tinyproxy
 
 - name: Enable tinyproxy service
-  service:
+  ansible.builtin.service:
     name: tinyproxy
     enabled: true
     state: started

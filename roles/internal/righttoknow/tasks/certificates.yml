@@ -1,6 +1,6 @@
 # Create fake let's encrypt directories when in development
 - name: Create fake let's encrypt directories when in development
-  file:
+  ansible.builtin.file:
     state: directory
     path: "/etc/letsencrypt/live/{{ item }}"
     mode: '0755'
@@ -10,7 +10,7 @@
 # We need to setup the SSL certificates before we try to configure nginx
 # because otherwise nginx will try to look for non-existent certificates
 - name: Copy SSL certificates for development
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}.pem"
     # We're faking it as if these are let's encrypt certs. Makes for less magic config
     dest: "/etc/letsencrypt/live/{{ item }}/fullchain.pem"
@@ -21,7 +21,7 @@
   notify: nginx restart
 
 - name: Copy SSL keys for development
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}.key"
     dest: "/etc/letsencrypt/live/{{ item }}/privkey.pem"
     mode: 0640
@@ -31,7 +31,7 @@
   notify: nginx restart
 
 - name: Install varnish and nginx now (for the benefit of certbot)
-  apt:
+  ansible.builtin.apt:
     pkg: "{{ item }}"
   with_items:
     - varnish
@@ -40,7 +40,7 @@
 
 # Staging Certbot only needs certs for the hostname
 - name: Set certificate configuration for staging
-  set_fact:
+  ansible.builtin.set_fact:
     staging_certs:
       - email: 'contact@oaf.{{ base_domain }}'
         domains: 
@@ -49,7 +49,7 @@
   when: "'righttoknow_staging' in group_names"
 
 - name: Set certificate configuration for production
-  set_fact:
+  ansible.builtin.set_fact:
     production_certs:
       - email: 'contact@oaf.{{ base_domain }}'
         domains: 

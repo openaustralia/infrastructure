@@ -1,16 +1,16 @@
 ---
 - name: Remove rbenv profile.d script
-  file:
+  ansible.builtin.file:
     state: absent
     path: /etc/profile.d/rbenv.sh
 
 - name: Remove rbenv installation
-  file:
+  ansible.builtin.file:
     state: absent
     path: '{{ rbenv_root }}'
 
 - name: Remove rbenv user installations
-  file:
+  ansible.builtin.file:
     state: absent
     path: '~{{ item }}/.rbenv'
   with_items: '{{ rbenv_users }}'

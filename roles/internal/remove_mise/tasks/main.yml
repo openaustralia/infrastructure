@@ -1,18 +1,18 @@
 ---
 - name: Remove mise binary
-  file:
+  ansible.builtin.file:
     state: absent
     path: '{{ item }}/.local/bin/mise'
   with_items: '{{ mise_user_homes }}'
 
 - name: Remove mise data directory
-  file:
+  ansible.builtin.file:
     state: absent
     path: '{{ item }}/.local/share/mise'
   with_items: '{{ mise_user_homes }}'
 
 - name: Remove mise config directory
-  file:
+  ansible.builtin.file:
     state: absent
     path: '{{ item }}/.config/mise'
   with_items: '{{ mise_user_homes }}'

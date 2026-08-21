@@ -3,7 +3,7 @@
 
 - name: Add deploy user to rvm group
   become: true
-  user:
+  ansible.builtin.user:
     name: deploy
     groups: rvm
     append: true
