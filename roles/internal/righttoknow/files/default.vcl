@@ -58,12 +58,13 @@ sub vcl_recv {
        req.method != "POST" &&
        req.method != "PUT" &&
        req.method != "PURGE" &&
+       req.method != "BAN" &&
        req.method != "DELETE" ) {
         # We don't allow any other methods.
         return (synth(405, "Method Not Allowed"));
     }
 
-    if (req.method != "GET" && req.method != "HEAD" && req.method != "PURGE") {
+    if (req.method != "GET" && req.method != "HEAD" && req.method != "PURGE" && req.method != "BAN") {
         /* We only deal with GET and HEAD by default, the rest get passed direct to backend */
         return (pass);
     }
@@ -75,7 +76,11 @@ sub vcl_recv {
     }
 
     # Ignore Cookies on images...
-    if (req.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico)(\?.*|)$") {
+    # ...unless Alaveteli has flagged the URL as an attachment download that
+    # needs its session cookie (see attachment_params in
+    # app/helpers/info_request_helper.rb)
+    if (req.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico)(\?.*|)$" &&
+        req.url !~ "(\?|\&)cookie_passthrough=1") {
         unset req.http.Cookie;
         return (hash);
     }
@@ -94,6 +99,11 @@ sub vcl_recv {
          return (synth(405, "Not allowed."));
       }
 
+      # Alaveteli's NotifyCacheJob sends its requests through Varnish as an
+      # HTTP proxy, so the request line carries an absolute URI. Strip the
+      # scheme and host so the ban pattern matches the path stored in x-url.
+      set req.url = regsub(req.url, "^https?://[^/]+", "");
+
       # For an explanation of the following roundabout way of defining
       # ban lists, see
       # http://kristianlyng.wordpress.com/2010/07/28/smart-bans-with-varnish/
@@ -103,12 +113,29 @@ sub vcl_recv {
       ban("obj.http.x-url ~ " + req.url);
       return (synth(200, "Banned"));
     }
+
+    # Handle BAN requests. Alaveteli sends these (instead of PURGE) for the
+    # pattern entries in its cached_urls lists, with the pattern in the
+    # X-Invalidate-Pattern header.
+    if (req.method == "BAN") {
+      if (!client.ip ~ purge) {
+         return (synth(405, "Not allowed."));
+      }
+
+      if (!req.http.X-Invalidate-Pattern) {
+         return (synth(400, "X-Invalidate-Pattern header required"));
+      }
+
+      ban("obj.http.x-url ~ " + req.http.X-Invalidate-Pattern);
+      return (synth(200, "Banned"));
+    }
     return (hash);
 }
 
 sub vcl_backend_response {
     set beresp.http.x-url = bereq.url;
-    if (bereq.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico|txt)(\?.*|)$") {
+    if (bereq.url ~ "\.(png|gif|jpg|jpeg|swf|css|js|rdf|ico|txt)(\?.*|)$" &&
+        bereq.url !~ "(\?|\&)cookie_passthrough=1") {
     # Ignore backend headers..
         unset beresp.http.set-Cookie;
         set beresp.ttl = 3600s;

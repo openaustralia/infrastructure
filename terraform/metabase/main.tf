@@ -14,7 +14,13 @@ resource "aws_instance" "main" {
   ebs_optimized = true
   key_name      = "deployer_key"
   tags = {
-    Name = "metabase"
+    Name           = "metabase"
+    PublicHostname = "metabase.oaf.org.au"
+    LogName        = "web.metabase.oaf.org.au"
+    # Replicated flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (requires_postgresql) from previous inventory/aws_ec2.yml.
+    AnsibleGroups = "metabase,requires_postgresql,ec2"
+    # NO capistrano Tags, this is deployed by ansible using docker compose
   }
   security_groups = [var.security_group_behind_lb.name]
 
@@ -75,7 +81,7 @@ resource "aws_lb_listener_certificate" "main" {
 
 resource "aws_lb_listener_rule" "main" {
   listener_arn = var.listener_https.arn
-  priority     = 6
+  priority     = 13
 
   action {
     type             = "forward"

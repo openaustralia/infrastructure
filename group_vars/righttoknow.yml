@@ -1,10 +1,28 @@
-# TODO: Unify this with the domain. It's currently only used to name
-# things on New Relic.
-site_name: righttoknow.org.au
-
 cron_enabled: true
 certbot_webserver: nginx
 certbot_webroot: /usr/share/nginx/html
+# righttoknow.org.au and www are proxied through Cloudflare (orange cloud), so
+# HTTP-01 webroot challenges pass through the Cloudflare edge and are subject
+# to its redirects and security rules, which have blocked Let's Encrypt's
+# validators. Validate via DNS-01 with the Cloudflare API instead.
+# certbot_webroot is kept above so nginx still serves
+# /.well-known/acme-challenge/ as a fallback.
+certbot_dns_cloudflare: true
+# A Cloudflare API token scoped to Zone / DNS / Edit for righttoknow.org.au.
+# To rotate: create a token in the Cloudflare dashboard, then run
+#   .venv/bin/ansible-vault encrypt_string --encrypt-vault-id rtk 'THE_TOKEN' \
+#     --name certbot_dns_cloudflare_api_token
+# and replace the value below.
+certbot_dns_cloudflare_api_token: !vault |
+          $ANSIBLE_VAULT;1.2;AES256;rtk
+          36373030633531313031353731656462306434626534616336323062353430333963393630656535
+          3235646233373963666161616263636265333533636336370a653031343664666631333632323834
+          65393533393163666161353837313266653238653737386230353062363764356264633131353238
+          6330383037643631620a386433333837636363633563323438323061663235396363663162656633
+          35613038316134313132346134616665313832643131636463636236356430363037643964303263
+          32636331393462633363336666396636373164303635366362373064653564333763633332643161
+          366231316234343536666436353035653665
+
 backup_gpg_pw: !vault |
           $ANSIBLE_VAULT;1.2;AES256;rtk
           32323937363233343737353934643134346166363339306232613066396233303862313863323364
@@ -174,48 +192,48 @@ pro_referral_coupon_production: !vault |
 logs:
   - file_path: /var/log/syslog
     log_group_name: /var/log/syslog
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%b %d %H:%M:%S"
 
   # Duplicity disabled Dec 2025 - replaced by restic
   # - file_path: /var/log/duply/righttoknow_data.log
   #   log_group_name: /var/log/duply/righttoknow_data.log
-  #   log_stream_name: "{{ inventory_hostname }}"
+  #   log_stream_name: "{{ log_name }}"
   #   timestamp_format: "%b %d %H:%M:%S"
 
   - file_path: /var/log/restic/righttoknow.log
     log_group_name: /var/log/restic/righttoknow.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%b %d %H:%M:%S"
 
   - file_path: /var/log/nginx/error.log
     log_group_name: /var/log/nginx/error.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%d %H:%M:%S.%f"
 
   - file_path: /var/log/letsencrypt/letsencrypt.log
     log_group_name: /var/log/letsencrypt/letsencrypt.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%d %H:%M:%S"
 
   - file_path: /var/log/unattended-upgrades/unattended-upgrades.log
     log_group_name: /var/log/unattended-upgrades/unattended-upgrades.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%d %H:%M:%S"
 
   - file_path: /srv/www/production/shared/log/production.log
     log_group_name: /srv/www/production/shared/log/production.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
 
   - file_path: /srv/www/production/shared/log/foi-alert-tracks.log
     log_group_name: /srv/www/production/shared/log/foi-alert-tracks.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
 
   - file_path: /srv/www/production/shared/log/foi-purge-varnish.log
     log_group_name: /srv/www/production/shared/log/foi-purge-varnish.log
-    log_stream_name: "{{ inventory_hostname }}"
+    log_stream_name: "{{ log_name }}"
     timestamp_format: "%Y-%m-%dT%H:%M:%S.%f"
 
 sentry_project_id: !vault |

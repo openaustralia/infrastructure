@@ -56,14 +56,21 @@ server {
   passenger_enabled on;
   passenger_ruby /home/deploy/.rbenv/shims/ruby;
 
-  # Serve maintenance page when present
-  if (-f $document_root/system/maintenance.html) {
-    return 503;
+  # Serve the maintenance page capistrano-maintenance writes (see
+  # config/deploy.rb in openaustralia/righttoknow). The test lives inside
+  # `location /` rather than at server level so the ACME challenge, assets
+  # and favicon locations above stay reachable while maintenance is on.
+  location / {
+    if (-f $document_root/down.html) {
+      return 503;
+    }
   }
   error_page 503 @maintenance;
   location @maintenance {
-    rewrite  ^(.*)$  /system/maintenance.html break;
-    break;
+    # Stop Varnish (and browsers) holding on to the 503 after
+    # maintenance:disable removes the page.
+    add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+    rewrite ^(.*)$ /down.html break;
   }
 }
 
@@ -71,13 +78,23 @@ server {
 server {
   listen 443 ssl http2;
   server_name {{ domain }};
-  rewrite ^/(.*) https://www.{{ domain }}/$1 permanent;
 
-  ssl on;
+  # Let's Encrypt HTTP-01 challenges can arrive over HTTPS (the validator
+  # follows redirects), so they must be exempt from the redirect below.
+  {% if certbot_webroot is defined %}
+  location ^~ /.well-known/acme-challenge/ {
+    root {{ certbot_webroot }};
+  }
+  {% endif %}
+
+  location / {
+    rewrite ^/(.*) https://www.{{ domain }}/$1 permanent;
+  }
+
   ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
 
-  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_protocols TLSv1.2 TLSv1.3;
   ssl_prefer_server_ciphers on;
   ssl_session_cache  builtin:1000  shared:SSL:10m;
   ssl_ciphers 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4';
@@ -88,14 +105,24 @@ server {
   listen 443 ssl http2;
   server_name www.{{ domain }};
 
-  ssl on;
   ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
 
-  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_protocols TLSv1.2 TLSv1.3;
   ssl_prefer_server_ciphers on;
   ssl_session_cache  builtin:1000  shared:SSL:10m;
   ssl_ciphers 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4';
+
+  # Let's Encrypt HTTP-01 challenges can arrive over HTTPS (the validator
+  # follows redirects), so they must bypass the deny list in `location /`
+  # below — Let's Encrypt validates from cloud provider IP ranges that
+  # overlap with it.
+  {% if certbot_webroot is defined %}
+  location ^~ /.well-known/acme-challenge/ {
+    auth_basic off;
+    root {{ certbot_webroot }};
+  }
+  {% endif %}
 
   # If you need to access the "emergency user" and password_protect is enabled
   # then you probably have to disable it temporarily

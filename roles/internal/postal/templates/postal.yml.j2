@@ -1,0 +1,47 @@
+# {{ ansible_managed }}
+# Based on https://github.com/postalserver/install/blob/main/examples/postal.v3.yml
+version: 2
+
+postal:
+  web_hostname: {{ postal_web_hostname }}
+  web_protocol: https
+  smtp_hostname: {{ postal_web_hostname }}
+
+main_db:
+  host: 127.0.0.1
+  username: root
+  password: {{ postal_mariadb_root_password }}
+  database: postal
+
+message_db:
+  host: 127.0.0.1
+  username: root
+  password: {{ postal_mariadb_root_password }}
+  prefix: postal
+
+smtp_server:
+  default_bind_address: "::"
+
+dns:
+  # These records are managed in terraform/postal/dns.tf
+  mx_records:
+    - {{ postal_web_hostname }}
+  spf_include: spf.{{ postal_web_hostname }}
+  return_path_domain: rp.{{ postal_web_hostname }}
+  route_domain: routes.{{ postal_web_hostname }}
+  track_domain: track.{{ postal_web_hostname }}
+
+smtp:
+  # SMTP server used to send messages from the postal management system
+  # itself to its users (e.g. password resets). Point this at postal's own
+  # SMTP server with credentials generated in the web interface once the
+  # installation is up and running.
+  host: 127.0.0.1
+  port: 2525
+  username: {{ postal_system_smtp_username | default('') }}
+  password: {{ postal_system_smtp_password | default('') }}
+  from_name: {{ postal_smtp_from_name }}
+  from_address: {{ postal_smtp_from_address }}
+
+rails:
+  secret_key: {{ postal_secret_key }}

@@ -4,8 +4,49 @@
 #
 # Other inventory files:
 
-# KEEP EMPTY - see `Vagrantfile` for development inventory
+# The ec2 group says where a host lives and requires_* says what it needs, so where either sets
+# the same variable as a service group, the service group is the more specific answer and must
+# win. Ansible combines group_vars in `sorted(groups, key=lambda g: (g.depth, g.priority,
+# g.name))` order, last one winning (ansible/inventory/helpers.py), so the priorities below read
+# low-to-high as least-to-most specific and give that outcome deterministically:
+#
+#   -1  development                    what every dev environment shares (Vagrantfile only)
+#    0  ec2, requires_*, vagrant       where the host lives, what it needs
+#    1  metabase, righttoknow, ...     service groups, at Ansible's default
+#
+# Names would decide it otherwise, and only by luck: "ec2" happens to sort before every service
+# group, but the Vagrantfile's "vagrant" sorts after most of them, and a future "devcontainer"
+# or "cloud" would land somewhere else again. See the matching block in the `Vagrantfile`.
+#
+# This has to live in an inventory rather than in group_vars/ec2.yml, since it decides how
+# group_vars files merge and so cannot be read from one. The aws_ec2 plugin config where these
+# hosts come from is no use either: it has no directive for group variables, and its
+# keyed_groups/groups only ever reach InventoryData.set_variable for a *host*. A source with no
+# hosts of its own still governs the group, because groups merge by name across inventory
+# sources.
+#
+# No-op as at 2026-08-21: group_vars/ec2.yml and group_vars/requires_*.yml share no keys with
+# any service group. This exists to stop a future overlap being resolved by alphabet.
+#
+# KEEP EMPTY - hosts come from inventory/aws_ec2.yml. The groups still have to be declared here,
+# because the ini plugin rejects a [group:vars] section for a group it has not seen.
+[ec2]
+[requires_postgresql]
+[requires_mysql]
+
+[ec2:vars]
+ansible_group_priority=0
+[requires_postgresql:vars]
+ansible_group_priority=0
+[requires_mysql:vars]
+ansible_group_priority=0
+
+# KEEP EMPTY - see `Vagrantfile` for development inventory, which sets the same priority on its
+# own copy of this group. Vagrant never reads this file, so the priority here only matters if a
+# host is ever added to [development] in a static inventory.
 [development]
+[development:vars]
+ansible_group_priority=-1
 
 # KEEP EMPTY - used by `Vagrantfile` to set up rds equivalents
 [mysql]
@@ -14,56 +55,7 @@
 
 # INVENTORY IN alphabetical order by group name
 
-[ec2]
-# NOTE: The planning alerts servers are NOT in ec2!
-srv.theyvoteforyou.org.au
-openaustralia.org.au
-staging.righttoknow.org.au
-prod.righttoknow.org.au
-au.proxy.oaf.org.au
-web.metabase.oaf.org.au
-vpn.oaf.org.au
-
-[catch_all_mail:children]
-righttoknow_staging
-
-[metabase]
-web.metabase.oaf.org.au
-
-[openaustralia]
-openaustralia.org.au
-
-[openvpn]
-52.64.33.12 ansible_user=ubuntu ansible_ssh_private_key_file=terraform.pem
-
-[planningalerts]
-ec2-3-27-58-54.ap-southeast-2.compute.amazonaws.com
-ec2-3-27-189-101.ap-southeast-2.compute.amazonaws.com
-
-[proxy]
-au.proxy.oaf.org.au
-
-# Group for all sites that use and thus need information on the MySQL 8.x RDS instance
-[requires_mysql:children]
-openaustralia
-theyvoteforyou
-
-# Group for all sites that use and need information on the PostgreSQL RDS instance
-[requires_postgresql:children]
-righttoknow
-metabase
-planningalerts
-
-[righttoknow:children]
-righttoknow_production
-righttoknow_staging
-
-[righttoknow_production]
-prod.righttoknow.org.au
-
-[righttoknow_staging]
-staging.righttoknow.org.au
-
-[theyvoteforyou]
-srv.theyvoteforyou.org.au
+# NOTE: The postal server is a Linode instance, NOT ec2 - see terraform/postal
+[postal]
+postal.oaf.org.au
 

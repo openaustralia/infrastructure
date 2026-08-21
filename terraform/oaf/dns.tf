@@ -210,7 +210,7 @@ resource "cloudflare_record" "spf_include" {
   zone_id = var.oaf_org_au_zone_id
   name    = "_spf1.oaf.org.au"
   type    = "TXT"
-  value   = "v=spf1 ip4:192.0.78.154 ip4:192.0.78.197 ip4:192.0.78.177 ip4:192.0.78.220 ip4:${var.openaustralia_main_ip} ip4:${var.openaustralia_production_ip} ip4:${var.righttoknow_production_ip} ip4:${var.righttoknow_staging_ip} ip4:${var.cuttlefish_ip} -all"
+  value   = "v=spf1 ip4:192.0.78.154 ip4:192.0.78.197 ip4:192.0.78.177 ip4:192.0.78.220 ip4:${var.openaustralia_production_ip} ip4:${var.righttoknow_production_ip} ip4:${var.righttoknow_staging_ip} ip4:${var.cuttlefish_ip} -all"
 }
 
 ## openaustraliafoundation.org.au

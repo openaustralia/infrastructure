@@ -28,6 +28,26 @@ resource "aws_instance" "main" {
     Application = "planningalerts"
     BlueGreen   = var.env_name
     Roles       = "app,web,db"
+    # Same value across every instance in the blue/green fleet, unlike Name - see group_vars/ssm.yml
+    PublicHostname = "www.planningalerts.org.au"
+    # Deliberately mirrors Name (not the old static-inventory hostname, unlike other collections) -
+    # this fleet's instances get replaced regularly (blue/green cutovers), so a snapshot of the
+    # previous ec2-*.compute.amazonaws.com hostname would likely go stale before the next
+    # replacement anyway, whereas Name stays self-consistent regardless of replacement. Costs a
+    # one-time CloudWatch log stream rename now - see the PR description for exactly what renamed
+    # to what.
+    LogName = "web${count.index + 1}.${var.env_name}.planningalerts"
+    # Flattened inventory/ec2-hosts group membership, including groups only reached via
+    # :children (requires_postgresql) - see previous inventory/aws_ec2.yml. Now includes "ec2" (previously
+    # deliberately excluded) - that exclusion's stated reason (group_vars/ec2.yml's base_domain
+    # "newly applying") doesn't hold up: the role already builds planningalerts.{{ base_domain }}
+    # expecting exactly ec2.yml's org.au, and packer/planningalerts.pkr.hcl's own AMI-build
+    # provisioner already runs with groups = ["ec2", "planningalerts"] - so the golden image
+    # itself has always been built assuming ec2.yml's vars apply. Without "ec2" here, the live
+    # instance was missing base_domain/aws_access_key/aws_secret_key/newrelic_license_key/
+    # planningalerts_db_host entirely (the last of these registered by the "Gather RDS facts"
+    # play, itself scoped to hosts: ec2) - which is what broke the newrelic_license_key check.
+    AnsibleGroups = "planningalerts,requires_postgresql,ec2"
   }
   security_groups      = var.security_groups
   iam_instance_profile = var.iam_instance_profile

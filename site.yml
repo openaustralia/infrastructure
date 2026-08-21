@@ -113,11 +113,10 @@
   become: true
   tasks:
     - name: Get information about the RDS instance
-      rds:
+      community.aws.rds_instance_info:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
-        command: facts
-        instance_name: "{{ db_name }}"
+        db_instance_identifier: "{{ db_name }}"
         region: "{{ ec2_region }}"
       register: rds_database
       tags:
@@ -136,11 +135,10 @@
       when: "(show_rds_debug | default(false) | bool) and (db_name is defined)"
 
     - name: Get information about the planningalerts RDS instance
-      rds:
+      community.aws.rds_instance_info:
         aws_access_key: "{{ aws_access_key }}"
         aws_secret_key: "{{ aws_secret_key }}"
-        command: facts
-        instance_name: "{{ planningalerts_db_name }}"
+        db_instance_identifier: "{{ planningalerts_db_name }}"
         region: "{{ ec2_region }}"
       register: rds_planningalerts
       tags:
@@ -298,11 +296,11 @@
   roles:
     - metabase
 
-- hosts: openvpn
-  tags: openvpn
+- hosts: postal
+  tags: postal
   become: true
   roles:
-    - internal/openvpn
+    - postal
 
 # vagrant equivalent of AWS redis service
 - hosts: redis

@@ -1,3 +1,10 @@
 ---
 # defaults file for oaf.certbot
 certbot_webserver: apache
+
+# Validate domain ownership via DNS-01 using the Cloudflare API instead of
+# HTTP-01. Use this for domains proxied through Cloudflare (orange cloud),
+# where HTTP-01 challenges are subject to edge redirects/security rules.
+# Requires certbot_dns_cloudflare_api_token: a Cloudflare API token scoped to
+# Zone / DNS / Edit for the relevant zone(s).
+certbot_dns_cloudflare: false

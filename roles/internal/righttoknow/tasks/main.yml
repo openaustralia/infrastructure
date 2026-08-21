@@ -17,11 +17,12 @@
       - curl
     state: present
 
-- name: Add key for passenger
+- name: "Add key for passenger (change notification turned off)"
   tags: passenger
   ansible.builtin.get_url:
     url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt
     dest: /usr/share/keyrings/phusionpassenger-archive-keyring.asc
+  changed_when: false
 
 - name: Add passenger apt repository
   tags: passenger
@@ -90,7 +91,8 @@
     mode: '0755'
   with_nested:
     - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
-    - ['', 'shared']
+    # The daemon units log straight into shared/log, which has to exist before they can start
+    - ['', 'shared', 'shared/log']
 
 - name: Link directories in /srv/www to /data
   file:
@@ -255,6 +257,70 @@
     daemon_reload: true
   when: "'righttoknow_production' in group_names"
 
+# The sysvinit daemons have to be stopped and removed before the systemd units start,
+# otherwise both copies of each daemon run at once. Both stages are cleaned up on every
+# host because both hosts have accumulated both stages' scripts over the years.
+# Their own `stop` can't be used: those scripts call start-stop-daemon with --pidfile as
+# the only match criterion, which dpkg 1.19.3+ refuses for a pidfile written by a non-root
+# user ("matching only on non-root pidfile ... is insecure"), so the daemon is left running
+# and the script exits 1. Adding --user is the documented remedy, and is what Alaveteli
+# upstream did in its own templates in 2021.
+# --user is deliberately the only criterion added. --exec or --name would narrow the match
+# further, guarding against a stale pidfile whose PID has been recycled by another deploy
+# process, but neither can match these daemons: they are `script/runner` invocations, so
+# /proc/<pid>/exe is the rbenv ruby binary and comm is `ruby`, never the script path. A
+# criterion that can't match makes start-stop-daemon treat the daemon as absent and exit 0
+# under --oknodo, leaving it running, which is the problem above. The residual stale-pidfile
+# risk is accepted: this is a one-shot, guarded by `removes:`, run during provisioning.
+- name: Stop the sysvinit daemons replaced by systemd units
+  command: >-
+    /sbin/start-stop-daemon --stop --oknodo --retry 5
+    --pidfile /srv/www/{{ item[0] }}/current/tmp/pids/{{ item[1] }}.pid
+    --user deploy
+  args:
+    removes: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
+  with_nested:
+    - ['staging', 'production']
+    - ['send-notifications', 'foi-alert-tracks']
+
+- name: Remove the sysvinit daemons replaced by systemd units
+  file:
+    path: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
+    state: absent
+  with_nested:
+    - ['staging', 'production']
+    - ['send-notifications', 'foi-alert-tracks']
+
+- name: Install send-notifications systemd unit
+  template:
+    src: send-notifications.service.j2
+    dest: /etc/systemd/system/send-notifications.service
+    mode: "0644"
+  vars:
+    stage: "{{ item }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+  notify: restart send-notifications
+
+- name: Install foi-alert-tracks systemd unit
+  template:
+    src: foi-alert-tracks.service.j2
+    dest: /etc/systemd/system/foi-alert-tracks.service
+    mode: "0644"
+  vars:
+    stage: "{{ item }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+  notify: restart foi-alert-tracks
+
+- name: Enable and start the Alaveteli notification and alert daemons
+  systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+    daemon_reload: true
+  with_items:
+    - send-notifications
+    - foi-alert-tracks
+
 - name: Link run-with-lockfile.sh so it's available system-wide
   file:
     src: "/srv/www/{{ 'staging' if ('righttoknow_staging' in group_names) else 'production' }}/current/commonlib/bin/run-with-lockfile.sh"
@@ -322,16 +388,21 @@
   with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
   notify: nginx restart
 
-- name: Copy init scripts
+- name: Copy init script Capistrano uses to restart the application
   template:
-    src: "init/{{ item[1] }}.j2"
-    dest: "/etc/init.d/{{ item[1] }}-{{ item[0] }}"
+    src: init/alaveteli.j2
+    dest: "/etc/init.d/alaveteli-{{ item }}"
     mode: 0755
   vars:
-    stage: "{{ item[0] }}"
-  with_nested:
-    - "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
-    - ['send-notifications', 'foi-alert-tracks', 'alaveteli']
+    stage: "{{ item }}"
+  with_items: "{{ ['staging'] if 'righttoknow_staging' in group_names else ( ['production'] if 'righttoknow_production' in group_names else [] ) }}"
+
+- name: Allow deploy user to restart the application daemons
+  copy:
+    src: righttoknow_deploy_sudoers
+    dest: /etc/sudoers.d/
+    mode: '0440'
+    validate: visudo -cf %s
 
 - name: Generate nginx config
   copy:
@@ -431,7 +502,9 @@
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_production }}"
-  notify: nginx restart
+  notify:
+    - nginx restart
+    - restart sidekiq
   when: "'righttoknow_production' in group_names"
 
 - name: Apply Alaveteli config (staging)
@@ -456,7 +529,9 @@
     enable_alaveteli_pro: true
     enable_pro_pricing: true
     pro_referral_coupon: "{{ pro_referral_coupon_staging }}"
-  notify: nginx restart
+  notify:
+    - nginx restart
+    - restart sidekiq
   when: "'righttoknow_staging' in group_names"
 
 - name: Apply Alaveteli Storage Config
@@ -517,6 +592,35 @@
     dest: /lib/systemd/system/varnish.service
     mode: '0644'
   notify: restart varnish
+
+# Sentry CLI, used by cron.yml to wrap each scheduled job in a cron monitor
+# check-in (openaustralia/righttoknow#1004). Pinned and checksummed rather
+# than piping cli.sentry.dev/install to bash, so a provision run can't be
+# changed out from under us. The binary is self-contained (no runtime deps).
+# `sentry monitor run` authenticates with the project DSN, not an auth token.
+- name: Install Sentry CLI
+  tags: sentry
+  ansible.builtin.get_url:
+    url: "https://github.com/getsentry/cli/releases/download/{{ sentry_cli_version }}/sentry-linux-x64"
+    checksum: "sha256:{{ sentry_cli_sha256 }}"
+    dest: /usr/local/bin/sentry
+    owner: root
+    group: root
+    mode: '0755'
+
+# `run-with-lockfile -n` exits 100 when the previous run still holds the lock,
+# which is routine for the frequent jobs (update-xapian-index runs every five
+# minutes) and is not a failure. Without this shim Sentry would record every
+# skip as a failed check-in. Any other non-zero exit is passed through, so real
+# failures still register.
+- name: Install lock-aware cron wrapper for Sentry check-ins
+  tags: sentry
+  ansible.builtin.copy:
+    src: rtk-cron-lock
+    dest: /usr/local/bin/rtk-cron-lock
+    owner: root
+    group: root
+    mode: '0755'
 
 - import_tasks: certificates.yml
 - import_tasks: cron.yml

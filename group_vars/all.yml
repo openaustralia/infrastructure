@@ -27,6 +27,20 @@ backup_max_age: 6M
 backup_max_full_backups: 6
 backup_full_max_age: 1M
 
+# inventory_hostname isn't safe for identifiers that need to persist across the static-to-dynamic
+# inventory migration or an instance replacement - use public_hostname (not unique) or log_name
+# (unique) instead, e.g. for backup paths (see roles/internal/righttoknow's restic repository).
+
+# The collection's canonical public name - deliberately identical across every instance in a
+# blue/green fleet like planningalerts. Overridden in group_vars/ssm.yml for dynamically-discovered
+# hosts.
+public_hostname: "{{ inventory_hostname }}"
+
+# A stable, per-instance-unique identifier (e.g. CloudWatch log stream names), where
+# public_hostname is unsuitable because it's deliberately identical across a pool of app servers.
+# Overridden in group_vars/ssm.yml for dynamically-discovered hosts.
+log_name: "{{ inventory_hostname }}"
+
 certbot_webserver: apache
 # Part of the default value "--quiet" appears not to be valid
 certbot_auto_renew_options: "--no-self-upgrade"

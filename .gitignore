@@ -8,6 +8,7 @@ ec2-provisioning.retry
 terraform/.terraform
 terraform/secrets.auto.tfvars
 terraform/aws.auto.tfvars
+terraform/local.tfvars
 terraform/terraform.tfstate.*
 site.retry
 ubuntu-xenial-16.04-cloudimg-console.log
@@ -37,6 +38,10 @@ db_dumps/*.sql.gz
 *~
 *.swp
 *.swo
+
+# Claude Code local-only files (personal settings/notes, not shared via AGENTS.md/CLAUDE.md)
+/.claude/settings.local.json
+/CLAUDE.local.md
 
 # Ignore patch files
 *.patch

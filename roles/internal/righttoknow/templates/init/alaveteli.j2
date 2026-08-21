@@ -29,8 +29,7 @@ restart_daemon() {
   echo -n "Restarting Alaveteli app server"
   touch "/srv/www/{{ stage }}/current/tmp/restart.txt"
 
-  /etc/init.d/send-notifications-{{ stage }} restart
-  /etc/init.d/foi-alert-tracks-{{ stage }} restart
+  sudo /usr/bin/systemctl restart send-notifications foi-alert-tracks sidekiq
 }
 
 case "$1" in

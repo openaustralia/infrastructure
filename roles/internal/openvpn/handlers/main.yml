@@ -1,7 +1,0 @@
----
-# OpenVPN Handlers
-
-- name: restart openvpn
-  systemd:
-    name: openvpn@server
-    state: restarted
