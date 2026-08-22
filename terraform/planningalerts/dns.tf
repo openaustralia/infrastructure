@@ -42,6 +42,22 @@ resource "cloudflare_record" "www" {
   proxied = false
 }
 
+resource "cloudflare_record" "www_test" {
+  zone_id = cloudflare_zone.main.id
+  name    = "www-test.planningalerts.org.au"
+  type    = "CNAME"
+  value   = cloudflare_tunnel.planningalerts_test.cname
+  proxied = true
+}
+
+resource "cloudflare_record" "api_test" {
+  zone_id = cloudflare_zone.main.id
+  name    = "api-test.planningalerts.org.au"
+  type    = "CNAME"
+  value   = cloudflare_tunnel.planningalerts_test.cname
+  proxied = true
+}
+
 resource "cloudflare_record" "api" {
   zone_id = cloudflare_zone.main.id
   name    = "api.planningalerts.org.au"

@@ -33,8 +33,6 @@ variable "instance_count" {
   type        = number
 }
 
-variable "instance_profile" {}
-# Not sure if it's better to pass this in or whether this module should just make its own version of it
 variable "security_group_incoming_email" {}
 variable "deployer_key" {}
 variable "load_balancer" {}
