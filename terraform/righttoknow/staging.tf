@@ -11,6 +11,7 @@ resource "aws_instance" "staging" {
     Environment = "staging"
     Purpose     = "Ubuntu 22.04 Staging Server"
 
+    Application = "alaveteli"
     # Flattened inventory/ec2-hosts group membership, including groups only reached via
     # :children (righttoknow, catch_all_mail) - see previous inventory/aws_ec2.yml.
     AnsibleGroups = "righttoknow_staging,righttoknow,catch_all_mail,requires_postgresql,ec2"
@@ -45,7 +46,7 @@ resource "aws_instance" "staging" {
   ]
 
   availability_zone    = aws_ebs_volume.staging_data.availability_zone
-  iam_instance_profile = var.instance_profile.name
+  iam_instance_profile = module.instance_role.instance_profile.name
 
   # Allow termination for staging
   disable_api_termination = false

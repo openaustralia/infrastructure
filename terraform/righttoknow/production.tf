@@ -12,6 +12,7 @@ resource "aws_instance" "production" {
     Environment = "production"
     Purpose     = "Ubuntu 22.04 Production Server"
 
+    Application = "alaveteli"
     # Deliberately the real (redirect-target) public domain, not the old static-inventory
     # hostname - see group_vars/all.yml/ssm.yml for how this is used.
     PublicHostname = "www.righttoknow.org.au"
@@ -45,7 +46,7 @@ resource "aws_instance" "production" {
   ]
 
   availability_zone    = aws_ebs_volume.production_data.availability_zone
-  iam_instance_profile = var.instance_profile.name
+  iam_instance_profile = module.instance_role.instance_profile.name
 
   # Disable termination to protect production
   disable_api_termination = true
